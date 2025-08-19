@@ -1,19 +1,19 @@
 <template>
-  <main class="min-h-screen flex items-center justify-center bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 pt-0 md:pt-12 transition-all">
+  <main class="min-h-screen flex items-center justify-center bg-[#3c0b3c] pt-0 md:pt-12 transition-all">
     <!-- Cards Container -->
     <div class="w-full max-w-5xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 items-center justify-center">
       <!-- Left Info Card -->
       <section
-        class="w-full md:w-1/2 bg-white/90 rounded-2xl shadow-xl p-8 md:p-10 flex flex-col items-start fade-in-up mb-0 md:mb-0"
-      >
+        class= "w-full md:w-1/2 bg-white/10 rounded-2xl shadow-xl p-8 md:p-10 flex flex-col items-start fade-in-up mb-0 md:mb-0 mt-7 mb-4" 
+      >       
         <div class="flex items-center gap-3 mb-4">
           <div class="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
             <img src="@/assets/logo.png" alt="Logo" class="w-8 h-8" />
           </div>
-          <h2 class="text-lg font-semibold text-indigo-700">RC Convergio</h2>
+          <h2 class="text-lg font-semibold text-white">RC Convergio</h2>
         </div>
-                  <h3 class="text-3xl md:text-4xl font-bold mb-4 text-gray-900">Create your account</h3>
-        <p class="text-gray-700 mb-4">Join RC Convergio to securely manage your business data.</p>
+                  <h3 class="text-3xl md:text-4xl font-bold mb-4 text-white">Create your account</h3>
+        <p class="text-white mb-4">Join RC Convergio to securely manage your business data.</p>
         <img
           src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=600&q=80"
           alt="Team Example"
@@ -27,12 +27,8 @@
       </section>
       <!-- Register Form Card -->
       <section
-        class="w-full md:w-1/2 bg-white/90 rounded-2xl shadow-xl p-8 md:p-10 flex flex-col fade-in-up relative"
+        class="w-full md:w-1/2 bg-white/05  rounded-2xl shadow-xl p-8 md:p-10 flex flex-col fade-in-up relative"
       >
-                 <div class="flex items-center gap-3 mb-6 opacity-40">
-           <div class="w-10 h-10 rounded-xl bg-gray-200"></div>
-           <div class="h-6 w-32 rounded bg-gray-200"></div>
-         </div>
         <!-- Full Name -->
         <div class="mb-3">
           <input
@@ -40,7 +36,7 @@
             type="text"
             required
             placeholder="Full Name"
-            class="my-input"
+            class="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             autocomplete="name"
           />
         </div>
@@ -51,7 +47,7 @@
             type="email"
             required
             placeholder="name@company.com"
-            class="my-input"
+             class="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             autocomplete="email"
           />
         </div>
@@ -62,7 +58,7 @@
             v-model="password"
             required
             placeholder="Create a password"
-            class="my-input"
+             class="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             autocomplete="new-password"
           />
                      <button
@@ -79,7 +75,7 @@
             v-model="confirmPwd"
             required
             placeholder="Re-enter password"
-            class="my-input"
+             class="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             autocomplete="new-password"
           />
         </div>
@@ -90,7 +86,7 @@
             type="text"
             required
             placeholder="Your company"
-            class="my-input"
+             class="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             autocomplete="organization"
           />
         </div>

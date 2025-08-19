@@ -1,6 +1,6 @@
 <template>
   <nav
-   class="fixed w-full top-0 left-0 z-50 bg-gradient-to-tr from-highlight to-accent via-pink-400 shadow-lg py-3 px-8 flex items-center justify-between transition-colors duration-300"
+   class="fixed w-full top-0 left-0 z-50 bg-[#3c0b3c] shadow-lg py-3 px-8 flex items-center justify-between transition-colors duration-300"
   >
     <div class="flex items-center gap-2">
       <router-link to="/" class="flex items-center gap-2">

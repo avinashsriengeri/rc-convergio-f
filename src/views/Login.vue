@@ -1,23 +1,20 @@
 <template>
-  <main
-    class="min-h-screen flex items-center justify-center bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 pt-0 md:pt-12 transition-all"
-  >
+  <main class="min-h-screen flex items-center justify-center bg-[#3c0b3c] pt-0 md:pt-12 transition-all">
     <!-- Cards Container -->
-    <div class="w-full max-w-5xl mx-auto flex flex-col md:flex-row gap-10 md:gap-12 items-center justify-center"
-    >
+    <div class="w-full max-w-5xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 items-center justify-center">
       <!-- Left Info Card -->
       <section
-        class="w-full md:w-1/2 bg-white/90 rounded-2xl shadow-xl p-8 md:p-10 flex flex-col items-start fade-in-up mb-0 md:mb-0"
-      >
+        class="w-full md:w-1/2 bg-white/10 rounded-2xl shadow-xl p-8 md:p-10 flex flex-col items-start fade-in-up mb-0 md:mb-0 mt-7 mb-4" 
+      >       
         <div class="flex items-center gap-3 mb-6">
           <div class="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center">
             <img src="@/assets/logo.png" alt="Logo" class="w-8 h-8" />
           </div>
-          <h2 class="text-xl font-bold ">RC Convergio</h2>
+          <h2 class="text-xl font-bold text-white/90 ">RC Convergio</h2>
         </div>
 
-        <h3 class="text-4xl font-extrabold mb-4 text-gray-900">Welcome back 👋</h3>
-        <p class="text-gray-600 mb-6 text-lg">
+        <h3 class="text-4xl font-extrabold mb-4 text-white/90">Welcome back 👋</h3>
+        <p class="text-white/90 mb-6 text-lg">
           Securely access your customer data, pipelines, and insights.
         </p>
 
@@ -36,7 +33,7 @@
 
       <!-- Login Form Card -->
       <section
-        class="w-full md:w-1/2 bg-white rounded-2xl shadow-2xl p-10 flex flex-col fade-in-up"
+        class="w-full md:w-1/2 bg-white\15 rounded-2xl shadow-xl p-10 flex flex-col fade-in-up"
       >
         <!-- Email Field -->
         <div class="mb-5">
@@ -82,7 +79,7 @@
 
         <!-- Action -->
         <button
-          class="w-full mt-2 py-3 rounded-lg bg-black font-bold text-white text-lg shadow-md hover:bg-indigo-700 active:scale-95 transition-all duration-150"
+          class="w-full mt-2 py-3 rounded-lg   bg-indigo-600 font-bold text-white text-lg shadow-md  active:scale-95 transition-all duration-150"
           @click="handleLogin"
         >
           Login
