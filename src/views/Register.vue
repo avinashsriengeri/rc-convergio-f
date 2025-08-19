@@ -120,7 +120,10 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import api from '@/services/api'
 
+const router = useRouter()
 const name = ref('')
 const email = ref('')
 const password = ref('')
@@ -128,18 +131,38 @@ const confirmPwd = ref('')
 const org = ref('')
 const showPwd = ref(false)
 const success = ref(false)
-function handleRegister() {
-  if (
-    name.value &&
-    /\S+@\S+\.\S+/.test(email.value) &&
-    password.value &&
-    password.value === confirmPwd.value &&
-    org.value
-  ) {
-    success.value = true
-  } else {
+const errorMessage = ref('')
+const loading = ref(false)
+
+async function handleRegister() {
+  errorMessage.value = ''
+  if (!name.value || !/\S+@\S+\.\S+/.test(email.value) || !password.value || password.value !== confirmPwd.value || !org.value) {
     success.value = false
-    // Handle error in real app
+    errorMessage.value = 'Please fill all fields correctly.'
+    return
+  }
+  loading.value = true
+  try {
+    const { data } = await api.post('/auth/register', {
+      name: name.value,
+      email: email.value,
+      phone: '',
+      password: password.value,
+      password_confirmation: confirmPwd.value,
+      organization_name: org.value,
+    })
+    success.value = true
+    router.push('/login')
+  } catch (err) {
+    const resp = err?.response?.data
+    if (resp?.errors) {
+      const firstField = Object.keys(resp.errors)[0]
+      errorMessage.value = resp.errors[firstField]?.[0] || resp.message || 'Registration failed.'
+    } else {
+      errorMessage.value = resp?.message || 'Registration failed.'
+    }
+  } finally {
+    loading.value = false
   }
 }
 </script>

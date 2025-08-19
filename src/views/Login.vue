@@ -115,6 +115,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import api from '@/services/api'
 
 const username = ref('')
 const password = ref('')
@@ -122,19 +123,31 @@ const showPwd = ref(false)
 const emailError = ref(false)
 const pwdError = ref(false)
 const tryError = ref('')
+const loading = ref(false)
 const router = useRouter()
 
-function handleLogin(e) {
+async function handleLogin(e) {
   emailError.value = !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(username.value)
   pwdError.value = password.value.length < 8
   if (emailError.value || pwdError.value) return
-
-  if (username.value === 'lock@company.com') {
-    tryError.value = 'Too many attempts. Try again in 00:58'
-    return
-  }
   tryError.value = ''
-  router.push('/dashboard')
+  loading.value = true
+  try {
+    const { data } = await api.post('/auth/login', {
+      email: username.value,
+      password: password.value,
+    })
+    const token = data?.token || data?.access_token || data?.data?.token || data?.data?.access_token
+    if (!token) {
+      throw new Error('Invalid login response')
+    }
+    localStorage.setItem('token', token)
+    router.push('/dashboard')
+  } catch (err) {
+    tryError.value = err?.response?.data?.message || 'Login failed. Please check your credentials.'
+  } finally {
+    loading.value = false
+  }
 }
 function clearError() {
   emailError.value = false

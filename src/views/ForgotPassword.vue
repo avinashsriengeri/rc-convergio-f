@@ -49,6 +49,7 @@
           >
             Send Reset Link
           </button>
+          <p v-if="errorMessage" class="w-full border border-red-500 bg-red-50 text-red-700 p-2 mt-4 rounded text-center">{{ errorMessage }}</p>
           <!-- Success/Info Message -->
           <transition name="fade">
             <p v-if="success" class="w-full border border-green-500 bg-green-50 text-green-700 p-2 mt-4 rounded text-center">
@@ -75,22 +76,35 @@
   
   <script setup>
   import { ref } from 'vue'
+  import api from '@/services/api'
   const email = ref('')
   const emailError = ref(false)
   const success = ref(false)
+  const loading = ref(false)
+  const errorMessage = ref('')
   
-  function handleReset() {
+  async function handleReset() {
     emailError.value = !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email.value)
     if (emailError.value) {
       success.value = false
       return
     }
-    // Simulate sending a reset email; replace with actual API call
-    success.value = true
+    loading.value = true
+    errorMessage.value = ''
+    try {
+      await api.post('/auth/forgot', { email: email.value })
+      success.value = true
+    } catch (err) {
+      errorMessage.value = err?.response?.data?.message || 'Unable to send reset link.'
+      success.value = false
+    } finally {
+      loading.value = false
+    }
   }
   function clearError() {
     emailError.value = false
     success.value = false
+    errorMessage.value = ''
   }
   </script>
   

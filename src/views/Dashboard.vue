@@ -36,18 +36,18 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-white rounded-xl shadow p-5 text-center">
               <div class="text-sm text-gray-500 mb-1">Open</div>
-              <div class="text-2xl font-extrabold text-gray-800 mb-1">$128,000</div>
-              <div class="text-xs text-gray-400">Week: $48k</div>
+              <div class="text-2xl font-extrabold text-gray-800 mb-1">{{ (metrics && (metrics.open || metrics.open_value)) || '$128,000' }}</div>
+              <div class="text-xs text-gray-400">{{ (metrics && (metrics.open_week || metrics.open_week_value)) || 'Week: $48k' }}</div>
             </div>
             <div class="bg-white rounded-xl shadow p-5 text-center">
               <div class="text-sm text-gray-500 mb-1">Won</div>
-              <div class="text-2xl font-extrabold text-gray-800 mb-1">$24,300</div>
-              <div class="text-xs text-gray-400">Week: $9.6k</div>
+              <div class="text-2xl font-extrabold text-gray-800 mb-1">{{ (metrics && (metrics.won || metrics.won_value)) || '$24,300' }}</div>
+              <div class="text-xs text-gray-400">{{ (metrics && (metrics.won_week || metrics.won_week_value)) || 'Week: $9.6k' }}</div>
             </div>
             <div class="bg-white rounded-xl shadow p-5 text-center">
               <div class="text-sm text-gray-500 mb-1">Lost</div>
-              <div class="text-2xl font-extrabold text-gray-800 mb-1">$8,900</div>
-              <div class="text-xs text-gray-400">Week: $3.3k</div>
+              <div class="text-2xl font-extrabold text-gray-800 mb-1">{{ (metrics && (metrics.lost || metrics.lost_value)) || '$8,900' }}</div>
+              <div class="text-xs text-gray-400">{{ (metrics && (metrics.lost_week || metrics.lost_week_value)) || 'Week: $3.3k' }}</div>
             </div>
           </div>
           <!-- Tasks -->
@@ -115,5 +115,22 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import Footer from '../components/Footer.vue'
+import api from '@/services/api'
+
+const metrics = ref(null)
+const loading = ref(true)
+const errorMessage = ref('')
+
+onMounted(async () => {
+  try {
+    const { data } = await api.get('/dashboard')
+    metrics.value = data
+  } catch (err) {
+    errorMessage.value = err?.response?.data?.message || 'Failed to load dashboard.'
+  } finally {
+    loading.value = false
+  }
+})
 </script>

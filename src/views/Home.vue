@@ -93,17 +93,17 @@ const slides = ref([
   {
     title: "RC Book",
     description: "A smarter way to manage records with a secure and intuitive digital system.",
-    image: "https://via.placeholder.com/120x120.png?text=Records"
+    image: "https://placehold.co/120x120?text=Records"
   },
   {
     title: "Cybersecurity",
     description: "Comprehensive protection to safeguard your business from evolving threats.",
-    image: "https://via.placeholder.com/120x120.png?text=Security"
+    image: "https://placehold.co/120x120?text=Security"
   },
   {
     title: "Consulting Services",
     description: "Trusted experts offering guidance to innovate and drive business growth.",
-    image: "https://via.placeholder.com/120x120.png?text=Consulting"
+    image: "https://placehold.co/120x120?text=Consulting"
   }
 ])
 
