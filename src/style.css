@@ -1,26 +1,17 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&display=swap');
 
-@theme {
-  --font-baloo: "Baloo 2", sans-serif;
-  /* Brand palette */
-  --color-primary: #2596be;   /* cyan-blue */
-  --color-secondary: #973894; /* magenta */
-  --color-tertiary: #655997;  /* purple */
-  --color-accent: #cc3266;    /* rose */
-  /* Optional: also define calibri if you plan to use it as a utility
-  --font-calibri: Calibri, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  */
-}
-
-@layer utilities {
-  .font-baloo { font-family: var(--font-baloo); }
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   html, body, #app {
     @apply min-h-full bg-white text-tertiary font-baloo;
   }
+}
+
+@layer utilities {
+  .font-baloo { font-family: "Baloo 2", sans-serif; }
 }
 
 @keyframes fade-down {

@@ -1,417 +1,393 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-accent/10 via-white to-primary/10 flex flex-col">
-    <div class="flex flex-1">
-      <Sidebar />
-      <main class="flex-1 py-8 bg-transparent">
-        <div class="w-full px-4 md:px-6 lg:px-8 grid grid-cols-1 gap-8">
+  <div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white shadow-sm border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex items-center justify-between">
           <div>
-            <HeaderBar />
+            <h1 class="text-2xl font-bold text-gray-900">Contacts</h1>
+            <p class="text-sm text-gray-600">Manage your contacts and leads</p>
           </div>
-          <section class="w-full">
-          <div class="flex flex-col gap-3 mb-4">
-            <div class="flex items-center justify-between">
-              <h1 class="text-2xl font-semibold text-tertiary">Contacts</h1>
-              <div class="flex items-center gap-2">
-                <input ref="csvInput" type="file" accept=".csv" class="hidden" @change="onCsvSelected" />
-                <button class="px-3 py-2 text-sm rounded-full border border-primary/20 bg-white hover:bg-primary/5 text-secondary" @click="() => csvInput?.click()">Import CSV</button>
-                <button class="px-3 py-2 text-sm rounded-full bg-accent text-white hover:bg-secondary" @click="openCreate">Create Contact</button>
+          <div class="flex items-center space-x-3">
+            <BaseButton
+              variant="outline"
+              size="sm"
+              icon="upload"
+              @click="showImportModal = true"
+            >
+              Import CSV
+            </BaseButton>
+            <BaseButton
+              variant="primary"
+              size="sm"
+              icon="plus"
+              @click="showCreateModal = true"
+            >
+              Add Contact
+            </BaseButton>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="bg-white border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex flex-col sm:flex-row gap-4">
+          <!-- Search -->
+          <div class="flex-1">
+            <div class="relative">
+              <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="Search contacts..."
+                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2596be] focus:border-[#2596be]"
+                @input="debouncedSearch"
+              />
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                </svg>
               </div>
             </div>
-            <!-- Search under title -->
-            <div class="max-w-md">
-              <input
-                v-model.trim="q"
-                placeholder="Search name, email, phone, company"
-                class="w-full rounded-lg bg-white border border-primary/20 px-4 py-2 text-sm text-tertiary focus:outline-none focus:ring-2 focus:ring-accent/30"
-              />
-            </div>
-            <div class="flex flex-wrap items-center gap-2">
-              <div class="flex items-center gap-2">
-                <div class="px-3 py-1.5 rounded-full bg-white border border-primary/20 text-sm text-tertiary">Owner: <span class="font-medium">Everyone</span></div>
-                <div class="px-3 py-1.5 rounded-full bg-white border border-primary/20 text-sm text-tertiary">Stage: <span class="font-medium">Any</span></div>
-                <div class="relative">
-                  <button type="button" class="px-3 py-1.5 rounded-full bg-white border border-primary/20 text-sm text-tertiary" @click="dateOpen = !dateOpen">
-                    Date: <span class="font-medium">{{ dateRangeLabel }}</span>
-                  </button>
-                  <div v-if="dateOpen" class="absolute z-20 mt-2 w-56 bg-white border border-primary/10 rounded-lg shadow p-3">
-                    <div class="text-xs font-semibold text-tertiary/80 mb-2">Quick ranges</div>
-                    <div class="flex flex-col gap-1 text-sm">
-                      <button class="text-left px-2 py-1 rounded hover:bg-primary/5" @click="setPreset('today')">Today</button>
-                      <button class="text-left px-2 py-1 rounded hover:bg-primary/5" @click="setPreset('yesterday')">Yesterday</button>
-                      <button class="text-left px-2 py-1 rounded hover:bg-primary/5" @click="setPreset('last7')">Last 7 days</button>
-                      <button class="text-left px-2 py-1 rounded hover:bg-primary/5" @click="setPreset('thisMonth')">This month</button>
-                    </div>
-                    <div class="mt-2 flex justify-end">
-                      <button class="px-2 py-1 text-sm text-tertiary/80" @click="dateOpen=false">Close</button>
-                    </div>
-                  </div>
+          </div>
+
+          <!-- Filters -->
+          <div class="flex items-center space-x-3">
+            <select
+              v-model="filters.status"
+              class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2596be] focus:border-[#2596be]"
+            >
+              <option value="">All Stages</option>
+              <option value="lead">Lead</option>
+              <option value="prospect">Prospect</option>
+              <option value="customer">Customer</option>
+              <option value="inactive">Inactive</option>
+            </select>
+            
+            <select
+              v-model="filters.sort"
+              class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2596be] focus:border-[#2596be]"
+            >
+              <option value="-created_at">Newest First</option>
+              <option value="created_at">Oldest First</option>
+              <option value="first_name">Name A-Z</option>
+              <option value="-first_name">Name Z-A</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Loading state -->
+      <div v-if="loading" class="flex items-center justify-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2596be]"></div>
+      </div>
+
+      <!-- Contacts list -->
+      <div v-else>
+        <!-- Empty state -->
+        <div v-if="contacts.length === 0" class="text-center py-12">
+          <div class="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+            <svg class="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">No contacts found</h3>
+          <p class="text-gray-500 mb-6">Get started by adding your first contact.</p>
+          <BaseButton
+            variant="primary"
+            icon="plus"
+            @click="showCreateModal = true"
+          >
+            Add Contact
+          </BaseButton>
+        </div>
+
+        <!-- Contacts grid -->
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div
+            v-for="contact in contacts"
+            :key="contact.id"
+            class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer"
+            @click="viewContact(contact.id)"
+          >
+            <div class="p-6">
+              <!-- Contact header -->
+              <div class="flex items-center space-x-3 mb-4">
+                <div class="w-12 h-12 bg-gradient-to-r from-[#2596be] to-[#973894] rounded-full flex items-center justify-center">
+                  <span class="text-white font-medium text-lg">
+                    {{ getInitials(contact) }}
+                  </span>
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-lg font-semibold text-gray-900">{{ getFullName(contact) }}</h3>
+                  <p class="text-sm text-gray-500">{{ contact.email }}</p>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <BaseButton
+                    variant="ghost"
+                    size="sm"
+                    icon="edit"
+                    @click.stop="editContact(contact)"
+                  />
+                  <BaseButton
+                    variant="ghost"
+                    size="sm"
+                    icon="trash"
+                    @click.stop="deleteContact(contact.id)"
+                  />
                 </div>
               </div>
-              
-              <!-- <div class="ml-auto flex items-center gap-2">
-                <button class="px-3 py-1.5 rounded-full bg-white border text-sm">Save View</button>
-                <button class="px-3 py-1.5 rounded-full bg-white border text-sm">Saved Views</button>
-              </div> -->
+
+              <!-- Contact details -->
+              <div class="space-y-2">
+                <div v-if="contact.phone" class="flex items-center text-sm text-gray-600">
+                  <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.493 1.498a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                  </svg>
+                  {{ contact.phone }}
+                </div>
+                
+                <div v-if="contact.email" class="flex items-center text-sm text-gray-600">
+                  <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                  </svg>
+                  {{ contact.email }}
+                </div>
+
+                <div v-if="contact.lifecycle_stage" class="flex items-center text-sm text-gray-600">
+                  <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd" />
+                  </svg>
+                  {{ contact.lifecycle_stage }}
+                </div>
+              </div>
+
+              <!-- Status and date -->
+              <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                <span
+                  class="px-2 py-1 text-xs rounded-full"
+                  :class="getStatusClass(contact.lifecycle_stage)"
+                >
+                  {{ contact.lifecycle_stage || 'No Stage' }}
+                </span>
+                <span class="text-xs text-gray-500">
+                  {{ formatDate(contact.created_at) }}
+                </span>
+              </div>
             </div>
           </div>
+        </div>
 
-      <div v-if="showForm" class="bg-white rounded-xl shadow p-6">
-        <h2 class="text-lg font-semibold text-tertiary mb-1">{{ isEditing ? 'Edit Contact' : 'Add Contact' }}</h2>
-        <p class="text-xs text-tertiary/70 mb-4">Data is stored locally in your browser.</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs text-tertiary/80 mb-1">First Name</label>
-            <input v-model.trim="form.firstName" class="w-full rounded-lg bg-primary/5 border border-primary/20 px-3 py-2 text-tertiary placeholder-tertiary/50 focus:outline-none focus:ring-2 focus:ring-accent/30" placeholder="Jane" />
-          </div>
-          <div>
-            <label class="block text-xs text-tertiary/80 mb-1">Last Name</label>
-            <input v-model.trim="form.lastName" class="w-full rounded-lg bg-primary/5 border border-primary/20 px-3 py-2 text-tertiary placeholder-tertiary/50 focus:outline-none focus:ring-2 focus:ring-accent/30" placeholder="Doe" />
-          </div>
-          <div class="md:col-span-2">
-            <label class="block text-xs text-tertiary/80 mb-1">Email</label>
-            <input v-model.trim="form.email" type="email" class="w-full rounded-lg bg-primary/5 border border-primary/20 px-3 py-2 text-tertiary placeholder-tertiary/50 focus:outline-none focus:ring-2 focus:ring-accent/30" placeholder="jane@company.com" />
-            <p v-if="errors.email" class="text-xs text-red-600 mt-1">{{ errors.email }}</p>
-          </div>
-          <div>
-            <label class="block text-xs text-tertiary/80 mb-1">Phone</label>
-            <input v-model.trim="form.phone" class="w-full rounded-lg bg-primary/5 border border-primary/20 px-3 py-2 text-tertiary placeholder-tertiary/50 focus:outline-none focus:ring-2 focus:ring-accent/30" placeholder="+1 202 555 0147" />
-          </div>
-          <div>
-            <label class="block text-xs text-tertiary/80 mb-1">Company</label>
-            <input v-model.trim="form.company" class="w-full rounded-lg bg-primary/5 border border-primary/20 px-3 py-2 text-tertiary placeholder-tertiary/50 focus:outline-none focus:ring-2 focus:ring-accent/30" placeholder="Acme Inc." />
-          </div>
-          <div class="md:col-span-2">
-            <label class="block text-xs text-tertiary/80 mb-1">Notes</label>
-            <textarea v-model.trim="form.notes" rows="3" class="w-full rounded-lg bg-primary/5 border border-primary/20 px-3 py-2 text-tertiary placeholder-tertiary/50 focus:outline-none focus:ring-2 focus:ring-accent/30" placeholder="Short note..."></textarea>
-          </div>
-        </div>
-        <div class="mt-6 flex gap-2 justify-end">
-          <button class="px-4 py-2 rounded-lg border border-primary/20 bg-white text-tertiary hover:bg-primary/5" @click="reset">Reset</button>
-          <button class="px-4 py-2 rounded-lg border border-primary/20 bg-white text-tertiary hover:bg-primary/5" @click="cancel">Cancel</button>
-          <button class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-secondary" @click="save">{{ isEditing ? 'Update' : 'Save' }}</button>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-xl shadow p-6 mt-6">
-        <div class="flex items-center justify-between mb-3">
-          <h2 class="text-lg font-semibold text-tertiary">Contacts ({{ contacts.length }})</h2>
-          <button class="text-xs text-tertiary/70 underline" @click="clearAll" v-if="contacts.length">Clear all</button>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-primary/10">
-            <thead class="bg-primary/5">
-              <tr>
-                <th class="px-4 py-2 text-left text-xs font-medium text-tertiary/70 uppercase tracking-wider">Name</th>
-                <th class="px-4 py-2 text-left text-xs font-medium text-tertiary/70 uppercase tracking-wider">Email</th>
-                <th class="px-4 py-2 text-left text-xs font-medium text-tertiary/70 uppercase tracking-wider">Owner</th>
-                <th class="px-4 py-2 text-left text-xs font-medium text-tertiary/70 uppercase tracking-wider">Stage</th>
-                <th class="px-4 py-2 text-left text-xs font-medium text-tertiary/70 uppercase tracking-wider">Source</th>
-                <th class="px-4 py-2 text-left text-xs font-medium text-tertiary/70 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-primary/5">
-              <tr v-for="row in paginatedRows" :key="row.id" class="bg-white hover:bg-primary/5">
-                <td class="px-4 py-3">
-                  <div class="flex items-center gap-3">
-                    <img :src="logo" class="w-8 h-8 rounded-full" alt="" />
-                    <div class="flex flex-col">
-                      <span class="text-sm font-medium text-tertiary">{{ row.firstName }} {{ row.lastName }}</span>
-                      <span class="text-xs text-tertiary/70" v-if="row.company">{{ row.company }}</span>
-                    </div>
-                  </div>
-                </td>
-                <td class="px-4 py-3 text-sm text-tertiary">{{ row.email }}</td>
-                <td class="px-4 py-3 text-sm text-tertiary">{{ row.owner.name }}</td>
-                <td class="px-4 py-3">
-                  <span class="text-xs px-2 py-1 rounded-full text-white" :class="stageClass(row.stage)">{{ row.stage }}</span>
-                </td>
-                <td class="px-4 py-3 text-sm text-tertiary">{{ row.source }}</td>
-                <td class="px-4 py-3">
-                  <div class="flex items-center gap-1 flex-wrap">
-                    <span v-for="tag in row.tags" :key="tag" class="text-[11px] px-2 py-1 rounded-full text-white" :class="tagClass(tag)">{{ tag }}</span>
-                  </div>
-                  <div class="mt-2 flex items-center gap-2 flex-wrap">
-                    <button class="px-2 py-1 rounded border border-primary/20 bg-white text-tertiary hover:bg-primary/5 inline-flex items-center gap-1" title="View" @click="viewRow(row)">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-4 h-4 text-tertiary"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                      <span class="text-xs">View</span>
-                    </button>
-                    <button class="px-2 py-1 rounded border border-primary/20 bg-white text-tertiary hover:bg-primary/5 inline-flex items-center gap-1" title="Edit" @click="startEdit(row)">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-4 h-4 text-tertiary"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.862 3.487a2.25 2.25 0 113.182 3.182L7.5 19.313 3 21l1.687-4.5L16.862 3.487z"/></svg>
-                      <span class="text-xs">Edit</span>
-                    </button>
-                    <button class="px-2 py-1 rounded border border-primary/20 bg-white text-accent hover:bg-primary/5 inline-flex items-center gap-1" title="Delete" @click="remove(row.id)">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-4 h-4 text-accent"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 7h12M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2m-7 4v7m4-7v7M5 7l1 14a2 2 0 002 2h8a2 2 0 002-2l1-14"/></svg>
-                      <span class="text-xs">Delete</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
         <!-- Pagination -->
-        <div v-if="filteredRows.length" class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div class="text-xs text-tertiary/70">
-            Showing
-            <span class="font-medium text-tertiary">{{ pageStart + 1 }}</span>
-            –
-            <span class="font-medium text-tertiary">{{ Math.min(pageEnd, filteredRows.length) }}</span>
-            of
-            <span class="font-medium text-tertiary">{{ filteredRows.length }}</span>
+        <div v-if="pagination && pagination.total > pagination.per_page" class="mt-8 flex items-center justify-between">
+          <div class="text-sm text-gray-700">
+            Showing {{ pagination.from }} to {{ pagination.to }} of {{ pagination.total }} results
           </div>
-          <div class="flex items-center gap-1">
-            <button class="px-2 py-1 text-sm rounded border border-primary/20 bg-white text-tertiary disabled:opacity-50" :disabled="currentPage === 1" @click="prevPage">Prev</button>
-            <button v-for="p in pages" :key="p" class="px-2 py-1 text-sm rounded border border-primary/20" :class="p === currentPage ? 'bg-primary text-white' : 'bg-white text-tertiary hover:bg-primary/5'" @click="setPage(p)">{{ p }}</button>
-            <button class="px-2 py-1 text-sm rounded border border-primary/20 bg-white text-tertiary disabled:opacity-50" :disabled="currentPage === totalPages" @click="nextPage">Next</button>
+          <div class="flex items-center space-x-2">
+            <BaseButton
+              variant="outline"
+              size="sm"
+              :disabled="pagination.current_page === 1"
+              @click="changePage(pagination.current_page - 1)"
+            >
+              Previous
+            </BaseButton>
+            <span class="px-3 py-2 text-sm text-gray-700">
+              Page {{ pagination.current_page }} of {{ pagination.last_page }}
+            </span>
+            <BaseButton
+              variant="outline"
+              size="sm"
+              :disabled="pagination.current_page === pagination.last_page"
+              @click="changePage(pagination.current_page + 1)"
+            >
+              Next
+            </BaseButton>
           </div>
         </div>
-        <p v-else class="text-sm text-tertiary/70 mt-4">No contacts yet. Add one above.</p>
       </div>
-          </section>
-        </div>
-      </main>
     </div>
+
+    <!-- Modals -->
+    <ContactModal
+      v-if="showCreateModal || showEditModal"
+      :contact="editingContact"
+      :mode="showEditModal ? 'edit' : 'create'"
+      @close="closeModal"
+      @saved="handleContactSaved"
+    />
+
+    <ImportModal
+      v-if="showImportModal"
+      @close="showImportModal = false"
+      @imported="handleImportComplete"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
-import Sidebar from '../components/Sidebar.vue'
-import HeaderBar from '../components/HeaderBar.vue'
-import logo from '@/assets/logo.png'
+import { ref, reactive, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useNotifications } from '@/composables/useNotifications'
+import { contactsAPI } from '@/services/api'
+import BaseButton from '@/components/ui/BaseButton.vue'
+import ContactModal from '@/components/modals/ContactModal.vue'
+import ImportModal from '@/components/modals/ImportModal.vue'
 
-const STORAGE_KEY = 'contacts'
-const form = ref({ firstName: '', lastName: '', email: '', phone: '', company: '', notes: '' })
-const errors = ref({ email: '' })
+const router = useRouter()
+const { success, error, warning } = useNotifications()
+
+// Reactive data
+const loading = ref(false)
 const contacts = ref([])
-const isEditing = ref(false)
-const editId = ref(null)
-const showForm = ref(false)
-const csvInput = ref(null)
-const openMenuId = ref(null)
-// Date filter state
-const dateOpen = ref(false)
-const datePreset = ref('last7') // 'today' | 'yesterday' | 'last7' | 'thisMonth'
+const pagination = ref(null)
+const searchQuery = ref('')
+const filters = reactive({
+  status: '',
+  sort: '-created_at'
+})
 
-onMounted(() => {
+// Modal states
+const showCreateModal = ref(false)
+const showEditModal = ref(false)
+const showImportModal = ref(false)
+const editingContact = ref(null)
+
+// Debounced search
+let searchTimeout = null
+const debouncedSearch = () => {
+  clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    fetchContacts()
+  }, 300)
+}
+
+// Fetch contacts
+const fetchContacts = async (page = 1) => {
+  console.log('Fetching contacts for page:', page)
+  loading.value = true
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
-    if (Array.isArray(saved)) contacts.value = saved
-    if (!contacts.value.length) {
-      const now = new Date()
-      const d = (days) => new Date(now.getTime() - days * 86400000).toISOString()
-      contacts.value = [
-        { id: 1, firstName: 'Jane', lastName: 'Cooper', email: 'jane@acme.com', phone: '+1 202-555-0101', company: 'Acme Inc.', createdAt: d(3) },
-        { id: 2, firstName: 'Devon', lastName: 'Lane', email: 'devon@globex.com', phone: '+1 202-555-0102', company: 'Globex', createdAt: d(20) },
-      ]
-      persist()
+    const params = {
+      page,
+      per_page: 12,
+      sort: filters.sort,
+      ...(filters.status && { stage: filters.status }),
+      ...(searchQuery.value && { q: searchQuery.value })
     }
-  } catch (e) {
-    contacts.value = []
+
+    console.log('API params:', params)
+    const response = await contactsAPI.getContacts(params)
+    console.log('API response:', response.data)
+    contacts.value = response.data.data
+    pagination.value = response.data.meta
+    console.log('Updated contacts array:', contacts.value)
+    console.log('Pagination:', pagination.value)
+  } catch (err) {
+    error('Failed to load contacts')
+    console.error('Contacts error:', err)
+  } finally {
+    loading.value = false
   }
-})
-
-// Normalize rows for display with safe defaults
-const displayRows = computed(() =>
-  contacts.value.map(c => ({
-    id: c.id,
-    firstName: c.firstName || '',
-    lastName: c.lastName || '',
-    email: c.email || '',
-    phone: c.phone || '',
-    company: c.company || '',
-    owner: c.owner || { name: 'You', avatar: '/vite.svg' },
-    stage: c.stage || 'New',
-    source: c.source || 'Website',
-    tags: Array.isArray(c.tags) ? c.tags : [],
-    createdAt: c.createdAt || new Date().toISOString(),
-  }))
-)
-
-// Search state and filtered rows
-const q = ref('')
-const filteredRows = computed(() => {
-  // Active date range
-  const now = new Date()
-  let from = null
-  let to = null
-  switch (datePreset.value) {
-    case 'today': {
-      const start = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-      const end = new Date(start)
-      end.setHours(23, 59, 59, 999)
-      from = start
-      to = end
-      break
-    }
-    case 'yesterday': {
-      const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1)
-      const end = new Date(start)
-      end.setHours(23, 59, 59, 999)
-      from = start
-      to = end
-      break
-    }
-    case 'last7':
-      from = new Date(now.getTime() - 7 * 86400000)
-      to = now
-      break
-    case 'thisMonth': {
-      const start = new Date(now.getFullYear(), now.getMonth(), 1)
-      from = start
-      to = now
-      break
-    }
-    default:
-      from = null
-      to = null
-  }
-
-  const s = q.value.trim().toLowerCase()
-  return displayRows.value.filter(r => {
-    // Date filter
-    if (from || to) {
-      const created = r.createdAt ? new Date(r.createdAt) : null
-      if (!created) return false
-      if (from && created < from) return false
-      if (to && created > to) return false
-    }
-    // Search filter
-    if (!s) return true
-    const hay = `${r.firstName} ${r.lastName} ${r.email} ${r.phone} ${r.company} ${r.owner?.name || ''} ${(r.tags || []).join(' ')}`.toLowerCase()
-    return hay.includes(s)
-  })
-})
+}
 
 // Pagination
-const pageSize = ref(10)
-const currentPage = ref(1)
-const totalPages = computed(() => Math.max(1, Math.ceil(filteredRows.value.length / pageSize.value)))
-const pages = computed(() => Array.from({ length: totalPages.value }, (_, i) => i + 1))
-const pageStart = computed(() => (currentPage.value - 1) * pageSize.value)
-const pageEnd = computed(() => currentPage.value * pageSize.value)
-const paginatedRows = computed(() => filteredRows.value.slice(pageStart.value, pageEnd.value))
+const changePage = (page) => {
+  fetchContacts(page)
+}
 
-function setPage(p) { if (p >= 1 && p <= totalPages.value) currentPage.value = p }
-function prevPage() { setPage(currentPage.value - 1) }
-function nextPage() { setPage(currentPage.value + 1) }
+// Contact actions
+const viewContact = (contactId) => {
+  router.push(`/contacts/${contactId}`)
+}
 
-watch(filteredRows, () => {
-  // Ensure current page is valid when filter/search changes
-  if (currentPage.value > totalPages.value) currentPage.value = totalPages.value
-  if (currentPage.value < 1) currentPage.value = 1
+const editContact = (contact) => {
+  console.log('Editing contact:', contact)
+  editingContact.value = contact
+  showEditModal.value = true
+}
+
+const deleteContact = async (contactId) => {
+  if (!confirm('Are you sure you want to delete this contact?')) return
+
+  try {
+    console.log('Deleting contact with ID:', contactId)
+    const response = await contactsAPI.deleteContact(contactId)
+    console.log('Delete response:', response)
+    success('Contact deleted successfully')
+    fetchContacts(pagination.value?.current_page || 1)
+  } catch (err) {
+    console.error('Delete contact error:', err)
+    console.error('Error response:', err.response?.data)
+    error('Failed to delete contact')
+  }
+}
+
+const closeModal = () => {
+  showCreateModal.value = false
+  showEditModal.value = false
+  editingContact.value = null
+}
+
+const handleContactSaved = async () => {
+  console.log('Contact saved, refreshing contacts list...')
+  closeModal()
+  // Add a small delay to ensure the backend has processed the creation
+  await new Promise(resolve => setTimeout(resolve, 500))
+  // Always refresh to page 1 to see the newly created contact
+  await fetchContacts(1)
+  success('Contact saved successfully')
+}
+
+const handleImportComplete = async () => {
+  showImportModal.value = false
+  
+  console.log('Import completed, refreshing contacts list...')
+  
+  // Refresh contacts list
+  await fetchContacts(1)
+}
+
+// Utility functions
+const getStatusClass = (status) => {
+  const classes = {
+    lead: 'bg-blue-100 text-blue-800',
+    prospect: 'bg-yellow-100 text-yellow-800',
+    customer: 'bg-green-100 text-green-800',
+    inactive: 'bg-gray-100 text-gray-800'
+  }
+  return classes[status] || 'bg-gray-100 text-gray-800'
+}
+
+const formatDate = (dateString) => {
+  return new Date(dateString).toLocaleDateString()
+}
+
+const getInitials = (contact) => {
+  if (!contact || !contact.first_name || !contact.last_name) {
+    return 'N/A'
+  }
+  return `${contact.first_name.charAt(0).toUpperCase()}${contact.last_name.charAt(0).toUpperCase()}`
+}
+
+const getFullName = (contact) => {
+  if (!contact || !contact.first_name || !contact.last_name) {
+    return 'N/A'
+  }
+  return `${contact.first_name} ${contact.last_name}`
+}
+
+// Watch for filter changes
+watch(filters, () => {
+  fetchContacts(1)
+}, { deep: true })
+
+// Initialize
+onMounted(() => {
+  fetchContacts()
 })
-
-// Date UI label and handlers
-const dateRangeLabel = computed(() => {
-  switch (datePreset.value) {
-    case 'today': return 'Today'
-    case 'yesterday': return 'Yesterday'
-    case 'last7': return 'Last 7 days'
-    case 'thisMonth': return 'This month'
-    default: return 'Last 7 days'
-  }
-})
-
-function setPreset(p) {
-  datePreset.value = p
-  dateOpen.value = false
-}
-
-// no custom range handler needed
-
-function validate(payload) {
-  errors.value.email = ''
-  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email || '')
-  if (!emailOk) errors.value.email = 'Valid email is required'
-  return emailOk
-}
-
-function persist() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts.value))
-}
-
-function save() {
-  const payload = { ...form.value }
-  if (!validate(payload)) return
-  if (isEditing.value && editId.value != null) {
-    contacts.value = contacts.value.map(c => (c.id === editId.value ? { ...c, ...payload } : c))
-  } else {
-    contacts.value = [{ id: Date.now(), createdAt: new Date().toISOString(), ...payload }, ...contacts.value]
-  }
-  persist()
-  // Show the newest contact immediately at the top
-  if (typeof setPage === 'function') setPage(1)
-  reset()
-  showForm.value = false
-}
-
-function startEdit(c) {
-  form.value = { firstName: c.firstName || '', lastName: c.lastName || '', email: c.email || '', phone: c.phone || '', company: c.company || '', notes: c.notes || '' }
-  isEditing.value = true
-  editId.value = c.id
-  showForm.value = true
-}
-
-function remove(id) {
-  contacts.value = contacts.value.filter(c => c.id !== id)
-  persist()
-  if (isEditing.value && editId.value === id) reset()
-}
-
-function clearAll() {
-  contacts.value = []
-  persist()
-}
-
-function reset() {
-  form.value = { firstName: '', lastName: '', email: '', phone: '', company: '', notes: '' }
-  errors.value.email = ''
-  isEditing.value = false
-  editId.value = null
-}
-
-function openCreate() {
-  reset()
-  isEditing.value = false
-  showForm.value = true
-}
-
-function cancel() {
-  reset()
-  showForm.value = false
-}
-
-// UI helpers
-function toggleMenu(id) { openMenuId.value = openMenuId.value === id ? null : id }
-function viewRow(row) { alert(`${row.firstName} ${row.lastName}\n${row.email}`) }
-function onCsvSelected(e) {
-  const file = e.target.files?.[0]
-  if (!file) return
-  alert(`Selected CSV: ${file.name}`)
-  e.target.value = ''
-}
-
-// Style helpers
-function tagClass(tag) {
-  const t = String(tag || '').toLowerCase()
-  const map = {
-    lead: 'bg-gradient-to-r from-primary to-secondary',
-    customer: 'bg-gradient-to-r from-tertiary to-primary',
-    vip: 'bg-gradient-to-r from-secondary to-accent',
-  }
-  return map[t] || 'bg-gradient-to-r from-tertiary/60 to-tertiary'
-}
-
-function stageClass(stage) {
-  const s = String(stage || '').toLowerCase()
-  const map = {
-    new: 'bg-gradient-to-r from-primary to-secondary',
-    qualified: 'bg-gradient-to-r from-tertiary to-primary',
-    negotiation: 'bg-gradient-to-r from-accent to-secondary',
-    won: 'bg-gradient-to-r from-primary to-tertiary',
-    lost: 'bg-gradient-to-r from-accent to-secondary',
-  }
-  return map[s] || 'bg-gradient-to-r from-tertiary/60 to-tertiary'
-}
 </script>

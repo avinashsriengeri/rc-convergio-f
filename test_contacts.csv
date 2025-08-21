@@ -1,0 +1,5 @@
+first_name,last_name,email,phone,lifecycle_stage,source,tags
+Test,User,test.user@example.com,+1234567890,lead,website,"test,import"
+John,Doe,john.doe@example.com,+1987654321,prospect,referral,"prospect,hot"
+Jane,Smith,jane.smith@example.com,+1122334455,customer,email,"customer,vip"
+
