@@ -1,19 +1,19 @@
 <template>
   <nav
-   class="fixed w-full top-0 left-0 z-50 bg-white/80 backdrop-blur border-b border-primary/10 shadow-sm transition-colors duration-300"
+   class="fixed w-full top-0 left-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-white/10 shadow-sm transition-colors duration-300"
   >
     <div class="max-w-7xl mx-auto px-4 md:px-6">
       <div class="flex items-center justify-between h-14">
         <div class="flex items-center gap-2">
           <router-link to="/" class="flex items-center gap-2">
             <img src="@/assets/logo.png" class="w-8 h-8" alt="logo" />
-            <span class="text-tertiary text-lg font-semibold tracking-tight">Reliance Corporation</span>
+            <span class="text-2xl font-bold text-white">RC Convergio</span>
           </router-link>
         </div>
         <div class="flex items-center gap-1 md:gap-2">
           <router-link
             to="/"
-            class="px-3 py-2 rounded-md text-sm font-bold text-secondary hover:text-primary hover:bg-primary/5 transition"
+            class="hidden md:inline-block bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-colors duration-300"
           >Home</router-link>
           <!-- <router-link
             to="/register"

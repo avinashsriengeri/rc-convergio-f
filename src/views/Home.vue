@@ -1,13 +1,13 @@
 <template>
   <div id="app" class="font-baloo text-tertiary">
     <!-- Fixed Navigation Header -->
-    <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md z-50 shadow-sm border-b border-primary/10">
+    <nav class="fixed top-0 w-full bg-slate-900/80 backdrop-blur-md z-50 shadow-sm border-b border-white/10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-3 items-center h-16">
           <!-- Left: Brand -->
           <div class="flex items-center gap-3">
             <img :src="logo" alt="RC Convergio" class="h-8 w-8 rounded-full" />
-            <h1 class="text-2xl font-bold text-primary">RC Convergio</h1>
+            <h1 class="text-2xl font-bold text-white">RC Convergio</h1>
           </div>
 
           <!-- Center: Navigation Links (desktop) -->
@@ -15,24 +15,24 @@
             <a 
               href="#features" 
               @click="smoothScroll"
-              :class="{ 'text-primary font-semibold': activeSection === 'features' }"
-              class="text-secondary hover:text-primary transition-colors duration-300 px-3 py-2 rounded-md"
+              :class="{ 'text-white font-semibold': activeSection === 'features' }"
+              class="text-gray-300 hover:text-white transition-colors duration-300 px-3 py-2 rounded-md"
             >
               Features
             </a>
             <a 
               href="#about" 
               @click="smoothScroll"
-              :class="{ 'text-primary font-semibold': activeSection === 'about' }"
-              class="text-secondary hover:text-primary transition-colors duration-300 px-3 py-2 rounded-md"
+              :class="{ 'text-white font-semibold': activeSection === 'about' }"
+              class="text-gray-300 hover:text-white transition-colors duration-300 px-3 py-2 rounded-md"
             >
               About Us
             </a>
             <a 
               href="#contact" 
               @click="smoothScroll"
-              :class="{ 'text-primary font-semibold': activeSection === 'contact' }"
-              class="text-secondary hover:text-primary transition-colors duration-300 px-3 py-2 rounded-md"
+              :class="{ 'text-white font-semibold': activeSection === 'contact' }"
+              class="text-gray-300 hover:text-white transition-colors duration-300 px-3 py-2 rounded-md"
             >
               Contact
             </a>
@@ -42,13 +42,13 @@
           <div class="flex items-center justify-end gap-4">
             <router-link
               to="/login"
-              class="hidden md:inline-block bg-accent text-black px-6 py-2 rounded-lg hover:bg-secondary transition-colors duration-300"
+              class="hidden md:inline-block bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-colors duration-300"
             >
               Login
             </router-link>
 
             <!-- Mobile menu button -->
-            <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-primary">
+            <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-white">
               <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
@@ -58,15 +58,15 @@
       </div>
 
       <!-- Mobile menu -->
-      <div v-show="mobileMenuOpen" class="md:hidden bg-white border-t border-primary/10">
+      <div v-show="mobileMenuOpen" class="md:hidden bg-slate-900/90 border-t border-white/10 backdrop-blur">
         <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <a href="#features" @click="smoothScroll" class="block px-3 py-2 text-secondary hover:text-primary">Features</a>
-          <a href="#about" @click="smoothScroll" class="block px-3 py-2 text-secondary hover:text-primary">About Us</a>
-          <a href="#contact" @click="smoothScroll" class="block px-3 py-2 text-secondary hover:text-primary">Contact</a>
+          <a href="#features" @click="smoothScroll" class="block px-3 py-2 text-gray-200 hover:text-white">Features</a>
+          <a href="#about" @click="smoothScroll" class="block px-3 py-2 text-gray-200 hover:text-white">About Us</a>
+          <a href="#contact" @click="smoothScroll" class="block px-3 py-2 text-gray-200 hover:text-white">Contact</a>
           <router-link
             to="/login"
             @click="mobileMenuOpen = false"
-            class="block w-full bg-accent text-white px-3 py-2 rounded-lg hover:bg-secondary"
+            class="block w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white px-3 py-2 rounded-lg hover:from-blue-600 hover:to-purple-700"
           >
             Login
           </router-link>
@@ -75,104 +75,228 @@
     </nav>
 
     <!-- Hero Section -->
-    <section id="hero" class="pt-16 min-h-screen bg-gradient-to-br from-primary/5 via-white to-tertiary/5">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
-          <div class="space-y-8">
-            <h1 class="text-5xl lg:text-6xl font-bold text-tertiary leading-tight">
-              Customer Conversions, 
-              <span class="text-primary">Supercharged</span>
-            </h1>
-            <p class="text-xl text-tertiary/80 font-calibri leading-relaxed max-w-xl">
-              RC Convergio helps you capture, nurture, and convert leads with powerful automation, 
-              unified messaging, and actionable insights
-            </p>
-            
-            <!-- Email Capture Form -->
-            <div class="flex flex-col sm:flex-row gap-4 max-w-md">
-              <input 
-                v-model="heroEmail"
-                type="email" 
-                placeholder="Enter your email" 
-                class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-              />
-              <button 
-                @click="scrollToContact"
-                class="bg-accent text-white px-8 py-3 rounded-lg font-semibold hover:bg-secondary transition-all duration-300 transform hover:scale-105"
-              >
-                Get Started
-              </button>
-            </div>
-          </div>
-          
-          <!-- Dashboard Mockup -->
-          <div class="relative">
-            <div class="bg-white rounded-2xl shadow-2xl p-6 transform rotate-1">
-              <div class="bg-gradient-to-r from-primary to-tertiary h-4 rounded-t-lg mb-4"></div>
-              <div class="space-y-4">
-                <div class="h-8 bg-gray-100 rounded w-3/4"></div>
-                <div class="grid grid-cols-3 gap-4">
-                  <div class="h-16 bg-primary/10 rounded"></div>
-                  <div class="h-16 bg-secondary/10 rounded"></div>
-                  <div class="h-16 bg-accent/10 rounded"></div>
-                </div>
-                <div class="h-32 bg-gradient-to-r from-tertiary/10 to-primary/10 rounded"></div>
-              </div>
+    <section id="hero" class="relative pt-16 min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
+      <!-- Animated Background Logo -->
+      <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]">
+          <!-- Placeholder for Relaince Corporation Logo -->
+          <div class="relative w-full h-full">
+            <!-- Logo background with gradient animation -->
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 rounded-full animate-pulse opacity-20"></div>
+            <div class="absolute inset-4 bg-gradient-to-br from-blue-400 via-purple-400 to-indigo-400 rounded-full animate-spin-slow opacity-30"></div>
+            <div class="absolute inset-8 bg-gradient-to-tl from-blue-300 via-purple-300 to-indigo-300 rounded-full animate-bounce-slow opacity-40"></div>
+            <!-- Replace this div with your actual logo -->
+            <div class="absolute inset-16 flex items-center justify-center text-white font-bold text-6xl opacity-50">
+              <img src="@/assets/logo.png" alt="">
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Trust Indicators Bar -->
-      <div class="bg-white py-12 border-t border-gray-100">
+      <!-- Floating particles animation -->
+      <div class="absolute inset-0 overflow-hidden">
+        <div class="floating-particles">
+          <div class="particle particle-1"></div>
+          <div class="particle particle-2"></div>
+          <div class="particle particle-3"></div>
+          <div class="particle particle-4"></div>
+          <div class="particle particle-5"></div>
+        </div>
+      </div>
+
+      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <div class="space-y-8 animate-fade-in-up">
+            <!-- Company Branding -->
+            <div class="mb-6">
+              <div class="flex items-center space-x-3 mb-4">
+                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <span class="text-white font-bold text-xl">RC</span>
+                </div>
+                <div>
+                  <h2 class="text-2xl font-bold text-white">Relaince Corporation</h2>
+                  <p class="text-blue-300 text-sm">Unified Software Solutions</p>
+                </div>
+              </div>
+            </div>
+
+            <h1 class="text-5xl lg:text-6xl font-bold text-white leading-tight animate-text-shimmer">
+              Your Complete Business 
+              <span class="bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent animate-gradient-x">
+                Software Ecosystem
+              </span>
+            </h1>
+            
+            <p class="text-xl text-gray-300 leading-relaxed max-w-2xl">
+              Access all Relaince Corporation's powerful software solutions from one unified platform. 
+              From customer conversions to enterprise management - everything you need to scale your business.
+            </p>
+
+            <!-- Key Features Pills -->
+            <div class="flex flex-wrap gap-3 mb-8">
+              <span class="px-4 py-2 bg-blue-500/20 text-blue-300 rounded-full text-sm border border-blue-500/30 animate-fade-in">
+                Unified Dashboard
+              </span>
+              <span class="px-4 py-2 bg-purple-500/20 text-purple-300 rounded-full text-sm border border-purple-500/30 animate-fade-in" style="animation-delay: 0.1s">
+                Single Sign-On
+              </span>
+              <span class="px-4 py-2 bg-indigo-500/20 text-indigo-300 rounded-full text-sm border border-indigo-500/30 animate-fade-in" style="animation-delay: 0.2s">
+                Integrated Analytics
+              </span>
+            </div>
+            
+            <!-- Email Capture Form -->
+            <div class="flex flex-col sm:flex-row gap-4 max-w-lg">
+              <input 
+                v-model="heroEmail"
+                type="email" 
+                placeholder="Enter your business email" 
+                class="flex-1 px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-300"
+              />
+              <button 
+                @click="scrollToContact"
+                class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 hover:shadow-xl animate-pulse-slow"
+              >
+                Access Platform
+              </button>
+            </div>
+
+            <!-- Trust Metrics -->
+            <div class="grid grid-cols-3 gap-6 pt-8 border-t border-white/20">
+              <div class="text-center">
+                <div class="text-3xl font-bold text-white mb-1 animate-count-up">500+</div>
+                <div class="text-gray-400 text-sm">Enterprise Clients</div>
+              </div>
+              <div class="text-center">
+                <div class="text-3xl font-bold text-white mb-1 animate-count-up">15+</div>
+                <div class="text-gray-400 text-sm">Software Solutions</div>
+              </div>
+              <div class="text-center">
+                <div class="text-3xl font-bold text-white mb-1 animate-count-up">99.9%</div>
+                <div class="text-gray-400 text-sm">Uptime SLA</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Professional Dashboard Mockup -->
+          <div class="relative animate-float">
+            <div class="relative bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border border-white/20">
+              <!-- Browser Header -->
+              <div class="flex items-center space-x-2 mb-6">
+                <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                <div class="flex-1 bg-white/10 rounded-lg px-4 py-1 ml-4">
+                  <span class="text-gray-300 text-sm">relaince.com/platform</span>
+                </div>
+              </div>
+
+              <!-- Dashboard Content -->
+              <div class="space-y-6">
+                <!-- Header -->
+                <div class="flex items-center justify-between">
+                  <h3 class="text-white font-semibold text-lg">Unified Control Center</h3>
+                  <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full animate-pulse"></div>
+                </div>
+
+                <!-- Software Grid -->
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl p-4 border border-white/10 hover:scale-105 transition-transform duration-300">
+                    <div class="w-8 h-8 bg-blue-500 rounded-lg mb-2"></div>
+                    <div class="text-white text-sm font-medium">RC Convergio</div>
+                    <div class="text-gray-400 text-xs">Lead Management</div>
+                  </div>
+                  
+                  <div class="bg-gradient-to-br from-purple-500/20 to-indigo-500/20 rounded-xl p-4 border border-white/10 hover:scale-105 transition-transform duration-300">
+                    <div class="w-8 h-8 bg-purple-500 rounded-lg mb-2"></div>
+                    <div class="text-white text-sm font-medium">RC Analytics</div>
+                    <div class="text-gray-400 text-xs">Business Intelligence</div>
+                  </div>
+                  
+                  <div class="bg-gradient-to-br from-indigo-500/20 to-blue-500/20 rounded-xl p-4 border border-white/10 hover:scale-105 transition-transform duration-300">
+                    <div class="w-8 h-8 bg-indigo-500 rounded-lg mb-2"></div>
+                    <div class="text-white text-sm font-medium">RC Operations</div>
+                    <div class="text-gray-400 text-xs">Workflow Management</div>
+                  </div>
+                  
+                  <div class="bg-gradient-to-br from-teal-500/20 to-blue-500/20 rounded-xl p-4 border border-white/10 hover:scale-105 transition-transform duration-300">
+                    <div class="w-8 h-8 bg-teal-500 rounded-lg mb-2"></div>
+                    <div class="text-white text-sm font-medium">RC Connect</div>
+                    <div class="text-gray-400 text-xs">Communication Hub</div>
+                  </div>
+                </div>
+
+                <!-- Performance Chart -->
+                <div class="h-24 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl border border-white/10 p-4">
+                  <div class="flex items-end h-full space-x-2 justify-between">
+                    <div class="w-2 bg-blue-500 rounded-t animate-chart-grow" style="--final-height: 60%; animation-delay: 0.1s"></div>
+                    <div class="w-2 bg-purple-500 rounded-t animate-chart-grow" style="--final-height: 80%; animation-delay: 0.2s"></div>
+                    <div class="w-2 bg-indigo-500 rounded-t animate-chart-grow" style="--final-height: 45%; animation-delay: 0.3s"></div>
+                    <div class="w-2 bg-teal-500 rounded-t animate-chart-grow" style="--final-height: 90%; animation-delay: 0.4s"></div>
+                    <div class="w-2 bg-blue-500 rounded-t animate-chart-grow" style="--final-height: 70%; animation-delay: 0.5s"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Floating Elements -->
+            <div class="absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full opacity-20 animate-bounce-slow"></div>
+            <div class="absolute -bottom-4 -left-4 w-12 h-12 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full opacity-30 animate-float-delayed"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enterprise Trust Bar -->
+      <div class="relative z-10 bg-white/5 backdrop-blur-sm border-t border-white/10 py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p class="text-gray-600 font-calibri mb-8">Trusted by 5,000+ teams</p>
-          <div class="flex justify-center items-center space-x-12 opacity-60">
-            <div class="h-8 w-24 bg-gray-300 rounded"></div>
-            <div class="h-8 w-24 bg-gray-300 rounded"></div>
-            <div class="h-8 w-24 bg-gray-300 rounded"></div>
-            <div class="h-8 w-24 bg-gray-300 rounded"></div>
-            <div class="h-8 w-24 bg-gray-300 rounded"></div>
+          <p class="text-gray-300 mb-8">Trusted by Fortune 500 companies worldwide</p>
+          <div class="flex justify-center items-center space-x-12 opacity-40">
+            <!-- Replace with actual client logos -->
+            <div class="h-12 w-32 bg-gradient-to-r from-white/20 to-white/10 rounded-lg animate-fade-in"></div>
+            <div class="h-12 w-32 bg-gradient-to-r from-white/20 to-white/10 rounded-lg animate-fade-in" style="animation-delay: 0.1s"></div>
+            <div class="h-12 w-32 bg-gradient-to-r from-white/20 to-white/10 rounded-lg animate-fade-in" style="animation-delay: 0.2s"></div>
+            <div class="h-12 w-32 bg-gradient-to-r from-white/20 to-white/10 rounded-lg animate-fade-in" style="animation-delay: 0.3s"></div>
+            <div class="h-12 w-32 bg-gradient-to-r from-white/20 to-white/10 rounded-lg animate-fade-in" style="animation-delay: 0.4s"></div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="py-20 bg-white">
+    <section id="features" class="py-20 bg-slate-900">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Features Header -->
         <div class="text-center mb-16">
-          <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          <h2 class="text-4xl lg:text-5xl font-bold text-white mb-4">
             Everything you need to convert more
           </h2>
-          <p class="text-xl text-gray-600 font-calibri max-w-3xl mx-auto">
+          <p class="text-xl text-gray-300 font-calibri max-w-3xl mx-auto">
             Turn first-time visitors into marketing, sales, and service to accelerate growth
           </p>
         </div>
 
         <!-- Main Features -->
         <div class="grid md:grid-cols-3 gap-8 mb-20">
-          <div class="text-center p-6 rounded-xl hover:shadow-lg transition-shadow duration-300">
+          <div class="text-center p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300">
             <div class="text-4xl mb-4">🎯</div>
-            <h3 class="text-xl font-bold text-gray-900 mb-3">Lead Automation</h3>
-            <p class="text-gray-600 font-calibri">
+            <h3 class="text-xl font-bold text-white mb-3">Lead Automation</h3>
+            <p class="text-gray-300 font-calibri">
               Capture and qualify leads with workflows, forms, and funnel tracking
             </p>
           </div>
           
-          <div class="text-center p-6 rounded-xl hover:shadow-lg transition-shadow duration-300">
+          <div class="text-center p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300">
             <div class="text-4xl mb-4">📧</div>
-            <h3 class="text-xl font-bold text-gray-900 mb-3">Unified Inbox</h3>
-            <p class="text-gray-600 font-calibri">
+            <h3 class="text-xl font-bold text-white mb-3">Unified Inbox</h3>
+            <p class="text-gray-300 font-calibri">
               Manage email, chat, and social messages in one place, with context
             </p>
           </div>
           
-          <div class="text-center p-6 rounded-xl hover:shadow-lg transition-shadow duration-300">
+          <div class="text-center p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300">
             <div class="text-4xl mb-4">📊</div>
-            <h3 class="text-xl font-bold text-gray-900 mb-3">Analytics</h3>
-            <p class="text-gray-600 font-calibri">
+            <h3 class="text-xl font-bold text-white mb-3">Analytics</h3>
+            <p class="text-gray-300 font-calibri">
               Track attribution, funnel performance, and revenue impact
             </p>
           </div>
@@ -182,8 +306,8 @@
         <div class="grid lg:grid-cols-2 gap-16 items-center mb-20">
           <div class="space-y-8">
             <div>
-              <h3 class="text-3xl font-bold text-gray-900 mb-4">Personalize every touchpoint</h3>
-              <p class="text-gray-600 font-calibri text-lg">
+              <h3 class="text-3xl font-bold text-white mb-4">Personalize every touchpoint</h3>
+              <p class="text-gray-300 font-calibri text-lg">
                 Use segments and dynamic content to deliver relevant experiences
               </p>
             </div>
@@ -191,32 +315,32 @@
             <div class="grid sm:grid-cols-2 gap-6">
               <div class="space-y-3">
                 <div class="text-2xl">🎯</div>
-                <h4 class="font-bold text-gray-900">Smart Segments</h4>
-                <p class="text-gray-600 font-calibri text-sm">
+                <h4 class="font-bold text-white">Smart Segments</h4>
+                <p class="text-gray-300 font-calibri text-sm">
                   Build real-time audiences based on behavior and demographics
                 </p>
               </div>
               
               <div class="space-y-3">
                 <div class="text-2xl">🔄</div>
-                <h4 class="font-bold text-gray-900">Dynamic Content</h4>
-                <p class="text-gray-600 font-calibri text-sm">
+                <h4 class="font-bold text-white">Dynamic Content</h4>
+                <p class="text-gray-300 font-calibri text-sm">
                   Swap headlines, blocks, and CTAs to match visitor intent
                 </p>
               </div>
               
               <div class="space-y-3">
                 <div class="text-2xl">🛣️</div>
-                <h4 class="font-bold text-gray-900">Journeys</h4>
-                <p class="text-gray-600 font-calibri text-sm">
+                <h4 class="font-bold text-white">Journeys</h4>
+                <p class="text-gray-300 font-calibri text-sm">
                   Drag-and-drop automation to nurture and down customers
                 </p>
               </div>
               
               <div class="space-y-3">
                 <div class="text-2xl">✅</div>
-                <h4 class="font-bold text-gray-900">Compliance</h4>
-                <p class="text-gray-600 font-calibri text-sm">
+                <h4 class="font-bold text-white">Compliance</h4>
+                <p class="text-gray-300 font-calibri text-sm">
                   GDPR, CCPA and consent tools built in out of the box
                 </p>
               </div>
@@ -225,18 +349,18 @@
 
           <!-- Product Screenshot -->
           <div class="relative">
-            <div class="bg-white rounded-xl shadow-2xl p-6">
-              <div class="bg-gradient-to-r from-primary to-secondary h-3 rounded-t-lg mb-6"></div>
+            <div class="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6">
+              <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-t-lg mb-6"></div>
               <div class="space-y-4">
                 <div class="flex items-center space-x-3">
-                  <div class="w-4 h-4 bg-primary rounded-full"></div>
-                  <div class="h-4 bg-gray-200 rounded flex-1"></div>
+                  <div class="w-4 h-4 bg-blue-500 rounded-full"></div>
+                  <div class="h-4 bg-white/20 rounded flex-1"></div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                  <div class="h-20 bg-gradient-to-br from-tertiary/20 to-accent/20 rounded-lg"></div>
-                  <div class="h-20 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg"></div>
+                  <div class="h-20 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-lg border border-white/10"></div>
+                  <div class="h-20 bg-gradient-to-br from-blue-500/20 to-teal-500/20 rounded-lg border border-white/10"></div>
                 </div>
-                <div class="h-24 bg-gray-100 rounded-lg"></div>
+                <div class="h-24 bg-white/10 rounded-lg border border-white/10"></div>
               </div>
             </div>
           </div>
@@ -244,62 +368,62 @@
 
         <!-- Social Proof -->
         <div class="text-center mb-16">
-          <h3 class="text-3xl font-bold text-gray-900 mb-4">Loved by modern go-to-market teams</h3>
-          <p class="text-gray-600 font-calibri text-lg mb-12">Here's what our customers say</p>
+          <h3 class="text-3xl font-bold text-white mb-4">Loved by modern go-to-market teams</h3>
+          <p class="text-gray-300 font-calibri text-lg mb-12">Here's what our customers say</p>
           
           <div class="grid md:grid-cols-3 gap-8">
-            <div class="bg-gray-50 p-6 rounded-xl">
-              <p class="text-gray-700 font-calibri mb-4">
+            <div class="bg-white/5 backdrop-blur-sm border border-white/10 p-6 rounded-xl">
+              <p class="text-gray-300 font-calibri mb-4">
                 "Our marketing and sales teams love and increased our qualified pipeline by 22% in two months."
               </p>
-              <div class="font-bold text-primary">Ana Thompson</div>
+              <div class="font-bold text-blue-400">Ana Thompson</div>
             </div>
             
-            <div class="bg-gray-50 p-6 rounded-xl">
-              <p class="text-gray-700 font-calibri mb-4">
+            <div class="bg-white/5 backdrop-blur-sm border border-white/10 p-6 rounded-xl">
+              <p class="text-gray-300 font-calibri mb-4">
                 "The automation and insights gave our team superpowers using was first and intuitive."
               </p>
-              <div class="font-bold text-secondary">Jamal Ortiz</div>
+              <div class="font-bold text-purple-400">Jamal Ortiz</div>
             </div>
             
-            <div class="bg-gray-50 p-6 rounded-xl">
-              <p class="text-gray-700 font-calibri mb-4">
+            <div class="bg-white/5 backdrop-blur-sm border border-white/10 p-6 rounded-xl">
+              <p class="text-gray-300 font-calibri mb-4">
                 "We finally have a clear view of the funnel. Campaign decisions are now data-driven."
               </p>
-              <div class="font-bold text-tertiary">Mira Park</div>
+              <div class="font-bold text-indigo-400">Mira Park</div>
             </div>
           </div>
         </div>
 
         <!-- Pricing -->
         <div class="text-center">
-          <h3 class="text-3xl font-bold text-gray-900 mb-4">Simple, transparent pricing</h3>
-          <p class="text-gray-600 font-calibri text-lg mb-12">Choose a plan that fits your stage, upgrade anytime</p>
+          <h3 class="text-3xl font-bold text-white mb-4">Simple, transparent pricing</h3>
+          <p class="text-gray-300 font-calibri text-lg mb-12">Choose a plan that fits your stage, upgrade anytime</p>
           
           <div class="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div class="border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-shadow duration-300">
-              <h4 class="text-xl font-bold text-gray-900 mb-2">Starter</h4>
-              <p class="text-gray-600 font-calibri mb-6">For small teams getting started</p>
-              <button class="w-full bg-primary text-white py-3 rounded-lg hover:bg-tertiary transition-colors duration-300">
+            <div class="border border-white/10 bg-white/5 backdrop-blur-sm rounded-xl p-8 transition-all duration-300 hover:bg-white/10">
+              <h4 class="text-xl font-bold text-white mb-2">Starter</h4>
+              <p class="text-gray-300 font-calibri mb-6">For small teams getting started</p>
+              <button class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-colors duration-300">
                 Contact Sales
               </button>
             </div>
             
-            <div class="border-2 border-accent rounded-xl p-8 relative">
-              <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-accent text-white px-4 py-1 rounded-full text-sm">
+            <div class="border-2 border-purple-500 bg-white/5 backdrop-blur-sm rounded-xl p-8 relative">
+              <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-1 rounded-full text-sm">
                 Popular
               </div>
-              <h4 class="text-xl font-bold text-gray-900 mb-2">Growth</h4>
-              <p class="text-gray-600 font-calibri mb-6">Advanced automation and reporting</p>
-              <button class="w-full bg-accent text-white py-3 rounded-lg hover:bg-secondary transition-colors duration-300">
+              <h4 class="text-xl font-bold text-white mb-2">Growth</h4>
+              <p class="text-gray-300 font-calibri mb-6">Advanced automation and reporting</p>
+              <button class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-colors duration-300">
                 Contact Sales
               </button>
             </div>
             
-            <div class="border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-shadow duration-300">
-              <h4 class="text-xl font-bold text-gray-900 mb-2">Scale</h4>
-              <p class="text-gray-600 font-calibri mb-6">For large orgs with complex needs</p>
-              <button class="w-full bg-tertiary text-white py-3 rounded-lg hover:bg-secondary transition-colors duration-300">
+            <div class="border border-white/10 bg-white/5 backdrop-blur-sm rounded-xl p-8 transition-all duration-300 hover:bg-white/10">
+              <h4 class="text-xl font-bold text-white mb-2">Scale</h4>
+              <p class="text-gray-300 font-calibri mb-6">For large orgs with complex needs</p>
+              <button class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-colors duration-300">
                 Contact Sales
               </button>
             </div>
@@ -309,36 +433,36 @@
     </section>
 
     <!-- About Us Section -->
-    <section id="about" class="py-20 bg-gradient-to-br from-blue-50 to-purple-50">
+    <section id="about" class="py-20 bg-slate-900">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-          <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-8">About RC Convergio</h2>
+          <h2 class="text-4xl lg:text-5xl font-bold text-white mb-8">About RC Convergio</h2>
         </div>
 
         <div class="grid lg:grid-cols-2 gap-16 items-center mb-16">
           <div class="space-y-6">
-            <p class="text-lg text-gray-700 font-calibri leading-relaxed">
+            <p class="text-lg text-gray-300 font-calibri leading-relaxed">
               We're a team of builders dedicated to helping companies grow through better customer experiences.
             </p>
-            <p class="text-gray-600 font-calibri leading-relaxed">
+            <p class="text-gray-300 font-calibri leading-relaxed">
               Our mission is to make sophisticated growth tools simple and accessible for businesses of all sizes. 
               We believe that every interaction matters and every customer deserves personalized experiences.
             </p>
           </div>
 
           <div class="grid gap-8">
-            <div class="bg-white p-6 rounded-xl shadow-sm">
+            <div class="bg-white/5 backdrop-blur-sm border border-white/10 p-6 rounded-xl">
               <div class="text-3xl mb-4">🎯</div>
-              <h3 class="text-xl font-bold text-gray-900 mb-2">Our Mission</h3>
-              <p class="text-gray-600 font-calibri">
+              <h3 class="text-xl font-bold text-white mb-2">Our Mission</h3>
+              <p class="text-gray-300 font-calibri">
                 Make sophisticated growth tools simple and accessible
               </p>
             </div>
             
-            <div class="bg-white p-6 rounded-xl shadow-sm">
+            <div class="bg-white/5 backdrop-blur-sm border border-white/10 p-6 rounded-xl">
               <div class="text-3xl mb-4">🔒</div>
-              <h3 class="text-xl font-bold text-gray-900 mb-2">Trust & Security</h3>
-              <p class="text-gray-600 font-calibri">
+              <h3 class="text-xl font-bold text-white mb-2">Trust & Security</h3>
+              <p class="text-gray-300 font-calibri">
                 Your data is encrypted and protected by enterprise-grade standards
               </p>
             </div>
@@ -346,19 +470,19 @@
         </div>
 
         <!-- Call to Action -->
-        <div class="text-center bg-white p-12 rounded-2xl shadow-sm">
-          <h3 class="text-3xl font-bold text-gray-900 mb-4">Ready to boost conversions?</h3>
-          <p class="text-gray-600 font-calibri text-lg mb-8">
+        <div class="text-center bg-white/5 backdrop-blur-sm p-12 rounded-2xl border border-white/10">
+          <h3 class="text-3xl font-bold text-white mb-4">Ready to boost conversions?</h3>
+          <p class="text-gray-300 font-calibri text-lg mb-8">
             Start your 14-day free trial. No credit card required.
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <button 
               @click="scrollToContact"
-              class="bg-accent text-white px-8 py-3 rounded-lg font-semibold hover:bg-secondary transition-all duration-300 transform hover:scale-105"
+              class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"
             >
               Get Started
             </button>
-            <button class="border-2 border-primary text-primary px-8 py-3 rounded-lg font-semibold hover:bg-primary hover:text-white transition-all duration-300">
+            <button class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-slate-900 transition-all duration-300">
               Learn More
             </button>
           </div>
@@ -367,11 +491,11 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="py-20 bg-white">
+    <section id="contact" class="py-20 bg-slate-900">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-          <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Contact Us</h2>
-          <p class="text-xl text-gray-600 font-calibri">
+          <h2 class="text-4xl lg:text-5xl font-bold text-white mb-4">Contact Us</h2>
+          <p class="text-xl text-gray-300 font-calibri">
             Have questions? Our team is here to help.
           </p>
         </div>
@@ -384,7 +508,7 @@
                 v-model="contactForm.name"
                 type="text" 
                 placeholder="Your name" 
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                class="w-full px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-300"
               />
             </div>
             <div>
@@ -392,7 +516,7 @@
                 v-model="contactForm.email"
                 type="email" 
                 placeholder="Work email" 
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                class="w-full px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-300"
               />
             </div>
             <div>
@@ -400,12 +524,12 @@
                 v-model="contactForm.message"
                 placeholder="How can we help?" 
                 rows="5"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-none"
+                class="w-full px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-300 resize-none"
               ></textarea>
             </div>
             <button 
               @click="submitForm"
-              class="w-full bg-accent text-white py-3 rounded-lg font-semibold hover:bg-secondary transition-colors duration-300"
+              class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-colors duration-300"
             >
               Send message
             </button>
@@ -415,39 +539,39 @@
           <div class="space-y-8">
             <div class="space-y-6">
               <div class="flex items-start space-x-4">
-                <div class="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex-shrink-0 w-12 h-12 bg-white/10 border border-white/20 rounded-lg flex items-center justify-center">
+                  <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
                 <div>
-                  <h3 class="font-bold text-gray-900">Email</h3>
-                  <p class="text-gray-600 font-calibri">support@rcconvergio.com</p>
+                  <h3 class="font-bold text-white">Email</h3>
+                  <p class="text-gray-300 font-calibri">info@reliancecorporation.co.za</p>
                 </div>
               </div>
 
               <div class="flex items-start space-x-4">
-                <div class="flex-shrink-0 w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center">
-                  <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex-shrink-0 w-12 h-12 bg-white/10 border border-white/20 rounded-lg flex items-center justify-center">
+                  <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
                 </div>
                 <div>
-                  <h3 class="font-bold text-gray-900">Phone</h3>
-                  <p class="text-gray-600 font-calibri">+1 (555) 000-1234</p>
+                  <h3 class="font-bold text-white">Phone</h3>
+                  <p class="text-gray-300 font-calibri">(+27) 10 447 1845</p>
                 </div>
               </div>
 
               <div class="flex items-start space-x-4">
-                <div class="flex-shrink-0 w-12 h-12 bg-tertiary/10 rounded-lg flex items-center justify-center">
-                  <svg class="w-6 h-6 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex-shrink-0 w-12 h-12 bg-white/10 border border-white/20 rounded-lg flex items-center justify-center">
+                  <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </div>
                 <div>
-                  <h3 class="font-bold text-gray-900">Address</h3>
-                  <p class="text-gray-600 font-calibri">123 Market Street<br>San Francisco, CA</p>
+                  <h3 class="font-bold text-white">Office Address</h3>
+                  <p class="text-gray-300 font-calibri">Glenvista Shopping Centre 2nd Floor, Above Checkers Liquor 188 Biggarsberg Road & Kirby Beller Rd, Glenvista, Johannesburg South, 2091, South Africa.<br>San Francisco, CA</p>
                 </div>
               </div>
             </div>
@@ -627,4 +751,99 @@ onUnmounted(() => {
 html {
   scroll-behavior: smooth;
 }
+
+/* --- Hero animations and utilities --- */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes float-delayed {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes gradient-x {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes text-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes chart-grow {
+  from { height: 0%; }
+  to { height: var(--final-height); }
+}
+
+@keyframes count-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-spin-slow { animation: spin-slow 20s linear infinite; }
+.animate-bounce-slow { animation: bounce-slow 4s ease-in-out infinite; }
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-float-delayed { animation: float-delayed 6s ease-in-out infinite 2s; }
+.animate-fade-in-up { animation: fade-in-up 1s ease-out; }
+.animate-fade-in { animation: fade-in 1s ease-out forwards; }
+.animate-gradient-x { 
+  background-size: 200% 200%;
+  animation: gradient-x 3s ease infinite;
+}
+.animate-text-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: text-shimmer 3s ease-in-out infinite;
+}
+.animate-chart-grow { animation: chart-grow 2s ease-out forwards; }
+.animate-count-up { animation: count-up 1s ease-out 0.5s forwards; }
+.animate-pulse-slow { animation: pulse 3s ease-in-out infinite; }
+
+.floating-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.particle {
+  position: absolute;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.5) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: float 8s ease-in-out infinite;
+}
+
+.particle-1 { width: 4px; height: 4px; top: 20%; left: 10%; animation-delay: 0s; }
+.particle-2 { width: 6px; height: 6px; top: 60%; left: 80%; animation-delay: 2s; }
+.particle-3 { width: 3px; height: 3px; top: 40%; left: 60%; animation-delay: 4s; }
+.particle-4 { width: 5px; height: 5px; top: 80%; left: 20%; animation-delay: 6s; }
+.particle-5 { width: 4px; height: 4px; top: 30%; left: 90%; animation-delay: 1s; }
 </style>

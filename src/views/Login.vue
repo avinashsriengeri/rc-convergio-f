@@ -1,20 +1,20 @@
 <template>
-  <main class="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent/10 via-white to-primary/10 pt-0 md:pt-12 transition-all">
+  <main class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-0 md:pt-12 transition-all">
     <!-- Cards Container -->
     <div class="w-full max-w-5xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 items-center justify-center">
       <!-- Left Info Card -->
       <section
-        class="w-full md:w-1/2 bg-white/10 rounded-2xl shadow-xl p-8 md:p-10 flex flex-col items-start fade-in-up mb-0 md:mb-0 mt-7 mb-4" 
-      >       
+        class="w-full md:w-1/2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl shadow-2xl p-8 md:p-10 flex flex-col items-start fade-in-up mb-0 md:mb-0 mt-7 mb-4" 
+      >
         <div class="flex items-center gap-3 mb-6">
-          <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+          <div class="w-12 h-12 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center">
             <img src="@/assets/logo.png" alt="Logo" class="w-8 h-8" />
           </div>
-          <h2 class="text-xl font-bold text-tertiary">RC Convergio</h2>
+          <h2 class="text-xl font-bold text-white">RC Convergio</h2>
         </div>
 
-        <h3 class="text-4xl font-extrabold mb-4 text-tertiary">Welcome back 👋</h3>
-        <p class="text-tertiary mb-6 text-lg">
+        <h3 class="text-4xl font-extrabold mb-4 text-white">Welcome back 👋</h3>
+        <p class="text-gray-300 mb-6 text-lg">
           Securely access your customer data, pipelines, and insights.
         </p>
 
@@ -25,15 +25,15 @@
         />
 
         <div class="flex flex-wrap gap-3 mt-2">
-          <span class="rounded-full bg-primary/10 px-4 py-1 text-sm text-primary border border-primary/20">SSO Ready</span>
-          <span class="rounded-full bg-secondary/10 px-4 py-1 text-sm text-secondary border border-secondary/20">Encrypted</span>
-          <span class="rounded-full bg-tertiary/10 px-4 py-1 text-sm text-tertiary border border-tertiary/20">2FA Supported</span>
+          <span class="rounded-full bg-blue-500/20 px-4 py-1 text-sm text-blue-300 border border-blue-500/30">SSO Ready</span>
+          <span class="rounded-full bg-purple-500/20 px-4 py-1 text-sm text-purple-300 border border-purple-500/30">Encrypted</span>
+          <span class="rounded-full bg-indigo-500/20 px-4 py-1 text-sm text-indigo-300 border border-indigo-500/30">2FA Supported</span>
         </div>
       </section>
 
       <!-- Login Form Card -->
       <section
-        class="w-full md:w-1/2 bg-white/95 rounded-2xl shadow-xl p-10 flex flex-col fade-in-up"
+        class="w-full md:w-1/2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl shadow-2xl p-10 flex flex-col fade-in-up"
       >
         <!-- Email Field -->
         <div class="mb-5">
@@ -42,12 +42,12 @@
             type="email"
             required
             placeholder="Email"
-            class="login-input"
+            class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
             :class="{ 'error-input': emailError }"
             @input="clearError"
             autocomplete="username"
           />
-          <p v-if="emailError" class="text-sm text-red-600 pl-1 pt-1">
+          <p v-if="emailError" class="text-sm text-red-400 pl-1 pt-1">
             Invalid email format. Please use name@company.com
           </p>
         </div>
@@ -59,27 +59,27 @@
             v-model="password"
             required
             placeholder="Password"
-            class="login-input"
+            class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
             :class="{ 'error-input': pwdError }"
             @input="clearError"
             autocomplete="current-password"
           />
           <button
             type="button"
-            class="absolute right-3 top-2 text-primary font-medium text-sm focus:outline-none"
+            class="absolute right-3 top-2 text-gray-300 hover:text-white font-medium text-sm focus:outline-none"
             @click="showPwd = !showPwd"
             tabindex="-1"
           >
             {{ showPwd ? 'Hide' : 'Show' }}
           </button>
-          <p v-if="pwdError" class="text-sm text-red-600 pl-1 pt-1">
+          <p v-if="pwdError" class="text-sm text-red-400 pl-1 pt-1">
             Password must be at least 8 characters
           </p>
         </div>
 
         <!-- Action -->
         <button
-          class="w-full mt-2 py-3 rounded-lg bg-primary font-bold text-white text-lg shadow-md hover:bg-secondary active:scale-95 transition-all duration-150"
+          class="w-full mt-2 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 font-bold text-white text-lg shadow-md hover:from-blue-600 hover:to-purple-700 active:scale-95 transition-all duration-150"
           @click="handleLogin"
         >
           Login
@@ -90,17 +90,17 @@
 
         <router-link
   to="/forgot-password"
-  class="block text-sm mt-4 text-primary hover:underline transition"
+  class="block text-sm mt-4 text-gray-300 hover:text-white hover:underline transition"
 >
   Forgot Password?
 </router-link>
         <div class="flex items-center justify-between mt-6">
-          <span class="text-xs text-tertiary/60">
+          <span class="text-xs text-gray-400">
             Tip: Use your company email to sign in.
           </span>
           <router-link
             to="/register"
-            class="text-primary hover:text-secondary font-semibold hover:underline text-sm transition"
+            class="text-gray-300 hover:text-white font-semibold hover:underline text-sm transition"
           >
             Sign Up
           </router-link>
