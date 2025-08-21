@@ -1,5 +1,5 @@
 <template>
-  <main class="min-h-screen flex items-center justify-center bg-[#3c0b3c] pt-0 md:pt-12 transition-all">
+  <main class="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent/10 via-white to-primary/10 pt-0 md:pt-12 transition-all">
     <!-- Cards Container -->
     <div class="w-full max-w-5xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 items-center justify-center">
       <!-- Left Info Card -->
@@ -7,27 +7,27 @@
         class= "w-full md:w-1/2 bg-white/10 rounded-2xl shadow-xl p-8 md:p-10 flex flex-col items-start fade-in-up mb-0 md:mb-0 mt-7 mb-4" 
       >       
         <div class="flex items-center gap-3 mb-4">
-          <div class="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+          <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
             <img src="@/assets/logo.png" alt="Logo" class="w-8 h-8" />
           </div>
-          <h2 class="text-lg font-semibold text-white">RC Convergio</h2>
+          <h2 class="text-lg font-semibold text-tertiary">RC Convergio</h2>
         </div>
-                  <h3 class="text-3xl md:text-4xl font-bold mb-4 text-white">Create your account</h3>
-        <p class="text-white mb-4">Join RC Convergio to securely manage your business data.</p>
+                  <h3 class="text-3xl md:text-4xl font-bold mb-4 text-tertiary">Create your account</h3>
+        <p class="text-tertiary mb-4">Join RC Convergio to securely manage your business data.</p>
         <img
           src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=600&q=80"
           alt="Team Example"
           class="w-full rounded-lg shadow mb-4"
         />
                  <div class="flex flex-wrap gap-3 mt-2">
-           <span class="rounded-full bg-gray-100 px-4 py-1 text-sm text-gray-700 border border-gray-200">Encrypted</span>
-           <span class="rounded-full bg-gray-100 px-4 py-1 text-sm text-gray-700 border border-gray-200">Email Verification</span>
-           <span class="rounded-full bg-gray-100 px-4 py-1 text-sm text-gray-700 border border-gray-200">2FA Ready</span>
+           <span class="rounded-full bg-primary/10 px-4 py-1 text-sm text-primary border border-primary/20">Encrypted</span>
+           <span class="rounded-full bg-secondary/10 px-4 py-1 text-sm text-secondary border border-secondary/20">Email Verification</span>
+           <span class="rounded-full bg-tertiary/10 px-4 py-1 text-sm text-tertiary border border-tertiary/20">2FA Ready</span>
          </div>
       </section>
       <!-- Register Form Card -->
       <section
-        class="w-full md:w-1/2 bg-white/05  rounded-2xl shadow-xl p-8 md:p-10 flex flex-col fade-in-up relative"
+        class="w-full md:w-1/2 bg-white/95  rounded-2xl shadow-xl p-8 md:p-10 flex flex-col fade-in-up relative"
       >
         <!-- Full Name -->
         <div class="mb-3">
@@ -36,7 +36,7 @@
             type="text"
             required
             placeholder="Full Name"
-            class="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            class="w-full px-3 py-2 rounded-md border border-primary/20 bg-white text-tertiary placeholder-tertiary/50 focus:outline-none focus:ring-2 focus:ring-accent/30"
             autocomplete="name"
           />
         </div>
@@ -47,7 +47,7 @@
             type="email"
             required
             placeholder="name@company.com"
-             class="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+             class="w-full px-3 py-2 rounded-md border border-primary/20 bg-white text-tertiary placeholder-tertiary/50 focus:outline-none focus:ring-2 focus:ring-accent/30"
             autocomplete="email"
           />
         </div>
@@ -58,12 +58,12 @@
             v-model="password"
             required
             placeholder="Create a password"
-             class="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+             class="w-full px-3 py-2 rounded-md border border-primary/20 bg-white text-tertiary placeholder-tertiary/50 focus:outline-none focus:ring-2 focus:ring-accent/30"
             autocomplete="new-password"
           />
                      <button
              type="button"
-             class="absolute right-3 top-2 text-indigo-600 font-medium text-sm focus:outline-none"
+             class="absolute right-3 top-2 text-secondary font-medium text-sm focus:outline-none"
              @click="showPwd = !showPwd"
              tabindex="-1"
            >{{ showPwd ? 'Hide' : 'Show' }}</button>
@@ -75,7 +75,7 @@
             v-model="confirmPwd"
             required
             placeholder="Re-enter password"
-             class="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+             class="w-full px-3 py-2 rounded-md border border-primary/20 bg-white text-tertiary placeholder-tertiary/50 focus:outline-none focus:ring-2 focus:ring-accent/30"
             autocomplete="new-password"
           />
         </div>
@@ -86,13 +86,13 @@
             type="text"
             required
             placeholder="Your company"
-             class="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+             class="w-full px-3 py-2 rounded-md border border-primary/20 bg-white text-tertiary placeholder-tertiary/50 focus:outline-none focus:ring-2 focus:ring-accent/30"
             autocomplete="organization"
           />
         </div>
         <!-- Action -->
                  <button
-           class="w-full py-2 rounded-lg bg-indigo-600 font-bold text-white text-lg shadow-md hover:bg-indigo-700 active:scale-95 transition-all duration-150"
+           class="w-full py-2 rounded-lg bg-primary font-bold text-white text-lg shadow-md hover:bg-secondary active:scale-95 transition-all duration-150"
            @click="handleRegister"
          >
            Create Account
@@ -100,7 +100,7 @@
 
         <!-- Success message -->
         <transition name="fade">
-          <p v-if="success" class="w-full border border-green-500 bg-green-50 text-green-700 p-2 mt-4 rounded text-center">
+          <p v-if="success" class="w-full border border-primary/20 bg-primary/5 text-primary p-2 mt-4 rounded text-center">
             Check your email to verify your account.
           </p>
         </transition>
@@ -109,9 +109,9 @@
                  <div class="flex items-center justify-between mt-4 text-sm">
            <router-link
              to="/login"
-             class="text-indigo-600 hover:text-indigo-800 font-semibold hover:underline transition"
+             class="text-secondary hover:text-primary font-semibold hover:underline transition"
            >Back to Login</router-link>
-           <span class="text-indigo-600 hover:underline cursor-pointer">Need help?</span>
+           <span class="text-secondary hover:text-primary hover:underline cursor-pointer">Need help?</span>
          </div>
       </section>
     </div>
@@ -148,20 +148,20 @@ function handleRegister() {
 .my-input {
   width: 100%;
   padding: 0.5rem 1rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid color-mix(in oklab, var(--color-primary) 20%, white);
   border-radius: 0.375rem;
-  background-color: rgba(245, 245, 245, 0.6);
-  color: #374151;
+  background-color: color-mix(in oklab, var(--color-primary) 5%, white);
+  color: var(--color-tertiary);
   font-size: 1rem;
   outline: none;
   transition: all 0.2s;
 }
 .my-input::placeholder {
-  color: #9ca3af;
+  color: color-mix(in oklab, var(--color-tertiary) 55%, white);
 }
 .my-input:focus {
-  box-shadow: 0 0 0 2px #4f46e5;
-  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-accent) 25%, transparent);
+  border-color: color-mix(in oklab, var(--color-accent) 40%, white);
 }
 .fade-in-up {
   animation: fade-in-up .7s cubic-bezier(.4,0,.2,1);

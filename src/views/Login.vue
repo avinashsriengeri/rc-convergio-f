@@ -1,5 +1,5 @@
 <template>
-  <main class="min-h-screen flex items-center justify-center bg-[#3c0b3c] pt-0 md:pt-12 transition-all">
+  <main class="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent/10 via-white to-primary/10 pt-0 md:pt-12 transition-all">
     <!-- Cards Container -->
     <div class="w-full max-w-5xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 items-center justify-center">
       <!-- Left Info Card -->
@@ -7,14 +7,14 @@
         class="w-full md:w-1/2 bg-white/10 rounded-2xl shadow-xl p-8 md:p-10 flex flex-col items-start fade-in-up mb-0 md:mb-0 mt-7 mb-4" 
       >       
         <div class="flex items-center gap-3 mb-6">
-          <div class="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center">
+          <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
             <img src="@/assets/logo.png" alt="Logo" class="w-8 h-8" />
           </div>
-          <h2 class="text-xl font-bold text-white/90 ">RC Convergio</h2>
+          <h2 class="text-xl font-bold text-tertiary">RC Convergio</h2>
         </div>
 
-        <h3 class="text-4xl font-extrabold mb-4 text-white/90">Welcome back 👋</h3>
-        <p class="text-white/90 mb-6 text-lg">
+        <h3 class="text-4xl font-extrabold mb-4 text-tertiary">Welcome back 👋</h3>
+        <p class="text-tertiary mb-6 text-lg">
           Securely access your customer data, pipelines, and insights.
         </p>
 
@@ -25,15 +25,15 @@
         />
 
         <div class="flex flex-wrap gap-3 mt-2">
-          <span class="rounded-full bg-gray-100 px-4 py-1 text-sm text-gray-700 border border-gray-200">SSO Ready</span>
-          <span class="rounded-full bg-gray-100 px-4 py-1 text-sm text-gray-700 border border-gray-200">Encrypted</span>
-          <span class="rounded-full bg-gray-100 px-4 py-1 text-sm text-gray-700 border border-gray-200">2FA Supported</span>
+          <span class="rounded-full bg-primary/10 px-4 py-1 text-sm text-primary border border-primary/20">SSO Ready</span>
+          <span class="rounded-full bg-secondary/10 px-4 py-1 text-sm text-secondary border border-secondary/20">Encrypted</span>
+          <span class="rounded-full bg-tertiary/10 px-4 py-1 text-sm text-tertiary border border-tertiary/20">2FA Supported</span>
         </div>
       </section>
 
       <!-- Login Form Card -->
       <section
-        class="w-full md:w-1/2 bg-white\15 rounded-2xl shadow-xl p-10 flex flex-col fade-in-up"
+        class="w-full md:w-1/2 bg-white/95 rounded-2xl shadow-xl p-10 flex flex-col fade-in-up"
       >
         <!-- Email Field -->
         <div class="mb-5">
@@ -66,7 +66,7 @@
           />
           <button
             type="button"
-            class="absolute right-3 top-2 text-indigo-600 font-medium text-sm focus:outline-none"
+            class="absolute right-3 top-2 text-primary font-medium text-sm focus:outline-none"
             @click="showPwd = !showPwd"
             tabindex="-1"
           >
@@ -79,7 +79,7 @@
 
         <!-- Action -->
         <button
-          class="w-full mt-2 py-3 rounded-lg   bg-indigo-600 font-bold text-white text-lg shadow-md  active:scale-95 transition-all duration-150"
+          class="w-full mt-2 py-3 rounded-lg bg-primary font-bold text-white text-lg shadow-md hover:bg-secondary active:scale-95 transition-all duration-150"
           @click="handleLogin"
         >
           Login
@@ -90,17 +90,17 @@
 
         <router-link
   to="/forgot-password"
-  class="block text-sm mt-4 text-indigo-600 hover:underline transition"
+  class="block text-sm mt-4 text-primary hover:underline transition"
 >
   Forgot Password?
 </router-link>
         <div class="flex items-center justify-between mt-6">
-          <span class="text-xs text-gray-400">
+          <span class="text-xs text-tertiary/60">
             Tip: Use your company email to sign in.
           </span>
           <router-link
             to="/register"
-            class="text-indigo-600 hover:text-indigo-800 font-semibold hover:underline text-sm transition"
+            class="text-primary hover:text-secondary font-semibold hover:underline text-sm transition"
           >
             Sign Up
           </router-link>
@@ -134,6 +134,12 @@ function handleLogin(e) {
     return
   }
   tryError.value = ''
+  // Persist minimal user info so HeaderBar can show the actual email
+  try {
+    localStorage.setItem('user', JSON.stringify({ email: username.value }))
+  } catch (err) {
+    console.warn('Failed to persist user to localStorage', err)
+  }
   router.push('/dashboard')
 }
 function clearError() {
@@ -147,20 +153,20 @@ function clearError() {
 .login-input {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid color-mix(in oklab, var(--color-primary) 20%, white);
   border-radius: 0.5rem;
-  background-color: #f9fafb;
-  color: #374151;
+  background-color: color-mix(in oklab, var(--color-primary) 5%, white);
+  color: var(--color-tertiary);
   font-size: 1rem;
   outline: none;
   transition: all 0.2s;
 }
 .login-input::placeholder {
-  color: #9ca3af;
+  color: color-mix(in oklab, var(--color-tertiary) 55%, white);
 }
 .login-input:focus {
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 30%, transparent);
 }
 .error-input {
   border-color: #dc2626;

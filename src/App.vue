@@ -1,8 +1,10 @@
 <template>
-  <div class="min-h-screen flex flex-col bg-gray-50">
+  <div class="min-h-screen flex flex-col bg-white font-baloo text-tertiary">
     <router-view v-slot="{ Component, route }">
       <Navbar v-if="!route.meta?.hideNavbar" />
-      <component :is="Component" />
+      <div :class="route.meta?.hideNavbar ? '' : 'pt-14'">
+        <component :is="Component" />
+      </div>
     </router-view>
   </div>
   

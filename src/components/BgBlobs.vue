@@ -1,8 +1,8 @@
 <template>
   <div class="absolute inset-0 pointer-events-none">
-    <div class="blob blob-1 w-96 h-96 bg-indigo-400 rounded-full -top-20 -left-20"></div>
-    <div class="blob blob-2 w-80 h-80 bg-teal-300 rounded-full top-40 right-20"></div>
-    <div class="blob blob-3 w-72 h-72 bg-pink-300 rounded-full bottom-20 left-40"></div>
+    <div class="blob blob-1 w-96 h-96 bg-primary/40 rounded-full -top-20 -left-20"></div>
+    <div class="blob blob-2 w-80 h-80 bg-secondary/30 rounded-full top-40 right-20"></div>
+    <div class="blob blob-3 w-72 h-72 bg-accent/30 rounded-full bottom-20 left-40"></div>
   </div>
 </template>
 

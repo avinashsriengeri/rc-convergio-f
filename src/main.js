@@ -6,6 +6,7 @@ import Login from './views/Login.vue'
 import Register from './views/Register.vue'
 import Dashboard from './views/Dashboard.vue'
 import ForgotPassword from './views/ForgotPassword.vue'
+import Contacts from './views/Contacts.vue'
 import './style.css'
 
 const routes = [
@@ -13,6 +14,7 @@ const routes = [
   { path: '/login', component: Login },
   { path: '/register', component: Register },
   { path: '/dashboard', component: Dashboard, meta: { hideNavbar: true } },
+  { path: '/contacts', component: Contacts, meta: { hideNavbar: true } },
   { path: '/forgot-password', component: ForgotPassword },
 ]
 
