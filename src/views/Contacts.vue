@@ -171,6 +171,66 @@
         </div>
       </main>
     </div>
+
+    <!-- Details Modal -->
+    <div v-if="showDetails" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <!-- Backdrop -->
+      <div class="absolute inset-0 bg-black/50" @click="closeDetail"></div>
+
+      <!-- Card -->
+      <div class="relative w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-primary/10 overflow-hidden">
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-4 bg-primary/5 border-b border-primary/10">
+          <h3 class="text-lg font-semibold text-tertiary">Contact Details</h3>
+          <button class="p-2 rounded-lg hover:bg-primary/10" @click="closeDetail" aria-label="Close">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-5 h-5 text-tertiary"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <div class="px-6 py-5">
+          <div class="flex items-start gap-4">
+            <img :src="logo" class="w-12 h-12 rounded-full" alt="avatar" />
+            <div>
+              <div class="text-xl font-semibold text-tertiary">{{ selected?.firstName }} {{ selected?.lastName }}</div>
+              <div class="text-sm text-tertiary/70" v-if="selected?.company">{{ selected.company }}</div>
+              <div class="mt-2 flex flex-wrap items-center gap-2">
+                <span class="text-xs px-2 py-1 rounded-full text-white" :class="stageClass(selected?.stage)">{{ selected?.stage || 'New' }}</span>
+                <span v-for="tag in (selected?.tags || [])" :key="tag" class="text-[11px] px-2 py-1 rounded-full text-white" :class="tagClass(tag)">{{ tag }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-primary/5 rounded-lg border border-primary/10 p-3">
+              <div class="text-xs text-tertiary/70">Email</div>
+              <div class="text-sm font-medium text-tertiary break-all">{{ selected?.email || '-' }}</div>
+            </div>
+            <div class="bg-primary/5 rounded-lg border border-primary/10 p-3">
+              <div class="text-xs text-tertiary/70">Phone</div>
+              <div class="text-sm font-medium text-tertiary">{{ selected?.phone || '-' }}</div>
+            </div>
+            <div class="bg-primary/5 rounded-lg border border-primary/10 p-3">
+              <div class="text-xs text-tertiary/70">Owner</div>
+              <div class="text-sm font-medium text-tertiary">{{ selected?.owner?.name || 'You' }}</div>
+            </div>
+            <div class="bg-primary/5 rounded-lg border border-primary/10 p-3">
+              <div class="text-xs text-tertiary/70">Source</div>
+              <div class="text-sm font-medium text-tertiary">{{ selected?.source || '-' }}</div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <div class="text-xs text-tertiary/70 mb-1">Notes</div>
+            <div class="rounded-lg border border-primary/10 bg-white p-3 text-sm text-tertiary whitespace-pre-wrap min-h-12">{{ selected?.notes || '—' }}</div>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 bg-primary/5 border-t border-primary/10 flex items-center justify-end gap-2">
+          <button class="px-4 py-2 rounded-lg border border-primary/20 bg-white text-tertiary hover:bg-primary/5" @click="closeDetail">Close</button>
+          <button class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-secondary" @click="startEdit(selected)">Edit</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -192,6 +252,10 @@ const openMenuId = ref(null)
 // Date filter state
 const dateOpen = ref(false)
 const datePreset = ref('last7') // 'today' | 'yesterday' | 'last7' | 'thisMonth'
+
+// Details modal state
+const showDetails = ref(false)
+const selected = ref(null)
 
 onMounted(() => {
   try {
@@ -384,7 +448,8 @@ function cancel() {
 
 // UI helpers
 function toggleMenu(id) { openMenuId.value = openMenuId.value === id ? null : id }
-function viewRow(row) { alert(`${row.firstName} ${row.lastName}\n${row.email}`) }
+function viewRow(row) { selected.value = row; showDetails.value = true }
+function closeDetail() { showDetails.value = false; selected.value = null }
 function onCsvSelected(e) {
   const file = e.target.files?.[0]
   if (!file) return
