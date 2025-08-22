@@ -111,34 +111,50 @@
           <div
             v-for="contact in contacts"
             :key="contact.id"
-            class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer"
-            @click="viewContact(contact.id)"
+            class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
           >
             <div class="p-6">
               <!-- Contact header -->
-              <div class="flex items-center space-x-3 mb-4">
-                <div class="w-12 h-12 bg-gradient-to-r from-[#2596be] to-[#973894] rounded-full flex items-center justify-center">
-                  <span class="text-white font-medium text-lg">
-                    {{ getInitials(contact) }}
-                  </span>
+              <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center space-x-3 flex-1 min-w-0">
+                  <div class="w-12 h-12 bg-gradient-to-r from-[#2596be] to-[#973894] rounded-full flex items-center justify-center flex-shrink-0">
+                    <span class="text-white font-medium text-lg">
+                      {{ getInitials(contact) }}
+                    </span>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h3 class="text-lg font-semibold text-gray-900 truncate">{{ getFullName(contact) }}</h3>
+                    <p class="text-sm text-gray-500 truncate">{{ contact.email }}</p>
+                  </div>
                 </div>
-                <div class="flex-1">
-                  <h3 class="text-lg font-semibold text-gray-900">{{ getFullName(contact) }}</h3>
-                  <p class="text-sm text-gray-500">{{ contact.email }}</p>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <BaseButton
-                    variant="ghost"
-                    size="sm"
-                    icon="edit"
+                <div class="flex items-center space-x-1 ml-2 flex-shrink-0">
+                  <button
+                    @click.stop="viewContact(contact.id)"
+                    class="p-1.5 text-gray-400 hover:text-[#2596be] hover:bg-gray-100 rounded-lg transition-colors"
+                    title="View contact"
+                  >
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                  <button
                     @click.stop="editContact(contact)"
-                  />
-                  <BaseButton
-                    variant="ghost"
-                    size="sm"
-                    icon="trash"
+                    class="p-1.5 text-gray-400 hover:text-[#2596be] hover:bg-gray-100 rounded-lg transition-colors"
+                    title="Edit contact"
+                  >
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                  <button
                     @click.stop="deleteContact(contact.id)"
-                  />
+                    class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Delete contact"
+                  >
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
                 </div>
               </div>
 
@@ -272,16 +288,29 @@ const fetchContacts = async (page = 1) => {
   console.log('Fetching contacts for page:', page)
   loading.value = true
   try {
-    const params = {
-      page,
-      per_page: 12,
-      sort: filters.sort,
-      ...(filters.status && { stage: filters.status }),
-      ...(searchQuery.value && { q: searchQuery.value })
+    let response
+    
+    // Use search API if there's a search query, otherwise use regular contacts API
+    if (searchQuery.value.trim()) {
+      const params = {
+        page,
+        per_page: 12,
+        sort: filters.sort,
+        ...(filters.status && { stage: filters.status })
+      }
+      console.log('Search API params:', params)
+      response = await contactsAPI.searchContacts(searchQuery.value, params)
+    } else {
+      const params = {
+        page,
+        per_page: 12,
+        sort: filters.sort,
+        ...(filters.status && { stage: filters.status })
+      }
+      console.log('Contacts API params:', params)
+      response = await contactsAPI.getContacts(params)
     }
-
-    console.log('API params:', params)
-    const response = await contactsAPI.getContacts(params)
+    
     console.log('API response:', response.data)
     contacts.value = response.data.data
     pagination.value = response.data.meta

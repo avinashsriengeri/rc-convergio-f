@@ -104,7 +104,7 @@ export const contactsAPI = {
 // Companies API endpoints
 export const companiesAPI = {
   getCompanies: (params = {}) => api.get('/companies', { params }),
-  getCompany: (id) => api.get(`/companies/${id}`),
+  getCompany: (id) => api.get(`/companies/${id}?t=${Date.now()}`),
   createCompany: (data) => api.post('/companies', data),
   updateCompany: (id, data) => api.put(`/companies/${id}`, data),
   deleteCompany: (id) => api.delete(`/companies/${id}`),
@@ -123,7 +123,7 @@ export const companiesAPI = {
     })
   },
   getImportStatus: (jobId) => api.get(`/companies/import/status/${jobId}`),
-  attachContact: (companyId, contactId) => api.post(`/companies/${companyId}/contacts`, { contact_id: contactId }),
+  attachContact: (companyId, contactId) => api.post(`/companies/${companyId}/contacts`, { contact_ids: [contactId] }),
   detachContact: (companyId, contactId) => api.delete(`/companies/${companyId}/contacts/${contactId}`),
   getCompanyContacts: (companyId) => api.get(`/companies/${companyId}/contacts`),
   getActivityLog: (companyId) => api.get(`/companies/${companyId}/activity-log`),

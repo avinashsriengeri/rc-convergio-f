@@ -52,8 +52,8 @@
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-sm font-medium text-gray-600 mb-1">Open</p>
-                <p class="text-2xl font-bold text-gray-900">${{ formatCurrency(dashboardData?.open_deals || 0) }}</p>
-                <p class="text-sm text-gray-500">Week: ${{ formatCurrency(dashboardData?.open_deals_week || 0) }}</p>
+                <p class="text-2xl font-bold text-gray-900">${{ formatCurrency(dashboardData?.open_value || 0) }}</p>
+                <p class="text-sm text-gray-500">Today: {{ dashboardData?.won_today || 0 }} won</p>
               </div>
               <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,8 +68,8 @@
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-sm font-medium text-gray-600 mb-1">Won</p>
-                <p class="text-2xl font-bold text-gray-900">${{ formatCurrency(dashboardData?.won_deals || 0) }}</p>
-                <p class="text-sm text-gray-500">Week: ${{ formatCurrency(dashboardData?.won_deals_week || 0) }}</p>
+                <p class="text-2xl font-bold text-gray-900">{{ dashboardData?.won_today || 0 }}</p>
+                <p class="text-sm text-gray-500">Week: {{ dashboardData?.won_week || 0 }}</p>
               </div>
               <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                 <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,8 +84,8 @@
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-sm font-medium text-gray-600 mb-1">Lost</p>
-                <p class="text-2xl font-bold text-gray-900">${{ formatCurrency(dashboardData?.lost_deals || 0) }}</p>
-                <p class="text-sm text-gray-500">Week: ${{ formatCurrency(dashboardData?.lost_deals_week || 0) }}</p>
+                <p class="text-2xl font-bold text-gray-900">{{ dashboardData?.lost_today || 0 }}</p>
+                <p class="text-sm text-gray-500">Week: {{ dashboardData?.lost_week || 0 }}</p>
               </div>
               <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
                 <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,11 +106,11 @@
               <div class="space-y-3">
                 <div v-for="task in todayTasks" :key="task.id" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div class="flex-1">
-                    <p class="text-sm font-medium text-gray-900">{{ task.title }}</p>
-                    <p class="text-xs text-gray-500">{{ task.due_date }}</p>
+                    <p class="text-sm font-medium text-gray-900">{{ task.title || 'Task ' + task.id }}</p>
+                    <p class="text-xs text-gray-500">{{ task.due_date || task.created_at }}</p>
                   </div>
                   <span class="px-2 py-1 text-xs font-medium rounded-full" :class="getStatusClass(task.status)">
-                    {{ task.status }}
+                    {{ task.status || 'pending' }}
                   </span>
                 </div>
                 <div v-if="todayTasks.length === 0" class="text-center py-4 text-gray-500">
@@ -129,15 +129,15 @@
                 </div>
                 <div class="text-center">
                   <p class="text-2xl font-bold text-gray-900">{{ campaignMetrics?.opens || 0 }}</p>
-                  <p class="text-sm text-gray-600">Opens ({{ campaignMetrics?.open_rate || 0 }}%)</p>
+                  <p class="text-sm text-gray-600">Opens</p>
                 </div>
                 <div class="text-center">
                   <p class="text-2xl font-bold text-gray-900">{{ campaignMetrics?.clicks || 0 }}</p>
-                  <p class="text-sm text-gray-600">Clicks ({{ campaignMetrics?.click_rate || 0 }}%)</p>
+                  <p class="text-sm text-gray-600">Clicks</p>
                 </div>
                 <div class="text-center">
                   <p class="text-2xl font-bold text-gray-900">{{ campaignMetrics?.bounces || 0 }}</p>
-                  <p class="text-sm text-gray-600">Bounces ({{ campaignMetrics?.bounce_rate || 0 }}%)</p>
+                  <p class="text-sm text-gray-600">Bounces</p>
                 </div>
               </div>
             </div>
@@ -228,18 +228,14 @@ const fetchDashboardData = async () => {
   try {
     loading.value = true
     
-    // Fetch all dashboard data in parallel
-    const [dashboardRes, tasksRes, contactsRes, campaignsRes] = await Promise.all([
-      dashboardAPI.getDashboard(),
-      tasksAPI.getTodayTasks(),
-      dashboardAPI.getRecentContacts(5),
-      dashboardAPI.getCampaignMetrics('14d')
-    ])
+    // Fetch dashboard data - it contains all the data we need
+    const dashboardRes = await dashboardAPI.getDashboard()
     
-    dashboardData.value = dashboardRes.data
-    todayTasks.value = tasksRes.data || []
-    recentContacts.value = contactsRes.data || []
-    campaignMetrics.value = campaignsRes.data
+    // The backend returns: { success: true, data: { pipeline: {...}, tasks: {...}, contacts: {...}, campaigns: {...} } }
+    dashboardData.value = dashboardRes.data.data.pipeline || {}
+    todayTasks.value = dashboardRes.data.data.tasks || []
+    recentContacts.value = dashboardRes.data.data.contacts || []
+    campaignMetrics.value = dashboardRes.data.data.campaigns || {}
     
   } catch (err) {
     console.error('Failed to fetch dashboard data:', err)

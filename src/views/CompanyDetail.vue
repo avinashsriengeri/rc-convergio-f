@@ -20,14 +20,6 @@
           </div>
           <div class="flex items-center space-x-3">
             <BaseButton
-              variant="outline"
-              size="sm"
-              icon="edit"
-              @click="editCompany"
-            >
-              Edit
-            </BaseButton>
-            <BaseButton
               variant="danger"
               size="sm"
               icon="trash"
@@ -114,8 +106,8 @@
                 <div>
                   <label class="text-sm font-medium text-gray-500">LinkedIn Page</label>
                   <p class="text-sm text-gray-900">
-                    <a v-if="company.linkedin_page" :href="company.linkedin_page" target="_blank" class="text-[#2596be] hover:underline">
-                      {{ company.linkedin_page }}
+                    <a v-if="company.linkedin_page" :href="company.linkedin_page" target="_blank" class="text-[#2596be] hover:underline truncate block">
+                      {{ company.linkedin_page.length > 40 ? company.linkedin_page.substring(0, 40) + '...' : company.linkedin_page }}
                     </a>
                     <span v-else class="text-gray-500">Not specified</span>
                   </p>
@@ -310,7 +302,12 @@ const showAttachContactModal = ref(false)
 onMounted(async () => {
   try {
     const response = await companiesAPI.getCompany(route.params.id)
-    company.value = response.data
+    console.log('Company API response:', response)
+    company.value = response.data.data
+    console.log('Company data:', company.value)
+    console.log('Phone:', company.value.phone)
+    console.log('Email:', company.value.email)
+    console.log('Status:', company.value.status)
     await loadCompanyContacts()
   } catch (err) {
     error('Failed to load company')
@@ -327,7 +324,8 @@ const loadCompanyContacts = async () => {
   loadingContacts.value = true
   try {
     const response = await companiesAPI.getCompanyContacts(company.value.id)
-    companyContacts.value = response.data
+    console.log('Contacts API response:', response)
+    companyContacts.value = response.data.data || response.data
   } catch (err) {
     console.error('Error loading company contacts:', err)
   } finally {
@@ -345,9 +343,7 @@ const getStatusClass = (status) => {
   return classes[status] || 'bg-gray-100 text-gray-800'
 }
 
-const editCompany = () => {
-  router.push(`/companies/${company.value.id}?action=edit`)
-}
+
 
 const deleteCompany = async () => {
   if (!confirm('Are you sure you want to delete this company?')) return
@@ -362,8 +358,8 @@ const deleteCompany = async () => {
 }
 
 const addContact = () => {
-  // Implement contact creation for this company
-  console.log('Add contact for company:', company.value.id)
+  // Open the attach contact modal to add a contact to this company
+  showAttachContactModal.value = true
 }
 
 const createDeal = () => {

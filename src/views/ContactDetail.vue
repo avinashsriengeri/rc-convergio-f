@@ -55,17 +55,17 @@
             <div class="flex items-center space-x-4 mb-6">
               <div class="w-16 h-16 bg-gradient-to-r from-[#2596be] to-[#973894] rounded-full flex items-center justify-center">
                 <span class="text-white font-bold text-2xl">
-                  {{ contact.name.charAt(0).toUpperCase() }}
+                  {{ getInitials(contact) }}
                 </span>
               </div>
               <div>
-                <h2 class="text-2xl font-bold text-gray-900">{{ contact.name }}</h2>
+                <h2 class="text-2xl font-bold text-gray-900">{{ getFullName(contact) }}</h2>
                 <p class="text-gray-600">{{ contact.email }}</p>
                 <span
                   class="inline-block px-3 py-1 text-sm rounded-full mt-2"
-                  :class="getStatusClass(contact.status)"
+                  :class="getStatusClass(contact.lifecycle_stage)"
                 >
-                  {{ contact.status }}
+                  {{ contact.lifecycle_stage || 'No Stage' }}
                 </span>
               </div>
             </div>
@@ -90,32 +90,26 @@
                 </div>
               </div>
 
-              <div v-if="contact.company || contact.position">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Professional Information</h3>
+              <div v-if="contact.company_id || contact.source">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Additional Information</h3>
                 <div class="space-y-3">
-                  <div v-if="contact.company" class="flex items-center space-x-3">
+                  <div v-if="contact.source" class="flex items-center space-x-3">
                     <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 2h12v8H6V6z" clip-rule="evenodd" />
                     </svg>
-                    <span class="text-gray-700">{{ contact.company }}</span>
+                    <span class="text-gray-700">Source: {{ contact.source }}</span>
                   </div>
-                  <div v-if="contact.position" class="flex items-center space-x-3">
+                  <div v-if="contact.owner_id" class="flex items-center space-x-3">
                     <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd" />
                     </svg>
-                    <span class="text-gray-700">{{ contact.position }}</span>
+                    <span class="text-gray-700">Owner ID: {{ contact.owner_id }}</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Notes -->
-            <div v-if="contact.notes" class="mt-6">
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">Notes</h3>
-              <div class="bg-gray-50 rounded-lg p-4">
-                <p class="text-gray-700">{{ contact.notes }}</p>
-              </div>
-            </div>
+
           </div>
         </div>
 
@@ -199,7 +193,10 @@ const contact = ref(null)
 onMounted(async () => {
   try {
     const response = await contactsAPI.getContact(route.params.id)
-    contact.value = response.data
+    console.log('Contact detail response:', response.data)
+    // The API returns { data: { contact: {...} } }
+    contact.value = response.data.data.contact
+    console.log('Contact data:', contact.value)
   } catch (err) {
     error('Failed to load contact')
     console.error('Contact detail error:', err)
@@ -213,9 +210,24 @@ const getStatusClass = (status) => {
     active: 'bg-green-100 text-green-800',
     inactive: 'bg-gray-100 text-gray-800',
     lead: 'bg-blue-100 text-blue-800',
-    customer: 'bg-purple-100 text-purple-800'
+    customer: 'bg-green-100 text-green-800',
+    prospect: 'bg-yellow-100 text-yellow-800'
   }
   return classes[status] || 'bg-gray-100 text-gray-800'
+}
+
+const getInitials = (contact) => {
+  if (!contact || !contact.first_name || !contact.last_name) {
+    return 'N/A'
+  }
+  return `${contact.first_name.charAt(0).toUpperCase()}${contact.last_name.charAt(0).toUpperCase()}`
+}
+
+const getFullName = (contact) => {
+  if (!contact || !contact.first_name || !contact.last_name) {
+    return 'N/A'
+  }
+  return `${contact.first_name} ${contact.last_name}`
 }
 
 const editContact = () => {
