@@ -15,6 +15,8 @@ import Companies from './views/Companies.vue'
 import CompanyDetail from './views/CompanyDetail.vue'
 import DeletedCompanies from './views/DeletedCompanies.vue'
 
+// CRM Module views
+
 const routes = [
   // Public routes
   {
@@ -86,10 +88,96 @@ const routes = [
     meta: { requiresAuth: true }
   },
   
-  // Catch all route
+  // Deals Module routes
   {
-    path: '/:pathMatch(.*)*',
-    redirect: '/'
+    path: '/deals',
+    name: 'DealsList',
+    component: () => import('./views/deals/DealsListPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/deals/kanban',
+    name: 'DealsKanban',
+    component: () => import('./views/deals/DealsKanbanPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/deals/new',
+    name: 'DealCreate',
+    component: () => import('./views/deals/DealFormPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/deals/:id',
+    name: 'DealDetail',
+    component: () => import('./views/deals/DealDetailPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/deals/:id/edit',
+    name: 'DealEdit',
+    component: () => import('./views/deals/DealFormPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  
+  // Pipelines Module routes
+  {
+    path: '/pipelines',
+    name: 'Pipelines',
+    component: () => import('./views/pipelines/PipelinesPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  
+  // Stages Module routes
+  {
+    path: '/stages',
+    name: 'Stages',
+    component: () => import('./views/stages/StagesPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  
+  // CRM Module routes (existing)
+  {
+    path: '/deals-old',
+    name: 'Deals',
+    component: () => import('./views/Deals.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/campaigns',
+    name: 'Campaigns',
+    component: () => import('./views/Campaigns.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/tasks',
+    name: 'Tasks',
+    component: () => import('./views/Tasks.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/activities',
+    name: 'Activities',
+    component: () => import('./views/Activities.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/activities/:id',
+    name: 'activities.show',
+    component: () => import('./views/ActivitiesDetail.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/activities/:id/edit',
+    name: 'activities.edit',
+    component: () => import('./views/Activities.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: () => import('./views/Settings.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 
@@ -100,22 +188,15 @@ const router = createRouter({
 
 // Navigation guard
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('access_token')
-  const requiresAuth = to.meta.requiresAuth
+  const isAuthenticated = localStorage.getItem('access_token')
   
-  // If route requires auth and user is not authenticated
-  if (requiresAuth && !token) {
+  if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login')
-    return
-  }
-  
-  // If user is authenticated and trying to access auth pages
-  if (token && ['Login', 'Register', 'ForgotPassword', 'ResetPassword'].includes(to.name)) {
+  } else if (to.meta.requiresAuth === false && isAuthenticated) {
     next('/dashboard')
-    return
+  } else {
+    next()
   }
-  
-  next()
 })
 
 export default router

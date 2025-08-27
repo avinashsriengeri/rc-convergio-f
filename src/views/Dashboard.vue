@@ -48,7 +48,7 @@
         <!-- Metrics Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <!-- Open Deals -->
-          <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow" @click="$router.push('/deals')">
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-sm font-medium text-gray-600 mb-1">Open</p>
@@ -64,7 +64,7 @@
           </div>
 
           <!-- Won Deals -->
-          <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow" @click="$router.push('/deals')">
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-sm font-medium text-gray-600 mb-1">Won</p>
@@ -80,7 +80,7 @@
           </div>
 
           <!-- Lost Deals -->
-          <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow" @click="$router.push('/deals')">
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-sm font-medium text-gray-600 mb-1">Lost</p>
@@ -101,7 +101,7 @@
           <!-- Left Column -->
           <div class="lg:col-span-2 space-y-6">
             <!-- Follow Ups -->
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow" @click="$router.push('/tasks')">
               <h3 class="text-lg font-semibold text-gray-900 mb-4">Follow Ups</h3>
               <div class="space-y-3">
                 <div v-for="task in todayTasks" :key="task.id" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -163,14 +163,14 @@
                 </li>
               </ul>
               <div class="mt-6 space-y-3">
-                <BaseButton variant="primary" size="sm" full-width @click="$router.push('/contacts?action=create')">
-                  New Deal
+                <BaseButton variant="primary" size="sm" full-width @click="$router.push('/deals')">
+                  View Deals
                 </BaseButton>
-                <BaseButton variant="secondary" size="sm" full-width @click="$router.push('/contacts?action=create')">
-                  Add Contact
+                <BaseButton variant="secondary" size="sm" full-width @click="$router.push('/contacts')">
+                  View Contacts
                 </BaseButton>
-                <BaseButton variant="outline" size="sm" full-width>
-                  New Task
+                <BaseButton variant="outline" size="sm" full-width @click="$router.push('/tasks')">
+                  View Tasks
                 </BaseButton>
               </div>
             </div>

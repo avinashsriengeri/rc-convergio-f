@@ -161,15 +161,14 @@
           </router-link>
 
           <router-link
-            to="/campaigns"
+            to="/activities"
             class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-            :class="{ 'bg-white/20 text-white': $route.path === '/campaigns', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/campaigns' }"
+            :class="{ 'bg-white/20 text-white': $route.path === '/activities', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/activities' }"
           >
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            Campaigns
+            Activities
           </router-link>
 
           <router-link
@@ -181,6 +180,18 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
             </svg>
             Tasks
+          </router-link>
+
+          <router-link
+            to="/campaigns"
+            class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
+            :class="{ 'bg-white/20 text-white': $route.path === '/campaigns', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/campaigns' }"
+          >
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+            </svg>
+            Campaigns
           </router-link>
 
           <router-link

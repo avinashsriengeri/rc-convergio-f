@@ -1,17 +1,13 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
-import router from './router.js'
-import { useAuth } from './composables/useAuth'
+import router from './router'
 import './style.css'
 
 const app = createApp(App)
 const pinia = createPinia()
 
-// Initialize auth state
-const { initAuth } = useAuth()
-initAuth()
-
 app.use(pinia)
 app.use(router)
+
 app.mount('#app')
