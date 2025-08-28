@@ -11,8 +11,8 @@
           <div class="flex items-center space-x-3">
             <BaseButton
               variant="secondary"
-              @click="refreshDeals"
-              :loading="dealsStore.loading"
+              @click="loadKanbanData"
+              :loading="loading"
               class="flex items-center"
             >
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,7 +45,7 @@
       </div>
     </div>
 
-    <!-- Filters -->
+    <!-- Pipeline Filter -->
     <div class="bg-white border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div class="flex flex-col sm:flex-row gap-4">
@@ -57,51 +57,13 @@
               @change="onPipelineChange"
               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="">All Pipelines</option>
+              <option value="">Select Pipeline</option>
               <option
                 v-for="pipeline in pipelinesStore.pipelines"
                 :key="pipeline.id"
                 :value="pipeline.id"
               >
                 {{ pipeline.name }}
-              </option>
-            </select>
-          </div>
-
-          <!-- Owner Filter -->
-          <div class="flex-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Owner</label>
-            <select
-              v-model="selectedOwnerId"
-              @change="applyFilters"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">All Owners</option>
-              <option
-                v-for="user in refsStore.users"
-                :key="user.id"
-                :value="user.id"
-              >
-                {{ user.name }}
-              </option>
-            </select>
-          </div>
-
-          <!-- Status Filter -->
-          <div class="flex-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-            <select
-              v-model="selectedStatus"
-              @change="applyFilters"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="all">All Statuses</option>
-              <option
-                v-for="status in DEAL_STATUSES"
-                :key="status.value"
-                :value="status.value"
-              >
-                {{ status.label }}
               </option>
             </select>
           </div>
@@ -112,31 +74,40 @@
     <!-- Kanban Board -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Loading State -->
-      <div v-if="dealsStore.loading && !dealsStore.deals.length" class="flex justify-center items-center py-12">
+      <div v-if="loading && !kanbanData.length" class="flex justify-center items-center py-12">
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
 
       <!-- Error State -->
-      <div v-else-if="dealsStore.error" class="text-center py-12">
+      <div v-else-if="error" class="text-center py-12">
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
         </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">Error loading deals</h3>
-        <p class="mt-1 text-sm text-gray-500">{{ dealsStore.error }}</p>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">Error loading kanban data</h3>
+        <p class="mt-1 text-sm text-gray-500">{{ error }}</p>
         <div class="mt-6">
-          <BaseButton variant="primary" @click="refreshDeals">
+          <BaseButton variant="primary" @click="loadKanbanData">
             Try Again
           </BaseButton>
         </div>
       </div>
 
-      <!-- Empty State -->
-      <div v-else-if="!dealsStore.loading && !dealsStore.deals.length" class="text-center py-12">
+      <!-- Empty State - No Pipeline Selected -->
+      <div v-else-if="!selectedPipelineId" class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">Select a Pipeline</h3>
+        <p class="mt-1 text-sm text-gray-500">Choose a pipeline from the dropdown above to view the kanban board.</p>
+      </div>
+
+      <!-- Empty State - No Stages or Deals -->
+      <div v-else-if="!loading && kanbanData.length === 0" class="text-center py-12">
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
         </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">No deals found</h3>
-        <p class="mt-1 text-sm text-gray-500">Get started by creating your first deal.</p>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No stages or deals available</h3>
+        <p class="mt-1 text-sm text-gray-500">No stages or deals available for this pipeline.</p>
         <div class="mt-6">
           <BaseButton variant="primary" @click="$router.push('/deals/new')">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -151,7 +122,7 @@
       <div v-else class="overflow-x-auto">
         <div class="flex space-x-6 min-w-max">
           <div
-            v-for="stage in stagesForKanban"
+            v-for="stage in kanbanData"
             :key="stage.id"
             class="flex-shrink-0 w-80"
           >
@@ -162,12 +133,12 @@
                   <div class="flex items-center">
                     <div
                       class="w-3 h-3 rounded-full mr-2"
-                      :style="{ backgroundColor: stage.color }"
+                      :style="{ backgroundColor: stage.color || '#6B7280' }"
                     ></div>
                     <h3 class="text-sm font-medium text-gray-900">{{ stage.name }}</h3>
                   </div>
                   <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                    {{ getDealsForStage(stage.id).length }}
+                    {{ stage.deals ? stage.deals.length : 0 }}
                   </span>
                 </div>
               </div>
@@ -180,8 +151,14 @@
                   @dragover.prevent
                   @dragenter.prevent
                 >
+                  <!-- No deals in this stage -->
+                  <div v-if="!stage.deals || stage.deals.length === 0" class="text-center py-8 text-gray-500">
+                    <p class="text-sm">No deals in this stage</p>
+                  </div>
+
+                  <!-- Deals -->
                   <div
-                    v-for="deal in getDealsForStage(stage.id)"
+                    v-for="deal in stage.deals"
                     :key="deal.id"
                     class="bg-white border border-gray-200 rounded-lg p-4 cursor-move hover:shadow-md transition-shadow"
                     draggable="true"
@@ -203,40 +180,22 @@
                       </div>
                     </div>
 
-                    <!-- Deal Value -->
-                    <div v-if="deal.value" class="mb-3">
-                      <div class="text-lg font-semibold" :class="getValueColor(deal.value)">
-                        {{ formatCurrency(deal.value, deal.currency) }}
-                      </div>
-                    </div>
-
                     <!-- Deal Details -->
-                    <div class="space-y-2 text-sm text-gray-600">
-                      <!-- Probability -->
-                      <div class="flex items-center justify-between">
-                        <span>Probability</span>
-                        <div class="flex items-center">
-                          <div class="w-12 bg-gray-200 rounded-full h-1 mr-2">
-                            <div
-                              class="h-1 rounded-full"
-                              :class="getProbabilityColor(deal.probability)"
-                              :style="{ width: deal.probability + '%' }"
-                            ></div>
-                          </div>
-                          <span class="text-xs" :class="getProbabilityColor(deal.probability)">
-                            {{ deal.probability }}%
-                          </span>
-                        </div>
+                    <div class="space-y-2">
+                      <!-- Value -->
+                      <div v-if="deal.value" class="flex items-center">
+                        <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                        </svg>
+                        <span class="text-sm text-gray-600">{{ formatCurrency(deal.value, deal.currency) }}</span>
                       </div>
 
                       <!-- Owner -->
                       <div v-if="deal.owner" class="flex items-center">
-                        <div class="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center mr-2">
-                          <span class="text-xs font-medium text-gray-700">
-                            {{ getInitials(deal.owner.name) }}
-                          </span>
-                        </div>
-                        <span class="truncate">{{ deal.owner.name }}</span>
+                        <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span class="text-sm text-gray-600">{{ deal.owner.name }}</span>
                       </div>
 
                       <!-- Expected Close Date -->
@@ -244,9 +203,7 @@
                         <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                        <span :class="isOverdue(deal.expected_close_date) ? 'text-red-600 font-medium' : ''">
-                          {{ formatDate(deal.expected_close_date) }}
-                        </span>
+                        <span class="text-sm text-gray-600">{{ formatDate(deal.expected_close_date) }}</span>
                         <span v-if="isOverdue(deal.expected_close_date)" class="ml-1 text-xs text-red-600">
                           Overdue
                         </span>
@@ -257,7 +214,7 @@
                         <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
-                        <span class="truncate">
+                        <span class="truncate text-sm text-gray-600">
                           {{ deal.contact?.name || deal.company?.name || 'No contact' }}
                         </span>
                       </div>
@@ -314,13 +271,12 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useDealsStore } from '../../stores/deals'
 import { usePipelinesStore } from '../../stores/pipelines'
-import { useStagesStore } from '../../stores/stages'
 import { useRefsStore } from '../../stores/refs'
+import { pipelinesAPI, dealsAPI } from '../../services/api'
 import { success, error } from '../../utils/notifications'
-import { formatDate, formatCurrency, formatRelativeTime, getInitials, getValueColor, getProbabilityColor, isOverdue } from '../../utils/formatters'
-import { DEAL_STATUSES, STATUS_BADGE_COLORS } from '../../utils/constants'
+import { formatDate, formatCurrency, formatRelativeTime, isOverdue } from '../../utils/formatters'
+import { STATUS_BADGE_COLORS } from '../../utils/constants'
 import type { Deal } from '../../types'
 import BaseButton from '../../components/ui/BaseButton.vue'
 import ConfirmationModal from '../../components/modals/ConfirmationModal.vue'
@@ -328,54 +284,42 @@ import ConfirmationModal from '../../components/modals/ConfirmationModal.vue'
 const router = useRouter()
 
 // Stores
-const dealsStore = useDealsStore()
 const pipelinesStore = usePipelinesStore()
-const stagesStore = useStagesStore()
 const refsStore = useRefsStore()
 
 // Reactive data
+const loading = ref(false)
+const error = ref<string | null>(null)
+const kanbanData = ref<any[]>([])
 const showDeleteModal = ref(false)
 const dealToDelete = ref<Deal | null>(null)
 const selectedPipelineId = ref<number | string>('')
-const selectedOwnerId = ref<number | string>('')
-const selectedStatus = ref<string>('all')
 const draggedDeal = ref<Deal | null>(null)
 
-// Computed
-const stagesForKanban = computed(() => {
-  if (selectedPipelineId.value) {
-    return stagesStore.stages.filter(stage => stage.pipeline_id === selectedPipelineId.value)
-  }
-  // If no pipeline selected, show all stages from all pipelines
-  return stagesStore.stages
-})
-
 // Methods
-const refreshDeals = () => {
-  applyFilters()
-}
-
-const applyFilters = () => {
-  const filters: any = {
-    status: selectedStatus.value === 'all' ? undefined : selectedStatus.value,
-    owner_id: selectedOwnerId.value || undefined,
-    pipeline_id: selectedPipelineId.value || undefined
+const loadKanbanData = async () => {
+  if (!selectedPipelineId.value) {
+    kanbanData.value = []
+    return
   }
-  dealsStore.fetchDeals(filters)
+
+  loading.value = true
+  error.value = null
+
+  try {
+    const response = await pipelinesAPI.getKanban(selectedPipelineId.value as number)
+    kanbanData.value = response.data.data || []
+  } catch (err: any) {
+    console.error('Error loading kanban data:', err)
+    error.value = err.response?.data?.message || 'Failed to load kanban data'
+    kanbanData.value = []
+  } finally {
+    loading.value = false
+  }
 }
 
 const onPipelineChange = async () => {
-  if (selectedPipelineId.value) {
-    await stagesStore.fetchStagesByPipeline(selectedPipelineId.value as number)
-  } else {
-    // Load all stages if no pipeline selected
-    await stagesStore.fetchStages()
-  }
-  applyFilters()
-}
-
-const getDealsForStage = (stageId: number) => {
-  return dealsStore.deals.filter(deal => deal.stage_id === stageId)
+  await loadKanbanData()
 }
 
 const onDragStart = (event: DragEvent, deal: Deal) => {
@@ -389,14 +333,19 @@ const onDrop = async (event: DragEvent, stageId: number) => {
   event.preventDefault()
   
   if (!draggedDeal.value || draggedDeal.value.stage_id === stageId) {
+    draggedDeal.value = null
     return
   }
 
   try {
-    await dealsStore.moveDeal(draggedDeal.value.id, stageId)
+    await dealsAPI.moveDeal(draggedDeal.value.id, stageId)
     success('Deal moved successfully')
-  } catch (err) {
-    error('Failed to move deal')
+    
+    // Refresh only the affected columns
+    await loadKanbanData()
+  } catch (err: any) {
+    console.error('Error moving deal:', err)
+    error(err.response?.data?.message || 'Failed to move deal')
   } finally {
     draggedDeal.value = null
   }
@@ -419,12 +368,16 @@ const confirmDelete = async () => {
   if (!dealToDelete.value) return
   
   try {
-    await dealsStore.deleteDeal(dealToDelete.value.id)
+    await dealsAPI.deleteDeal(dealToDelete.value.id)
     showDeleteModal.value = false
     dealToDelete.value = null
     success('Deal deleted successfully')
-  } catch (err) {
-    error('Failed to delete deal')
+    
+    // Refresh the kanban data
+    await loadKanbanData()
+  } catch (err: any) {
+    console.error('Error deleting deal:', err)
+    error(err.response?.data?.message || 'Failed to delete deal')
   }
 }
 
@@ -432,11 +385,15 @@ const confirmDelete = async () => {
 onMounted(async () => {
   // Initialize data
   await Promise.all([
-    dealsStore.fetchDeals(),
     pipelinesStore.fetchPipelines(),
-    stagesStore.fetchStages(),
     refsStore.initializeData()
   ])
+
+  // Set default pipeline to first available
+  if (pipelinesStore.pipelines.length > 0 && !selectedPipelineId.value) {
+    selectedPipelineId.value = pipelinesStore.pipelines[0].id
+    await loadKanbanData()
+  }
 })
 </script>
 

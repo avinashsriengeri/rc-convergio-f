@@ -292,6 +292,9 @@
                   </option>
                 </select>
                 <p v-if="errors.company_id" class="mt-1 text-sm text-red-600">{{ errors.company_id }}</p>
+                <p v-if="route.query.company_name && form.company_id" class="mt-1 text-sm text-green-600">
+                  ✓ Pre-filled from company details
+                </p>
               </div>
 
               <!-- Expected Close Date -->
@@ -801,6 +804,14 @@ onMounted(async () => {
   
   // Force contacts to be reactive
   contacts.value = [...refsStore.contacts]
+
+  // Check for company pre-fill from query parameters
+  if (route.query.company_id && route.query.company_name) {
+    const companyId = parseInt(route.query.company_id as string)
+    if (!isNaN(companyId)) {
+      form.company_id = companyId
+    }
+  }
 
   if (isEditing.value && route.params.id) {
     // Load deal data for editing

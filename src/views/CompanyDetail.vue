@@ -363,8 +363,14 @@ const addContact = () => {
 }
 
 const createDeal = () => {
-  // Implement deal creation for this company
-  console.log('Create deal for company:', company.value.id)
+  // Navigate to create deal page with company pre-filled
+  router.push({
+    path: '/deals/new',
+    query: {
+      company_id: company.value.id,
+      company_name: company.value.name
+    }
+  })
 }
 
 const viewWebsite = () => {

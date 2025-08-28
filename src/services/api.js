@@ -180,6 +180,7 @@ export const pipelinesAPI = {
   deletePipeline: (id) => api.delete(`/pipelines/${id}`),
   toggleActive: (id) => api.patch(`/pipelines/${id}/toggle-active`),
   getActivePipelines: () => api.get('/pipelines/active'),
+  getKanban: (id) => api.get(`/pipelines/${id}/kanban`),
 }
 
 // Stages API endpoints
@@ -200,7 +201,7 @@ export const dealsAPI = {
   createDeal: (data) => api.post('/deals', data),
   updateDeal: (id, data) => api.put(`/deals/${id}`, data),
   deleteDeal: (id) => api.delete(`/deals/${id}`),
-  moveDeal: (id, stageId) => api.patch(`/deals/${id}/move`, { stage_id: stageId }),
+  moveDeal: (id, stageId) => api.post(`/deals/${id}/move`, { stage_id: stageId }),
   getDealsByStage: (stageId) => api.get(`/stages/${stageId}/deals`),
   getDealsByPipeline: (pipelineId) => api.get(`/pipelines/${pipelineId}/deals`),
   getDealsSummary: (range = '7d') => api.get(`/deals/summary?range=${range}`),

@@ -180,7 +180,7 @@ const handleForgotPassword = async () => {
     const result = await forgotPassword(form.email)
     
     if (result.success) {
-      success(result.message)
+      success('If the email exists, a reset link has been sent to your Gmail')
       form.email = ''
     } else {
       error(result.message)

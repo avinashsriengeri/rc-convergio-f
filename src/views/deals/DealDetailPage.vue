@@ -314,6 +314,32 @@
       @confirm="confirmDelete"
       @cancel="showDeleteModal = false"
     />
+
+    <!-- Move Stage Modal -->
+    <MoveStageModal
+      v-if="showMoveStageModal"
+      :deal-id="deal?.id || 0"
+      :current-stage-id="deal?.stage_id || 0"
+      :pipeline-id="deal?.pipeline_id || 0"
+      @confirm="onStageMoved"
+      @cancel="showMoveStageModal = false"
+    />
+
+    <!-- Add Activity Modal -->
+    <AddActivityModal
+      v-if="showAddActivityModal"
+      :deal-id="deal?.id || 0"
+      @confirm="onActivityAdded"
+      @cancel="showAddActivityModal = false"
+    />
+
+    <!-- Add Task Modal -->
+    <AddTaskModal
+      v-if="showAddTaskModal"
+      :deal-id="deal?.id || 0"
+      @confirm="onTaskAdded"
+      @cancel="showAddTaskModal = false"
+    />
   </div>
 </template>
 
@@ -327,6 +353,9 @@ import { STATUS_BADGE_COLORS } from '../../utils/constants'
 import type { Deal } from '../../types'
 import BaseButton from '../../components/ui/BaseButton.vue'
 import ConfirmationModal from '../../components/modals/ConfirmationModal.vue'
+import MoveStageModal from '../../components/modals/MoveStageModal.vue'
+import AddActivityModal from '../../components/activities/AddActivityModal.vue'
+import AddTaskModal from '../../components/tasks/AddTaskModal.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -337,6 +366,9 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 const deal = ref<Deal | null>(null)
 const showDeleteModal = ref(false)
+const showMoveStageModal = ref(false)
+const showAddActivityModal = ref(false)
+const showAddTaskModal = ref(false)
 
 // Methods
 const loadDeal = async () => {
@@ -384,18 +416,33 @@ const confirmDelete = async () => {
 }
 
 const moveDeal = () => {
-  // TODO: Implement move deal functionality
-  success('Move deal functionality coming soon')
+  showMoveStageModal.value = true
 }
 
 const addActivity = () => {
-  // TODO: Implement add activity functionality
-  success('Add activity functionality coming soon')
+  showAddActivityModal.value = true
 }
 
 const addTask = () => {
-  // TODO: Implement add task functionality
-  success('Add task functionality coming soon')
+  showAddTaskModal.value = true
+}
+
+const onStageMoved = async (stageId: number) => {
+  showMoveStageModal.value = false
+  // Reload the deal to get updated stage information
+  await loadDeal()
+}
+
+const onActivityAdded = () => {
+  showAddActivityModal.value = false
+  // Optionally reload the deal or show a success message
+  success('Activity added successfully')
+}
+
+const onTaskAdded = () => {
+  showAddTaskModal.value = false
+  // Optionally reload the deal or show a success message
+  success('Task added successfully')
 }
 
 // Lifecycle

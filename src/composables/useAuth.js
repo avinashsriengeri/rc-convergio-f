@@ -61,7 +61,7 @@ const register = async (userData) => {
   loading.value = true
   try {
     const response = await authAPI.register(userData)
-    return { success: true, message: 'Registration successful' }
+    return { success: true, message: 'Check your Gmail inbox to verify your email' }
   } catch (error) {
     const message = error.response?.data?.message || 'Registration failed'
     return { success: false, message }
@@ -106,7 +106,7 @@ const forgotPassword = async (email) => {
   loading.value = true
   try {
     await authAPI.forgotPassword(email)
-    return { success: true, message: 'Password reset link sent' }
+    return { success: true, message: 'If the email exists, a reset link has been sent to your Gmail' }
   } catch (error) {
     const message = error.response?.data?.message || 'Failed to send reset link'
     return { success: false, message }

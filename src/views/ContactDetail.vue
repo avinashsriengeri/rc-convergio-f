@@ -20,14 +20,6 @@
           </div>
           <div class="flex items-center space-x-3">
             <BaseButton
-              variant="outline"
-              size="sm"
-              icon="edit"
-              @click="editContact"
-            >
-              Edit
-            </BaseButton>
-            <BaseButton
               variant="danger"
               size="sm"
               icon="trash"
@@ -230,9 +222,7 @@ const getFullName = (contact) => {
   return `${contact.first_name} ${contact.last_name}`
 }
 
-const editContact = () => {
-  router.push(`/contacts/${contact.value.id}?action=edit`)
-}
+
 
 const deleteContact = async () => {
   if (!confirm('Are you sure you want to delete this contact?')) return
