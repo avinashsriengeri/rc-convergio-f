@@ -20,6 +20,14 @@
           </div>
           <div class="flex items-center space-x-3">
             <BaseButton
+              variant="primary"
+              size="sm"
+              icon="edit"
+              @click="editCompany"
+            >
+              Edit
+            </BaseButton>
+            <BaseButton
               variant="danger"
               size="sm"
               icon="trash"
@@ -278,6 +286,14 @@
       @close="showAttachContactModal = false"
       @attached="handleContactAttached"
     />
+    
+    <CompanyModal
+      v-if="showEditModal"
+      :company="company"
+      mode="edit"
+      @close="showEditModal = false"
+      @saved="handleCompanySaved"
+    />
   </div>
 </template>
 
@@ -288,6 +304,7 @@ import { useNotifications } from '@/composables/useNotifications'
 import { companiesAPI } from '@/services/api'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import AttachContactModal from '@/components/modals/AttachContactModal.vue'
+import CompanyModal from '@/components/modals/CompanyModal.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -298,6 +315,7 @@ const loadingContacts = ref(false)
 const company = ref(null)
 const companyContacts = ref([])
 const showAttachContactModal = ref(false)
+const showEditModal = ref(false)
 
 onMounted(async () => {
   try {
@@ -344,6 +362,10 @@ const getStatusClass = (status) => {
 }
 
 
+
+const editCompany = () => {
+  showEditModal.value = true
+}
 
 const deleteCompany = async () => {
   if (!confirm('Are you sure you want to delete this company?')) return
@@ -408,6 +430,18 @@ const detachContact = async (contactId) => {
 // Handle contact attached
 const handleContactAttached = () => {
   loadCompanyContacts()
+}
+
+// Handle company saved (create or edit)
+const handleCompanySaved = async () => {
+  showEditModal.value = false
+  // Reload company data to reflect changes
+  try {
+    const response = await companiesAPI.getCompany(route.params.id)
+    company.value = response.data.data
+  } catch (err) {
+    console.error('Error reloading company:', err)
+  }
 }
 
 // Format address for display

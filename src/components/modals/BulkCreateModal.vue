@@ -25,8 +25,9 @@
           <h3 class="text-sm font-medium text-blue-900 mb-2">Instructions:</h3>
           <ul class="text-xs text-blue-800 space-y-1">
             <li>• Add multiple companies at once</li>
-            <li>• Required fields: Company Name</li>
-            <li>• Optional fields: Industry, Website, Phone, Email, Address, Status, Description</li>
+            <li>• Required fields: Company Name *, Website *, Industry *</li>
+            <li>• Optional: Enter a domain to auto-fill company details</li>
+            <li>• Optional fields: Phone, Email, Address, Status, Description</li>
             <li>• Use the "Add Another Company" button to add more entries</li>
           </ul>
         </div>
@@ -53,40 +54,57 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Domain -->
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Domain (auto-fill details)
+                </label>
+                <BaseInput
+                  v-model="company.domain"
+                  type="text"
+                  placeholder="e.g. example.com"
+                  :error="!!errors[`companies.${index}.domain`]"
+                  @blur="handleDomainEnrichment(company, index)"
+                  @keyup.enter="handleDomainEnrichment(company, index)"
+                />
+                <p class="mt-1 text-xs text-gray-500">
+                  Enter a valid domain to auto-fill company details, or leave blank to enter manually.
+                </p>
+                <p v-if="errors[`companies.${index}.domain`]" class="mt-1 text-sm text-red-600">{{ errors[`companies.${index}.domain`] }}</p>
+              </div>
+
               <!-- Company Name -->
               <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Company Name *
+                </label>
                 <BaseInput
                   v-model="company.name"
                   type="text"
-                  label="Company Name *"
-                  placeholder="Enter company name"
-                  required
-                  :error="errors[`companies.${index}.name`]"
+                  placeholder="e.g. Acme Corporation"
+                  :error="!!errors[`companies.${index}.name`]"
                 />
+                <p v-if="errors[`companies.${index}.name`]" class="mt-1 text-sm text-red-600">{{ errors[`companies.${index}.name`] }}</p>
               </div>
 
-              <!-- Domain -->
-              <BaseInput
-                v-model="company.domain"
-                type="text"
-                label="Domain"
-                placeholder="example.com"
-                :error="errors[`companies.${index}.domain`]"
-              />
-
               <!-- Website -->
-              <BaseInput
-                v-model="company.website"
-                type="url"
-                label="Website"
-                placeholder="https://example.com"
-                :error="errors[`companies.${index}.website`]"
-              />
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Website *
+                </label>
+                <BaseInput
+                  v-model="company.website"
+                  type="url"
+                  placeholder="https://example.com"
+                  :error="!!errors[`companies.${index}.website`]"
+                />
+                <p v-if="errors[`companies.${index}.website`]" class="mt-1 text-sm text-red-600">{{ errors[`companies.${index}.website`] }}</p>
+              </div>
 
               <!-- Industry -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">
-                  Industry
+                  Industry *
                 </label>
                 <select
                   v-model="company.industry"
@@ -116,40 +134,60 @@
               </div>
 
               <!-- Size -->
-              <BaseInput
-                v-model="company.size"
-                type="number"
-                label="Company Size"
-                placeholder="Number of employees"
-                :error="errors[`companies.${index}.size`]"
-              />
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Employees
+                </label>
+                <BaseInput
+                  v-model="company.size"
+                  type="number"
+                  placeholder="e.g. 150"
+                  :error="!!errors[`companies.${index}.size`]"
+                />
+                <p v-if="errors[`companies.${index}.size`]" class="mt-1 text-sm text-red-600">{{ errors[`companies.${index}.size`] }}</p>
+              </div>
 
               <!-- Annual Revenue -->
-              <BaseInput
-                v-model="company.annual_revenue"
-                type="number"
-                label="Annual Revenue"
-                placeholder="Revenue amount"
-                :error="errors[`companies.${index}.annual_revenue`]"
-              />
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Revenue
+                </label>
+                <BaseInput
+                  v-model="company.annual_revenue"
+                  type="number"
+                  placeholder="e.g. 5000000"
+                  :error="!!errors[`companies.${index}.annual_revenue`]"
+                />
+                <p v-if="errors[`companies.${index}.annual_revenue`]" class="mt-1 text-sm text-red-600">{{ errors[`companies.${index}.annual_revenue`] }}</p>
+              </div>
 
               <!-- Phone -->
-              <BaseInput
-                v-model="company.phone"
-                type="tel"
-                label="Phone Number"
-                placeholder="Enter phone number"
-                :error="errors[`companies.${index}.phone`]"
-              />
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Phone
+                </label>
+                <BaseInput
+                  v-model="company.phone"
+                  type="tel"
+                  placeholder="e.g. +1-555-123-4567"
+                  :error="!!errors[`companies.${index}.phone`]"
+                />
+                <p v-if="errors[`companies.${index}.phone`]" class="mt-1 text-sm text-red-600">{{ errors[`companies.${index}.phone`] }}</p>
+              </div>
 
               <!-- Email -->
-              <BaseInput
-                v-model="company.email"
-                type="email"
-                label="Email Address"
-                placeholder="Enter email address"
-                :error="errors[`companies.${index}.email`]"
-              />
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
+                <BaseInput
+                  v-model="company.email"
+                  type="email"
+                  placeholder="e.g. contact@company.com"
+                  :error="!!errors[`companies.${index}.email`]"
+                />
+                <p v-if="errors[`companies.${index}.email`]" class="mt-1 text-sm text-red-600">{{ errors[`companies.${index}.email`] }}</p>
+              </div>
 
               <!-- Timezone -->
               <div>
@@ -175,13 +213,18 @@
               </div>
 
               <!-- LinkedIn Page -->
-              <BaseInput
-                v-model="company.linkedin_page"
-                type="url"
-                label="LinkedIn Page"
-                placeholder="https://linkedin.com/company/..."
-                :error="errors[`companies.${index}.linkedin_page`]"
-              />
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  LinkedIn URL
+                </label>
+                <BaseInput
+                  v-model="company.linkedin_page"
+                  type="url"
+                  placeholder="e.g. https://linkedin.com/company/..."
+                  :error="!!errors[`companies.${index}.linkedin_page`]"
+                />
+                <p v-if="errors[`companies.${index}.linkedin_page`]" class="mt-1 text-sm text-red-600">{{ errors[`companies.${index}.linkedin_page`] }}</p>
+              </div>
 
               <!-- Status -->
               <div>
@@ -206,43 +249,63 @@
                 </label>
                 
                 <!-- Street -->
-                <BaseInput
-                  v-model="company.address.street"
-                  type="text"
-                  label="Street Address"
-                  placeholder="Enter street address"
-                />
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Address
+                  </label>
+                  <BaseInput
+                    v-model="company.address.street"
+                    type="text"
+                    placeholder="e.g. 123 Main Street"
+                  />
+                </div>
                 
                 <!-- City and State -->
                 <div class="grid grid-cols-2 gap-3">
-                  <BaseInput
-                    v-model="company.address.city"
-                    type="text"
-                    label="City"
-                    placeholder="Enter city"
-                  />
-                  <BaseInput
-                    v-model="company.address.state"
-                    type="text"
-                    label="State/Province"
-                    placeholder="Enter state"
-                  />
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                      City
+                    </label>
+                    <BaseInput
+                      v-model="company.address.city"
+                      type="text"
+                      placeholder="e.g. New York"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                      State
+                    </label>
+                    <BaseInput
+                      v-model="company.address.state"
+                      type="text"
+                      placeholder="e.g. NY"
+                    />
+                  </div>
                 </div>
                 
                 <!-- Postal Code and Country -->
                 <div class="grid grid-cols-2 gap-3">
-                  <BaseInput
-                    v-model="company.address.postal_code"
-                    type="text"
-                    label="Postal Code"
-                    placeholder="Enter postal code"
-                  />
-                  <BaseInput
-                    v-model="company.address.country"
-                    type="text"
-                    label="Country"
-                    placeholder="Enter country"
-                  />
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                      Postal Code
+                    </label>
+                    <BaseInput
+                      v-model="company.address.postal_code"
+                      type="text"
+                      placeholder="e.g. 10001"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                      Country
+                    </label>
+                    <BaseInput
+                      v-model="company.address.country"
+                      type="text"
+                      placeholder="e.g. United States"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -255,7 +318,7 @@
                   v-model="company.description"
                   rows="2"
                   class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-[#2596be] focus:ring-[#2596be]"
-                  placeholder="Enter company description..."
+                  placeholder="e.g. Leading technology company specializing in..."
                 ></textarea>
               </div>
             </div>
@@ -334,6 +397,80 @@ const companyTypes = ref([
 const companies = ref([createEmptyCompany()])
 const errors = reactive({})
 
+// Company type normalization function
+const normalizeCompanyType = (type) => {
+  const typeMap = {
+    'corporation': 'Corporation',
+    'corp': 'Corporation',
+    'inc': 'Corporation',
+    'incorporated': 'Corporation',
+    'llc': 'LLC',
+    'limited liability company': 'LLC',
+    'partnership': 'Partnership',
+    'lp': 'Partnership',
+    'llp': 'Partnership',
+    'startup': 'Startup',
+    'non-profit': 'Non-Profit',
+    'nonprofit': 'Non-Profit',
+    'npo': 'Non-Profit',
+    'other': 'Other'
+  }
+  
+  const normalized = typeMap[type.toLowerCase()] || 'Other'
+  return normalized
+}
+
+// Domain enrichment function
+const handleDomainEnrichment = async (company, index) => {
+  const domain = company.domain.trim()
+  
+  if (!domain) {
+    return
+  }
+
+  // Basic domain validation
+  const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/
+  if (!domainRegex.test(domain)) {
+    error('Please enter a valid domain (e.g., example.com)')
+    return
+  }
+
+  try {
+    const response = await companiesAPI.enrichCompany(domain)
+    const companyData = response.data
+
+    // Auto-fill company fields with enrichment data
+    if (companyData.company_name) company.name = companyData.company_name
+    if (companyData.website) company.website = companyData.website
+    if (companyData.industry) company.industry = companyData.industry
+    
+    // Handle company type mapping with normalization
+    if (companyData.company_type) {
+      const normalizedType = normalizeCompanyType(companyData.company_type)
+      company.type = normalizedType
+    }
+    
+    if (companyData.employees) company.size = companyData.employees
+    if (companyData.revenue) company.annual_revenue = companyData.revenue
+    if (companyData.phone) company.phone = companyData.phone
+    if (companyData.email) company.email = companyData.email
+    if (companyData.linkedin_url) company.linkedin_page = companyData.linkedin_url
+    if (companyData.timezone) company.timezone = companyData.timezone
+
+    // Handle address data
+    if (companyData.address) company.address.street = companyData.address
+    if (companyData.city) company.address.city = companyData.city
+    if (companyData.state) company.address.state = companyData.state
+    if (companyData.postal_code) company.address.postal_code = companyData.postal_code
+    if (companyData.country) company.address.country = companyData.country
+
+    success('Company details auto-filled successfully.')
+  } catch (err) {
+    console.error('Enrichment error:', err)
+    error('Could not fetch details for this domain. Please enter manually.')
+  }
+}
+
 // Create empty company object
 function createEmptyCompany() {
   return {
@@ -407,11 +544,23 @@ const validateForm = () => {
   let isValid = true
   
   companies.value.forEach((company, index) => {
-    if (!company.name.trim()) {
+    // Required field validation
+    if (!company.name?.trim()) {
       errors[`companies.${index}.name`] = 'Company name is required'
       isValid = false
     }
     
+    if (!company.website?.trim()) {
+      errors[`companies.${index}.website`] = 'Website is required'
+      isValid = false
+    }
+    
+    if (!company.industry?.trim()) {
+      errors[`companies.${index}.industry`] = 'Industry is required'
+      isValid = false
+    }
+    
+    // Format validation
     if (company.website && !/^https?:\/\/.+/.test(company.website)) {
       errors[`companies.${index}.website`] = 'Please enter a valid website URL'
       isValid = false

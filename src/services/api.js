@@ -26,7 +26,6 @@ api.interceptors.request.use(
       headers: config.headers,
       params: config.params
     })
-    
     return config
   },
   (error) => {
@@ -113,14 +112,14 @@ export const contactsAPI = {
   updateContact: (id, data) => api.put(`/contacts/${id}`, data),
   deleteContact: (id) => api.delete(`/contacts/${id}`),
   restoreContact: (id) => api.post(`/contacts/${id}/restore`),
-  searchContacts: (query, params = {}) => api.get('/contacts/search', { 
-    params: { q: query, ...params } 
-  }),
+  searchContacts: (query, params = {}) => api.get('/contacts/search', { params: { q: query, ...params } }),
   importCSV: (file) => {
     const formData = new FormData()
     formData.append('file', file)
     return api.post('/contacts/import', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
     })
   },
   getImportStatus: (jobId) => api.get(`/contacts/import/status/${jobId}`),
@@ -135,16 +134,16 @@ export const companiesAPI = {
   deleteCompany: (id) => api.delete(`/companies/${id}`),
   restoreCompany: (id) => api.post(`/companies/${id}/restore`),
   getDeletedCompanies: (params = {}) => api.get('/companies/deleted', { params }),
-  searchCompanies: (query, params = {}) => api.get('/companies/search', { 
-    params: { q: query, ...params } 
-  }),
+  searchCompanies: (query, params = {}) => api.get('/companies/search', { params: { q: query, ...params } }),
   checkDuplicates: (data) => api.post('/companies/check-duplicates', data),
   bulkCreate: (data) => api.post('/companies/bulk-create', data),
   importCSV: (file) => {
     const formData = new FormData()
     formData.append('file', file)
     return api.post('/companies/import', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
     })
   },
   getImportStatus: (jobId) => api.get(`/companies/import/status/${jobId}`),
@@ -152,6 +151,7 @@ export const companiesAPI = {
   detachContact: (companyId, contactId) => api.delete(`/companies/${companyId}/contacts/${contactId}`),
   getCompanyContacts: (companyId) => api.get(`/companies/${companyId}/contacts`),
   getActivityLog: (companyId) => api.get(`/companies/${companyId}/activity-log`),
+  enrichCompany: (domain) => api.get(`/companies/enrich?domain=${domain}`),
 }
 
 // Metadata API endpoints
@@ -221,6 +221,11 @@ export const activitiesAPI = {
   getActivityTimeline: (params = {}) => api.get('/activities/timeline', { params }),
   getUpcomingActivities: (params = {}) => api.get('/activities/upcoming', { params }),
   markCompleted: (id) => api.patch(`/activities/${id}/complete`),
+  completeActivity: (id) => api.patch(`/activities/${id}/complete`),
+  bulkComplete: (ids) => api.post('/activities/bulk-complete', { ids }),
+  bulkDelete: (ids) => api.delete('/activities/bulk-delete', { data: { ids } }),
+  bulkUpdate: (data) => api.patch('/activities/bulk-update', data),
+  exportActivities: (params) => api.get('/activities/export', { params, responseType: 'blob' }),
 }
 
 // Tasks API endpoints
@@ -236,8 +241,9 @@ export const tasksAPI = {
   getTodayTasks: () => api.get('/tasks/today'),
   getOverdueTasks: () => api.get('/tasks/overdue'),
   getUpcomingTasks: (days = 7) => api.get(`/tasks/upcoming?days=${days}`),
-  bulkUpdate: (taskIds, data) => api.patch('/tasks/bulk-update', { task_ids: taskIds, ...data }),
+  bulkUpdate: (taskIds, data) => api.patch('/tasks/bulk-update', { ids: taskIds, ...data }),
   bulkComplete: (taskIds) => api.post('/tasks/bulk-complete', { task_ids: taskIds }),
+  exportTasks: (params) => api.get('/tasks/export', { params, responseType: 'blob' }),
 }
 
 // Campaigns API endpoints
@@ -251,14 +257,11 @@ export const campaignsAPI = {
   scheduleCampaign: (id, scheduledAt) => api.post(`/campaigns/${id}/schedule`, { scheduled_at: scheduledAt }),
   pauseCampaign: (id) => api.post(`/campaigns/${id}/pause`),
   resumeCampaign: (id) => api.post(`/campaigns/${id}/resume`),
-  getCampaignMetrics: (id) => api.get(`/campaigns/${id}/metrics`),
-  getCampaignRecipients: (id, params = {}) => api.get(`/campaigns/${id}/recipients`, { params }),
-  addRecipients: (id, recipientIds) => api.post(`/campaigns/${id}/recipients`, { recipient_ids: recipientIds }),
-  removeRecipients: (id, recipientIds) => api.delete(`/campaigns/${id}/recipients`, { data: { recipient_ids: recipientIds } }),
-  getCampaignEvents: (id) => api.get(`/campaigns/${id}/events`),
-  getWebhookEvents: (params = {}) => api.get('/campaigns/events', { params }),
-  getCampaignTemplates: () => api.get('/campaigns/templates'),
+  getTemplates: () => api.get('/campaigns/templates'),
   duplicateCampaign: (id) => api.post(`/campaigns/${id}/duplicate`),
+  getRecipients: (id) => api.get(`/campaigns/${id}/recipients`),
+  addRecipient: (id, recipientData) => api.post(`/campaigns/${id}/recipients`, recipientData),
+  removeRecipient: (id, recipientId) => api.delete(`/campaigns/${id}/recipients/${recipientId}`)
 }
 
 export default api

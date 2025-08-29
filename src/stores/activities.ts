@@ -122,21 +122,37 @@ export const useActivitiesStore = defineStore('activities', () => {
       const response = await activitiesAPI.getActivities(apiFilters)
       console.log('Activities API response:', response)
       
-      // Handle different response structures
+      // Handle different response structures and map backend fields to frontend fields
+      let activitiesData: any[] = []
+      
       if (response.data && Array.isArray(response.data)) {
         // Direct array response
-        state.value.activities = response.data
+        activitiesData = response.data
         console.log('Using direct array response')
       } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
         // Nested data structure
-        state.value.activities = response.data.data
+        activitiesData = response.data.data
         state.value.meta = response.data.meta || state.value.meta
         console.log('Using nested data structure')
       } else {
         // Empty or unexpected structure
-        state.value.activities = []
+        activitiesData = []
         console.log('Empty or unexpected response structure')
       }
+      
+      // Map backend fields to frontend fields
+      state.value.activities = activitiesData.map(activity => ({
+        ...activity,
+        title: activity.subject || activity.title || '', // Map subject → title
+        description: activity.description || '',
+        type: activity.type || 'other',
+        status: activity.status || 'scheduled',
+        scheduled_at: activity.scheduled_at || '',
+        duration: activity.duration || activity.metadata?.duration_minutes || null,
+        owner: activity.owner || null,
+        notes: activity.notes || activity.metadata?.notes || '',
+        completed_at: activity.completed_at || null
+      }))
       
       console.log('Activities loaded:', state.value.activities.length)
     } catch (err: unknown) {
@@ -161,7 +177,22 @@ export const useActivitiesStore = defineStore('activities', () => {
     try {
       console.log('Fetching activity from API:', id)
       const response = await activitiesAPI.getActivity(id)
-      const activity = response.data.data
+      const activityData = response.data.data
+      
+      // Map backend fields to frontend fields
+      const activity = {
+        ...activityData,
+        title: activityData.subject || activityData.title || '', // Map subject → title
+        description: activityData.description || '',
+        type: activityData.type || 'other',
+        status: activityData.status || 'scheduled',
+        scheduled_at: activityData.scheduled_at || '',
+        duration: activityData.duration || activityData.metadata?.duration_minutes || null,
+        owner: activityData.owner || null,
+        notes: activityData.notes || activityData.metadata?.notes || '',
+        completed_at: activityData.completed_at || null
+      }
+      
       state.value.selectedActivity = activity
       console.log('Activity fetched from API:', activity)
       return activity
@@ -215,7 +246,22 @@ export const useActivitiesStore = defineStore('activities', () => {
       // Call the backend API
       const response = await activitiesAPI.createActivity(mappedData)
       console.log('Create activity response:', response)
-      const newActivity = response.data.data
+      const activityData = response.data.data
+      
+      // Map backend response to frontend format
+      const newActivity = {
+        ...activityData,
+        title: activityData.subject || activityData.title || '', // Map subject → title
+        description: activityData.description || '',
+        type: activityData.type || 'other',
+        status: activityData.status || 'scheduled',
+        scheduled_at: activityData.scheduled_at || '',
+        duration: activityData.duration || activityData.metadata?.duration_minutes || null,
+        owner: activityData.owner || null,
+        notes: activityData.notes || activityData.metadata?.notes || '',
+        completed_at: activityData.completed_at || null
+      }
+      
       console.log('New activity created from API:', newActivity)
       
       // Add the new activity to the list
@@ -284,7 +330,22 @@ export const useActivitiesStore = defineStore('activities', () => {
       // Call the backend API
       const response = await activitiesAPI.updateActivity(id, mappedData)
       console.log('Update activity response:', response)
-      const updatedActivity = response.data.data
+      const activityData = response.data.data
+      
+      // Map backend response to frontend format
+      const updatedActivity = {
+        ...activityData,
+        title: activityData.subject || activityData.title || '', // Map subject → title
+        description: activityData.description || '',
+        type: activityData.type || 'other',
+        status: activityData.status || 'scheduled',
+        scheduled_at: activityData.scheduled_at || '',
+        duration: activityData.duration || activityData.metadata?.duration_minutes || null,
+        owner: activityData.owner || null,
+        notes: activityData.notes || activityData.metadata?.notes || '',
+        completed_at: activityData.completed_at || null
+      }
+      
       console.log('Updated activity from API:', updatedActivity)
       
       // Update in list
@@ -344,22 +405,36 @@ export const useActivitiesStore = defineStore('activities', () => {
     }
   }
 
-  const markCompleted = async (id: number): Promise<Activity> => {
+    const markCompleted = async (id: number): Promise<Activity> => {
     try {
       const response = await activitiesAPI.markCompleted(id)
-      const updatedActivity = response.data.data
+      const activityData = response.data.data
       
+      // Map backend response to frontend format
+      const updatedActivity = {
+        ...activityData,
+        title: activityData.subject || activityData.title || '', // Map subject → title
+        description: activityData.description || '',
+        type: activityData.type || 'other',
+        status: activityData.status || 'scheduled',
+        scheduled_at: activityData.scheduled_at || '',
+        duration: activityData.duration || activityData.metadata?.duration_minutes || null,
+        owner: activityData.owner || null,
+        notes: activityData.notes || activityData.metadata?.notes || '',
+        completed_at: activityData.completed_at || null
+      }
+
       // Update in list
       const index = state.value.activities.findIndex(a => a.id === id)
       if (index !== -1) {
         state.value.activities[index] = updatedActivity
       }
-      
+
       // Update selected activity if it's the same
       if (state.value.selectedActivity?.id === id) {
         state.value.selectedActivity = updatedActivity
       }
-      
+
       return updatedActivity
     } catch (err: unknown) {
       console.error('Error marking activity as completed:', err)
@@ -370,7 +445,21 @@ export const useActivitiesStore = defineStore('activities', () => {
   const getActivitiesByEntity = async (entityType: string, entityId: number): Promise<Activity[]> => {
     try {
       const response = await activitiesAPI.getActivitiesByEntity(entityType, entityId)
-      return response.data.data
+      const activitiesData = response.data.data || []
+      
+      // Map backend fields to frontend fields
+      return activitiesData.map((activity: any) => ({
+        ...activity,
+        title: activity.subject || activity.title || '', // Map subject → title
+        description: activity.description || '',
+        type: activity.type || 'other',
+        status: activity.status || 'scheduled',
+        scheduled_at: activity.scheduled_at || '',
+        duration: activity.duration || activity.metadata?.duration_minutes || null,
+        owner: activity.owner || null,
+        notes: activity.notes || activity.metadata?.notes || '',
+        completed_at: activity.completed_at || null
+      }))
     } catch (err: unknown) {
       console.error('Error fetching activities by entity:', err)
       return []
@@ -380,10 +469,99 @@ export const useActivitiesStore = defineStore('activities', () => {
   const getUpcomingActivities = async (params = {}): Promise<Activity[]> => {
     try {
       const response = await activitiesAPI.getUpcomingActivities(params)
-      return response.data.data
+      const activitiesData = response.data.data || []
+      
+      // Map backend fields to frontend fields
+      return activitiesData.map((activity: any) => ({
+        ...activity,
+        title: activity.subject || activity.title || '', // Map subject → title
+        description: activity.description || '',
+        type: activity.type || 'other',
+        status: activity.status || 'scheduled',
+        scheduled_at: activity.scheduled_at || '',
+        duration: activity.duration || activity.metadata?.duration_minutes || null,
+        owner: activity.owner || null,
+        notes: activity.notes || activity.metadata?.notes || '',
+        completed_at: activity.completed_at || null
+      }))
     } catch (err: unknown) {
       console.error('Error fetching upcoming activities:', err)
       return []
+    }
+  }
+
+  // Fetch timeline activities
+  const fetchTimeline = async (): Promise<void> => {
+    try {
+      const response = await activitiesAPI.getActivityTimeline()
+      const activitiesData = response.data.data || []
+      
+      // Map backend fields to frontend fields
+      state.value.activities = activitiesData.map((activity: any) => ({
+        ...activity,
+        title: activity.subject || activity.title || '', // Map subject → title
+        description: activity.description || '',
+        type: activity.type || 'other',
+        status: activity.status || 'scheduled',
+        scheduled_at: activity.scheduled_at || '',
+        duration: activity.duration || activity.metadata?.duration_minutes || null,
+        owner: activity.owner || null,
+        notes: activity.notes || activity.metadata?.notes || '',
+        completed_at: activity.completed_at || null
+      }))
+    } catch (err: unknown) {
+      console.error('Error fetching timeline activities:', err)
+      state.value.activities = []
+    }
+  }
+
+  // Fetch upcoming activities
+  const fetchUpcoming = async (): Promise<void> => {
+    try {
+      const response = await activitiesAPI.getUpcomingActivities()
+      const activitiesData = response.data.data || []
+      
+      // Map backend fields to frontend fields
+      state.value.activities = activitiesData.map((activity: any) => ({
+        ...activity,
+        title: activity.subject || activity.title || '', // Map subject → title
+        description: activity.description || '',
+        type: activity.type || 'other',
+        status: activity.status || 'scheduled',
+        scheduled_at: activity.scheduled_at || '',
+        duration: activity.duration || activity.metadata?.duration_minutes || null,
+        owner: activity.owner || null,
+        notes: activity.notes || activity.metadata?.notes || '',
+        completed_at: activity.completed_at || null
+      }))
+    } catch (err: unknown) {
+      console.error('Error fetching upcoming activities:', err)
+      state.value.activities = []
+    }
+  }
+
+  // Fetch entity-specific activities
+  const fetchEntityActivities = async (entityType: string, entityId: number): Promise<void> => {
+    try {
+      const response = await activitiesAPI.getActivitiesByEntity(entityType, entityId)
+      const activitiesData = response.data.data || []
+      
+      // Map backend fields to frontend fields
+      state.value.activities = activitiesData.map((activity: any) => ({
+        ...activity,
+        title: activity.subject || activity.title || '', // Map subject → title
+        description: activity.description || '',
+        type: activity.type || 'other',
+        status: activity.status || 'scheduled',
+        scheduled_at: activity.scheduled_at || '',
+        duration: activity.duration || activity.metadata?.duration_minutes || null,
+        owner: activity.owner || null,
+        notes: activity.notes || activity.metadata?.notes || '',
+        completed_at: activity.completed_at || null
+      }))
+    } catch (err: unknown) {
+      console.error('Error fetching entity activities:', err)
+      state.value.activities = []
     }
   }
 
@@ -403,6 +581,116 @@ export const useActivitiesStore = defineStore('activities', () => {
       sort: '-scheduled_at',
       page: 1,
       per_page: 15
+    }
+  }
+
+  // Complete a single activity
+  const completeActivity = async (id: number): Promise<Activity> => {
+    try {
+      const response = await activitiesAPI.completeActivity(id)
+      const activityData = response.data.data
+      
+      // Map backend response to frontend format
+      const updatedActivity = {
+        ...activityData,
+        title: activityData.subject || activityData.title || '', // Map subject → title
+        description: activityData.description || '',
+        type: activityData.type || 'other',
+        status: activityData.status || 'scheduled',
+        scheduled_at: activityData.scheduled_at || '',
+        duration: activityData.duration || activityData.metadata?.duration_minutes || null,
+        owner: activityData.owner || null,
+        notes: activityData.notes || activityData.metadata?.notes || '',
+        completed_at: activityData.completed_at || null
+      }
+
+      // Update in list
+      const index = state.value.activities.findIndex(a => a.id === id)
+      if (index !== -1) {
+        state.value.activities[index] = updatedActivity
+      }
+
+      // Update selected activity if it's the same
+      if (state.value.selectedActivity?.id === id) {
+        state.value.selectedActivity = updatedActivity
+      }
+
+      return updatedActivity
+    } catch (err: unknown) {
+      console.error('Error completing activity:', err)
+      throw err
+    }
+  }
+
+  // Bulk complete activities
+  const bulkComplete = async (ids: number[]): Promise<void> => {
+    try {
+      await activitiesAPI.bulkComplete(ids)
+      
+      // Update activities in the list
+      state.value.activities = state.value.activities.map(activity => {
+        if (ids.includes(activity.id)) {
+          return {
+            ...activity,
+            status: 'completed',
+            completed_at: new Date().toISOString()
+          }
+        }
+        return activity
+      })
+    } catch (err: unknown) {
+      console.error('Error bulk completing activities:', err)
+      throw err
+    }
+  }
+
+  // Bulk delete activities
+  const bulkDelete = async (ids: number[]): Promise<void> => {
+    try {
+      await activitiesAPI.bulkDelete(ids)
+      
+      // Remove activities from the list
+      state.value.activities = state.value.activities.filter(activity => !ids.includes(activity.id))
+      
+      // Update meta total
+      state.value.meta.total -= ids.length
+    } catch (err: unknown) {
+      console.error('Error bulk deleting activities:', err)
+      throw err
+    }
+  }
+
+  // Bulk update activities
+  const bulkUpdate = async (data: { ids: number[], status?: string, scheduled_at?: string, duration?: number, notes?: string }): Promise<void> => {
+    try {
+      await activitiesAPI.bulkUpdate(data)
+      
+      // Update activities in the list
+      state.value.activities = state.value.activities.map(activity => {
+        if (data.ids.includes(activity.id)) {
+          return {
+            ...activity,
+            ...(data.status && { status: data.status as any }),
+            ...(data.scheduled_at && { scheduled_at: data.scheduled_at }),
+            ...(data.duration && { duration: data.duration }),
+            ...(data.notes && { notes: data.notes })
+          }
+        }
+        return activity
+      })
+    } catch (err: unknown) {
+      console.error('Error bulk updating activities:', err)
+      throw err
+    }
+  }
+
+  // Export activities
+  const exportActivities = async (params: any): Promise<any> => {
+    try {
+      return await activitiesAPI.exportActivities(params)
+    } catch (err: unknown) {
+      console.error('Error exporting activities:', err)
+      throw err
     }
   }
 
@@ -430,8 +718,16 @@ export const useActivitiesStore = defineStore('activities', () => {
     markCompleted,
     getActivitiesByEntity,
     getUpcomingActivities,
+    fetchTimeline,
+    fetchUpcoming,
+    fetchEntityActivities,
     setSelectedActivity,
     clearError,
-    resetFilters
+    resetFilters,
+    completeActivity,
+    bulkComplete,
+    bulkDelete,
+    bulkUpdate,
+    exportActivities
   }
 })

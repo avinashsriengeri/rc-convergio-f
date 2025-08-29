@@ -154,6 +154,7 @@ export const tasksAPI: {
   getUpcomingTasks: (days?: number) => Promise<AxiosResponse<ApiResponse>>
   bulkUpdate: (taskIds: number[], data: any) => Promise<AxiosResponse<ApiResponse>>
   bulkComplete: (taskIds: number[]) => Promise<AxiosResponse<ApiResponse>>
+  exportTasks: (params?: any) => Promise<AxiosResponse<Blob>>
 }
 
 // Campaigns API

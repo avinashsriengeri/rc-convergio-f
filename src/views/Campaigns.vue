@@ -21,6 +21,16 @@
               Refresh
             </BaseButton>
             <BaseButton
+              variant="outline"
+              @click="showTemplatesModal = true"
+              class="flex items-center"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+              Templates
+            </BaseButton>
+            <BaseButton
               variant="primary"
               @click="showCreateModal = true"
               class="flex items-center"
@@ -330,6 +340,29 @@
                 >
                   Send Now
                 </BaseButton>
+                <BaseButton
+                  v-if="campaign.status === 'active'"
+                  variant="warning"
+                  size="sm"
+                  @click="pauseCampaign(campaign)"
+                >
+                  Pause
+                </BaseButton>
+                <BaseButton
+                  v-if="campaign.status === 'paused'"
+                  variant="success"
+                  size="sm"
+                  @click="resumeCampaign(campaign)"
+                >
+                  Resume
+                </BaseButton>
+                <BaseButton
+                  variant="outline"
+                  size="sm"
+                  @click="duplicateCampaign(campaign)"
+                >
+                  Duplicate
+                </BaseButton>
               </div>
               <div class="flex items-center space-x-1">
                 <button
@@ -405,6 +438,44 @@
 
     <!-- Campaign Form Modal -->
     <div v-if="showCreateModal || showEditModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    
+    <!-- Templates Modal -->
+    <div v-if="showTemplatesModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+      <div class="relative top-20 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-medium text-gray-900">Email Templates</h3>
+            <button
+              @click="showTemplatesModal = false"
+              class="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <!-- Templates List -->
+          <div class="space-y-4">
+            <div v-for="template in templates" :key="template.id" class="border border-gray-200 rounded-lg p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="text-lg font-medium text-gray-900">{{ template.name }}</h4>
+                  <p class="text-sm text-gray-600">{{ template.description }}</p>
+                </div>
+                <BaseButton
+                  variant="outline"
+                  size="sm"
+                  @click="useTemplate(template)"
+                >
+                  Use Template
+                </BaseButton>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
       <div class="relative top-20 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">
         <div class="mt-3">
           <h3 class="text-lg font-medium text-gray-900 mb-4">
@@ -723,6 +794,56 @@
       </div>
     </div>
 
+    <!-- Templates Modal -->
+    <div v-if="showTemplatesModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+      <div class="relative top-20 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-medium text-gray-900">Campaign Templates</h3>
+            <button
+              @click="showTemplatesModal = false"
+              class="text-gray-400 hover:text-gray-600"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <!-- Loading State -->
+          <div v-if="loadingTemplates" class="flex justify-center items-center py-12">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
+          
+          <!-- Templates List -->
+          <div v-else-if="templates.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div
+              v-for="template in templates"
+              :key="template.id"
+              class="bg-gray-50 p-4 rounded-lg border hover:border-blue-300 cursor-pointer"
+              @click="useTemplate(template)"
+            >
+              <h4 class="font-medium text-gray-900 mb-2">{{ template.name }}</h4>
+              <p class="text-sm text-gray-600 mb-3">{{ template.description }}</p>
+              <div class="flex items-center justify-between text-xs text-gray-500">
+                <span>{{ template.type }}</span>
+                <span>{{ template.category }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Empty State -->
+          <div v-else class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">No templates available</h3>
+            <p class="mt-1 text-sm text-gray-500">No campaign templates found.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Delete Confirmation Modal -->
     <ConfirmationModal
       v-if="showDeleteModal"
@@ -737,7 +858,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { debounce } from 'lodash-es'
 import { useCampaignsStore } from '@/stores/campaigns'
 import { useRefsStore } from '@/stores/refs'
@@ -766,9 +887,17 @@ const showEditModal = ref(false)
 const showDetailModal = ref(false)
 const showMetricsModal = ref(false)
 const showDeleteModal = ref(false)
+const showTemplatesModal = ref(false)
+const showRecipientsModal = ref(false)
 const campaignToDelete = ref<Campaign | null>(null)
 const selectedCampaign = ref<Campaign | null>(null)
 const campaignMetrics = ref<CampaignMetrics | null>(null)
+
+// Templates and recipients data
+const templates = ref<any[]>([])
+const recipients = ref<any[]>([])
+const loadingTemplates = ref(false)
+const loadingRecipients = ref(false)
 
 // Filters
 const filters = reactive({
@@ -933,6 +1062,87 @@ const viewMetrics = async (campaign: Campaign) => {
   }
 }
 
+// Pause campaign
+const pauseCampaign = async (campaign: Campaign) => {
+  try {
+    await campaignsStore.pauseCampaign(campaign.id)
+    success('Campaign paused successfully')
+    fetchCampaigns()
+  } catch (err: any) {
+    showError(err.response?.data?.message || 'Failed to pause campaign')
+  }
+}
+
+// Resume campaign
+const resumeCampaign = async (campaign: Campaign) => {
+  try {
+    await campaignsStore.resumeCampaign(campaign.id)
+    success('Campaign resumed successfully')
+    fetchCampaigns()
+  } catch (err: any) {
+    showError(err.response?.data?.message || 'Failed to resume campaign')
+  }
+}
+
+// Duplicate campaign
+const duplicateCampaign = async (campaign: Campaign) => {
+  try {
+    const duplicatedCampaign = await campaignsStore.duplicateCampaign(campaign.id)
+    success('Campaign duplicated successfully')
+    fetchCampaigns()
+  } catch (err: any) {
+    showError(err.response?.data?.message || 'Failed to duplicate campaign')
+  }
+}
+
+// Load templates
+const loadTemplates = async () => {
+  loadingTemplates.value = true
+  try {
+    const response = await campaignsStore.getTemplates()
+    templates.value = response.data || []
+  } catch (err: any) {
+    showError('Failed to load templates')
+  } finally {
+    loadingTemplates.value = false
+  }
+}
+
+// Load recipients for a campaign
+const loadRecipients = async (campaignId: number) => {
+  loadingRecipients.value = true
+  try {
+    const response = await campaignsStore.getRecipients(campaignId)
+    recipients.value = response.data || []
+  } catch (err: any) {
+    showError('Failed to load recipients')
+  } finally {
+    loadingRecipients.value = false
+  }
+}
+
+// Add recipient to campaign
+const addRecipient = async (campaignId: number, recipientData: any) => {
+  try {
+    await campaignsStore.addRecipient(campaignId, recipientData)
+    success('Recipient added successfully')
+    await loadRecipients(campaignId)
+  } catch (err: any) {
+    showError(err.response?.data?.message || 'Failed to add recipient')
+  }
+}
+
+// Remove recipient from campaign
+const removeRecipient = async (campaignId: number, recipientId: number) => {
+  try {
+    await campaignsStore.removeRecipient(campaignId, recipientId)
+    success('Recipient removed successfully')
+    await loadRecipients(campaignId)
+  } catch (err: any) {
+    showError(err.response?.data?.message || 'Failed to remove recipient')
+  }
+}
+
 const deleteCampaign = (campaign: Campaign) => {
   campaignToDelete.value = campaign
   showDeleteModal.value = true
@@ -957,6 +1167,8 @@ const closeModal = () => {
   showEditModal.value = false
   showDetailModal.value = false
   showMetricsModal.value = false
+  showTemplatesModal.value = false
+  showRecipientsModal.value = false
   campaignToDelete.value = null
   selectedCampaign.value = null
   campaignMetrics.value = null
@@ -969,6 +1181,23 @@ const closeModal = () => {
     content: '',
     scheduled_at: ''
   })
+}
+
+// Use template function
+const useTemplate = (template: any) => {
+  // Populate the campaign form with template data
+  Object.assign(campaignForm, {
+    name: template.name,
+    description: template.description || '',
+    type: template.type,
+    subject: template.subject || '',
+    content: template.content || '',
+    scheduled_at: ''
+  })
+  
+  // Close templates modal and open create modal
+  showTemplatesModal.value = false
+  showCreateModal.value = true
 }
 
 const insertText = (text: string) => {
@@ -1025,6 +1254,13 @@ const getStatusTextClass = (status: string) => {
 onMounted(() => {
   fetchCampaigns()
   refsStore.fetchUsers()
+})
+
+// Watch for templates modal opening
+watch(showTemplatesModal, (newValue) => {
+  if (newValue && templates.value.length === 0) {
+    loadTemplates()
+  }
 })
 </script>
 

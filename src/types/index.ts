@@ -313,19 +313,22 @@ export interface WebhookEvent extends BaseEntity {
 }
 
 // Form types
-export interface ActivityFormData {
-  title: string
-  description?: string
-  type: ActivityType
-  status: ActivityStatus
-  scheduled_at?: string
-  duration?: number
-  owner_id: number
-  contact_id?: number
-  company_id?: number
-  deal_id?: number
-  notes?: string
-}
+  export interface ActivityFormData {
+    title: string
+    description?: string
+    type: ActivityType
+    status: ActivityStatus
+    scheduled_at?: string
+    duration?: number
+    owner_id: number
+    contact_id?: number
+    company_id?: number
+    deal_id?: number
+    notes?: string
+    tags?: string[]
+    related_entity_type?: string
+    related_entity_id?: number
+  }
 
 export interface TaskFormData {
   title: string

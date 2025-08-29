@@ -21,6 +21,17 @@
               Refresh
             </BaseButton>
             <BaseButton
+              variant="outline"
+              @click="exportTasks"
+              :loading="exporting"
+              class="flex items-center"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Export CSV
+            </BaseButton>
+            <BaseButton
               variant="primary"
               @click="showCreateModal = true"
               class="flex items-center"
@@ -196,8 +207,54 @@
       </div>
     </div>
 
+    <!-- Tabs -->
+    <div class="bg-white border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex space-x-8">
+          <button
+            @click="handleTabChange('all')"
+            class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+            :class="activeTab === 'all' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          >
+            All Tasks
+          </button>
+          <button
+            @click="handleTabChange('overdue')"
+            class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+            :class="activeTab === 'overdue' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          >
+            Overdue
+          </button>
+          <button
+            @click="handleTabChange('upcoming')"
+            class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+            :class="activeTab === 'upcoming' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          >
+            Upcoming
+          </button>
+          <button
+            v-if="assigneeId"
+            @click="handleTabChange('assignee')"
+            class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+            :class="activeTab === 'assignee' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          >
+            My Tasks
+          </button>
+          <button
+            v-if="ownerId"
+            @click="handleTabChange('owner')"
+            class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+            :class="activeTab === 'owner' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          >
+            Created by Me
+          </button>
+        </nav>
+      </div>
+    </div>
+
     <!-- Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
       <!-- Loading State -->
       <div v-if="loading && (!tasks || tasks.length === 0)" class="flex justify-center items-center py-12">
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -234,8 +291,52 @@
         </div>
       </div>
 
+      <!-- Bulk Operations -->
+      <div v-if="tasks && tasks.length > 0" class="mb-6 bg-white shadow-sm rounded-lg p-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <label class="flex items-center">
+              <input
+                type="checkbox"
+                v-model="selectAll"
+                @change="toggleSelectAll"
+                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+              />
+              <span class="ml-2 text-sm font-medium text-gray-700">Select All</span>
+            </label>
+            <span v-if="selectedTasks.length > 0" class="text-sm text-gray-500">
+              {{ selectedTasks.length }} selected
+            </span>
+          </div>
+          <div v-if="selectedTasks.length > 0" class="flex items-center space-x-2">
+            <BaseButton
+              variant="outline"
+              size="sm"
+              @click="bulkComplete"
+              :loading="bulkLoading"
+            >
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Mark Complete
+            </BaseButton>
+            <BaseButton
+              variant="outline"
+              size="sm"
+              @click="bulkUpdate"
+              :loading="bulkLoading"
+            >
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Bulk Update
+            </BaseButton>
+          </div>
+        </div>
+      </div>
+
       <!-- Tasks List -->
-      <div v-else-if="tasks && tasks.length > 0" class="space-y-4">
+      <div v-if="!loading && tasks && tasks.length > 0" class="space-y-4">
         <div
           v-for="task in tasks"
           :key="task.id"
@@ -244,12 +345,12 @@
         >
           <div class="flex items-start justify-between">
             <div class="flex items-start space-x-4 flex-1">
-              <!-- Checkbox -->
+              <!-- Bulk Selection Checkbox -->
               <div class="flex-shrink-0 mt-1">
                 <input
                   type="checkbox"
-                  :checked="task.status === 'completed'"
-                  @change="toggleTaskStatus(task)"
+                  :value="task.id"
+                  v-model="selectedTasks"
                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
               </div>
@@ -618,6 +719,130 @@
       @confirm="confirmDelete"
       @cancel="showDeleteModal = false"
     />
+
+    <!-- Bulk Update Modal -->
+    <div v-if="showBulkUpdateModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+      <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-medium text-gray-900">Bulk Update Tasks</h3>
+            <button
+              @click="closeBulkUpdateModal"
+              class="text-gray-400 hover:text-gray-600"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <div class="mb-4 p-3 bg-blue-50 rounded-md">
+            <p class="text-sm text-blue-800">
+              <strong>{{ selectedTasks.length }}</strong> tasks selected for bulk update.
+            </p>
+          </div>
+
+          <form @submit.prevent="saveBulkUpdate" class="space-y-4">
+            <!-- Status -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Status
+              </label>
+              <select
+                v-model="bulkUpdateForm.status"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Keep current status</option>
+                <option value="pending">Pending</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+
+            <!-- Priority -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Priority
+              </label>
+              <select
+                v-model="bulkUpdateForm.priority"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Keep current priority</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="urgent">Urgent</option>
+              </select>
+            </div>
+
+            <!-- Assignee -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Assignee
+              </label>
+              <select
+                v-model="bulkUpdateForm.assignee_id"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Keep current assignee</option>
+                <option
+                  v-for="user in refsStore.users"
+                  :key="user.id"
+                  :value="user.id"
+                  v-if="refsStore.users && refsStore.users.length > 0"
+                >
+                  {{ user.name }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Due Date -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Due Date
+              </label>
+              <BaseInput
+                v-model="bulkUpdateForm.due_date"
+                type="date"
+                placeholder="Keep current due date"
+              />
+            </div>
+
+            <!-- Notes -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Notes
+              </label>
+              <textarea
+                v-model="bulkUpdateForm.notes"
+                rows="3"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Add notes (optional)"
+              ></textarea>
+            </div>
+
+            <div class="flex items-center justify-end space-x-3 pt-4 border-t">
+              <BaseButton
+                type="button"
+                variant="outline"
+                @click="closeBulkUpdateModal"
+              >
+                Cancel
+              </BaseButton>
+              <BaseButton
+                type="submit"
+                variant="primary"
+                :loading="bulkLoading"
+              >
+                Update {{ selectedTasks.length }} Tasks
+              </BaseButton>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -645,11 +870,19 @@ const error = computed(() => tasksStore.error)
 const tasks = computed(() => tasksStore.tasks)
 const meta = computed(() => tasksStore.meta)
 
+// Missing reactive state variables
+const exporting = ref(false)
+const bulkLoading = ref(false)
+const selectedTasks = ref<number[]>([])
+const selectAll = ref(false)
+const activeTab = ref('all')
+
 // Modal states
 const showCreateModal = ref(false)
 const showEditModal = ref(false)
 const showDetailModal = ref(false)
 const showDeleteModal = ref(false)
+const showBulkUpdateModal = ref(false)
 const taskToDelete = ref<Task | null>(null)
 const selectedTask = ref<Task | null>(null)
 
@@ -677,6 +910,15 @@ const taskForm = reactive<TaskFormData>({
   notes: '',
   related_entity_type: undefined,
   related_entity_id: undefined
+})
+
+// Bulk update form
+const bulkUpdateForm = reactive({
+  status: '',
+  priority: '',
+  assignee_id: undefined,
+  due_date: '',
+  notes: ''
 })
 
 // Computed
@@ -831,13 +1073,11 @@ const buildParams = (filters: any) => {
 const fetchTasks = async () => {
   try {
     const params = buildParams(filters)
-    console.log('Fetching tasks with params:', params)
-    
+
     await tasksStore.fetchTasks(params)
-    
+
     // Safety fallback: if params are non-empty and result is empty, try unfiltered
     if (Object.keys(params).length > 0 && tasks.value.length === 0) {
-      console.log('No tasks found with filters, trying without filters...')
       await tasksStore.fetchTasks({})
     }
   } catch (err: any) {
@@ -887,6 +1127,54 @@ const debouncedSearch = debounce(() => {
   filters.page = 1
   applyFilters()
 }, 300)
+
+// Tab handling
+const handleTabChange = async (tab: string) => {
+  activeTab.value = tab
+  filters.page = 1
+  
+  switch (tab) {
+    case 'overdue':
+      await fetchOverdueTasks()
+      break
+    case 'upcoming':
+      await fetchUpcomingTasks()
+      break
+    case 'assignee':
+      // For now, fetch all tasks with assignee filter
+      // This could be enhanced to show current user's assigned tasks
+      await fetchTasks()
+      break
+    case 'owner':
+      // For now, fetch all tasks with owner filter
+      // This could be enhanced to show current user's owned tasks
+      await fetchTasks()
+      break
+    default:
+      await fetchTasks()
+      break
+  }
+}
+
+// Fetch overdue tasks
+const fetchOverdueTasks = async () => {
+  try {
+    await tasksStore.fetchOverdueTasks()
+  } catch (err) {
+    console.error('Error fetching overdue tasks:', err)
+    showError('Failed to load overdue tasks')
+  }
+}
+
+// Fetch upcoming tasks
+const fetchUpcomingTasks = async () => {
+  try {
+    await tasksStore.fetchUpcomingTasks(7) // Default to 7 days
+  } catch (err) {
+    console.error('Error fetching upcoming tasks:', err)
+    showError('Failed to load upcoming tasks')
+  }
+}
 
 const saveTask = async () => {
   if (!isFormValid.value) {
@@ -994,6 +1282,56 @@ const closeModal = () => {
   })
 }
 
+const closeBulkUpdateModal = () => {
+  showBulkUpdateModal.value = false
+  Object.assign(bulkUpdateForm, {
+    status: '',
+    priority: '',
+    assignee_id: undefined,
+    due_date: '',
+    notes: ''
+  })
+}
+
+const saveBulkUpdate = async () => {
+  // Check if at least one field is filled
+  const hasChanges = bulkUpdateForm.status || 
+                    bulkUpdateForm.priority || 
+                    bulkUpdateForm.assignee_id || 
+                    bulkUpdateForm.due_date || 
+                    bulkUpdateForm.notes
+  
+  if (!hasChanges) {
+    showError('Please fill in at least one field to update')
+    return
+  }
+  
+  bulkLoading.value = true
+  try {
+    const updateData: any = {
+      ids: selectedTasks.value
+    }
+    
+    if (bulkUpdateForm.status) updateData.status = bulkUpdateForm.status
+    if (bulkUpdateForm.priority) updateData.priority = bulkUpdateForm.priority
+    if (bulkUpdateForm.assignee_id) updateData.assignee_id = bulkUpdateForm.assignee_id
+    if (bulkUpdateForm.due_date) updateData.due_date = bulkUpdateForm.due_date
+    if (bulkUpdateForm.notes) updateData.notes = bulkUpdateForm.notes
+    
+    await tasksStore.bulkUpdate(selectedTasks.value, updateData)
+    success(`${selectedTasks.value.length} tasks updated successfully`)
+    selectedTasks.value = []
+    selectAll.value = false
+    closeBulkUpdateModal()
+    await fetchTasks()
+  } catch (err) {
+    console.error('Error bulk updating tasks:', err)
+    showError('Failed to update tasks')
+  } finally {
+    bulkLoading.value = false
+  }
+}
+
 const getTaskBorderClass = (task: Task) => {
   if (task.status === 'completed') return 'border-green-500'
   if (isOverdue(task.due_date)) return 'border-red-500'
@@ -1042,6 +1380,68 @@ const getStatusTextClass = (status: string) => {
   }
   return classes[status as keyof typeof classes] || 'text-gray-600'
 }
+
+// Bulk operations
+const toggleSelectAll = () => {
+  if (selectAll.value) {
+    selectedTasks.value = tasks.value.map(task => task.id)
+  } else {
+    selectedTasks.value = []
+  }
+}
+
+const bulkComplete = async () => {
+  if (selectedTasks.value.length === 0) return
+  
+  bulkLoading.value = true
+  try {
+    await tasksStore.bulkComplete(selectedTasks.value)
+    success(`${selectedTasks.value.length} tasks marked as complete`)
+    selectedTasks.value = []
+    selectAll.value = false
+    await fetchTasks()
+  } catch (err) {
+    console.error('Error bulk completing tasks:', err)
+    showError('Failed to mark tasks as complete')
+  } finally {
+    bulkLoading.value = false
+  }
+}
+
+const bulkUpdate = async () => {
+  if (selectedTasks.value.length === 0) return
+  
+  // Show bulk update modal
+  showBulkUpdateModal.value = true
+}
+
+const exportTasks = async () => {
+  exporting.value = true
+  try {
+    const params = buildParams(filters)
+    const response = await tasksStore.exportTasks(params)
+    
+    // Create download link
+    const blob = new Blob([response.data], { type: 'text/csv' })
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `tasks-export-${new Date().toISOString().split('T')[0]}.csv`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+    
+    success('Tasks exported successfully')
+  } catch (err) {
+    console.error('Error exporting tasks:', err)
+    showError('Failed to export tasks')
+  } finally {
+    exporting.value = false
+  }
+}
+
+
 
 // Lifecycle
 onMounted(async () => {

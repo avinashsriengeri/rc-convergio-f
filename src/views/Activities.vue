@@ -21,6 +21,17 @@
               Refresh
             </BaseButton>
             <BaseButton
+              variant="outline"
+              @click="exportActivities"
+              :loading="exporting"
+              class="flex items-center"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Export CSV
+            </BaseButton>
+            <BaseButton
               variant="primary"
               @click="showCreateModal = true"
               class="flex items-center"
@@ -175,6 +186,43 @@
       </div>
     </div>
 
+    <!-- Tabs -->
+    <div class="bg-white border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex space-x-8">
+          <button
+            @click="handleTabChange('all')"
+            class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+            :class="activeTab === 'all' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          >
+            All Activities
+          </button>
+          <button
+            @click="handleTabChange('timeline')"
+            class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+            :class="activeTab === 'timeline' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          >
+            Timeline
+          </button>
+          <button
+            @click="handleTabChange('upcoming')"
+            class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+            :class="activeTab === 'upcoming' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          >
+            Upcoming
+          </button>
+          <button
+            v-if="entityType && entityId"
+            @click="handleTabChange('entity')"
+            class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+            :class="activeTab === 'entity' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          >
+            {{ entityType }} Activities
+          </button>
+        </nav>
+      </div>
+    </div>
+
     <!-- Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Loading State -->
@@ -213,14 +261,78 @@
         </div>
       </div>
 
+      <!-- Bulk Operations -->
+      <div v-if="activities.length > 0" class="mb-6 bg-white shadow-sm rounded-lg p-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <label class="flex items-center">
+              <input
+                type="checkbox"
+                v-model="selectAll"
+                @change="toggleSelectAll"
+                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+              />
+              <span class="ml-2 text-sm font-medium text-gray-700">Select All</span>
+            </label>
+            <span v-if="selectedActivities.length > 0" class="text-sm text-gray-500">
+              {{ selectedActivities.length }} selected
+            </span>
+          </div>
+          <div v-if="selectedActivities.length > 0" class="flex items-center space-x-2">
+            <BaseButton
+              variant="outline"
+              size="sm"
+              @click="bulkComplete"
+              :loading="bulkLoading"
+            >
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Mark Complete
+            </BaseButton>
+            <BaseButton
+              variant="outline"
+              size="sm"
+              @click="bulkUpdate"
+              :loading="bulkLoading"
+            >
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Bulk Update
+            </BaseButton>
+            <BaseButton
+              variant="danger"
+              size="sm"
+              @click="bulkDelete"
+              :loading="bulkLoading"
+            >
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Delete Selected
+            </BaseButton>
+          </div>
+        </div>
+      </div>
+
       <!-- Activities Timeline -->
-      <div v-else class="space-y-6">
+      <div v-if="!loading && !error && activities.length > 0" class="space-y-6">
         <div
           v-for="activity in activities"
           :key="activity.id"
           class="bg-white shadow-sm rounded-lg p-6"
         >
           <div class="flex items-start space-x-4">
+            <!-- Checkbox -->
+            <div class="flex-shrink-0">
+              <input
+                type="checkbox"
+                :value="activity.id"
+                v-model="selectedActivities"
+                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+              />
+            </div>
             <!-- Activity Icon -->
             <div class="flex-shrink-0">
               <div class="w-10 h-10 rounded-full flex items-center justify-center" :class="getActivityIconClass(activity.type)">
@@ -237,8 +349,8 @@
             <div class="flex-1 min-w-0">
               <div class="flex items-center justify-between">
                 <div>
-                  <h3 class="text-lg font-medium text-gray-900">{{ activity.title }}</h3>
-                  <p class="text-sm text-gray-500">{{ activity.description }}</p>
+                  <h3 class="text-lg font-medium text-gray-900">{{ activity.title || 'Untitled Activity' }}</h3>
+                  <p class="text-sm text-gray-500">{{ activity.description || '-' }}</p>
                 </div>
                 <div class="flex items-center space-x-2">
                   <span
@@ -268,6 +380,16 @@
                        </svg>
                      </button>
                      <button
+                       v-if="activity.status !== 'completed'"
+                       @click="markComplete(activity)"
+                       class="text-gray-400 hover:text-green-600 p-1"
+                       title="Mark complete"
+                     >
+                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                       </svg>
+                     </button>
+                     <button
                        @click="deleteActivity(activity)"
                        class="text-gray-400 hover:text-red-600 p-1"
                        title="Delete activity"
@@ -286,13 +408,13 @@
                   <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <span>{{ formatDate(activity.scheduled_at) }}</span>
+                  <span>{{ activity.scheduled_at ? formatDate(activity.scheduled_at) : '-' }}</span>
                 </div>
                 <div class="flex items-center">
                   <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span>{{ formatTime(activity.scheduled_at) }}</span>
+                  <span>{{ activity.scheduled_at ? formatTime(activity.scheduled_at) : '-' }}</span>
                 </div>
                 <div v-if="activity.duration" class="flex items-center">
                   <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -309,7 +431,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                   </svg>
                   <span class="text-sm text-gray-600">
-                    Related to: {{ activity.related_entity.type }} - {{ activity.related_entity.name }}
+                    Related to: {{ activity.related_entity?.type || 'Unknown' }} - {{ activity.related_entity?.name || 'Unknown' }}
                   </span>
                 </div>
               </div>
@@ -522,6 +644,100 @@
       @confirm="confirmDelete"
       @cancel="showDeleteModal = false"
     />
+
+    <!-- Bulk Update Modal -->
+    <div v-if="showBulkUpdateModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+      <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">
+            Bulk Update Activities ({{ selectedActivities.length }} selected)
+          </h3>
+          <form @submit.prevent="saveBulkUpdate">
+            <div class="space-y-4">
+              <!-- Status -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Status
+                </label>
+                <select
+                  v-model="bulkUpdateForm.status"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">No change</option>
+                  <option value="scheduled">Scheduled</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+
+              <!-- Scheduled Date & Time -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Date
+                  </label>
+                  <BaseInput
+                    v-model="bulkUpdateForm.scheduled_date"
+                    type="date"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Time
+                  </label>
+                  <BaseInput
+                    v-model="bulkUpdateForm.scheduled_time"
+                    type="time"
+                  />
+                </div>
+              </div>
+
+              <!-- Duration -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Duration (minutes)
+                </label>
+                <BaseInput
+                  v-model="bulkUpdateForm.duration"
+                  type="number"
+                  placeholder="60"
+                  min="1"
+                />
+              </div>
+
+              <!-- Notes -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Notes
+                </label>
+                <textarea
+                  v-model="bulkUpdateForm.notes"
+                  rows="3"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Enter notes for all selected activities"
+                ></textarea>
+              </div>
+            </div>
+            <div class="flex items-center justify-end space-x-3 mt-6">
+              <BaseButton
+                type="button"
+                variant="outline"
+                @click="closeBulkUpdateModal"
+              >
+                Cancel
+              </BaseButton>
+              <BaseButton
+                type="submit"
+                variant="primary"
+                :loading="bulkLoading"
+              >
+                Update {{ selectedActivities.length }} Activities
+              </BaseButton>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -557,6 +773,13 @@ const ACTIVITY_TYPES = [
 
 // Reactive data
 const saving = ref(false)
+const exporting = ref(false)
+const bulkLoading = ref(false)
+const activeTab = ref('all')
+const entityType = ref('')
+const entityId = ref('')
+const selectedActivities = ref<number[]>([])
+const selectAll = ref(false)
 const loading = computed(() => activitiesStore.loading)
 const error = computed(() => activitiesStore.error)
 const activities = computed(() => activitiesStore.activities)
@@ -566,6 +789,7 @@ const meta = computed(() => activitiesStore.meta)
 const showCreateModal = ref(false)
 const showEditModal = ref(false)
 const showDeleteModal = ref(false)
+const showBulkUpdateModal = ref(false)
 const activityToDelete = ref<Activity | null>(null)
 
 // Filters
@@ -590,6 +814,15 @@ const activityForm = reactive({
   notes: '',
   related_entity_type: undefined,
   related_entity_id: undefined
+})
+
+// Bulk update form
+const bulkUpdateForm = reactive({
+  status: '',
+  scheduled_date: '',
+  scheduled_time: '',
+  duration: undefined,
+  notes: ''
 })
 
 // Computed
@@ -690,6 +923,155 @@ const debouncedSearch = debounce(() => {
   applyFilters()
 }, 300)
 
+// Tab handling
+const handleTabChange = async (tab: string) => {
+  activeTab.value = tab
+  filters.page = 1
+  
+  switch (tab) {
+    case 'timeline':
+      await fetchTimeline()
+      break
+    case 'upcoming':
+      await fetchUpcoming()
+      break
+    case 'entity':
+      if (entityType.value && entityId.value) {
+        await fetchEntityActivities()
+      }
+      break
+    default:
+      await fetchActivities()
+      break
+  }
+}
+
+// Fetch timeline activities
+const fetchTimeline = async () => {
+  try {
+    await activitiesStore.fetchTimeline()
+  } catch (err) {
+    console.error('Error fetching timeline:', err)
+    showError('Failed to load timeline')
+  }
+}
+
+// Fetch upcoming activities
+const fetchUpcoming = async () => {
+  try {
+    await activitiesStore.fetchUpcoming()
+  } catch (err) {
+    console.error('Error fetching upcoming:', err)
+    showError('Failed to load upcoming activities')
+  }
+}
+
+// Fetch entity-specific activities
+const fetchEntityActivities = async () => {
+  if (!entityType.value || !entityId.value) return
+  
+  try {
+    await activitiesStore.fetchEntityActivities(entityType.value, entityId.value)
+  } catch (err) {
+    console.error('Error fetching entity activities:', err)
+    showError('Failed to load entity activities')
+  }
+}
+
+// Export activities
+const exportActivities = async () => {
+  exporting.value = true
+  try {
+    const params = buildParams(filters)
+    const response = await activitiesStore.exportActivities(params)
+    
+    // Create download link
+    const blob = new Blob([response.data], { type: 'text/csv' })
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `activities-export-${new Date().toISOString().split('T')[0]}.csv`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+    
+    success('Activities exported successfully')
+  } catch (err) {
+    console.error('Error exporting activities:', err)
+    showError('Failed to export activities')
+  } finally {
+    exporting.value = false
+  }
+}
+
+// Bulk operations
+const toggleSelectAll = () => {
+  if (selectAll.value) {
+    selectedActivities.value = activities.value.map(activity => activity.id)
+  } else {
+    selectedActivities.value = []
+  }
+}
+
+const markComplete = async (activity: Activity) => {
+  try {
+    await activitiesStore.completeActivity(activity.id)
+    success('Activity marked as complete')
+    await fetchActivities()
+  } catch (err) {
+    console.error('Error marking activity complete:', err)
+    showError('Failed to mark activity as complete')
+  }
+}
+
+const bulkComplete = async () => {
+  if (selectedActivities.value.length === 0) return
+  
+  bulkLoading.value = true
+  try {
+    await activitiesStore.bulkComplete(selectedActivities.value)
+    success(`${selectedActivities.value.length} activities marked as complete`)
+    selectedActivities.value = []
+    selectAll.value = false
+    await fetchActivities()
+  } catch (err) {
+    console.error('Error bulk completing activities:', err)
+    showError('Failed to mark activities as complete')
+  } finally {
+    bulkLoading.value = false
+  }
+}
+
+const bulkUpdate = async () => {
+  if (selectedActivities.value.length === 0) return
+  
+  // Show bulk update modal
+  showBulkUpdateModal.value = true
+}
+
+const bulkDelete = async () => {
+  if (selectedActivities.value.length === 0) return
+  
+  if (!confirm(`Are you sure you want to delete ${selectedActivities.value.length} activities?`)) {
+    return
+  }
+  
+  bulkLoading.value = true
+  try {
+    await activitiesStore.bulkDelete(selectedActivities.value)
+    success(`${selectedActivities.value.length} activities deleted`)
+    selectedActivities.value = []
+    selectAll.value = false
+    await fetchActivities()
+  } catch (err) {
+    console.error('Error bulk deleting activities:', err)
+    showError('Failed to delete activities')
+  } finally {
+    bulkLoading.value = false
+  }
+}
+
 const saveActivity = async () => {
   if (!isFormValid.value) {
     showError('Please fill in all required fields')
@@ -769,6 +1151,66 @@ const confirmDelete = async () => {
   } catch (err) {
     showError('Failed to delete activity')
   }
+}
+
+const saveBulkUpdate = async () => {
+  // Check if at least one field is filled
+  const hasChanges = bulkUpdateForm.status || 
+                    bulkUpdateForm.scheduled_date || 
+                    bulkUpdateForm.scheduled_time || 
+                    bulkUpdateForm.duration || 
+                    bulkUpdateForm.notes
+  
+  if (!hasChanges) {
+    showError('Please fill in at least one field to update')
+    return
+  }
+  
+  bulkLoading.value = true
+  try {
+    const updateData: any = {
+      ids: selectedActivities.value
+    }
+    
+    if (bulkUpdateForm.status) {
+      updateData.status = bulkUpdateForm.status
+    }
+    
+    if (bulkUpdateForm.scheduled_date && bulkUpdateForm.scheduled_time) {
+      updateData.scheduled_at = `${bulkUpdateForm.scheduled_date} ${bulkUpdateForm.scheduled_time}:00`
+    }
+    
+    if (bulkUpdateForm.duration) {
+      updateData.duration = bulkUpdateForm.duration
+    }
+    
+    if (bulkUpdateForm.notes) {
+      updateData.notes = bulkUpdateForm.notes
+    }
+    
+    await activitiesStore.bulkUpdate(updateData)
+    success(`${selectedActivities.value.length} activities updated successfully`)
+    selectedActivities.value = []
+    selectAll.value = false
+    closeBulkUpdateModal()
+    await fetchActivities()
+  } catch (err) {
+    console.error('Error bulk updating activities:', err)
+    showError('Failed to update activities')
+  } finally {
+    bulkLoading.value = false
+  }
+}
+
+const closeBulkUpdateModal = () => {
+  showBulkUpdateModal.value = false
+  Object.assign(bulkUpdateForm, {
+    status: '',
+    scheduled_date: '',
+    scheduled_time: '',
+    duration: undefined,
+    notes: ''
+  })
 }
 
 const closeModal = () => {

@@ -44,6 +44,17 @@
               Refresh
             </BaseButton>
             <BaseButton
+              variant="outline"
+              @click="exportDeals"
+              :loading="exporting"
+              class="flex items-center"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Export CSV
+            </BaseButton>
+            <BaseButton
               variant="primary"
               @click="openCreateModal"
               class="flex items-center"
@@ -438,6 +449,7 @@ const router = useRouter()
 
 // Reactive data
 const loading = ref(false)
+const exporting = ref(false)
 const deals = ref([])
 const pipelines = ref([])
 const stages = ref([])
@@ -553,6 +565,39 @@ const loadStages = async (pipelineId) => {
   } catch (err) {
     console.error('Error loading stages:', err)
     error('Failed to load stages')
+  }
+}
+
+const exportDeals = async () => {
+  exporting.value = true
+  try {
+    const params = {
+      search: filters.search,
+      status: filters.status,
+      pipeline_id: filters.pipeline,
+      owner_id: filters.owner,
+      sort: filters.sort
+    }
+    
+    const response = await dealsAPI.exportDeals(params)
+    
+    // Create download link
+    const blob = new Blob([response.data], { type: 'text/csv' })
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `deals-export-${new Date().toISOString().split('T')[0]}.csv`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+    
+    success('Deals exported successfully')
+  } catch (err) {
+    console.error('Error exporting deals:', err)
+    error('Failed to export deals')
+  } finally {
+    exporting.value = false
   }
 }
 

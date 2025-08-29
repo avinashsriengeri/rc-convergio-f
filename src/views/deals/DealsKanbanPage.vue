@@ -274,7 +274,7 @@ import { useRouter } from 'vue-router'
 import { usePipelinesStore } from '../../stores/pipelines'
 import { useRefsStore } from '../../stores/refs'
 import { pipelinesAPI, dealsAPI } from '../../services/api'
-import { success, error } from '../../utils/notifications'
+import { success, error as showError } from '../../utils/notifications'
 import { formatDate, formatCurrency, formatRelativeTime, isOverdue } from '../../utils/formatters'
 import { STATUS_BADGE_COLORS } from '../../utils/constants'
 import type { Deal } from '../../types'
@@ -308,7 +308,7 @@ const loadKanbanData = async () => {
 
   try {
     const response = await pipelinesAPI.getKanban(selectedPipelineId.value as number)
-    kanbanData.value = response.data.data || []
+    kanbanData.value = response.data.stages || []
   } catch (err: any) {
     console.error('Error loading kanban data:', err)
     error.value = err.response?.data?.message || 'Failed to load kanban data'
@@ -345,7 +345,7 @@ const onDrop = async (event: DragEvent, stageId: number) => {
     await loadKanbanData()
   } catch (err: any) {
     console.error('Error moving deal:', err)
-    error(err.response?.data?.message || 'Failed to move deal')
+    showError(err.response?.data?.message || 'Failed to move deal')
   } finally {
     draggedDeal.value = null
   }
@@ -377,7 +377,7 @@ const confirmDelete = async () => {
     await loadKanbanData()
   } catch (err: any) {
     console.error('Error deleting deal:', err)
-    error(err.response?.data?.message || 'Failed to delete deal')
+    showError(err.response?.data?.message || 'Failed to delete deal')
   }
 }
 

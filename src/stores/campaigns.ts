@@ -306,6 +306,83 @@ export const useCampaignsStore = defineStore('campaigns', () => {
     }
   }
 
+  // Pause campaign
+  const pauseCampaign = async (id: number): Promise<any> => {
+    try {
+      const response = await campaignsAPI.pauseCampaign(id)
+      return response.data
+    } catch (err: unknown) {
+      console.error('Error pausing campaign:', err)
+      throw err
+    }
+  }
+
+  // Resume campaign
+  const resumeCampaign = async (id: number): Promise<any> => {
+    try {
+      const response = await campaignsAPI.resumeCampaign(id)
+      return response.data
+    } catch (err: unknown) {
+      console.error('Error resuming campaign:', err)
+      throw err
+    }
+  }
+
+  // Duplicate campaign
+  const duplicateCampaign = async (id: number): Promise<any> => {
+    try {
+      const response = await campaignsAPI.duplicateCampaign(id)
+      return response.data
+    } catch (err: unknown) {
+      console.error('Error duplicating campaign:', err)
+      throw err
+    }
+  }
+
+  // Get templates
+  const getTemplates = async (): Promise<any> => {
+    try {
+      const response = await campaignsAPI.getTemplates()
+      return response.data
+    } catch (err: unknown) {
+      console.error('Error fetching templates:', err)
+      throw err
+    }
+  }
+
+  // Get recipients for a campaign
+  const getRecipients = async (id: number): Promise<any> => {
+    try {
+      const response = await campaignsAPI.getRecipients(id)
+      return response.data
+    } catch (err: unknown) {
+      console.error('Error fetching recipients:', err)
+      throw err
+    }
+  }
+
+  // Add recipient to campaign
+  const addRecipient = async (id: number, recipientData: any): Promise<any> => {
+    try {
+      const response = await campaignsAPI.addRecipient(id, recipientData)
+      return response.data
+    } catch (err: unknown) {
+      console.error('Error adding recipient:', err)
+      throw err
+    }
+  }
+
+  // Remove recipient from campaign
+  const removeRecipient = async (id: number, recipientId: number): Promise<any> => {
+    try {
+      const response = await campaignsAPI.removeRecipient(id, recipientId)
+      return response.data
+    } catch (err: unknown) {
+      console.error('Error removing recipient:', err)
+      throw err
+    }
+  }
+
   const setSelectedCampaign = (campaign: Campaign | null): void => {
     state.value.selectedCampaign = campaign
   }
@@ -349,7 +426,14 @@ export const useCampaignsStore = defineStore('campaigns', () => {
     deleteCampaign,
     sendCampaign,
     scheduleCampaign,
+    pauseCampaign,
+    resumeCampaign,
+    duplicateCampaign,
     getCampaignMetrics,
+    getTemplates,
+    getRecipients,
+    addRecipient,
+    removeRecipient,
     setSelectedCampaign,
     clearError,
     resetFilters
