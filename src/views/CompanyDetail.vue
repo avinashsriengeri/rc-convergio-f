@@ -160,6 +160,68 @@
                 <p class="text-gray-700">{{ company.description }}</p>
               </div>
             </div>
+
+            <!-- Deals Section -->
+            <div class="mt-6">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Deals</h3>
+                <div class="flex items-center space-x-2">
+                  <BaseButton
+                    variant="outline"
+                    size="sm"
+                    @click="createDeal"
+                  >
+                    Create Deal
+                  </BaseButton>
+                  <BaseButton
+                    v-if="companyDeals.length > 0"
+                    variant="outline"
+                    size="sm"
+                    @click="viewAllDeals"
+                  >
+                    View All
+                  </BaseButton>
+                </div>
+              </div>
+              
+              <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div v-if="dealsLoading" class="flex justify-center py-4">
+                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-[#2596be]"></div>
+                </div>
+                
+                <div v-else-if="companyDeals.length > 0" class="space-y-3">
+                  <div
+                    v-for="deal in companyDeals.slice(0, 5)"
+                    :key="deal.id"
+                    class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+                    @click="viewDeal(deal)"
+                  >
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <h4 class="font-medium text-gray-900">{{ deal.title }}</h4>
+                        <div class="flex items-center space-x-4 mt-1 text-sm text-gray-600">
+                          <span v-if="deal.value" class="font-medium">${{ formatCurrency(deal.value) }}</span>
+                          <span>{{ deal.stage?.name || 'No Stage' }}</span>
+                        </div>
+                      </div>
+                      <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                        :class="getDealStatusClass(deal.status)"
+                      >
+                        {{ deal.status }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div v-else class="text-center py-8 text-gray-500">
+                  <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                  </svg>
+                  <p class="text-sm">No deals yet</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -312,8 +374,10 @@ const { success, error } = useNotifications()
 
 const loading = ref(true)
 const loadingContacts = ref(false)
+const dealsLoading = ref(false)
 const company = ref(null)
 const companyContacts = ref([])
+const companyDeals = ref([])
 const showAttachContactModal = ref(false)
 const showEditModal = ref(false)
 
@@ -326,7 +390,10 @@ onMounted(async () => {
     console.log('Phone:', company.value.phone)
     console.log('Email:', company.value.email)
     console.log('Status:', company.value.status)
-    await loadCompanyContacts()
+    await Promise.all([
+      loadCompanyContacts(),
+      loadCompanyDeals()
+    ])
   } catch (err) {
     error('Failed to load company')
     console.error('Company detail error:', err)
@@ -351,6 +418,23 @@ const loadCompanyContacts = async () => {
   }
 }
 
+// Load company deals
+const loadCompanyDeals = async () => {
+  if (!company.value) return
+  
+  dealsLoading.value = true
+  try {
+    const response = await companiesAPI.getCompanyDeals(company.value.id, { limit: 10 })
+    console.log('Deals API response:', response)
+    companyDeals.value = response.data.data || []
+  } catch (err) {
+    console.error('Error loading company deals:', err)
+    companyDeals.value = []
+  } finally {
+    dealsLoading.value = false
+  }
+}
+
 const getStatusClass = (status) => {
   const classes = {
     active: 'bg-green-100 text-green-800',
@@ -359,6 +443,21 @@ const getStatusClass = (status) => {
     customer: 'bg-purple-100 text-purple-800'
   }
   return classes[status] || 'bg-gray-100 text-gray-800'
+}
+
+const getDealStatusClass = (status) => {
+  const classes = {
+    open: 'bg-blue-100 text-blue-800',
+    won: 'bg-green-100 text-green-800',
+    lost: 'bg-red-100 text-red-800',
+    pending: 'bg-yellow-100 text-yellow-800'
+  }
+  return classes[status] || 'bg-gray-100 text-gray-800'
+}
+
+const formatCurrency = (value) => {
+  if (!value) return '0'
+  return new Intl.NumberFormat('en-US').format(value)
 }
 
 
@@ -401,6 +500,14 @@ const viewWebsite = () => {
   }
 }
 
+const viewDeal = (deal) => {
+  router.push(`/deals/${deal.id}`)
+}
+
+const viewAllDeals = () => {
+  router.push(`/deals?company_id=${company.value.id}`)
+}
+
 // Contact utility functions
 const getContactInitials = (contact) => {
   const firstName = contact.first_name || ''
@@ -439,6 +546,11 @@ const handleCompanySaved = async () => {
   try {
     const response = await companiesAPI.getCompany(route.params.id)
     company.value = response.data.data
+    // Reload related data
+    await Promise.all([
+      loadCompanyContacts(),
+      loadCompanyDeals()
+    ])
   } catch (err) {
     console.error('Error reloading company:', err)
   }

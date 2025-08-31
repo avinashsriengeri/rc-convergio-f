@@ -87,6 +87,12 @@ const routes = [
     component: DeletedCompanies,
     meta: { requiresAuth: true }
   },
+  {
+    path: '/companies/create',
+    name: 'CompanyCreate',
+    component: () => import('./views/CompanyFormPage.vue'),
+    meta: { requiresAuth: true }
+  },
   
   // Deals Module routes
   {

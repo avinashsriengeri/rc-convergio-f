@@ -12,33 +12,41 @@
             <BaseButton
               variant="outline"
               size="sm"
-              icon="upload"
               @click="showImportModal = true"
             >
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+              </svg>
               Import CSV
             </BaseButton>
             <BaseButton
               variant="outline"
               size="sm"
-              icon="plus"
               @click="showBulkCreateModal = true"
             >
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+              </svg>
               Bulk Create
             </BaseButton>
             <BaseButton
               variant="outline"
               size="sm"
-              icon="trash"
               @click="router.push('/companies/deleted')"
             >
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+              </svg>
               Deleted Companies
             </BaseButton>
             <BaseButton
               variant="primary"
               size="sm"
-              icon="plus"
-              @click="showCreateModal = true"
+              @click="router.push('/companies/create')"
             >
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+              </svg>
               Add Company
             </BaseButton>
           </div>
@@ -133,9 +141,11 @@
           <p class="text-gray-500 mb-6">Get started by adding your first company.</p>
           <BaseButton
             variant="primary"
-            icon="plus"
-            @click="showCreateModal = true"
+            @click="router.push('/companies/create')"
           >
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+            </svg>
             Add Company
           </BaseButton>
         </div>
@@ -165,25 +175,34 @@
                   </h3>
                   <p class="text-sm text-gray-500">{{ company.industry || 'No industry' }}</p>
                 </div>
-                <div class="flex items-center space-x-2">
-                  <BaseButton
-                    variant="ghost"
-                    size="sm"
-                    icon="eye"
+                <div class="flex items-center space-x-1 ml-2 flex-shrink-0">
+                  <button
                     @click.stop="viewCompany(company.id)"
-                  />
-                  <BaseButton
-                    variant="ghost"
-                    size="sm"
-                    icon="edit"
+                    class="p-1.5 text-gray-400 hover:text-[#2596be] hover:bg-gray-100 rounded-lg transition-colors"
+                    title="View company"
+                  >
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                  <button
                     @click.stop="editCompany(company)"
-                  />
-                  <BaseButton
-                    variant="ghost"
-                    size="sm"
-                    icon="trash"
+                    class="p-1.5 text-gray-400 hover:text-[#2596be] hover:bg-gray-100 rounded-lg transition-colors"
+                    title="Edit company"
+                  >
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                  <button
                     @click.stop="deleteCompany(company.id)"
-                  />
+                    class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Delete company"
+                  >
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
                 </div>
               </div>
 
@@ -259,9 +278,9 @@
 
     <!-- Modals -->
     <CompanyModal
-      v-if="showCreateModal || showEditModal"
+      v-if="showEditModal"
       :company="editingCompany"
-      :mode="showEditModal ? 'edit' : 'create'"
+      mode="edit"
       @close="closeModal"
       @saved="handleCompanySaved"
     />
@@ -324,7 +343,6 @@ const filters = reactive({
 })
 
 // Modal states
-const showCreateModal = ref(false)
 const showEditModal = ref(false)
 const showImportModal = ref(false)
 const showBulkCreateModal = ref(false)
@@ -432,7 +450,6 @@ const deleteCompany = async (companyId) => {
 }
 
 const closeModal = () => {
-  showCreateModal.value = false
   showEditModal.value = false
   editingCompany.value = null
 }

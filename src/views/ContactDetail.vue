@@ -20,6 +20,13 @@
           </div>
           <div class="flex items-center space-x-3">
             <BaseButton
+              variant="outline"
+              size="sm"
+              @click="editContact"
+            >
+              Edit Contact
+            </BaseButton>
+            <BaseButton
               variant="danger"
               size="sm"
               icon="trash"
@@ -42,7 +49,8 @@
       <!-- Contact details -->
       <div v-else-if="contact" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Main info -->
-        <div class="lg:col-span-2">
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Contact Header Card -->
           <div class="bg-white rounded-xl shadow-sm p-6">
             <div class="flex items-center space-x-4 mb-6">
               <div class="w-16 h-16 bg-gradient-to-r from-[#2596be] to-[#973894] rounded-full flex items-center justify-center">
@@ -82,7 +90,7 @@
                 </div>
               </div>
 
-              <div v-if="contact.company_id || contact.source">
+              <div v-if="contact.source || contact.owner_id">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Additional Information</h3>
                 <div class="space-y-3">
                   <div v-if="contact.source" class="flex items-center space-x-3">
@@ -100,8 +108,160 @@
                 </div>
               </div>
             </div>
+          </div>
 
+          <!-- Associated Company Card -->
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold text-gray-900">Associated Company</h3>
+              <BaseButton
+                v-if="!contactCompany"
+                variant="outline"
+                size="sm"
+                @click="createCompany"
+              >
+                Create Company
+              </BaseButton>
+            </div>
+            
+            <div v-if="contactCompany" class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" @click="viewCompany">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="font-medium text-gray-900">{{ contactCompany.name }}</h4>
+                  <div class="flex items-center space-x-4 mt-1 text-sm text-gray-600">
+                    <span v-if="contactCompany.industry">{{ contactCompany.industry }}</span>
+                    <span v-if="contactCompany.email">{{ contactCompany.email }}</span>
+                  </div>
+                </div>
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+            
+            <div v-else class="text-center py-8 text-gray-500">
+              <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+              <p class="text-sm">No company linked</p>
+            </div>
+          </div>
 
+          <!-- Deals Section -->
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold text-gray-900">Deals</h3>
+              <div class="flex items-center space-x-2">
+                <BaseButton
+                  variant="outline"
+                  size="sm"
+                  @click="createDeal"
+                >
+                  Create Deal
+                </BaseButton>
+                <BaseButton
+                  v-if="deals.length > 0"
+                  variant="outline"
+                  size="sm"
+                  @click="viewAllDeals"
+                >
+                  View All
+                </BaseButton>
+              </div>
+            </div>
+            
+            <div v-if="dealsLoading" class="flex justify-center py-4">
+              <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-[#2596be]"></div>
+            </div>
+            
+            <div v-else-if="deals.length > 0" class="space-y-3">
+              <div
+                v-for="deal in deals.slice(0, 5)"
+                :key="deal.id"
+                class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer"
+                @click="viewDeal(deal)"
+              >
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h4 class="font-medium text-gray-900">{{ deal.title }}</h4>
+                    <div class="flex items-center space-x-4 mt-1 text-sm text-gray-600">
+                      <span v-if="deal.value" class="font-medium">${{ formatCurrency(deal.value) }}</span>
+                      <span>{{ deal.stage?.name || 'No Stage' }}</span>
+                    </div>
+                  </div>
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    :class="getDealStatusClass(deal.status)"
+                  >
+                    {{ deal.status }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <div v-else class="text-center py-8 text-gray-500">
+              <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+              </svg>
+              <p class="text-sm">No deals yet</p>
+            </div>
+          </div>
+
+          <!-- Recent Activities Section -->
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold text-gray-900">Recent Activities</h3>
+              <div class="flex items-center space-x-2">
+                <BaseButton
+                  variant="outline"
+                  size="sm"
+                  @click="logActivity"
+                >
+                  Log Activity
+                </BaseButton>
+                <BaseButton
+                  v-if="activities.length > 0"
+                  variant="outline"
+                  size="sm"
+                  @click="viewAllActivities"
+                >
+                  View All
+                </BaseButton>
+              </div>
+            </div>
+            
+            <div v-if="activitiesLoading" class="flex justify-center py-4">
+              <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-[#2596be]"></div>
+            </div>
+            
+            <div v-else-if="activities.length > 0" class="space-y-4">
+              <div
+                v-for="activity in activities.slice(0, 5)"
+                :key="activity.id"
+                class="flex items-start space-x-3"
+              >
+                <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center" :class="getActivityTypeClass(activity.type)">
+                  <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path v-if="activity.type === 'call'" d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                    <path v-else-if="activity.type === 'email'" d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                    <path v-else-if="activity.type === 'meeting'" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    <path v-else d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                                 <div class="flex-1 min-w-0">
+                   <p class="text-sm font-medium text-gray-900">{{ capitalize(activity.type) }}</p>
+                   <p class="text-sm text-gray-600">{{ activity.summary }}</p>
+                   <p class="text-xs text-gray-500 mt-1">{{ formatDate(activity.created_at) }}</p>
+                 </div>
+              </div>
+            </div>
+            
+            <div v-else class="text-center py-8 text-gray-500">
+              <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p class="text-sm">No recent activities</p>
+            </div>
           </div>
         </div>
 
@@ -115,9 +275,9 @@
                 variant="primary"
                 size="sm"
                 full-width
-                @click="createTask"
+                @click="createCompany"
               >
-                Create Task
+                Create Company
               </BaseButton>
               <BaseButton
                 variant="secondary"
@@ -131,6 +291,14 @@
                 variant="outline"
                 size="sm"
                 full-width
+                @click="logActivity"
+              >
+                Log Activity
+              </BaseButton>
+              <BaseButton
+                variant="outline"
+                size="sm"
+                full-width
                 @click="sendEmail"
               >
                 Send Email
@@ -138,11 +306,22 @@
             </div>
           </div>
 
-          <!-- Activity -->
+          <!-- Contact Stats -->
           <div class="bg-white rounded-xl shadow-sm p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-            <div class="text-center py-8 text-gray-500">
-              <p>No recent activity</p>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Contact Stats</h3>
+            <div class="space-y-4">
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600">Total Deals</span>
+                <span class="text-sm font-medium text-gray-900">{{ deals.length }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600">Total Activities</span>
+                <span class="text-sm font-medium text-gray-900">{{ activities.length }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600">Deal Value</span>
+                <span class="text-sm font-medium text-gray-900">${{ formatCurrency(totalDealValue) }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -169,7 +348,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useNotifications } from '@/composables/useNotifications'
 import { contactsAPI } from '@/services/api'
@@ -181,21 +360,78 @@ const { success, error } = useNotifications()
 
 const loading = ref(true)
 const contact = ref(null)
+const contactCompany = ref(null)
+const deals = ref([])
+const activities = ref([])
+const dealsLoading = ref(false)
+const activitiesLoading = ref(false)
+
+// Computed properties
+const totalDealValue = computed(() => {
+  return deals.value.reduce((total, deal) => total + (deal.value || 0), 0)
+})
 
 onMounted(async () => {
+  await loadContactData()
+})
+
+const loadContactData = async () => {
   try {
-    const response = await contactsAPI.getContact(route.params.id)
-    console.log('Contact detail response:', response.data)
-    // The API returns { data: { contact: {...} } }
-    contact.value = response.data.data.contact
-    console.log('Contact data:', contact.value)
+    loading.value = true
+    
+    // Load contact details
+    const contactResponse = await contactsAPI.getContact(route.params.id)
+    contact.value = contactResponse.data.data.contact
+    
+    // Load related data
+    await Promise.all([
+      loadContactCompany(),
+      loadContactDeals(),
+      loadContactActivities()
+    ])
   } catch (err) {
     error('Failed to load contact')
     console.error('Contact detail error:', err)
   } finally {
     loading.value = false
   }
-})
+}
+
+const loadContactCompany = async () => {
+  try {
+    const response = await contactsAPI.getContactCompany(route.params.id)
+    contactCompany.value = response.data.data
+  } catch (err) {
+    console.error('Failed to load contact company:', err)
+    contactCompany.value = null
+  }
+}
+
+const loadContactDeals = async () => {
+  try {
+    dealsLoading.value = true
+    const response = await contactsAPI.getContactDeals(route.params.id, { limit: 10 })
+    deals.value = response.data.data || []
+  } catch (err) {
+    console.error('Failed to load contact deals:', err)
+    deals.value = []
+  } finally {
+    dealsLoading.value = false
+  }
+}
+
+const loadContactActivities = async () => {
+  try {
+    activitiesLoading.value = true
+    const response = await contactsAPI.getContactActivities(route.params.id, { limit: 10 })
+    activities.value = response.data.data || []
+  } catch (err) {
+    console.error('Failed to load contact activities:', err)
+    activities.value = []
+  } finally {
+    activitiesLoading.value = false
+  }
+}
 
 const getStatusClass = (status) => {
   const classes = {
@@ -206,6 +442,26 @@ const getStatusClass = (status) => {
     prospect: 'bg-yellow-100 text-yellow-800'
   }
   return classes[status] || 'bg-gray-100 text-gray-800'
+}
+
+const getDealStatusClass = (status) => {
+  const classes = {
+    open: 'bg-blue-100 text-blue-800',
+    won: 'bg-green-100 text-green-800',
+    lost: 'bg-red-100 text-red-800',
+    pending: 'bg-yellow-100 text-yellow-800'
+  }
+  return classes[status] || 'bg-gray-100 text-gray-800'
+}
+
+const getActivityTypeClass = (type) => {
+  const classes = {
+    call: 'bg-blue-500',
+    email: 'bg-green-500',
+    meeting: 'bg-purple-500',
+    task: 'bg-orange-500'
+  }
+  return classes[type] || 'bg-gray-500'
 }
 
 const getInitials = (contact) => {
@@ -222,7 +478,20 @@ const getFullName = (contact) => {
   return `${contact.first_name} ${contact.last_name}`
 }
 
+const formatCurrency = (value) => {
+  if (!value) return '0'
+  return new Intl.NumberFormat('en-US').format(value)
+}
 
+const formatDate = (date) => {
+  if (!date) return ''
+  return new Date(date).toLocaleDateString()
+}
+
+const capitalize = (str) => {
+  if (!str) return ''
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
 
 const deleteContact = async () => {
   if (!confirm('Are you sure you want to delete this contact?')) return
@@ -236,19 +505,50 @@ const deleteContact = async () => {
   }
 }
 
-const createTask = () => {
-  // Implement task creation
-  console.log('Create task for contact:', contact.value.id)
+const editContact = () => {
+  router.push(`/contacts/${contact.value.id}/edit`)
+}
+
+const createCompany = () => {
+  // Navigate to company creation with contact pre-filled
+  router.push(`/companies/create?contact_id=${contact.value.id}`)
 }
 
 const createDeal = () => {
-  // Implement deal creation
-  console.log('Create deal for contact:', contact.value.id)
+  // Navigate to deal creation with contact pre-filled
+  router.push(`/deals/create?contact_id=${contact.value.id}`)
+}
+
+const logActivity = () => {
+  // Navigate to activity creation with contact pre-filled
+  router.push(`/activities/create?contact_id=${contact.value.id}`)
 }
 
 const sendEmail = () => {
   // Implement email sending
   console.log('Send email to:', contact.value.email)
 }
+
+const viewCompany = () => {
+  if (contactCompany.value) {
+    router.push(`/companies/${contactCompany.value.id}`)
+  }
+}
+
+const viewDeal = (deal) => {
+  router.push(`/deals/${deal.id}`)
+}
+
+const viewAllDeals = () => {
+  router.push(`/deals?contact_id=${contact.value.id}`)
+}
+
+const viewAllActivities = () => {
+  router.push(`/activities?contact_id=${contact.value.id}`)
+}
 </script>
+
+<style scoped>
+/* Add any custom styles here */
+</style>
 
