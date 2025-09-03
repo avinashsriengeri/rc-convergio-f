@@ -5,6 +5,7 @@ import { authAPI } from '@/services/api'
 const user = ref(null)
 const isAuthenticated = ref(false)
 const loading = ref(false)
+const verificationLoading = ref(false)
 
 // Initialize auth state from localStorage
 const initAuth = () => {
@@ -26,17 +27,28 @@ const initAuth = () => {
   }
 }
 
-// Login function
+// Login function with email verification handling
 const login = async (credentials) => {
   loading.value = true
   try {
     const response = await authAPI.login(credentials)
     console.log('Login response:', response.data)
     
+    // Check for email verification requirement
+    if (response.data.status === 403 && response.data.message?.includes('email not verified')) {
+      return { 
+        success: false, 
+        requiresVerification: true, 
+        message: 'Please verify your email before logging in.',
+        user: response.data.user || null 
+      }
+    }
+    
     // Backend returns: { success: true, data: { access_token, user } }
     const { access_token, user: userData } = response.data.data
     
     console.log('User data from login:', userData)
+    console.log('User roles from login:', userData.roles)
     
     // Store auth data
     localStorage.setItem('access_token', access_token)
@@ -46,13 +58,43 @@ const login = async (credentials) => {
     user.value = userData
     isAuthenticated.value = true
     
+    console.log('User role after login:', userRole.value)
+    
+    // Trigger feature refresh after successful login
+    // Note: This will be handled by the useFeatures composable when it's used
+    
     return { success: true, user: userData }
   } catch (error) {
     console.error('Login error:', error)
+    
+    // Handle specific email verification error
+    if (error.response?.status === 403 && error.response?.data?.message?.includes('email not verified')) {
+      return { 
+        success: false, 
+        requiresVerification: true, 
+        message: 'Please verify your email before logging in.',
+        user: error.response.data.user || null 
+      }
+    }
+    
     const message = error.response?.data?.error || error.response?.data?.message || 'Login failed'
     return { success: false, message }
   } finally {
     loading.value = false
+  }
+}
+
+// Resend verification email
+const resendVerification = async (email) => {
+  verificationLoading.value = true
+  try {
+    const response = await authAPI.resendVerification({ email })
+    return { success: true, message: 'Verification email resent successfully.' }
+  } catch (error) {
+    const message = error.response?.data?.message || 'Failed to resend verification email'
+    return { success: false, message }
+  } finally {
+    verificationLoading.value = false
   }
 }
 
@@ -130,9 +172,35 @@ const resetPassword = async (data) => {
 }
 
 // Computed properties
-const userRole = computed(() => user.value?.role || 'user')
+const userRole = computed(() => {
+  // Handle nested roles array from backend
+  if (user.value?.roles && user.value.roles.length > 0) {
+    // Check if roles array contains objects with .name property
+    if (typeof user.value.roles[0] === 'object' && user.value.roles[0]?.name) {
+      console.log('userRole computed: Using object.name format:', user.value.roles[0].name)
+      return user.value.roles[0].name
+    }
+    // Handle case where roles array contains strings directly
+    if (typeof user.value.roles[0] === 'string') {
+      console.log('userRole computed: Using string format:', user.value.roles[0])
+      return user.value.roles[0]
+    }
+  }
+  // Fallback to flat role property
+  console.log('userRole computed: Using fallback role:', user.value?.role || 'user')
+  return user.value?.role || 'user'
+})
 const userName = computed(() => user.value?.name || 'User')
 const userEmail = computed(() => user.value?.email || '')
+
+// Email verification computed properties
+const isEmailVerified = computed(() => {
+  return user.value?.email_verified_at !== null && user.value?.email_verified_at !== undefined
+})
+
+const requiresEmailVerification = computed(() => {
+  return isAuthenticated.value && !isEmailVerified.value
+})
 
 export function useAuth() {
   return {
@@ -140,11 +208,14 @@ export function useAuth() {
     user: readonly(user),
     isAuthenticated: readonly(isAuthenticated),
     loading: readonly(loading),
+    verificationLoading: readonly(verificationLoading),
     
     // Computed
     userRole,
     userName,
     userEmail,
+    isEmailVerified,
+    requiresEmailVerification,
     
     // Methods
     initAuth,
@@ -154,5 +225,6 @@ export function useAuth() {
     verifyToken,
     forgotPassword,
     resetPassword,
+    resendVerification,
   }
 }

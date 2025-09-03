@@ -21,46 +21,60 @@
       <!-- Form -->
       <form @submit.prevent="handleSubmit" class="p-6 space-y-4">
         <!-- First Name -->
-        <BaseInput
-          v-model="form.first_name"
-          type="text"
-          label="First Name"
-          placeholder="Enter first name"
-          icon="user"
-          required
-          :error="errors.first_name"
-        />
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            First Name *
+          </label>
+          <BaseInput
+            v-model="form.first_name"
+            type="text"
+            placeholder="Enter first name"
+            :error="!!errors.first_name"
+          />
+          <p v-if="errors.first_name" class="mt-1 text-sm text-red-600">{{ errors.first_name }}</p>
+        </div>
 
         <!-- Last Name -->
-        <BaseInput
-          v-model="form.last_name"
-          type="text"
-          label="Last Name"
-          placeholder="Enter last name"
-          icon="user"
-          required
-          :error="errors.last_name"
-        />
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Last Name *
+          </label>
+          <BaseInput
+            v-model="form.last_name"
+            type="text"
+            placeholder="Enter last name"
+            :error="!!errors.last_name"
+          />
+          <p v-if="errors.last_name" class="mt-1 text-sm text-red-600">{{ errors.last_name }}</p>
+        </div>
 
         <!-- Email -->
-        <BaseInput
-          v-model="form.email"
-          type="email"
-          label="Email Address"
-          placeholder="Enter email address"
-          icon="email"
-          :error="errors.email"
-        />
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Email Address
+          </label>
+          <BaseInput
+            v-model="form.email"
+            type="email"
+            placeholder="Enter email address"
+            :error="!!errors.email"
+          />
+          <p v-if="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</p>
+        </div>
 
         <!-- Phone -->
-        <BaseInput
-          v-model="form.phone"
-          type="tel"
-          label="Phone Number"
-          placeholder="Enter phone number"
-          icon="phone"
-          :error="errors.phone"
-        />
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Phone Number
+          </label>
+          <BaseInput
+            v-model="form.phone"
+            type="tel"
+            placeholder="Enter phone number"
+            :error="!!errors.phone"
+          />
+          <p v-if="errors.phone" class="mt-1 text-sm text-red-600">{{ errors.phone }}</p>
+        </div>
 
         <!-- Lifecycle Stage -->
         <div>
@@ -69,7 +83,10 @@
           </label>
           <select
             v-model="form.lifecycle_stage"
-            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-[#2596be] focus:ring-[#2596be]"
+            :class="[
+              'block w-full rounded-lg shadow-sm focus:border-[#2596be] focus:ring-[#2596be]',
+              errors.lifecycle_stage ? 'border-red-300' : 'border-gray-300'
+            ]"
           >
             <option value="">Select stage</option>
             <option value="lead">Lead</option>
@@ -83,13 +100,18 @@
         </div>
 
         <!-- Source -->
-        <BaseInput
-          v-model="form.source"
-          type="text"
-          label="Source"
-          placeholder="How did you find this contact?"
-          :error="errors.source"
-        />
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Source
+          </label>
+          <BaseInput
+            v-model="form.source"
+            type="text"
+            placeholder="How did you find this contact?"
+            :error="!!errors.source"
+          />
+          <p v-if="errors.source" class="mt-1 text-sm text-red-600">{{ errors.source }}</p>
+        </div>
 
         <!-- Tags -->
         <div>
@@ -100,7 +122,10 @@
             v-model="tagsInput"
             type="text"
             placeholder="Enter tags separated by commas"
-            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-[#2596be] focus:ring-[#2596be]"
+            :class="[
+              'block w-full rounded-lg shadow-sm focus:border-[#2596be] focus:ring-[#2596be]',
+              errors.tags ? 'border-red-300' : 'border-gray-300'
+            ]"
             @input="updateTags"
           />
           <p v-if="errors.tags" class="mt-1 text-sm text-red-600">

@@ -13,18 +13,24 @@ const api = axios.create({
 // Request interceptor - add auth token and tenant ID
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('access_token')
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`
+    // Skip authentication for public form endpoints
+    const isPublicFormRequest = config.url?.includes('/public/forms/')
+    
+    if (!isPublicFormRequest) {
+      const token = localStorage.getItem('access_token')
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`
+      }
+      config.headers['X-Tenant-ID'] = localStorage.getItem('tenant_id') || '1'
     }
-    config.headers['X-Tenant-ID'] = localStorage.getItem('tenant_id') || '1'
     
     // Debug logging
     console.log('API Request:', {
       method: config.method,
       url: config.baseURL + config.url,
       headers: config.headers,
-      params: config.params
+      params: config.params,
+      isPublicForm: isPublicFormRequest
     })
     return config
   },
@@ -51,15 +57,21 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
       
-      // Clear stored auth data
-      localStorage.removeItem('access_token')
-      localStorage.removeItem('user')
-      localStorage.removeItem('tenant_id')
+      // Check if this is a public form request
+      const isPublicFormRequest = originalRequest.url?.includes('/public/forms/')
       
-      // Redirect to login if not already there
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login'
+      if (!isPublicFormRequest) {
+        // Clear stored auth data only for authenticated requests
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('user')
+        localStorage.removeItem('tenant_id')
+        
+        // Redirect to login if not already there
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login'
+        }
       }
+      // For public form requests, just let the component handle the 401 error
     }
 
     // Debug logging for errors
@@ -93,6 +105,7 @@ export const authAPI = {
   forgotPassword: (email) => api.post('/auth/forgot', { email }),
   resetPassword: (data) => api.post('/auth/reset', data),
   logout: () => api.post('/auth/logout'),
+  resendVerification: (data) => api.post('/auth/resend-verification', data),
 }
 
 // Dashboard API endpoints
@@ -267,6 +280,56 @@ export const campaignsAPI = {
   getRecipients: (id) => api.get(`/campaigns/${id}/recipients`),
   addRecipient: (id, recipientData) => api.post(`/campaigns/${id}/recipients`, recipientData),
   removeRecipient: (id, recipientId) => api.delete(`/campaigns/${id}/recipients/${recipientId}`)
+}
+
+// Forms API endpoints
+export const formsAPI = {
+  getForms: (params = {}) => api.get('/forms', { params }),
+  getForm: (id) => api.get(`/forms/${id}`),
+  createForm: (data) => api.post('/forms', data),
+  updateForm: (id, data) => api.put(`/forms/${id}`, data),
+  deleteForm: (id) => api.delete(`/forms/${id}`),
+  getFormSubmissions: (id, params = {}) => api.get(`/forms/${id}/submissions`, { params }),
+  getFormSubmission: (formId, submissionId) => api.get(`/forms/${formId}/submissions/${submissionId}`),
+  getPublicForm: (id) => api.get(`/public/forms/${id}`),
+  submitPublicForm: (id, data) => api.post(`/public/forms/${id}/submit`, data),
+  checkDuplicateName: (name, excludeId = null) => {
+    const params = { name, exclude_id: excludeId }
+    return api.get('/forms/check-duplicate', { params })
+  },
+}
+
+// Lists/Segments API endpoints
+export const listsAPI = {
+  getLists: (params = {}) => api.get('/lists', { params }),
+  getList: (id) => api.get(`/lists/${id}`),
+  createList: (data) => api.post('/lists', data),
+  updateList: (id, data) => api.put(`/lists/${id}`, data),
+  deleteList: (id) => api.delete(`/lists/${id}`),
+  getListMembers: (id, params = {}) => api.get(`/lists/${id}/members`, { params }),
+  addListMember: (id, data) => api.post(`/lists/${id}/members`, data),
+  removeListMember: (id, contactId) => api.delete(`/lists/${id}/members/${contactId}`),
+  checkDuplicateName: (name, excludeId = null) => {
+    const params = { name, exclude_id: excludeId }
+    return api.get('/lists/check-duplicate', { params })
+  },
+}
+
+// Users API endpoints
+export const usersAPI = {
+  getUsers: (params = {}) => api.get('/users', { params }),
+  getUser: (id) => api.get(`/users/${id}`),
+  createUser: (data) => api.post('/users', data),
+  updateUser: (id, data) => api.put(`/users/${id}`, data),
+  deleteUser: (id) => api.delete(`/users/${id}`),
+  getCurrentUser: () => api.get('/users/me'),
+  getRoles: () => api.get('/roles'),
+}
+
+// Search API endpoints
+export const searchAPI = {
+  globalSearch: (query, types = 'contacts,companies,deals', limit = 10) => 
+    api.get('/search', { params: { q: query, types, limit } }),
 }
 
 export default api

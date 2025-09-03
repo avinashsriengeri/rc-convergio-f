@@ -259,6 +259,14 @@ const handleLogin = async () => {
     if (result.success) {
       success('Welcome back!')
       router.push('/dashboard')
+    } else if (result.requiresVerification) {
+      // Handle email verification requirement
+      error('Please verify your email before logging in.')
+      // Store user data temporarily for verification page
+      if (result.user) {
+        localStorage.setItem('temp_user', JSON.stringify(result.user))
+      }
+      router.push('/verify-notification')
     } else {
       error(result.message)
     }

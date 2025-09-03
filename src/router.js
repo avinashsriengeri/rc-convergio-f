@@ -1,3 +1,4 @@
+
 import { createRouter, createWebHistory } from 'vue-router'
 
 // Auth views
@@ -5,6 +6,7 @@ import Login from './views/auth/Login.vue'
 import Register from './views/auth/Register.vue'
 import ForgotPassword from './views/auth/ForgotPassword.vue'
 import ResetPassword from './views/auth/ResetPassword.vue'
+import VerifyNotification from './views/auth/VerifyNotification.vue'
 
 // Main views
 import Home from './views/Home.vue'
@@ -49,6 +51,12 @@ const routes = [
     component: ResetPassword,
     meta: { requiresAuth: false }
   },
+  {
+    path: '/verify-notification',
+    name: 'VerifyNotification',
+    component: VerifyNotification,
+    meta: { requiresAuth: false }
+  },
   
   // Protected routes
   {
@@ -67,6 +75,12 @@ const routes = [
     path: '/contacts/:id',
     name: 'ContactDetail',
     component: ContactDetail,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/contacts/:id/edit',
+    name: 'ContactEdit',
+    component: () => import('./views/ContactEdit.vue'),
     meta: { requiresAuth: true }
   },
   {
@@ -184,6 +198,112 @@ const routes = [
     name: 'Settings',
     component: () => import('./views/Settings.vue'),
     meta: { requiresAuth: true }
+  },
+
+  // Forms Module routes
+  {
+    path: '/forms',
+    name: 'Forms',
+    component: () => import('./views/Forms/FormsList.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/forms/create',
+    name: 'FormCreate',
+    component: () => import('./views/Forms/FormBuilder.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/forms/:id',
+    name: 'FormView',
+    component: () => import('./views/Forms/FormView.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/forms/:id/edit',
+    name: 'FormEdit',
+    component: () => import('./views/Forms/FormBuilder.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/forms/:id/submissions',
+    name: 'FormSubmissions',
+    component: () => import('./views/Forms/FormSubmissions.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/forms/:formId/submissions/:submissionId',
+    name: 'FormSubmissionDetail',
+    component: () => import('./views/Forms/FormSubmissionDetail.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/public/forms/:id',
+    name: 'PublicForm',
+    component: () => import('./views/Forms/FormPublicView.vue'),
+    meta: { requiresAuth: false }
+  },
+
+  // Lists/Segments Module routes
+  {
+    path: '/lists',
+    name: 'Lists',
+    component: () => import('./views/Lists/ListsIndex.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/lists/create',
+    name: 'ListCreate',
+    component: () => import('./views/Lists/ListForm.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/lists/:id',
+    name: 'ListDetails',
+    component: () => import('./views/Lists/ListDetails.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/lists/:id/edit',
+    name: 'ListEdit',
+    component: () => import('./views/Lists/ListForm.vue'),
+    meta: { requiresAuth: true }
+  },
+
+  // Users Module routes (Admin only)
+  {
+    path: '/users',
+    name: 'Users',
+    component: () => import('./views/Users/UsersIndex.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/users/create',
+    name: 'UserCreate',
+    component: () => import('./views/Users/UserForm.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/users/:id/edit',
+    name: 'UserEdit',
+    component: () => import('./views/Users/UserForm.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+
+  // Profile Module routes
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: () => import('./views/Profile/ProfileView.vue'),
+    meta: { requiresAuth: true }
+  },
+
+  // Features Demo route
+  {
+    path: '/features-demo',
+    name: 'FeaturesDemo',
+    component: () => import('./views/FeaturesDemo.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 
@@ -196,10 +316,47 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('access_token')
   
+  // Get user role from stored user data (handle both nested roles array and flat role)
+  let userRole = null
+  let userData = null
+  if (isAuthenticated) {
+    try {
+      userData = JSON.parse(localStorage.getItem('user') || '{}')
+      // Handle nested roles array from backend
+      if (userData.roles && userData.roles.length > 0) {
+        if (typeof userData.roles[0] === 'object' && userData.roles[0]?.name) {
+          userRole = userData.roles[0].name
+        } else if (typeof userData.roles[0] === 'string') {
+          userRole = userData.roles[0]
+        }
+      }
+      // Fallback to flat role property
+      if (!userRole) {
+        userRole = userData.role
+      }
+    } catch (error) {
+      console.error('Failed to parse user data:', error)
+    }
+  }
+  
+  // Check if user needs email verification
+  const requiresEmailVerification = isAuthenticated && userData && !userData.email_verified_at
+  
+  console.log('Navigation guard - Route:', to.path, 'User role:', userRole, 'Requires admin:', to.meta.requiresAdmin, 'Requires verification:', requiresEmailVerification)
+  
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login')
-  } else if (to.meta.requiresAuth === false && isAuthenticated) {
+  } else if (to.meta.requiresAuth === false && isAuthenticated && to.path === '/') {
+    // Only redirect to dashboard if user is authenticated and trying to access home page
     next('/dashboard')
+  } else if (to.meta.requiresAdmin && userRole !== 'admin') {
+    // Redirect non-admin users trying to access admin routes
+    console.log('Access denied: User role', userRole, 'is not admin for route', to.path)
+    next('/dashboard')
+  } else if (to.meta.requiresAuth && requiresEmailVerification && to.path !== '/verify-notification') {
+    // Redirect unverified users to verification page
+    console.log('Email verification required for route:', to.path)
+    next('/verify-notification')
   } else {
     next()
   }

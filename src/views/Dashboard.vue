@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <VerificationPageGuard>
+    <div class="min-h-screen bg-gray-50">
     <!-- Header -->
     <div class="bg-white shadow-sm border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -29,13 +30,62 @@
         <div class="flex items-center space-x-4">
           <div class="flex-1 relative">
             <input
+              v-model="searchQuery"
               type="text"
               placeholder="Search contacts, companies, deals..."
               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2596be] focus:border-[#2596be]"
+              @input="handleSearch"
+              @focus="showSearchResults = true"
             />
             <svg class="absolute left-3 top-3.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
+            
+            <!-- Search Results Dropdown -->
+            <div v-if="showSearchResults && searchResults.length > 0" class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+              <div class="p-2">
+                <div v-for="(group, groupType) in groupedResults" :key="groupType" class="mb-4">
+                  <h4 class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2 px-2">{{ groupType }}</h4>
+                  <div class="space-y-1">
+                    <div
+                      v-for="result in group"
+                      :key="`${result.type}-${result.id}`"
+                      @click="navigateToResult(result)"
+                      class="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer"
+                    >
+                      <div class="flex-shrink-0">
+                        <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                          <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path v-if="result.type === 'contact'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            <path v-else-if="result.type === 'company'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            <path v-else-if="result.type === 'deal'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate">{{ result.name }}</p>
+                        <p class="text-xs text-gray-500 truncate">{{ result.email || result.company || result.value }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- No Results -->
+            <div v-if="showSearchResults && searchQuery && !searching && searchResults.length === 0" class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+              <div class="p-4 text-center">
+                <p class="text-sm text-gray-500">No results found for "{{ searchQuery }}"</p>
+              </div>
+            </div>
+            
+            <!-- Loading -->
+            <div v-if="searching" class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+              <div class="p-4 text-center">
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-[#2596be] mx-auto"></div>
+                <p class="text-sm text-gray-500 mt-2">Searching...</p>
+              </div>
+            </div>
           </div>
           <div class="flex items-center space-x-2">
             <div class="w-8 h-8 bg-gradient-to-r from-[#2596be] to-[#973894] rounded-full flex items-center justify-center">
@@ -204,15 +254,21 @@
     <!-- Quick Add Modal -->
     <QuickAddModal v-if="showQuickAddModal" @close="showQuickAddModal = false" @created="handleQuickAddCreated" />
   </div>
+  </VerificationPageGuard>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { useNotifications } from '@/composables/useNotifications'
-import { dashboardAPI, tasksAPI } from '@/services/api'
+import { dashboardAPI, tasksAPI, searchAPI } from '@/services/api'
+import { debounce } from 'lodash-es'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import QuickAddModal from '@/components/modals/QuickAddModal.vue'
+import VerificationPageGuard from '@/components/ui/VerificationPageGuard.vue'
+
+const router = useRouter()
 
 const { userName } = useAuth()
 const { success, error } = useNotifications()
@@ -223,6 +279,12 @@ const dashboardData = ref(null)
 const todayTasks = ref([])
 const recentContacts = ref([])
 const campaignMetrics = ref(null)
+
+// Search functionality
+const searchQuery = ref('')
+const searchResults = ref([])
+const searching = ref(false)
+const showSearchResults = ref(false)
 
 const fetchDashboardData = async () => {
   try {
@@ -255,6 +317,64 @@ const formatCurrency = (amount) => {
 const formatDate = (dateString) => {
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+// Search functionality
+const handleSearch = debounce(async () => {
+  if (!searchQuery.value.trim()) {
+    searchResults.value = []
+    showSearchResults.value = false
+    return
+  }
+  
+  try {
+    searching.value = true
+    const response = await searchAPI.globalSearch(searchQuery.value)
+    searchResults.value = response.data.data || response.data || []
+  } catch (err) {
+    console.error('Search failed:', err)
+    searchResults.value = []
+  } finally {
+    searching.value = false
+  }
+}, 500)
+
+const groupedResults = computed(() => {
+  const groups = {}
+  searchResults.value.forEach(result => {
+    const type = result.type || 'other'
+    if (!groups[type]) {
+      groups[type] = []
+    }
+    groups[type].push(result)
+  })
+  return groups
+})
+
+const navigateToResult = (result) => {
+  showSearchResults.value = false
+  searchQuery.value = ''
+  
+  switch (result.type) {
+    case 'contact':
+      router.push(`/contacts/${result.id}`)
+      break
+    case 'company':
+      router.push(`/companies/${result.id}`)
+      break
+    case 'deal':
+      router.push(`/deals/${result.id}`)
+      break
+    default:
+      console.warn('Unknown result type:', result.type)
+  }
+}
+
+// Close search results when clicking outside
+const closeSearchResults = () => {
+  setTimeout(() => {
+    showSearchResults.value = false
+  }, 200)
 }
 
 const getInitials = (contact) => {
