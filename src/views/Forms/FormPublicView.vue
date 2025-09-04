@@ -221,14 +221,25 @@ const route = useRoute()
 const { success, error: showError } = useNotifications()
 
 // Reactive data
+const form = ref<Form | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
-const submitting = ref(false)
 const submitted = ref(false)
-const form = ref<Form | null>(null)
+const submitting = ref(false)
 const formData = reactive<Record<string, any>>({})
 const fieldErrors = reactive<Record<string, string>>({})
-const consentGiven = ref(false)
+const consentGiven = ref(false) // Add missing consent variable
+
+// UTM and tracking data
+const utmData = reactive({
+  utm_source: '',
+  utm_medium: '',
+  utm_campaign: '',
+  utm_term: '',
+  utm_content: '',
+  referrer_url: '',
+  page_url: ''
+})
 
 // Methods
 const loadForm = async () => {

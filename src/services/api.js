@@ -293,6 +293,15 @@ export const formsAPI = {
   getFormSubmission: (formId, submissionId) => api.get(`/forms/${formId}/submissions/${submissionId}`),
   getPublicForm: (id) => api.get(`/public/forms/${id}`),
   submitPublicForm: (id, data) => api.post(`/public/forms/${id}/submit`, data),
+  reprocessSubmission: (formId, submissionId) => api.post(`/forms/${formId}/submissions/${submissionId}/reprocess`),
+  // Form Settings
+  getFormSettings: (id) => api.get(`/forms/${id}/settings`),
+  updateFormSettings: (id, data) => api.put(`/forms/${id}/settings`, data),
+  // Form Field Mapping
+  getFormFieldMapping: (id) => api.get(`/forms/${id}/mapping`),
+  updateFormFieldMapping: (id, data) => api.put(`/forms/${id}/mapping`, data),
+  // Contact Form Submissions
+  getContactFormSubmissions: (contactId) => api.get(`/contacts/${contactId}/form-submissions`),
   checkDuplicateName: (name, excludeId = null) => {
     const params = { name, exclude_id: excludeId }
     return api.get('/forms/check-duplicate', { params })

@@ -307,6 +307,7 @@ import { onMounted, onUnmounted, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { useFeatures } from '@/composables/useFeatures'
+import { useRealTimeUpdates } from '@/composables/useRealTimeUpdates'
 import { useNotifications } from '@/composables/useNotifications'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import NotificationToast from '@/components/ui/NotificationToast.vue'
@@ -326,6 +327,9 @@ const currentUserRole = computed(() => userRole.value)
 onMounted(() => {
   initAuth()
 })
+
+// Initialize real-time updates
+useRealTimeUpdates()
 
 const toggleProfileDropdown = () => {
   showProfileDropdown.value = !showProfileDropdown.value

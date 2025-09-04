@@ -247,10 +247,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch } from 'vue'
+import { ref, reactive, onMounted, watch, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useNotifications } from '@/composables/useNotifications'
-import { contactsAPI } from '@/services/api'
+import { contactsAPI, dashboardAPI } from '@/services/api'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import ContactModal from '@/components/modals/ContactModal.vue'
 import ImportModal from '@/components/modals/ImportModal.vue'
@@ -261,6 +261,7 @@ const { success, error, warning } = useNotifications()
 // Reactive data
 const loading = ref(false)
 const contacts = ref([])
+const recentContacts = ref([])
 const pagination = ref(null)
 const searchQuery = ref('')
 const filters = reactive({
@@ -279,8 +280,42 @@ let searchTimeout = null
 const debouncedSearch = () => {
   clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
-    fetchContacts()
+    fetchContacts(1)
   }, 300)
+}
+
+// Load recent contacts and keep them on top of the list
+const fetchRecentContacts = async (limit = 8) => {
+  try {
+    const resp = await dashboardAPI.getRecentContacts(limit)
+    recentContacts.value = resp.data?.data || resp.data || []
+    console.log('Recent contacts (ids):', Array.isArray(recentContacts.value) ? recentContacts.value.map(c => c.id).join(',') : 'N/A')
+  } catch (e) {
+    console.error('Failed to load recent contacts:', e)
+  }
+}
+
+const mergeRecentIntoContacts = () => {
+  if (!Array.isArray(contacts.value)) return
+  if (!Array.isArray(recentContacts.value) || recentContacts.value.length === 0) return
+  const seen = new Set()
+  const merged = []
+  // Prepend recents first (dedup by id)
+  recentContacts.value.forEach((c) => {
+    if (c && typeof c.id !== 'undefined' && !seen.has(c.id)) {
+      merged.push(c)
+      seen.add(c.id)
+    }
+  })
+  // Then add the rest from paginated list
+  contacts.value.forEach((c) => {
+    if (c && typeof c.id !== 'undefined' && !seen.has(c.id)) {
+      merged.push(c)
+      seen.add(c.id)
+    }
+  })
+  contacts.value = merged
+  console.log('Contacts after merge (ids):', merged.map(c => c.id).join(','))
 }
 
 // Fetch contacts
@@ -290,22 +325,30 @@ const fetchContacts = async (page = 1) => {
   try {
     let response
     
-    // Use search API if there's a search query, otherwise use regular contacts API
     if (searchQuery.value.trim()) {
+      // Primary: use /contacts?search= to search across all pages
       const params = {
         page,
         per_page: 12,
         sort: filters.sort,
-        ...(filters.status && { stage: filters.status })
+        ...(filters.status && { stage: filters.status }),
+        search: searchQuery.value.trim(),
+        t: Date.now(), // cache-busting
       }
-      console.log('Search API params:', params)
-      response = await contactsAPI.searchContacts(searchQuery.value, params)
+      console.log('Contacts search params:', params)
+      try {
+        response = await contactsAPI.getContacts(params)
+      } catch (e) {
+        console.warn('Fallback to /contacts/search due to getContacts search error:', e?.message)
+        response = await contactsAPI.searchContacts(searchQuery.value.trim(), params)
+      }
     } else {
       const params = {
         page,
         per_page: 12,
         sort: filters.sort,
-        ...(filters.status && { stage: filters.status })
+        ...(filters.status && { stage: filters.status }),
+        t: Date.now(), // cache-busting
       }
       console.log('Contacts API params:', params)
       response = await contactsAPI.getContacts(params)
@@ -314,8 +357,12 @@ const fetchContacts = async (page = 1) => {
     console.log('API response:', response.data)
     contacts.value = response.data.data
     pagination.value = response.data.meta
-    console.log('Updated contacts array:', contacts.value)
+    console.log('Updated contacts array length:', contacts.value?.length)
+    console.log('First page contact IDs:', Array.isArray(contacts.value) ? contacts.value.map(c => c.id).join(',') : 'N/A')
     console.log('Pagination:', pagination.value)
+
+    // Keep recent contacts visible at the top
+    mergeRecentIntoContacts()
   } catch (err) {
     error('Failed to load contacts')
     console.error('Contacts error:', err)
@@ -365,8 +412,7 @@ const closeModal = () => {
 const handleContactSaved = async () => {
   console.log('Contact saved, refreshing contacts list...')
   closeModal()
-  // Add a small delay to ensure the backend has processed the creation
-  await new Promise(resolve => setTimeout(resolve, 500))
+  await fetchRecentContacts(8)
   // Always refresh to page 1 to see the newly created contact
   await fetchContacts(1)
   success('Contact saved successfully')
@@ -374,10 +420,8 @@ const handleContactSaved = async () => {
 
 const handleImportComplete = async () => {
   showImportModal.value = false
-  
   console.log('Import completed, refreshing contacts list...')
-  
-  // Refresh contacts list
+  await fetchRecentContacts(8)
   await fetchContacts(1)
 }
 
@@ -415,8 +459,29 @@ watch(filters, () => {
   fetchContacts(1)
 }, { deep: true })
 
+// Handle real-time contact creation events
+const handleContactsListUpdate = async (event) => {
+  const { action, contact_id, submission_id, form_id } = event.detail || {}
+  if (action === 'contact-created' || typeof contact_id !== 'undefined') {
+    console.log('Real-time contact creation detected:', { contact_id, submission_id, form_id })
+    await fetchRecentContacts(8)
+    await fetchContacts(1)
+  }
+}
+
 // Initialize
-onMounted(() => {
-  fetchContacts()
+onMounted(async () => {
+  await fetchRecentContacts(8)
+  await fetchContacts(1)
+  
+  // Listen for real-time contact creation events from both channels
+  window.addEventListener('contacts-list-update', handleContactsListUpdate)
+  window.addEventListener('contact-created', handleContactsListUpdate)
+})
+
+// Cleanup
+onUnmounted(() => {
+  window.removeEventListener('contacts-list-update', handleContactsListUpdate)
+  window.removeEventListener('contact-created', handleContactsListUpdate)
 })
 </script>

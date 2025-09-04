@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\FormController; // Added this import
 
 /*
 |--------------------------------------------------------------------------
@@ -37,4 +38,31 @@ Route::prefix('contacts')->group(function () {
     Route::get('/search', [ContactController::class, 'search']);
     Route::post('/import', [ContactController::class, 'import']);
     Route::get('/import/status/{jobId}', [ContactController::class, 'getImportStatus']);
+});
+
+// Form routes
+Route::prefix('forms')->group(function () {
+    // Basic CRUD operations
+    Route::get('/{id}', [FormController::class, 'getForm']);
+    Route::post('/', [FormController::class, 'createForm']);
+    Route::put('/{id}', [FormController::class, 'updateForm']);
+    Route::delete('/{id}', [FormController::class, 'deleteForm']);
+    
+    // Form settings
+    Route::get('/{id}/settings', [FormController::class, 'getSettings']);
+    Route::put('/{id}/settings', [FormController::class, 'updateSettings']);
+    
+    // Form field mapping
+    Route::get('/{id}/mapping', [FormController::class, 'getFieldMapping']);
+    Route::put('/{id}/mapping', [FormController::class, 'updateFieldMapping']);
+    
+    // Form submissions
+    Route::get('/{id}/submissions', [FormController::class, 'getSubmissions']);
+    Route::post('/{id}/submissions/{submissionId}/reprocess', [FormController::class, 'reprocessSubmission']);
+});
+
+// Public form routes (no authentication required)
+Route::prefix('public/forms')->group(function () {
+    Route::get('/{id}', [FormController::class, 'getPublicForm']);
+    Route::post('/{id}/submit', [FormController::class, 'submitPublicForm']);
 });

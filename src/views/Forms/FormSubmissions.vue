@@ -1,191 +1,322 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200">
     <!-- Header -->
-    <div class="bg-white shadow-sm border-b border-gray-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center py-6">
-          <div>
-            <h1 class="text-2xl font-bold text-gray-900">Form Submissions</h1>
-            <p class="text-sm text-gray-600 mt-1">View submissions for {{ form?.name || 'this form' }}</p>
-          </div>
-          <div class="flex items-center space-x-3">
-            <BaseButton
-              variant="outline"
-              @click="goBack"
-            >
-              Back to Form
-            </BaseButton>
-          </div>
+    <div class="px-6 py-4 border-b border-gray-200">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-medium text-gray-900">Form Submissions</h3>
+        <div class="flex items-center space-x-3">
+          <BaseButton
+            variant="secondary"
+            size="sm"
+            @click="refreshSubmissions"
+            :loading="loading"
+          >
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Refresh
+          </BaseButton>
         </div>
       </div>
     </div>
 
-    <!-- Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Loading State -->
-      <div v-if="loading" class="flex justify-center items-center py-12">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-
-      <!-- Error State -->
-      <div v-else-if="error" class="text-center py-12">
-        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-        </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">Error loading submissions</h3>
-        <p class="mt-1 text-sm text-gray-500">{{ error }}</p>
-        <div class="mt-6">
-          <BaseButton variant="primary" @click="loadSubmissions">
-            Try Again
-          </BaseButton>
-        </div>
-      </div>
-
-      <!-- Empty State -->
-      <div v-else-if="!loading && submissions.length === 0" class="text-center py-12">
-        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-        </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">No submissions yet</h3>
-        <p class="mt-1 text-sm text-gray-500">This form hasn't received any submissions yet.</p>
-      </div>
-
-      <!-- Submissions List -->
-      <div v-else class="space-y-4">
-        <div
-          v-for="submission in submissions"
-          :key="submission.id"
-          class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
-        >
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <h3 class="text-lg font-medium text-gray-900">Submission #{{ submission.id }}</h3>
-              <p class="text-sm text-gray-500">{{ formatDate(submission.created_at) }}</p>
-            </div>
-            <div class="text-sm text-gray-500">
-              IP: {{ submission.ip_address }}
-            </div>
-          </div>
-
-          <!-- Submission Data -->
-          <div class="bg-gray-50 rounded-lg p-4">
-            <h4 class="text-sm font-medium text-gray-700 mb-3">Form Data</h4>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div
-                v-for="(value, key) in submission.payload"
-                :key="key"
-                class="flex flex-col"
-              >
-                <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">{{ key }}</span>
-                <span class="text-sm text-gray-900 mt-1">{{ value }}</span>
+    <!-- Submissions Table -->
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Submission ID
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Contact
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Company
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Status
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Owner
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Submitted
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr v-if="loading" class="animate-pulse">
+            <td colspan="7" class="px-6 py-4">
+              <div class="flex items-center space-x-3">
+                <div class="w-4 h-4 bg-gray-200 rounded"></div>
+                <div class="w-24 h-4 bg-gray-200 rounded"></div>
+                <div class="w-32 h-4 bg-gray-200 rounded"></div>
+                <div class="w-20 h-4 bg-gray-200 rounded"></div>
+                <div class="w-24 h-4 bg-gray-200 rounded"></div>
+                <div class="w-32 h-4 bg-gray-200 rounded"></div>
+                <div class="w-20 h-4 bg-gray-200 rounded"></div>
               </div>
-            </div>
+            </td>
+          </tr>
+          
+          <tr v-else-if="submissions.length === 0" class="text-center">
+            <td colspan="7" class="px-6 py-12 text-gray-500">
+              <div class="flex flex-col items-center">
+                <svg class="w-12 h-12 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                </svg>
+                <p class="text-lg font-medium">No submissions yet</p>
+                <p class="text-sm">When users submit this form, their responses will appear here.</p>
+              </div>
+            </td>
+          </tr>
+          
+          <tr v-else v-for="submission in submissions" :key="submission.id" class="hover:bg-gray-50">
+            <!-- Submission ID -->
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+              #{{ submission.id }}
+            </td>
+            
+            <!-- Contact -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div v-if="submission.contact_id" class="flex items-center space-x-2">
+                <router-link
+                  :to="`/contacts/${submission.contact_id}`"
+                  class="text-sm text-blue-600 hover:text-blue-800 font-medium hover:underline"
+                >
+                  {{ getContactDisplay(submission) }}
+                </router-link>
+              </div>
+              <span v-else class="text-sm text-gray-400">-</span>
+            </td>
+            
+            <!-- Company -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div v-if="submission.company_id" class="flex items-center space-x-2">
+                <router-link
+                  :to="`/companies/${submission.company_id}`"
+                  class="text-sm text-blue-600 hover:text-blue-800 font-medium hover:underline"
+                >
+                  {{ getCompanyDisplay(submission) }}
+                </router-link>
+              </div>
+              <span v-else class="text-sm text-gray-400">-</span>
+            </td>
+            
+            <!-- Status -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                :class="getStatusBadgeClass(submission)"
+              >
+                {{ getStatusText(submission) }}
+              </span>
+            </td>
+            
+            <!-- Owner -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span v-if="submission.owner_id" class="text-sm text-gray-900">
+                {{ submission.owner_id }}
+              </span>
+              <span v-else class="text-sm text-gray-400">-</span>
+            </td>
+            
+            <!-- Submitted -->
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ formatDate(submission.created_at) }}
+            </td>
             
             <!-- Actions -->
-            <div class="mt-4 pt-4 border-t border-gray-200">
-              <BaseButton
-                variant="outline"
-                size="sm"
-                @click="viewSubmission(submission.id)"
-                class="flex items-center"
-              >
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-                View Details
-              </BaseButton>
-            </div>
-          </div>
-        </div>
-      </div>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <div class="flex items-center space-x-2">
+                <BaseButton
+                  v-if="submission.status !== 'processed'"
+                  variant="secondary"
+                  size="sm"
+                  @click="reprocessSubmission(submission.id)"
+                  :loading="reprocessingId === submission.id"
+                >
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Reprocess
+                </BaseButton>
+                <router-link
+                  :to="`/forms/${formId}/submissions/${submission.id}`"
+                  class="text-blue-600 hover:text-blue-800 hover:underline"
+                >
+                  View Details
+                </router-link>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useNotifications } from '@/composables/useNotifications'
 import { formsAPI } from '@/services/api'
 import BaseButton from '@/components/ui/BaseButton.vue'
 
-interface FormSubmission {
+interface Submission {
   id: number
-  form_id: number
-  contact_id?: number
   payload: Record<string, any>
-  ip_address: string
-  user_agent: string
+  contact_id?: number
+  company_id?: number
+  owner_id?: number
+  processed_at?: string
+  status?: string
   created_at: string
   updated_at: string
 }
 
-interface Form {
-  id: number
-  name: string
-  status: string
-}
-
 const route = useRoute()
-const router = useRouter()
-const { error: showError } = useNotifications()
+const { success, error: showError } = useNotifications()
 
-// Reactive data
-const loading = ref(true)
-const error = ref<string | null>(null)
-const form = ref<Form | null>(null)
-const submissions = ref<FormSubmission[]>([])
+const formId = computed(() => parseInt(route.params.id as string))
+const submissions = ref<Submission[]>([])
+const loading = ref(false)
+const reprocessingId = ref<number | null>(null)
 
-// Methods
+// Load submissions
 const loadSubmissions = async () => {
   loading.value = true
-  error.value = null
-  
   try {
-    // Load form details
-    const formResponse = await formsAPI.getForm(route.params.id as string)
-    form.value = formResponse.data.data || formResponse.data
-    
-    // Load submissions
-    const submissionsResponse = await formsAPI.getFormSubmissions(route.params.id as string)
-    submissions.value = submissionsResponse.data.data || submissionsResponse.data || []
-  } catch (err: any) {
-    error.value = err.response?.data?.message || err.message || 'Failed to load submissions'
-    showError('Failed to load submissions')
+    const response = await formsAPI.getFormSubmissions(formId.value)
+    submissions.value = response.data.data || response.data || []
+  } catch (err) {
+    console.error('Failed to load submissions:', err)
+    showError('Failed to load form submissions')
+    submissions.value = []
   } finally {
     loading.value = false
   }
 }
 
-const goBack = () => {
-  router.push(`/forms/${route.params.id}`)
+// Refresh submissions
+const refreshSubmissions = () => {
+  loadSubmissions()
 }
 
-const viewSubmission = (submissionId: number) => {
-  router.push(`/forms/${route.params.id}/submissions/${submissionId}`)
-}
-
-const formatDate = (dateString: string) => {
-  if (!dateString) return 'Invalid Date'
-  
+// Reprocess submission
+const reprocessSubmission = async (submissionId: number) => {
+  reprocessingId.value = submissionId
   try {
-    const date = new Date(dateString)
-    if (isNaN(date.getTime())) return 'Invalid Date'
+    const response = await formsAPI.reprocessSubmission(formId.value, submissionId)
+    success('Submission reprocessed successfully')
     
-    return date.toLocaleDateString('en-US', {
+    // Attempt to extract contact id from various response shapes
+    const respData: any = (response && response.data && response.data.data) ? response.data.data : (response && response.data) ? response.data : {}
+    const contactIdFromResponse: number | null = respData.contact_id || (respData.contact && respData.contact.id) || null
+
+    // Update the matching submission locally if found
+    const submission = submissions.value.find(s => s.id === submissionId)
+    if (submission) {
+      if (contactIdFromResponse && !submission.contact_id) {
+        submission.contact_id = contactIdFromResponse
+      }
+      if (respData.status) {
+        submission.status = respData.status
+      } else if (contactIdFromResponse) {
+        submission.status = 'processed'
+      }
+    }
+
+    // If a contact was created/attached, notify Contacts page to refresh
+    if (contactIdFromResponse) {
+      // Dispatch both events for compatibility
+      window.dispatchEvent(new CustomEvent('contact-created', {
+        detail: {
+          contact_id: contactIdFromResponse,
+          submission_id: submissionId,
+          form_id: formId.value
+        }
+      }))
+      window.dispatchEvent(new CustomEvent('contacts-list-update', {
+        detail: {
+          action: 'contact-created',
+          contact_id: contactIdFromResponse,
+          submission_id: submissionId,
+          form_id: formId.value
+        }
+      }))
+    }
+    
+    // Refresh the submissions list to show updated status
+    await loadSubmissions()
+  } catch (err) {
+    console.error('Failed to reprocess submission:', err)
+    showError('Failed to reprocess submission')
+  } finally {
+    reprocessingId.value = null
+  }
+}
+
+// Helper functions
+const getContactDisplay = (submission: Submission): string => {
+  if (submission.payload.first_name || submission.payload.last_name) {
+    return `${submission.payload.first_name || ''} ${submission.payload.last_name || ''}`.trim()
+  }
+  if (submission.payload.email) {
+    return submission.payload.email
+  }
+  return `Contact #${submission.contact_id}`
+}
+
+const getCompanyDisplay = (submission: Submission): string => {
+  if (submission.payload.company_name) {
+    return submission.payload.company_name
+  }
+  if (submission.payload.domain) {
+    return submission.payload.domain
+  }
+  return `Company #${submission.company_id}`
+}
+
+const getStatusBadgeClass = (submission: Submission): string => {
+  if (submission.status === 'processed') return 'bg-green-100 text-green-800'
+  if (submission.status === 'failed') return 'bg-red-100 text-red-800'
+  if (submission.status === 'pending') return 'bg-yellow-100 text-yellow-800'
+  // If no status but has processed_at, treat as processed
+  if (submission.processed_at) return 'bg-green-100 text-green-800'
+  // Default to pending if no status and no processed_at
+  return 'bg-yellow-100 text-yellow-800'
+}
+
+const getStatusText = (submission: Submission): string => {
+  if (submission.status === 'processed') return 'Processed'
+  if (submission.status === 'failed') return 'Failed'
+  if (submission.status === 'pending') return 'Pending'
+  // If no status but has processed_at, treat as processed
+  if (submission.processed_at) return 'Processed'
+  // Default to pending if no status and no processed_at
+  return 'Pending'
+}
+
+const formatDate = (dateString: string): string => {
+  if (!dateString) return '-'
+  try {
+    return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
     })
-  } catch (err) {
-    return 'Invalid Date'
+  } catch {
+    return dateString
   }
 }
 
-// Lifecycle
 onMounted(() => {
   loadSubmissions()
 })
