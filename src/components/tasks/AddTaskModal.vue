@@ -195,8 +195,7 @@ const loadUsers = async () => {
     // In a real app, you might have a usersAPI or get this from a store
     const response = await fetch(`${process.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api'}/users`, {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-        'X-Tenant-ID': localStorage.getItem('tenant_id') || '1'
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
       }
     })
     

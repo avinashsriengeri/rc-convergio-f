@@ -348,7 +348,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useNotifications } from '@/composables/useNotifications'
 import { contactsAPI } from '@/services/api'
@@ -372,7 +372,18 @@ const totalDealValue = computed(() => {
 })
 
 onMounted(async () => {
+  // Clear suppression so other pages can fetch recent contacts normally
+  if (typeof window !== 'undefined') {
+    delete window.__RC_SUPPRESS_RECENT_CONTACTS__
+  }
   await loadContactData()
+})
+
+onUnmounted(() => {
+  // Ensure flag is cleared when leaving detail as well
+  if (typeof window !== 'undefined') {
+    delete window.__RC_SUPPRESS_RECENT_CONTACTS__
+  }
 })
 
 const loadContactData = async () => {

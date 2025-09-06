@@ -9,6 +9,7 @@ use App\Models\Activity;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class ContactController extends Controller
 {
@@ -18,7 +19,11 @@ class ContactController extends Controller
     public function show($id): JsonResponse
     {
         try {
-            $contact = Contact::with(['owner', 'company'])->findOrFail($id);
+            $tenantId = Auth::user()->tenant_id ?? null;
+            $contact = Contact::with(['owner', 'company'])
+                ->where('tenant_id', $tenantId)
+                ->where('id', $id)
+                ->firstOrFail();
             
             return response()->json([
                 'data' => [
@@ -38,7 +43,10 @@ class ContactController extends Controller
     public function getDeals(Request $request, $contactId): JsonResponse
     {
         try {
-            $contact = Contact::findOrFail($contactId);
+            $tenantId = Auth::user()->tenant_id ?? null;
+            $contact = Contact::where('tenant_id', $tenantId)
+                ->where('id', $contactId)
+                ->firstOrFail();
             
             $deals = Deal::where('contact_id', $contactId)
                 ->with(['stage', 'pipeline'])
@@ -69,7 +77,10 @@ class ContactController extends Controller
     public function getActivities(Request $request, $contactId): JsonResponse
     {
         try {
-            $contact = Contact::findOrFail($contactId);
+            $tenantId = Auth::user()->tenant_id ?? null;
+            $contact = Contact::where('tenant_id', $tenantId)
+                ->where('id', $contactId)
+                ->firstOrFail();
             
             $activities = Activity::where('contact_id', $contactId)
                 ->orderBy('created_at', 'desc')
@@ -99,7 +110,11 @@ class ContactController extends Controller
     public function getCompany($contactId): JsonResponse
     {
         try {
-            $contact = Contact::with('company')->findOrFail($contactId);
+            $tenantId = Auth::user()->tenant_id ?? null;
+            $contact = Contact::with('company')
+                ->where('tenant_id', $tenantId)
+                ->where('id', $contactId)
+                ->firstOrFail();
             
             if (!$contact->company) {
                 return response()->json([
@@ -122,10 +137,12 @@ class ContactController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $tenantId = Auth::user()->tenant_id ?? null;
+
         $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:contacts,email',
+            'email' => 'required|email|unique:contacts,email,NULL,id,tenant_id,' . $tenantId,
             'phone' => 'nullable|string|max:20',
             'company_id' => 'nullable|exists:companies,id',
             'source' => 'nullable|string|max:255',
@@ -134,7 +151,13 @@ class ContactController extends Controller
         ]);
 
         try {
-            $contact = Contact::create($request->all());
+            $payload = $request->all();
+            // Enforce tenant and default owner
+            $payload['tenant_id'] = $tenantId;
+            if (!isset($payload['owner_id'])) {
+                $payload['owner_id'] = Auth::id();
+            }
+            $contact = Contact::create($payload);
             
             return response()->json([
                 'data' => [
@@ -154,10 +177,12 @@ class ContactController extends Controller
      */
     public function update(Request $request, $id): JsonResponse
     {
+        $tenantId = Auth::user()->tenant_id ?? null;
+
         $request->validate([
             'first_name' => 'sometimes|required|string|max:255',
             'last_name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|email|unique:contacts,email,' . $id,
+            'email' => 'sometimes|required|email|unique:contacts,email,' . $id . ',id,tenant_id,' . $tenantId,
             'phone' => 'nullable|string|max:20',
             'company_id' => 'nullable|exists:companies,id',
             'source' => 'nullable|string|max:255',
@@ -166,7 +191,9 @@ class ContactController extends Controller
         ]);
 
         try {
-            $contact = Contact::findOrFail($id);
+            $contact = Contact::where('tenant_id', $tenantId)
+                ->where('id', $id)
+                ->firstOrFail();
             $contact->update($request->all());
             
             return response()->json([
@@ -188,7 +215,10 @@ class ContactController extends Controller
     public function destroy($id): JsonResponse
     {
         try {
-            $contact = Contact::findOrFail($id);
+            $tenantId = Auth::user()->tenant_id ?? null;
+            $contact = Contact::where('tenant_id', $tenantId)
+                ->where('id', $id)
+                ->firstOrFail();
             $contact->delete();
             
             return response()->json([

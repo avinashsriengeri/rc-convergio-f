@@ -435,6 +435,10 @@ const exportList = async () => {
 }
 
 const viewContact = (contact: Contact) => {
+  // TODO: Temporary suppression of recent contacts API during contact detail navigation
+  if (typeof window !== 'undefined') {
+    ;(window as any).__RC_SUPPRESS_RECENT_CONTACTS__ = true
+  }
   router.push(`/contacts/${contact.id}`)
 }
 

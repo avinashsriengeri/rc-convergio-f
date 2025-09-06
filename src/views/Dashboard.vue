@@ -357,6 +357,10 @@ const navigateToResult = (result) => {
   
   switch (result.type) {
     case 'contact':
+      // TODO: Temporary suppression of recent contacts API during contact detail navigation
+      if (typeof window !== 'undefined') {
+        window.__RC_SUPPRESS_RECENT_CONTACTS__ = true
+      }
       router.push(`/contacts/${result.id}`)
       break
     case 'company':

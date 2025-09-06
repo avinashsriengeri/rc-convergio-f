@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/',
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api/',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -10,7 +10,7 @@ const api = axios.create({
   timeout: 10000,
 })
 
-// Request interceptor - add auth token and tenant ID
+// Request interceptor - add auth token
 api.interceptors.request.use(
   (config) => {
     // Skip authentication for public form endpoints
@@ -21,7 +21,6 @@ api.interceptors.request.use(
       if (token) {
         config.headers['Authorization'] = `Bearer ${token}`
       }
-      config.headers['X-Tenant-ID'] = localStorage.getItem('tenant_id') || '1'
     }
     
     // Debug logging
@@ -113,7 +112,13 @@ export const dashboardAPI = {
   getDashboard: () => api.get('/dashboard'),
   getDealsSummary: (range = '7d') => api.get(`/deals/summary?range=${range}`),
   getTodayTasks: () => api.get('/tasks/today'),
-  getRecentContacts: (limit = 5) => api.get(`/contacts/recent?limit=${limit}`),
+  getRecentContacts: (limit = 5) => {
+    // TODO: Temporary suppression for contact detail navigation; remove when no longer needed
+    if (typeof window !== 'undefined' && window.__RC_SUPPRESS_RECENT_CONTACTS__) {
+      return Promise.resolve({ data: { data: [] } })
+    }
+    return api.get(`/contacts/recent?limit=${limit}`)
+  },
   getCampaignMetrics: (range = '14d') => api.get(`/campaigns/metrics?range=${range}`),
 }
 

@@ -352,6 +352,30 @@ export const useStagesStore = defineStore('stages', () => {
     state.value.selectedPipelineId = null
   }
 
+  const reset = () => {
+    state.value = {
+      loading: false,
+      error: null,
+      stages: [],
+      meta: {
+        current_page: 1,
+        last_page: 1,
+        per_page: 100,
+        total: 0,
+        from: 0,
+        to: 0
+      },
+      filters: {
+        pipeline_id: undefined,
+        is_active: true,
+        page: 1,
+        per_page: 100,
+        sort: 'order'
+      },
+      selectedPipelineId: null
+    }
+  }
+
   return {
     // State
     stages,
@@ -374,6 +398,7 @@ export const useStagesStore = defineStore('stages', () => {
     reorderStages,
     setSelectedPipeline,
     clearError,
-    resetFilters
+    resetFilters,
+    reset
   }
 })

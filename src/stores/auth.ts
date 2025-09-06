@@ -6,7 +6,7 @@ export const useAuthStore = defineStore('auth', () => {
   // Environment configuration
   const getEnvironment = (): Environment => ({
     VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/',
-    VITE_TENANT_ID: import.meta.env.VITE_TENANT_ID || localStorage.getItem('tenant_id') || '1',
+    VITE_TENANT_ID: import.meta.env.VITE_TENANT_ID || '',
     VITE_AUTH_TOKEN: import.meta.env.VITE_AUTH_TOKEN || localStorage.getItem('auth_token') || undefined,
     VITE_USERS_ENDPOINT: import.meta.env.VITE_USERS_ENDPOINT || '/api/users'
   })
@@ -16,8 +16,7 @@ export const useAuthStore = defineStore('auth', () => {
     const env = getEnvironment()
     const headers: Record<string, string> = {
       'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'X-Tenant-ID': env.VITE_TENANT_ID
+      'Content-Type': 'application/json'
     }
 
     if (env.VITE_AUTH_TOKEN) {
@@ -34,7 +33,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   // Get tenant ID
   const getTenantId = (): string => {
-    return getEnvironment().VITE_TENANT_ID
+    return ''
   }
 
   // Get users endpoint

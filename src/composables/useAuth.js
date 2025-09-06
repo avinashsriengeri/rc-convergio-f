@@ -60,8 +60,19 @@ const login = async (credentials) => {
     
     console.log('User role after login:', userRole.value)
     
-    // Trigger feature refresh after successful login
-    // Note: This will be handled by the useFeatures composable when it's used
+    // Trigger metadata refresh for current tenant
+    try {
+      const { useRefsStore } = await import('../stores/refs')
+      const { useStagesStore } = await import('../stores/stages')
+      const refsStore = useRefsStore()
+      const stagesStore = useStagesStore()
+      await Promise.all([
+        refsStore.initializeData(),
+        stagesStore.fetchStages()
+      ])
+    } catch (e) {
+      console.warn('Post-login metadata refresh failed:', e)
+    }
     
     return { success: true, user: userData }
   } catch (error) {
@@ -127,6 +138,18 @@ const logout = async () => {
     // Reset reactive state
     user.value = null
     isAuthenticated.value = false
+
+    // Reset cached metadata
+    try {
+      const { useRefsStore } = await import('../stores/refs')
+      const { useStagesStore } = await import('../stores/stages')
+      const refsStore = useRefsStore()
+      const stagesStore = useStagesStore()
+      refsStore.reset()
+      stagesStore.reset()
+    } catch (e) {
+      console.warn('Post-logout store reset failed:', e)
+    }
   }
 }
 
