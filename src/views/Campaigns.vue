@@ -456,20 +456,44 @@
           </div>
           
           <!-- Templates List -->
-          <div class="space-y-4">
-            <div v-for="template in templates" :key="template.id" class="border border-gray-200 rounded-lg p-4">
-              <div class="flex items-center justify-between">
-                <div>
-                  <h4 class="text-lg font-medium text-gray-900">{{ template.name }}</h4>
-                  <p class="text-sm text-gray-600">{{ template.description }}</p>
+          <div>
+            <div v-if="loadingTemplates" class="flex justify-center items-center py-12">
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+            <div v-else-if="!templates || templates.length === 0" class="text-center py-12">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M4.93 4.93a10 10 0 1114.14 14.14A10 10 0 014.93 4.93z" />
+              </svg>
+              <h4 class="mt-2 text-sm font-medium text-gray-900">No templates yet</h4>
+              <p class="mt-1 text-sm text-gray-500">Save any campaign as a template to reuse content quickly.</p>
+              <div class="mt-6">
+                <BaseButton variant="outline" @click="showTemplatesModal = false">Close</BaseButton>
+              </div>
+            </div>
+            <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div v-for="template in templates" :key="template.id" class="border border-gray-200 rounded-lg p-4">
+                <div class="mb-3">
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-sm font-medium text-gray-900 truncate" :title="template.name">{{ template.name }}</h4>
+                    <span class="text-xs text-gray-500" :title="template.updated_at">{{ formatDate(template.updated_at) }}</span>
+                  </div>
+                  <p class="text-xs text-gray-600 truncate" :title="template.subject">{{ template.subject }}</p>
                 </div>
-                <BaseButton
-                  variant="outline"
-                  size="sm"
-                  @click="useTemplate(template)"
-                >
-                  Use Template
-                </BaseButton>
+                <div class="flex items-center justify-end space-x-2">
+                  <BaseButton
+                    variant="primary"
+                    size="sm"
+                    aria-label="Use template"
+                    @click.stop="useTemplate(template)"
+                  >Use</BaseButton>
+                  <BaseButton
+                    v-if="template.is_template"
+                    variant="outline"
+                    size="sm"
+                    aria-label="Delete template"
+                    @click.stop="confirmDeleteTemplate(template)"
+                  >Delete</BaseButton>
+                </div>
               </div>
             </div>
           </div>
@@ -563,6 +587,53 @@
                     type="datetime-local"
                   />
                 </div>
+
+                <!-- Recipients -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Recipients</label>
+                  <div class="space-y-4">
+                    <div class="flex items-center space-x-4">
+                      <label class="inline-flex items-center space-x-2">
+                        <input type="radio" class="text-blue-600" value="contacts" v-model="campaignForm.recipient_mode" />
+                        <span class="text-sm text-gray-700">Static Contacts</span>
+                      </label>
+                      <label class="inline-flex items-center space-x-2">
+                        <input type="radio" class="text-blue-600" value="segment" v-model="campaignForm.recipient_mode" />
+                        <span class="text-sm text-gray-700">Dynamic List (Segment)</span>
+                      </label>
+                    </div>
+
+                    <div v-if="campaignForm.recipient_mode === 'segment'">
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Select Segment</label>
+                      <select
+                        v-model="campaignForm.segment_id"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="">Choose a segment</option>
+                        <option v-for="seg in segmentOptions" :key="seg.value" :value="seg.value">{{ seg.label }}</option>
+                      </select>
+                    </div>
+
+                    <div v-if="campaignForm.recipient_mode === 'contacts'">
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Select Contacts</label>
+                      <BaseInput
+                        v-model="contactSearch"
+                        placeholder="Search contacts by name or email..."
+                      />
+                      <div class="bg-gray-50 border border-gray-200 rounded-md p-2 max-h-80 overflow-y-auto mt-2">
+                        <div
+                          v-for="opt in filteredContactOptions"
+                          :key="opt.value"
+                          class="flex items-center space-x-2 py-1"
+                        >
+                          <input type="checkbox" class="rounded" :value="opt.value" v-model="campaignForm.recipient_contact_ids" />
+                          <span class="text-sm text-gray-700">{{ opt.label }}</span>
+                        </div>
+                        <div v-if="filteredContactOptions.length === 0" class="text-xs text-gray-500 p-2">No contacts found.</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <!-- Content -->
@@ -629,6 +700,14 @@
                 @click="closeModal"
               >
                 Cancel
+              </BaseButton>
+              <BaseButton
+                type="button"
+                variant="outline"
+                @click="saveAsTemplateInline"
+                :loading="savingTemplate"
+              >
+                Save as Template
               </BaseButton>
               <BaseButton
                 type="submit"
@@ -814,31 +893,47 @@
           <div v-if="loadingTemplates" class="flex justify-center items-center py-12">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
           </div>
-          
-          <!-- Templates List -->
-          <div v-else-if="templates.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div
-              v-for="template in templates"
-              :key="template.id"
-              class="bg-gray-50 p-4 rounded-lg border hover:border-blue-300 cursor-pointer"
-              @click="useTemplate(template)"
-            >
-              <h4 class="font-medium text-gray-900 mb-2">{{ template.name }}</h4>
-              <p class="text-sm text-gray-600 mb-3">{{ template.description }}</p>
-              <div class="flex items-center justify-between text-xs text-gray-500">
-                <span>{{ template.type }}</span>
-                <span>{{ template.category }}</span>
+
+          <!-- Templates List (cards with Use/Delete) -->
+          <div v-else-if="templates && templates.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div v-for="template in templates" :key="template.id" class="border border-gray-200 rounded-lg p-4">
+              <div class="mb-3">
+                <div class="flex items-center justify-between">
+                  <h4 class="text-sm font-medium text-gray-900 truncate" :title="template.name">{{ template.name }}</h4>
+                  <span class="text-xs text-gray-500" :title="template.updated_at">{{ formatDate(template.updated_at) }}</span>
+                </div>
+                <p class="text-xs text-gray-600 truncate" :title="template.subject">{{ template.subject }}</p>
+              </div>
+              <div class="flex items-center justify-end space-x-2">
+                <BaseButton
+                  variant="primary"
+                  size="sm"
+                  aria-label="Use template"
+                  :disabled="deletingMap[template.id] === true"
+                  @click.stop="useTemplate(template)"
+                >Use</BaseButton>
+                <BaseButton
+                  variant="outline"
+                  size="sm"
+                  aria-label="Delete template"
+                  :loading="deletingMap[template.id] === true"
+                  :disabled="deletingMap[template.id] === true"
+                  @click.stop="confirmDeleteTemplate(template)"
+                >Delete</BaseButton>
               </div>
             </div>
           </div>
-          
+
           <!-- Empty State -->
           <div v-else class="text-center py-12">
             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M4.93 4.93a10 10 0 1114.14 14.14A10 10 0 014.93 4.93z" />
             </svg>
-            <h3 class="mt-2 text-sm font-medium text-gray-900">No templates available</h3>
-            <p class="mt-1 text-sm text-gray-500">No campaign templates found.</p>
+            <h4 class="mt-2 text-sm font-medium text-gray-900">No templates yet</h4>
+            <p class="mt-1 text-sm text-gray-500">Save any campaign as a template to reuse content quickly.</p>
+            <div class="mt-6">
+              <BaseButton variant="outline" @click="showTemplatesModal = false">Close</BaseButton>
+            </div>
           </div>
         </div>
       </div>
@@ -865,10 +960,14 @@ import { useRefsStore } from '@/stores/refs'
 import { success, error as showError } from '@/utils/notifications'
 import { formatDate } from '@/utils/formatters'
 import { PER_PAGE_OPTIONS } from '@/utils/constants'
-import type { Campaign, CampaignFormData, PaginationMeta, CampaignMetrics } from '@/types'
+import type { Campaign, CampaignFormData, CampaignMetrics } from '@/types'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
+import { listsAPI } from '@/services/api'
+
+// Types for watcher tuple
+type ModalBools = [boolean, boolean]
 
 // Store
 const campaignsStore = useCampaignsStore()
@@ -876,6 +975,7 @@ const refsStore = useRefsStore()
 
 // Reactive data
 const saving = ref(false)
+const errors = reactive<Record<string, string>>({})
 const loading = computed(() => campaignsStore.loading)
 const error = computed(() => campaignsStore.error)
 const campaigns = computed(() => campaignsStore.campaigns)
@@ -898,6 +998,39 @@ const templates = ref<any[]>([])
 const recipients = ref<any[]>([])
 const loadingTemplates = ref(false)
 const loadingRecipients = ref(false)
+const savingTemplate = ref(false)
+const segments = ref<any[]>([])
+const deletingMap = reactive<Record<number, boolean>>({})
+
+// Options for pickers
+const contactSearch = ref('')
+const contactOptions = computed(() =>
+  (refsStore.contacts || [])
+    .filter((c: any) => !!c.email)
+    .map((c: any) => {
+      const name = c.name || c.first_name || c.last_name ? `${c.first_name ?? ''} ${c.last_name ?? ''}`.trim() : ''
+      const label = name ? `${name} (${c.email})` : (c.email || 'Unknown')
+      return { value: c.id, label }
+    })
+)
+const filteredContactOptions = computed(() => {
+  const q = contactSearch.value.trim().toLowerCase()
+  if (!q) return contactOptions.value
+  return contactOptions.value.filter((o: { label: string }) => o.label.toLowerCase().includes(q))
+})
+
+const segmentOptions = computed(() =>
+  (segments.value || []).map((s: any) => ({ value: s.id, label: s.name }))
+)
+
+const loadSegments = async () => {
+  try {
+    const res = await listsAPI.getLists({ per_page: 50 })
+    segments.value = res.data?.data || []
+  } catch (err: any) {
+    segments.value = []
+  }
+}
 
 // Filters
 const filters = reactive({
@@ -919,7 +1052,10 @@ const campaignForm = reactive<CampaignFormData>({
   owner_id: undefined,
   subject: '',
   content: '',
-  scheduled_at: ''
+  scheduled_at: '',
+  recipient_mode: '',
+  recipient_contact_ids: [],
+  segment_id: ''
 })
 
 // Computed
@@ -990,13 +1126,42 @@ const saveCampaign = async () => {
     return
   }
 
+  // Build payload with recipients at ROOT level per backend contract
+  const payload: any = {
+    name: campaignForm.name?.trim(),
+    description: campaignForm.description || '',
+    type: campaignForm.type,
+    owner_id: campaignForm.owner_id,
+    subject: campaignForm.subject?.trim() || '',
+    content: campaignForm.content?.trim()
+  }
+  // Recipient fields at root
+  if (campaignForm.recipient_mode === 'contacts') {
+    payload.recipient_mode = 'manual'
+    payload.recipient_contact_ids = (campaignForm.recipient_contact_ids || [])
+      .map((id: any) => Number(id))
+      .filter((n: any) => Number.isFinite(n))
+  } else if (campaignForm.recipient_mode === 'segment') {
+    payload.recipient_mode = 'segment'
+    if (campaignForm.segment_id !== '' && campaignForm.segment_id !== undefined && campaignForm.segment_id !== null) {
+      const segId = Number(campaignForm.segment_id)
+      payload.segment_id = Number.isFinite(segId) ? segId : campaignForm.segment_id
+    }
+  }
+
+  // scheduled_at: convert back to ISO UTC if user set a value
+  if (campaignForm.scheduled_at) {
+    const iso = toIsoUtcFromLocalInput(campaignForm.scheduled_at)
+    if (iso) payload.scheduled_at = iso
+  }
+
   saving.value = true
   try {
     if (showEditModal.value && campaignToDelete.value) {
-      await campaignsStore.updateCampaign(campaignToDelete.value.id, campaignForm)
+      await campaignsStore.updateCampaign(campaignToDelete.value.id, payload)
       success('Campaign updated successfully')
     } else {
-      await campaignsStore.createCampaign(campaignForm)
+      await campaignsStore.createCampaign(payload)
       success('Campaign created successfully')
     }
 
@@ -1011,7 +1176,9 @@ const saveCampaign = async () => {
 
 const scheduleCampaign = async (campaign: Campaign) => {
   try {
-    await campaignsStore.scheduleCampaign(campaign.id, campaign.scheduled_at || '')
+    // Ensure ISO format for schedule_at; if UI date lacks timezone, append 'Z'
+    const iso = campaign.scheduled_at ? (campaign.scheduled_at.endsWith('Z') ? campaign.scheduled_at : `${campaign.scheduled_at}Z`) : ''
+    await campaignsStore.scheduleCampaign(campaign.id, iso)
     success('Campaign scheduled successfully')
     fetchCampaigns()
   } catch (err: any) {
@@ -1043,8 +1210,23 @@ const editCampaign = (campaign: Campaign) => {
     owner_id: campaign.owner_id,
     subject: campaign.subject || '',
     content: campaign.content,
-    scheduled_at: campaign.scheduled_at || ''
+    scheduled_at: campaign.scheduled_at ? toLocalInputFromIsoUtc(campaign.scheduled_at as unknown as string) : ''
   })
+  // Prefill recipients from settings if provided (backend returns under settings)
+  const settings: any = (campaign as any).settings || {}
+  if (settings.recipient_mode === 'manual' || settings.recipient_mode === 'static') {
+    campaignForm.recipient_mode = 'contacts'
+    campaignForm.recipient_contact_ids = Array.isArray(settings.recipient_contact_ids) ? settings.recipient_contact_ids : []
+    campaignForm.segment_id = ''
+  } else if (settings.recipient_mode === 'segment') {
+    campaignForm.recipient_mode = 'segment'
+    campaignForm.segment_id = settings.segment_id || ''
+    campaignForm.recipient_contact_ids = []
+  } else {
+    campaignForm.recipient_mode = ''
+    campaignForm.recipient_contact_ids = []
+    campaignForm.segment_id = ''
+  }
   showEditModal.value = true
   showDetailModal.value = false
   showMetricsModal.value = false
@@ -1087,7 +1269,7 @@ const resumeCampaign = async (campaign: Campaign) => {
 // Duplicate campaign
 const duplicateCampaign = async (campaign: Campaign) => {
   try {
-    const duplicatedCampaign = await campaignsStore.duplicateCampaign(campaign.id)
+    await campaignsStore.duplicateCampaign(campaign.id)
     success('Campaign duplicated successfully')
     fetchCampaigns()
   } catch (err: any) {
@@ -1179,25 +1361,80 @@ const closeModal = () => {
     owner_id: undefined,
     subject: '',
     content: '',
-    scheduled_at: ''
+    scheduled_at: '',
+    recipient_mode: '',
+    recipient_contact_ids: [],
+    segment_id: ''
   })
 }
 
 // Use template function
-const useTemplate = (template: any) => {
-  // Populate the campaign form with template data
-  Object.assign(campaignForm, {
-    name: template.name,
-    description: template.description || '',
-    type: template.type,
-    subject: template.subject || '',
-    content: template.content || '',
-    scheduled_at: ''
-  })
-  
-  // Close templates modal and open create modal
-  showTemplatesModal.value = false
-  showCreateModal.value = true
+const useTemplate = async (template: any) => {
+  try {
+    const full = await campaignsStore.fetchCampaign(template.id)
+    const tpl: any = full || template
+    Object.assign(campaignForm, {
+      name: tpl.name,
+      description: tpl.description || '',
+      type: tpl.type,
+      owner_id: tpl.owner_id,
+      subject: tpl.subject || '',
+      content: tpl.content || '',
+      scheduled_at: ''
+    })
+    // Do not carry over template flags or recipient settings
+    campaignForm.recipient_mode = ''
+    campaignForm.recipient_contact_ids = []
+    campaignForm.segment_id = ''
+    showTemplatesModal.value = false
+    showCreateModal.value = true
+  } catch (err: any) {
+    showError('Failed to load template')
+  }
+}
+
+const deleteTemplateItem = async (template: any) => {
+  const id = template?.id
+  if (id === undefined || id === null) {
+    console.debug('[Templates][Delete][UI] invalid id', { id, typeofId: typeof id, template })
+    throw new Error('Invalid template id')
+  }
+  console.debug('[Templates][Delete][UI] calling store with', { id, typeofId: typeof id })
+  try {
+    await campaignsStore.deleteTemplate(id)
+    console.debug('[Templates][Delete][UI] store resolved', { id })
+    success('Template deleted')
+    // Optimistically remove; then refetch in confirm handler
+    templates.value = templates.value.filter(t => t.id !== id)
+  } catch (err: any) {
+    console.debug('[Templates][Delete][UI] store error', {
+      id,
+      status: err?.response?.status,
+      message: err?.response?.data?.message
+    })
+    const status = err?.response?.status
+    const message = err?.response?.data?.message
+    let friendly = message || 'Failed to delete template'
+    if (status === 422) friendly = message || 'Only templates can be deleted via this view.'
+    else if (status === 403) friendly = "You don't have permission to delete this template."
+    else if (status === 404) friendly = 'Template not found or belongs to another workspace.'
+    else if (status >= 500) friendly = 'Server error. Try again.'
+    showError(friendly)
+    throw err
+  }
+}
+
+const confirmDeleteTemplate = async (template: any) => {
+  console.debug('[Templates][Delete][UI] click', { template })
+  const ok = window.confirm(`Delete template '${template?.name}'? This cannot be undone.`)
+  if (!ok) return
+  deletingMap[template.id] = true
+  try {
+    await deleteTemplateItem(template)
+    await loadTemplates() // only after successful DELETE
+  } finally {
+    deletingMap[template.id] = false
+  }
 }
 
 const insertText = (text: string) => {
@@ -1250,16 +1487,118 @@ const getStatusTextClass = (status: string) => {
   return classes[status as keyof typeof classes] || 'text-gray-600'
 }
 
+// Date helpers: ISO (UTC) <-> input[type=datetime-local] (local, no seconds)
+const toLocalInputFromIsoUtc = (isoUtc: string): string => {
+  try {
+    const d = new Date(isoUtc)
+    const yyyy = d.getFullYear()
+    const mm = String(d.getMonth() + 1).padStart(2, '0')
+    const dd = String(d.getDate()).padStart(2, '0')
+    const hh = String(d.getHours()).padStart(2, '0')
+    const mi = String(d.getMinutes()).padStart(2, '0')
+    return `${yyyy}-${mm}-${dd}T${hh}:${mi}`
+  } catch {
+    return ''
+  }
+}
+
+const toIsoUtcFromLocalInput = (localStr: string): string => {
+  try {
+    // Ensure seconds; Date will treat as local time
+    const withSeconds = localStr.length === 16 ? `${localStr}:00` : localStr
+    const d = new Date(withSeconds)
+    return d.toISOString()
+  } catch {
+    return ''
+  }
+}
+
+const saveAsTemplateInline = async () => {
+  console.log('[SaveTemplate] clicked')
+  if (savingTemplate.value) return
+  savingTemplate.value = true
+  try {
+    // Determine mode via current editing object or presence of id in form
+    const editingId = showEditModal.value && campaignToDelete.value?.id ? campaignToDelete.value.id : (campaignForm as any).id
+    if (editingId) {
+      console.log('[SaveTemplate] mode=edit, id=', editingId)
+      const resp = await campaignsStore.saveAsTemplate(editingId as number)
+      console.log('[SaveTemplate] response(edit):', resp)
+    } else {
+      // Create a clean template (no scheduled_at, no recipient settings)
+      const payload: any = {
+        name: (campaignForm.name || '').trim(),
+        type: campaignForm.type,
+        subject: (campaignForm.subject || '').trim(),
+        content: (campaignForm.content || '').trim(),
+        status: 'draft',
+        is_template: true
+      }
+      // owner_id optional; include only if present
+      if (campaignForm.owner_id) payload.owner_id = campaignForm.owner_id
+      console.log('[SaveTemplate] mode=create, payload=', payload)
+      const created = await campaignsStore.createCampaign(payload)
+      console.log('[SaveTemplate] response(create):', created)
+      // Some backends ignore is_template on create. Ensure it's flagged via PATCH.
+      if (created?.id) {
+        try {
+          await campaignsStore.saveAsTemplate(created.id)
+        } catch (e) {
+          console.warn('[SaveTemplate] fallback patch failed', e)
+        }
+      }
+    }
+    success('Template saved')
+    showCreateModal.value = false
+    showEditModal.value = false
+    await loadTemplates()
+  } catch (err: any) {
+    const status = err?.response?.status
+    const data = err?.response?.data
+    console.error('[SaveTemplate] error:', status, data)
+    if (status === 422 && data?.errors) {
+      // Map validation errors to the form for visibility
+      try {
+        Object.keys(data.errors).forEach((k) => ((errors as any)[k] = data.errors[k][0]))
+      } catch {}
+      showError(data?.message || 'Validation failed')
+    } else {
+      showError(err.response?.data?.message || 'Failed to save template')
+    }
+  } finally {
+    savingTemplate.value = false
+  }
+}
+
 // Lifecycle
 onMounted(() => {
   fetchCampaigns()
   refsStore.fetchUsers()
+  loadSegments() // Load segments on mount
 })
 
 // Watch for templates modal opening
-watch(showTemplatesModal, (newValue) => {
+watch(showTemplatesModal, (newValue: boolean) => {
   if (newValue && templates.value.length === 0) {
     loadTemplates()
+  }
+})
+
+watch([showCreateModal, showEditModal], async ([createOpen, editOpen]: ModalBools) => {
+  if (createOpen || editOpen) {
+    if (!refsStore.users.length) refsStore.fetchUsers()
+    if (!refsStore.contacts.length) refsStore.fetchContacts({ per_page: 50 })
+    if (!segments.value.length) await loadSegments()
+    // Preselect current user as owner if empty
+    if (!campaignForm.owner_id) {
+      try {
+        const userStr = localStorage.getItem('user')
+        if (userStr) {
+          const u = JSON.parse(userStr)
+          if (u?.id) campaignForm.owner_id = u.id
+        }
+      } catch (_) {}
+    }
   }
 })
 </script>

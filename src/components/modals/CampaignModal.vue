@@ -118,6 +118,61 @@
               />
             </div>
 
+            <!-- Recipients (Design only) -->
+            <div class="md:col-span-2">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Recipients (Design)</label>
+              <div class="space-y-4">
+                <div class="flex items-center space-x-4">
+                  <label class="inline-flex items-center space-x-2">
+                    <input type="radio" class="text-blue-600" value="manual" v-model="form.recipient_mode" />
+                    <span class="text-sm text-gray-700">Static Contacts</span>
+                  </label>
+                  <label class="inline-flex items-center space-x-2">
+                    <input type="radio" class="text-blue-600" value="segment" v-model="form.recipient_mode" />
+                    <span class="text-sm text-gray-700">Dynamic List (Segment)</span>
+                  </label>
+                </div>
+
+                <div v-if="form.recipient_mode === 'segment'">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Select Segment</label>
+                  <select
+                    v-model="form.segment_id"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Choose a segment</option>
+                    <option value="finance">Finance Leads</option>
+                    <option value="it_directors">IT Directors</option>
+                    <option value="newsletter">Newsletter Subscribers</option>
+                  </select>
+                </div>
+
+                <div v-if="form.recipient_mode === 'manual'">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Select Contacts</label>
+                  <div class="bg-gray-50 border border-gray-200 rounded-md p-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                      <label class="inline-flex items-center space-x-2">
+                        <input type="checkbox" class="rounded" :value="201" v-model="form.recipient_contact_ids" />
+                        <span>John Doe (john@example.com)</span>
+                      </label>
+                      <label class="inline-flex items-center space-x-2">
+                        <input type="checkbox" class="rounded" :value="202" v-model="form.recipient_contact_ids" />
+                        <span>Alice Smith (alice@example.com)</span>
+                      </label>
+                      <label class="inline-flex items-center space-x-2">
+                        <input type="checkbox" class="rounded" :value="203" v-model="form.recipient_contact_ids" />
+                        <span>Michael Brown (michael@example.com)</span>
+                      </label>
+                      <label class="inline-flex items-center space-x-2">
+                        <input type="checkbox" class="rounded" :value="204" v-model="form.recipient_contact_ids" />
+                        <span>Emily Davis (emily@example.com)</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p class="text-xs text-gray-500 mt-1">Design only. API wiring will be added later.</p>
+            </div>
+
             <!-- Settings -->
             <div>
               <label for="settings" class="block text-sm font-medium text-gray-700 mb-1">
@@ -181,6 +236,7 @@
             <p class="mt-1 text-sm text-gray-500">You can use HTML tags and merge fields for personalization</p>
           </div>
 
+
           <!-- Error Display -->
           <div v-if="submitError" class="text-red-600 text-sm bg-red-50 p-3 rounded-md">
             {{ submitError }}
@@ -195,6 +251,14 @@
               :disabled="loading"
             >
               Cancel
+            </BaseButton>
+            <BaseButton
+              type="button"
+              variant="outline"
+              @click="saveAsTemplate"
+              :disabled="loading"
+            >
+              Save as Template
             </BaseButton>
             <BaseButton
               type="submit"
@@ -212,6 +276,8 @@
 
 <script setup>
 import { ref, reactive, computed, watch, nextTick } from 'vue'
+import { success, error as showError } from '@/utils/notifications'
+import { useCampaignsStore } from '@/stores/campaigns'
 import { campaignsAPI } from '@/services/api'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
@@ -232,6 +298,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close', 'saved'])
+const campaignsStore = useCampaignsStore?.() || null
 
 // Reactive data
 const loading = ref(false)
@@ -246,7 +313,12 @@ const form = reactive({
   subject: '',
   content: '',
   scheduled_at: '',
-  settings: ''
+  settings: '',
+  // Design-only fields (no API calls yet)
+  is_template: false,
+  recipient_mode: '', // 'contacts' | 'segment'
+  recipient_contact_ids: [], // selected contact IDs (static recipients)
+  segment_id: '' // selected dynamic segment ID
 })
 
 // Computed
@@ -263,6 +335,11 @@ watch(() => props.campaign, (newCampaign) => {
     form.content = newCampaign.content || ''
     form.scheduled_at = newCampaign.scheduled_at ? newCampaign.scheduled_at.replace('Z', '') : ''
     form.settings = newCampaign.settings ? JSON.stringify(newCampaign.settings, null, 2) : ''
+    // Reset design-only flags for clarity
+    form.is_template = false
+    form.recipient_mode = ''
+    form.recipient_contact_ids = []
+    form.segment_id = ''
   } else {
     // Reset form for new campaign
     Object.keys(form).forEach(key => {
@@ -272,6 +349,10 @@ watch(() => props.campaign, (newCampaign) => {
         form[key] = ''
       }
     })
+    form.is_template = false
+    form.recipient_mode = ''
+    form.recipient_contact_ids = []
+    form.segment_id = ''
   }
   // Clear errors
   Object.keys(errors).forEach(key => delete errors[key])
@@ -357,7 +438,14 @@ const handleSubmit = async () => {
       subject: form.subject.trim(),
       content: form.content.trim(),
       scheduled_at: form.scheduled_at || null,
-      settings: form.settings ? JSON.parse(form.settings) : null
+      settings: form.settings ? JSON.parse(form.settings) : null,
+      // Include recipients and template flags in payload if provided
+      ...(form.is_template ? { is_template: true } : {}),
+      ...(form.recipient_mode ? { recipient_mode: form.recipient_mode } : {}),
+      ...(Array.isArray(form.recipient_contact_ids) && form.recipient_contact_ids.length > 0
+        ? { recipient_contact_ids: form.recipient_contact_ids.map(id => Number(id)) }
+        : {}),
+      ...(form.segment_id ? { segment_id: form.segment_id } : {})
     }
     
     if (isEditing.value) {
@@ -379,6 +467,20 @@ const handleSubmit = async () => {
     }
   } finally {
     loading.value = false
+  }
+}
+
+// Design-only handler for Save as Template
+const saveAsTemplate = async () => {
+  try {
+    form.is_template = true
+    // If editing existing campaign, persist via store
+    if (campaignsStore && props.campaign?.id) {
+      await campaignsStore.saveAsTemplate(props.campaign.id)
+    }
+    success('Template saved')
+  } catch (e) {
+    showError('Failed to save template')
   }
 }
 </script>

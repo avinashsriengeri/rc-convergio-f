@@ -177,7 +177,7 @@ export const useCampaignsStore = defineStore('campaigns', () => {
       console.log('Creating campaign with data:', data)
       
       // Call the backend API
-      const response = await campaignsAPI.createCampaign(data)
+      const response = await campaignsAPI.createCampaign(data as any)
       console.log('Create campaign response:', response)
       const newCampaign = response.data.data
       console.log('New campaign created from API:', newCampaign)
@@ -212,7 +212,7 @@ export const useCampaignsStore = defineStore('campaigns', () => {
       console.log('Campaign ID:', id)
       
       // Call the backend API
-      const response = await campaignsAPI.updateCampaign(id, data)
+      const response = await campaignsAPI.updateCampaign(id, data as any)
       console.log('Update campaign response:', response)
       const updatedCampaign = response.data.data
       console.log('Updated campaign from API:', updatedCampaign)
@@ -286,7 +286,15 @@ export const useCampaignsStore = defineStore('campaigns', () => {
 
   const scheduleCampaign = async (id: number, scheduledAt: string): Promise<any> => {
     try {
-      const response = await campaignsAPI.scheduleCampaign(id, scheduledAt)
+      // Use unified /send endpoint with schedule_at in ISO (backend deprecated /schedule)
+      const payload = scheduledAt ? { schedule_at: scheduledAt } : {}
+      const response = await campaignsAPI.sendCampaign(id, payload)
+      // Merge returned campaign into list if present
+      const updated = response.data?.data || null
+      if (updated) {
+        const index = state.value.campaigns.findIndex(c => c.id === id)
+        if (index !== -1) state.value.campaigns[index] = updated
+      }
       return response.data
     } catch (err: unknown) {
       console.error('Error scheduling campaign:', err)
@@ -303,6 +311,22 @@ export const useCampaignsStore = defineStore('campaigns', () => {
     } catch (err: unknown) {
       console.error('Error fetching campaign metrics:', err)
       return null
+    }
+  }
+
+  const saveAsTemplate = async (id: number): Promise<Campaign | null> => {
+    try {
+      // Use PATCH to avoid overwriting other fields unexpectedly
+      const response = await campaignsAPI.patchCampaign(id, { is_template: true } as any)
+      const updated = response.data?.data
+      if (updated) {
+        const index = state.value.campaigns.findIndex(c => c.id === id)
+        if (index !== -1) state.value.campaigns[index] = updated
+      }
+      return updated || null
+    } catch (err: unknown) {
+      console.error('Error saving campaign as template:', err)
+      throw err
     }
   }
 
@@ -332,6 +356,12 @@ export const useCampaignsStore = defineStore('campaigns', () => {
   const duplicateCampaign = async (id: number): Promise<any> => {
     try {
       const response = await campaignsAPI.duplicateCampaign(id)
+      // Add duplicated (draft) campaign to the list if backend returns it
+      const duplicated = response.data?.data || null
+      if (duplicated) {
+        state.value.campaigns.unshift(duplicated)
+        state.value.meta.total += 1
+      }
       return response.data
     } catch (err: unknown) {
       console.error('Error duplicating campaign:', err)
@@ -347,6 +377,33 @@ export const useCampaignsStore = defineStore('campaigns', () => {
     } catch (err: unknown) {
       console.error('Error fetching templates:', err)
       throw err
+    }
+  }
+
+  // Delete a template (only if is_template=true)
+  const deleteTemplate = async (id: number): Promise<void> => {
+    if (id === undefined || id === null) {
+      console.debug('[Templates][Delete][Store] invalid id', { id, typeofId: typeof id })
+      throw new Error('Invalid template id')
+    }
+    console.debug('[Templates][Delete][Store] start', { id, typeofId: typeof id })
+    try {
+      const res = await campaignsAPI.deleteCampaign(id)
+      console.debug('[Templates][Delete][Store] success', { status: res?.status })
+      // Optimistically prune from in-memory list if present
+      const index = state.value.campaigns.findIndex(c => c.id === id)
+      if (index !== -1) {
+        state.value.campaigns.splice(index, 1)
+        state.value.meta.total = Math.max(0, state.value.meta.total - 1)
+      }
+    } catch (err: any) {
+      console.debug('[Templates][Delete][Store] error', {
+        status: err?.response?.status,
+        message: err?.response?.data?.message
+      })
+      throw err
+    } finally {
+      console.debug('[Templates][Delete][Store] finally')
     }
   }
 
@@ -430,7 +487,9 @@ export const useCampaignsStore = defineStore('campaigns', () => {
     resumeCampaign,
     duplicateCampaign,
     getCampaignMetrics,
+    saveAsTemplate,
     getTemplates,
+    deleteTemplate,
     getRecipients,
     addRecipient,
     removeRecipient,

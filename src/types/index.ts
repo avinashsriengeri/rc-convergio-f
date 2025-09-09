@@ -350,6 +350,11 @@ export interface CampaignFormData {
   subject?: string
   content: string
   scheduled_at?: string
+  // New optional fields for templates and recipients
+  is_template?: boolean
+  recipient_mode?: 'contacts' | 'segment' | ''
+  recipient_contact_ids?: number[]
+  segment_id?: number | string
 }
 
 // Store state types

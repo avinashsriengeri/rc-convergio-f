@@ -275,11 +275,22 @@ export const campaignsAPI = {
   getCampaign: (id) => api.get(`/campaigns/${id}`),
   createCampaign: (data) => api.post('/campaigns', data),
   updateCampaign: (id, data) => api.put(`/campaigns/${id}`, data),
-  deleteCampaign: (id) => api.delete(`/campaigns/${id}`),
-  sendCampaign: (id) => api.post(`/campaigns/${id}/send`),
+  patchCampaign: (id, data) => api.patch(`/campaigns/${id}`, data),
+  deleteCampaign: (id) => {
+    const url = `/campaigns/${id}`
+    console.debug('[Templates][Delete][API] sending', { method: 'delete', url })
+    return api.delete(url).then((res) => {
+      console.debug('[Templates][Delete][API] response', { status: res?.status })
+      return res
+    })
+  },
+  // Backward compatible: sendCampaign now accepts optional data (e.g., { schedule_at })
+  sendCampaign: (id, data) => api.post(`/campaigns/${id}/send`, data),
+  // Deprecated on backend, kept for backward compatibility in older UIs
   scheduleCampaign: (id, scheduledAt) => api.post(`/campaigns/${id}/schedule`, { scheduled_at: scheduledAt }),
   pauseCampaign: (id) => api.post(`/campaigns/${id}/pause`),
   resumeCampaign: (id) => api.post(`/campaigns/${id}/resume`),
+  getCampaignMetrics: (id, params = {}) => api.get(`/campaigns/${id}/metrics`, { params }),
   getTemplates: () => api.get('/campaigns/templates'),
   duplicateCampaign: (id) => api.post(`/campaigns/${id}/duplicate`),
   getRecipients: (id) => api.get(`/campaigns/${id}/recipients`),

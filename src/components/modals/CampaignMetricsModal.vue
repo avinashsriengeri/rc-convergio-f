@@ -224,6 +224,14 @@
         <div class="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200 mt-6">
           <BaseButton
             type="button"
+            variant="outline"
+            @click="loadMetrics"
+            :loading="loading"
+          >
+            Refresh
+          </BaseButton>
+          <BaseButton
+            type="button"
             variant="secondary"
             @click="$emit('close')"
           >
