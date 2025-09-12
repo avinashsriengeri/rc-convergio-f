@@ -739,44 +739,273 @@
           </div>
           
           <div v-if="selectedCampaign" class="space-y-6">
-            <!-- Campaign Info -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h4 class="text-lg font-medium text-gray-900">{{ selectedCampaign.name }}</h4>
-                <p class="text-sm text-gray-600 mt-1">{{ selectedCampaign.description }}</p>
+            <!-- Tab Navigation -->
+            <div class="border-b border-gray-200">
+              <nav class="-mb-px flex space-x-8">
+                <button
+                  @click="activeDetailTab = 'overview'"
+                  :class="[
+                    'py-2 px-1 border-b-2 font-medium text-sm',
+                    activeDetailTab === 'overview'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ]"
+                >
+                  Overview
+                </button>
+                <button
+                  @click="activeDetailTab = 'recipients'"
+                  :class="[
+                    'py-2 px-1 border-b-2 font-medium text-sm',
+                    activeDetailTab === 'recipients'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ]"
+                >
+                  Recipients
+                </button>
+                <button
+                  @click="activeDetailTab = 'audit-logs'"
+                  :class="[
+                    'py-2 px-1 border-b-2 font-medium text-sm',
+                    activeDetailTab === 'audit-logs'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ]"
+                >
+                  Audit Logs
+                </button>
+              </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <div v-if="activeDetailTab === 'overview'">
+              <!-- Campaign Info -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 class="text-lg font-medium text-gray-900">{{ selectedCampaign.name }}</h4>
+                  <p class="text-sm text-gray-600 mt-1">{{ selectedCampaign.description }}</p>
+                </div>
+                <div class="space-y-2 text-sm">
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Status:</span>
+                    <span :class="getStatusTextClass(selectedCampaign.status)">
+                      {{ selectedCampaign.status }}
+                    </span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Type:</span>
+                    <span>{{ selectedCampaign.type }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Owner:</span>
+                    <span>{{ selectedCampaign.owner?.name || 'Unassigned' }}</span>
+                  </div>
+                  <div v-if="selectedCampaign.scheduled_at" class="flex justify-between">
+                    <span class="text-gray-500">Scheduled:</span>
+                    <span>{{ formatDate(selectedCampaign.scheduled_at) }}</span>
+                  </div>
+                  <div v-if="selectedCampaign.sent_at" class="flex justify-between">
+                    <span class="text-gray-500">Sent:</span>
+                    <span>{{ formatDate(selectedCampaign.sent_at) }}</span>
+                  </div>
+                </div>
               </div>
-              <div class="space-y-2 text-sm">
-                <div class="flex justify-between">
-                  <span class="text-gray-500">Status:</span>
-                  <span :class="getStatusTextClass(selectedCampaign.status)">
-                    {{ selectedCampaign.status }}
-                  </span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-500">Type:</span>
-                  <span>{{ selectedCampaign.type }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-500">Owner:</span>
-                  <span>{{ selectedCampaign.owner?.name || 'Unassigned' }}</span>
-                </div>
-                <div v-if="selectedCampaign.scheduled_at" class="flex justify-between">
-                  <span class="text-gray-500">Scheduled:</span>
-                  <span>{{ formatDate(selectedCampaign.scheduled_at) }}</span>
-                </div>
-                <div v-if="selectedCampaign.sent_at" class="flex justify-between">
-                  <span class="text-gray-500">Sent:</span>
-                  <span>{{ formatDate(selectedCampaign.sent_at) }}</span>
+
+              <!-- Campaign Content -->
+              <div>
+                <h5 class="text-sm font-medium text-gray-900 mb-2">Content</h5>
+                <div class="bg-gray-50 p-4 rounded-md">
+                  <div class="prose prose-sm max-w-none">
+                    <div v-html="renderMarkdown(selectedCampaign.content)"></div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- Campaign Content -->
-            <div>
-              <h5 class="text-sm font-medium text-gray-900 mb-2">Content</h5>
-              <div class="bg-gray-50 p-4 rounded-md">
-                <div class="prose prose-sm max-w-none">
-                  <div v-html="renderMarkdown(selectedCampaign.content)"></div>
+            <!-- Recipients Tab -->
+            <div v-else-if="activeDetailTab === 'recipients'">
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <h5 class="text-sm font-medium text-gray-900">Campaign Recipients</h5>
+                  <button
+                    @click="fetchCampaignRecipients(selectedCampaign.id)"
+                    :disabled="loadingRecipients"
+                    class="text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50"
+                  >
+                    {{ loadingRecipients ? 'Loading...' : 'Refresh' }}
+                  </button>
+                </div>
+
+                <!-- Loading State -->
+                <div v-if="loadingRecipients" class="flex justify-center items-center py-8">
+                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                </div>
+
+                <!-- Recipients Table -->
+                <div v-else-if="campaignRecipients && campaignRecipients.length > 0" class="overflow-x-auto">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Name
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Email
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Status
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Sent At
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Opened At
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Clicked At
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                      <tr v-for="recipient in campaignRecipients" :key="recipient.id">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {{ recipient.name || 'N/A' }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {{ recipient.email }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <span :class="getRecipientStatusClass(recipient.status)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
+                            {{ recipient.status || 'pending' }}
+                          </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {{ recipient.sent_at ? formatDate(recipient.sent_at) : '-' }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {{ recipient.opened_at ? formatDate(recipient.opened_at) : '-' }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {{ recipient.clicked_at ? formatDate(recipient.clicked_at) : '-' }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Empty State -->
+                <div v-else class="text-center py-8">
+                  <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  <h4 class="mt-2 text-sm font-medium text-gray-900">No recipients found</h4>
+                  <p class="mt-1 text-sm text-gray-500">This campaign has no recipients configured yet.</p>
+                </div>
+
+                <!-- Error State -->
+                <div v-if="recipientsError" class="text-center py-8">
+                  <div class="text-red-600 text-sm bg-red-50 p-3 rounded-md">
+                    {{ recipientsError }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Audit Logs Tab -->
+            <div v-else-if="activeDetailTab === 'audit-logs'">
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <h5 class="text-sm font-medium text-gray-900">Campaign Audit Logs</h5>
+                  <button
+                    @click="fetchCampaignAuditLogs(selectedCampaign.id)"
+                    :disabled="loadingAuditLogs"
+                    class="text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50"
+                  >
+                    {{ loadingAuditLogs ? 'Loading...' : 'Refresh' }}
+                  </button>
+                </div>
+
+                <!-- Loading State -->
+                <div v-if="loadingAuditLogs" class="flex justify-center items-center py-8">
+                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                </div>
+
+                <!-- Audit Logs Table -->
+                <div v-else-if="campaignAuditLogs && campaignAuditLogs.length > 0" class="overflow-x-auto">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Action
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          User
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Metadata
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          IP Address
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          User Agent
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Timestamp
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                      <tr v-for="log in campaignAuditLogs" :key="log.id">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <span :class="getAuditLogActionClass(log.action)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
+                            {{ formatAuditLogAction(log.action) }}
+                          </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {{ log.user?.name || 'System' }}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500">
+                          <button
+                            v-if="log.metadata"
+                            @click="toggleMetadata(log.id)"
+                            class="text-blue-600 hover:text-blue-800 text-xs"
+                          >
+                            {{ expandedMetadata[log.id] ? 'Hide' : 'Show' }} Details
+                          </button>
+                          <div v-if="expandedMetadata[log.id] && log.metadata" class="mt-2 p-2 bg-gray-50 rounded text-xs font-mono">
+                            {{ JSON.stringify(log.metadata, null, 2) }}
+                          </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {{ log.ip_address || '-' }}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate" :title="log.user_agent">
+                          {{ log.user_agent || '-' }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {{ formatDate(log.created_at) }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Empty State -->
+                <div v-else class="text-center py-8">
+                  <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <h4 class="mt-2 text-sm font-medium text-gray-900">No audit logs yet</h4>
+                  <p class="mt-1 text-sm text-gray-500">Audit logs will appear when actions are performed on this campaign.</p>
+                </div>
+
+                <!-- Error State -->
+                <div v-if="auditLogsError" class="text-center py-8">
+                  <div class="text-red-600 text-sm bg-red-50 p-3 rounded-md">
+                    {{ auditLogsError }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -808,21 +1037,46 @@
         <div class="mt-3">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-medium text-gray-900">Campaign Metrics</h3>
-            <button
-              @click="showMetricsModal = false"
-              class="text-gray-400 hover:text-gray-600"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            <div class="flex items-center space-x-3">
+              <BaseButton
+                variant="outline"
+                size="sm"
+                @click="viewMetrics(selectedCampaign)"
+                :loading="loading"
+              >
+                Refresh
+              </BaseButton>
+              <button
+                @click="showMetricsModal = false"
+                class="text-gray-400 hover:text-gray-600"
+              >
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
           </div>
           
-          <div v-if="selectedCampaign && campaignMetrics" class="space-y-6">
+          <!-- Loading State -->
+          <div v-if="loading" class="flex justify-center items-center py-12">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
+
+          <!-- Empty State -->
+          <div v-else-if="!campaignMetrics || Object.keys(campaignMetrics).length === 0" class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <h4 class="mt-2 text-sm font-medium text-gray-900">No metrics available</h4>
+            <p class="mt-1 text-sm text-gray-500">Campaign metrics will appear once the campaign is sent and recipients start engaging.</p>
+          </div>
+
+          <!-- Metrics Content -->
+          <div v-else-if="selectedCampaign && campaignMetrics" class="space-y-6">
             <!-- Metrics Summary -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div class="bg-blue-50 p-4 rounded-lg">
-                <div class="text-2xl font-bold text-blue-600">{{ campaignMetrics.recipient_count || 0 }}</div>
+                <div class="text-2xl font-bold text-blue-600">{{ campaignMetrics.sent_count || 0 }}</div>
                 <div class="text-sm text-blue-800">Recipients</div>
               </div>
               <div class="bg-green-50 p-4 rounded-lg">
@@ -844,19 +1098,19 @@
               <div class="bg-white p-4 rounded-lg border">
                 <div class="text-lg font-medium text-gray-900">Open Rate</div>
                 <div class="text-3xl font-bold text-blue-600">
-                  {{ calculateRate(campaignMetrics.opened_count, campaignMetrics.sent_count) }}%
+                  {{ campaignMetrics.open_percentage || 0 }}%
                 </div>
               </div>
               <div class="bg-white p-4 rounded-lg border">
                 <div class="text-lg font-medium text-gray-900">Click Rate</div>
                 <div class="text-3xl font-bold text-green-600">
-                  {{ calculateRate(campaignMetrics.clicked_count, campaignMetrics.sent_count) }}%
+                  {{ campaignMetrics.click_percentage || 0 }}%
                 </div>
               </div>
               <div class="bg-white p-4 rounded-lg border">
                 <div class="text-lg font-medium text-gray-900">Bounce Rate</div>
                 <div class="text-3xl font-bold text-red-600">
-                  {{ calculateRate(campaignMetrics.bounced_count, campaignMetrics.sent_count) }}%
+                  {{ campaignMetrics.bounce_percentage || 0 }}%
                 </div>
               </div>
             </div>
@@ -865,7 +1119,13 @@
             <div class="bg-white p-4 rounded-lg border">
               <h5 class="text-lg font-medium text-gray-900 mb-4">Engagement Timeline</h5>
               <div class="h-64 bg-gray-50 rounded flex items-center justify-center">
-                <p class="text-gray-500">Chart placeholder - would show engagement over time</p>
+                <div class="text-center">
+                  <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  <h4 class="mt-2 text-sm font-medium text-gray-900">Timeline Chart</h4>
+                  <p class="mt-1 text-sm text-gray-500">Engagement timeline will show when recipients start opening and clicking emails</p>
+                </div>
               </div>
             </div>
           </div>
@@ -964,6 +1224,7 @@ import type { Campaign, CampaignFormData, CampaignMetrics } from '@/types'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
+// @ts-expect-error - listsAPI is exported from api.js
 import { listsAPI } from '@/services/api'
 
 // Types for watcher tuple
@@ -993,13 +1254,24 @@ const campaignToDelete = ref<Campaign | null>(null)
 const selectedCampaign = ref<Campaign | null>(null)
 const campaignMetrics = ref<CampaignMetrics | null>(null)
 
+// Detail modal tab state
+const activeDetailTab = ref('overview')
+
 // Templates and recipients data
 const templates = ref<any[]>([])
+const campaignRecipients = ref<any[]>([])
+const loadingRecipients = ref(false)
+const recipientsError = ref('')
 const recipients = ref<any[]>([])
 const loadingTemplates = ref(false)
-const loadingRecipients = ref(false)
 const savingTemplate = ref(false)
 const segments = ref<any[]>([])
+
+// Audit logs data
+const campaignAuditLogs = ref<any[]>([])
+const loadingAuditLogs = ref(false)
+const auditLogsError = ref('')
+const expandedMetadata = ref<Record<number, boolean>>({})
 const deletingMap = reactive<Record<number, boolean>>({})
 
 // Options for pickers
@@ -1198,6 +1470,7 @@ const sendCampaign = async (campaign: Campaign) => {
 
 const viewCampaign = (campaign: Campaign) => {
   selectedCampaign.value = campaign
+  activeDetailTab.value = 'overview' // Reset to overview tab
   showDetailModal.value = true
 }
 
@@ -1344,6 +1617,78 @@ const confirmDelete = async () => {
   }
 }
 
+// Recipients methods
+const fetchCampaignRecipients = async (campaignId: number) => {
+  loadingRecipients.value = true
+  recipientsError.value = ''
+  
+  try {
+    const response = await campaignsStore.getRecipients(campaignId)
+    campaignRecipients.value = response.data || []
+  } catch (err: any) {
+    recipientsError.value = err.response?.data?.message || 'Failed to fetch recipients'
+    campaignRecipients.value = []
+  } finally {
+    loadingRecipients.value = false
+  }
+}
+
+const getRecipientStatusClass = (status: string) => {
+  switch (status?.toLowerCase()) {
+    case 'sent':
+      return 'bg-green-100 text-green-800'
+    case 'delivered':
+      return 'bg-blue-100 text-blue-800'
+    case 'opened':
+      return 'bg-purple-100 text-purple-800'
+    case 'clicked':
+      return 'bg-yellow-100 text-yellow-800'
+    case 'bounced':
+      return 'bg-red-100 text-red-800'
+    case 'failed':
+      return 'bg-red-100 text-red-800'
+    default:
+      return 'bg-gray-100 text-gray-800'
+  }
+}
+
+const fetchCampaignAuditLogs = async (campaignId: number) => {
+  loadingAuditLogs.value = true
+  auditLogsError.value = ''
+  
+  try {
+    const response = await campaignsStore.getCampaignAuditLogs(campaignId)
+    campaignAuditLogs.value = response.data || []
+  } catch (err: any) {
+    auditLogsError.value = err.response?.data?.message || 'Unable to load logs'
+    campaignAuditLogs.value = []
+  } finally {
+    loadingAuditLogs.value = false
+  }
+}
+
+const getAuditLogActionClass = (action: string) => {
+  switch (action?.toLowerCase()) {
+    case 'audience_frozen': return 'bg-blue-100 text-blue-800'
+    case 'campaign_sent': return 'bg-green-100 text-green-800'
+    case 'recipient_opened': return 'bg-yellow-100 text-yellow-800'
+    case 'recipient_clicked': return 'bg-purple-100 text-purple-800'
+    case 'recipient_unsubscribed': return 'bg-red-100 text-red-800'
+    case 'campaign_created': return 'bg-indigo-100 text-indigo-800'
+    case 'campaign_updated': return 'bg-orange-100 text-orange-800'
+    case 'campaign_deleted': return 'bg-red-100 text-red-800'
+    default: return 'bg-gray-100 text-gray-800'
+  }
+}
+
+const formatAuditLogAction = (action: string) => {
+  return action?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || action
+}
+
+const toggleMetadata = (logId: number) => {
+  expandedMetadata.value[logId] = !expandedMetadata.value[logId]
+}
+
 const closeModal = () => {
   showCreateModal.value = false
   showEditModal.value = false
@@ -1354,6 +1699,14 @@ const closeModal = () => {
   campaignToDelete.value = null
   selectedCampaign.value = null
   campaignMetrics.value = null
+  // Reset recipients data
+  campaignRecipients.value = []
+  recipientsError.value = ''
+  // Reset audit logs data
+  campaignAuditLogs.value = []
+  auditLogsError.value = ''
+  expandedMetadata.value = {}
+  activeDetailTab.value = 'overview'
   Object.assign(campaignForm, {
     name: '',
     description: '',
@@ -1405,7 +1758,7 @@ const deleteTemplateItem = async (template: any) => {
     console.debug('[Templates][Delete][UI] store resolved', { id })
     success('Template deleted')
     // Optimistically remove; then refetch in confirm handler
-    templates.value = templates.value.filter(t => t.id !== id)
+    templates.value = templates.value.filter((t: any) => t.id !== id)
   } catch (err: any) {
     console.debug('[Templates][Delete][UI] store error', {
       id,

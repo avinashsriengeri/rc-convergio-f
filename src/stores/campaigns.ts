@@ -461,6 +461,16 @@ export const useCampaignsStore = defineStore('campaigns', () => {
     }
   }
 
+  const getCampaignAuditLogs = async (id: number, params: any = {}): Promise<any> => {
+    try {
+      const response = await campaignsAPI.getCampaignAuditLogs(id, params)
+      return response.data
+    } catch (err: any) {
+      console.error('Error fetching campaign audit logs:', err)
+      throw err
+    }
+  }
+
   return {
     // State
     campaigns,
@@ -493,6 +503,7 @@ export const useCampaignsStore = defineStore('campaigns', () => {
     getRecipients,
     addRecipient,
     removeRecipient,
+    getCampaignAuditLogs,
     setSelectedCampaign,
     clearError,
     resetFilters

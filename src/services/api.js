@@ -295,7 +295,8 @@ export const campaignsAPI = {
   duplicateCampaign: (id) => api.post(`/campaigns/${id}/duplicate`),
   getRecipients: (id) => api.get(`/campaigns/${id}/recipients`),
   addRecipient: (id, recipientData) => api.post(`/campaigns/${id}/recipients`, recipientData),
-  removeRecipient: (id, recipientId) => api.delete(`/campaigns/${id}/recipients/${recipientId}`)
+  removeRecipient: (id, recipientId) => api.delete(`/campaigns/${id}/recipients/${recipientId}`),
+  getCampaignAuditLogs: (id, params = {}) => api.get('/audit-logs', { params: { campaign_id: id, ...params } })
 }
 
 // Forms API endpoints
