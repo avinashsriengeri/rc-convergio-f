@@ -5,7 +5,7 @@
       <div class="p-6 border-b border-gray-200">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">
-            {{ mode === 'edit' ? 'Edit Contact' : 'Add Contact' }}
+            {{ mode === 'edit' ? $t('common.edit_contact') : $t('common.add_contact') }}
           </h2>
           <button
             @click="$emit('close')"
@@ -23,12 +23,12 @@
         <!-- First Name -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            First Name *
+            {{ $t('common.first_name') }} *
           </label>
           <BaseInput
             v-model="form.first_name"
             type="text"
-            placeholder="Enter first name"
+            :placeholder="$t('common.enter_first_name')"
             :error="!!errors.first_name"
           />
           <p v-if="errors.first_name" class="mt-1 text-sm text-red-600">{{ errors.first_name }}</p>
@@ -37,12 +37,12 @@
         <!-- Last Name -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Last Name *
+            {{ $t('common.last_name') }} *
           </label>
           <BaseInput
             v-model="form.last_name"
             type="text"
-            placeholder="Enter last name"
+            :placeholder="$t('common.enter_last_name')"
             :error="!!errors.last_name"
           />
           <p v-if="errors.last_name" class="mt-1 text-sm text-red-600">{{ errors.last_name }}</p>
@@ -51,12 +51,12 @@
         <!-- Email -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Email Address
+            {{ $t('common.email') }}
           </label>
           <BaseInput
             v-model="form.email"
             type="email"
-            placeholder="Enter email address"
+            :placeholder="$t('common.enter_email')"
             :error="!!errors.email"
           />
           <p v-if="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</p>
@@ -65,12 +65,12 @@
         <!-- Phone -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Phone Number
+            {{ $t('common.phone') }}
           </label>
           <BaseInput
             v-model="form.phone"
             type="tel"
-            placeholder="Enter phone number"
+            :placeholder="$t('common.enter_phone')"
             :error="!!errors.phone"
           />
           <p v-if="errors.phone" class="mt-1 text-sm text-red-600">{{ errors.phone }}</p>
@@ -88,11 +88,11 @@
               errors.lifecycle_stage ? 'border-red-300' : 'border-gray-300'
             ]"
           >
-            <option value="">Select stage</option>
-            <option value="lead">Lead</option>
-            <option value="prospect">Prospect</option>
-            <option value="customer">Customer</option>
-            <option value="inactive">Inactive</option>
+            <option value="">{{ $t('common.select_status') }}</option>
+            <option value="lead">{{ $t('common.lead') }}</option>
+            <option value="prospect">{{ $t('common.prospect') }}</option>
+            <option value="customer">{{ $t('common.customer') }}</option>
+            <option value="inactive">{{ $t('common.inactive') }}</option>
           </select>
           <p v-if="errors.lifecycle_stage" class="mt-1 text-sm text-red-600">
             {{ errors.lifecycle_stage }}
@@ -140,14 +140,14 @@
             variant="outline"
             @click="$emit('close')"
           >
-            Cancel
+            {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
             type="submit"
             variant="primary"
             :loading="loading"
           >
-            {{ mode === 'edit' ? 'Update' : 'Create' }}
+            {{ mode === 'edit' ? $t('common.save') : $t('common.create') }}
           </BaseButton>
         </div>
       </form>

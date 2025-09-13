@@ -4,8 +4,8 @@
     <div class="bg-white shadow-sm border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="py-6">
-          <h1 class="text-2xl font-bold text-gray-900">Settings</h1>
-          <p class="text-sm text-gray-600 mt-1">Manage your account and preferences</p>
+          <h1 class="text-2xl font-bold text-gray-900">{{ $t('settings.title') }}</h1>
+          <p class="text-sm text-gray-600 mt-1">{{ $t('settings.subtitle') }}</p>
         </div>
       </div>
     </div>
@@ -33,20 +33,20 @@
           <!-- Profile Settings -->
           <div v-if="activeTab === 'profile'" class="bg-white shadow rounded-lg">
             <div class="px-6 py-4 border-b border-gray-200">
-              <h3 class="text-lg font-medium text-gray-900">Profile Information</h3>
-              <p class="text-sm text-gray-600 mt-1">Update your personal information and contact details.</p>
+              <h3 class="text-lg font-medium text-gray-900">{{ $t('settings.profile_information') }}</h3>
+              <p class="text-sm text-gray-600 mt-1">{{ $t('settings.profile_subtitle') }}</p>
             </div>
             <div class="px-6 py-4">
               <form @submit.prevent="updateProfile" class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label for="first_name" class="block text-sm font-medium text-gray-700 mb-2">
-                      First Name
+                      {{ $t('settings.first_name') }}
                     </label>
                     <BaseInput
                       id="first_name"
                       v-model="profileForm.first_name"
-                      placeholder="Enter your first name"
+                      :placeholder="$t('settings.enter_first_name')"
                       :error="errors.first_name"
                     />
                   </div>
@@ -374,9 +374,9 @@ const updateProfile = async () => {
   try {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000))
-    success('Profile updated successfully')
+    success($t('common.messages.updated'))
   } catch (err) {
-    error('Failed to update profile')
+    error($t('common.messages.failed'))
   } finally {
     profileLoading.value = false
   }
@@ -385,7 +385,7 @@ const updateProfile = async () => {
 // Update password
 const updatePassword = async () => {
   if (passwordForm.new_password !== passwordForm.new_password_confirmation) {
-    error('Passwords do not match')
+    error($t('common.validation.password_mismatch'))
     return
   }
   
@@ -400,7 +400,7 @@ const updatePassword = async () => {
       new_password_confirmation: ''
     })
   } catch (err) {
-    error('Failed to update password')
+    error($t('common.messages.failed'))
   } finally {
     passwordLoading.value = false
   }
@@ -412,9 +412,9 @@ const updatePreferences = async () => {
   try {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000))
-    success('Preferences saved successfully')
+    success($t('common.messages.saved'))
   } catch (err) {
-    error('Failed to save preferences')
+    error($t('common.messages.failed'))
   } finally {
     preferencesLoading.value = false
   }
@@ -424,9 +424,9 @@ const updatePreferences = async () => {
 const copyToClipboard = async (text) => {
   try {
     await navigator.clipboard.writeText(text)
-    success('Copied to clipboard')
+    success($t('common.messages.copied'))
   } catch (err) {
-    error('Failed to copy to clipboard')
+    error($t('common.messages.failed'))
   }
 }
 

@@ -105,6 +105,7 @@ export const authAPI = {
   resetPassword: (data) => api.post('/auth/reset', data),
   logout: () => api.post('/auth/logout'),
   resendVerification: (data) => api.post('/auth/resend-verification', data),
+  getCurrentUser: () => api.get('/users/me'),
 }
 
 // Dashboard API endpoints

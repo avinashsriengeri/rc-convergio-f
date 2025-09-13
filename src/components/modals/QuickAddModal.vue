@@ -5,7 +5,7 @@
       <div class="p-6 border-b border-gray-200">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">
-            Quick Add
+            {{ $t('common.quick_add') }}
           </h2>
           <button
             @click="$emit('close')"
@@ -31,8 +31,8 @@
                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 class="font-medium text-gray-900">Add Contact</h3>
-            <p class="text-sm text-gray-500">Create a new contact</p>
+            <h3 class="font-medium text-gray-900">{{ $t('common.add_contact') }}</h3>
+            <p class="text-sm text-gray-500">{{ $t('common.create_contact') }}</p>
           </button>
 
           <!-- Add Company -->
@@ -45,8 +45,8 @@
                 <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 2h12v8H6V6z" clip-rule="evenodd" />
               </svg>
             </div>
-            <h3 class="font-medium text-gray-900">Add Company</h3>
-            <p class="text-sm text-gray-500">Create a new company</p>
+            <h3 class="font-medium text-gray-900">{{ $t('common.add_company') }}</h3>
+            <p class="text-sm text-gray-500">{{ $t('common.create_company') }}</p>
           </button>
 
           <!-- Add Task -->
@@ -59,8 +59,8 @@
                 <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
               </svg>
             </div>
-            <h3 class="font-medium text-gray-900">Add Task</h3>
-            <p class="text-sm text-gray-500">Create a new task</p>
+            <h3 class="font-medium text-gray-900">{{ $t('common.add_task') }}</h3>
+            <p class="text-sm text-gray-500">{{ $t('common.create_task') }}</p>
           </button>
 
           <!-- Add Deal -->
@@ -73,8 +73,8 @@
                 <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
               </svg>
             </div>
-            <h3 class="font-medium text-gray-900">Add Deal</h3>
-            <p class="text-sm text-gray-500">Create a new deal</p>
+            <h3 class="font-medium text-gray-900">{{ $t('common.add_deal') }}</h3>
+            <p class="text-sm text-gray-500">{{ $t('common.create_deal') }}</p>
           </button>
         </div>
 
@@ -85,7 +85,7 @@
             variant="outline"
             @click="$emit('close')"
           >
-            Cancel
+            {{ $t('common.cancel') }}
           </BaseButton>
         </div>
       </div>

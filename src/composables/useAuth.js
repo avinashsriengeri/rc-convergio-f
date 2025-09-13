@@ -6,6 +6,32 @@ const user = ref(null)
 const isAuthenticated = ref(false)
 const loading = ref(false)
 const verificationLoading = ref(false)
+const currentOrgName = ref('RC')
+
+// Fetch current user organization data
+const fetchCurrentUserData = async () => {
+  try {
+    const response = await authAPI.getCurrentUser()
+    const userData = response.data.data || response.data
+    
+    // Extract organization name with priority: organization_name -> organization.name -> current_organization.name
+    let orgName = userData.organization_name || 
+                  userData.organization?.name || 
+                  userData.current_organization?.name
+    
+    // Use fallback if no organization found
+    if (!orgName || orgName.trim() === '') {
+      orgName = 'RC'
+    }
+    
+    currentOrgName.value = orgName
+    console.log('Organization name fetched:', orgName)
+  } catch (error) {
+    console.warn('Failed to fetch current user data:', error)
+    // Use fallback on any error
+    currentOrgName.value = 'RC'
+  }
+}
 
 // Initialize auth state from localStorage
 const initAuth = () => {
@@ -20,6 +46,9 @@ const initAuth = () => {
       user.value = JSON.parse(userData)
       isAuthenticated.value = true
       console.log('Auth initialized with user:', user.value)
+      
+      // Fetch current user data to get organization info
+      fetchCurrentUserData()
     } catch (error) {
       console.error('Failed to parse user data:', error)
       logout()
@@ -59,6 +88,9 @@ const login = async (credentials) => {
     isAuthenticated.value = true
     
     console.log('User role after login:', userRole.value)
+    
+    // Fetch current user data to get organization info
+    fetchCurrentUserData()
     
     // Trigger metadata refresh for current tenant
     try {
@@ -232,6 +264,7 @@ export function useAuth() {
     isAuthenticated: readonly(isAuthenticated),
     loading: readonly(loading),
     verificationLoading: readonly(verificationLoading),
+    currentOrgName: readonly(currentOrgName),
     
     // Computed
     userRole,
@@ -249,5 +282,6 @@ export function useAuth() {
     forgotPassword,
     resetPassword,
     resendVerification,
+    fetchCurrentUserData,
   }
 }

@@ -5,8 +5,8 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center py-6">
           <div>
-            <h1 class="text-2xl font-bold text-gray-900">Deals</h1>
-            <p class="text-sm text-gray-600 mt-1">Manage your sales deals and opportunities</p>
+            <h1 class="text-2xl font-bold text-gray-900">{{ $t('deals.title') }}</h1>
+            <p class="text-sm text-gray-600 mt-1">{{ $t('deals.subtitle') }}</p>
           </div>
           <div class="flex items-center space-x-3">
             <!-- View Toggle -->
@@ -19,7 +19,7 @@
                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                 </svg>
-                List
+                {{ $t('deals.list') }}
               </button>
               <button
                 @click="viewMode = 'kanban'"
@@ -29,7 +29,7 @@
                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
-                Kanban
+                {{ $t('deals.kanban') }}
               </button>
             </div>
             <BaseButton
@@ -41,7 +41,7 @@
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              Refresh
+              {{ $t('deals.refresh') }}
             </BaseButton>
             <BaseButton
               variant="outline"
@@ -52,7 +52,7 @@
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              Export CSV
+              {{ $t('deals.export_csv') }}
             </BaseButton>
             <BaseButton
               variant="primary"
@@ -62,7 +62,7 @@
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
-              New Deal
+              {{ $t('deals.new_deal') }}
             </BaseButton>
           </div>
         </div>
@@ -77,7 +77,7 @@
           <div class="flex-1">
             <BaseInput
               v-model="filters.search"
-              placeholder="Search deals..."
+              :placeholder="$t('deals.search_placeholder')"
               @input="debouncedSearch"
               class="w-full"
             >
@@ -96,7 +96,7 @@
               @change="loadDeals"
               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="">All Status</option>
+              <option value="">{{ $t('deals.all_status') }}</option>
               <option v-for="status in dealStatuses" :key="status" :value="status">
                 {{ status }}
               </option>
@@ -110,7 +110,7 @@
               @change="loadDeals"
               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="">All Pipelines</option>
+              <option value="">{{ $t('deals.all_pipelines') }}</option>
               <option v-for="pipeline in pipelines" :key="pipeline.id" :value="pipeline.id">
                 {{ pipeline.name }}
               </option>
@@ -124,7 +124,7 @@
               @change="loadDeals"
               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="">All Owners</option>
+              <option value="">{{ $t('deals.all_owners') }}</option>
               <option v-for="owner in owners" :key="owner.id" :value="owner.id">
                 {{ owner.name }}
               </option>
@@ -424,9 +424,9 @@
     <!-- Delete Confirmation Modal -->
     <ConfirmationModal
       v-if="showDeleteModal"
-      title="Delete Deal"
-      :message="`Are you sure you want to delete the deal '${dealToDelete?.title}'? This action cannot be undone.`"
-      confirm-text="Delete"
+      :title="$t('common.actions.delete_deal')"
+      :message="$t('common.actions.confirm_delete', { name: dealToDelete?.title })"
+      :confirm-text="$t('common.delete')"
       confirm-variant="danger"
       @confirm="confirmDelete"
       @cancel="showDeleteModal = false"
@@ -592,10 +592,10 @@ const exportDeals = async () => {
     document.body.removeChild(link)
     window.URL.revokeObjectURL(url)
     
-    success('Deals exported successfully')
+    success($t('common.messages.export_done'))
   } catch (err) {
     console.error('Error exporting deals:', err)
-    error('Failed to export deals')
+    error($t('common.messages.failed'))
   } finally {
     exporting.value = false
   }
@@ -655,10 +655,10 @@ const onDrop = async (event, stageId) => {
   try {
     await dealsAPI.moveDeal(dealId, stageId)
     refreshDeals()
-    success('Deal moved successfully')
+    success($t('common.messages.updated'))
   } catch (err) {
     console.error('Error moving deal:', err)
-    error('Failed to move deal')
+    error($t('common.messages.failed'))
   }
 }
 
@@ -679,10 +679,10 @@ const confirmDelete = async () => {
     showDeleteModal.value = false
     dealToDelete.value = null
     refreshDeals()
-    success('Deal deleted successfully')
+    success($t('common.messages.deleted'))
   } catch (err) {
     console.error('Error deleting deal:', err)
-    error('Failed to delete deal')
+    error($t('common.messages.failed'))
   }
 }
 

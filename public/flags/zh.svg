@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30">
+  <rect width="60" height="30" fill="#EE1C25"/>
+  <g transform="translate(15,7.5)">
+    <polygon points="0,0 1.5,0.5 0,1" fill="#FFDE00"/>
+    <polygon points="0,0 0.5,1.5 1,0" fill="#FFDE00"/>
+    <polygon points="1,0 0,1 1.5,0.5" fill="#FFDE00"/>
+    <polygon points="0,1 1,0 0.5,1.5" fill="#FFDE00"/>
+  </g>
+  <g transform="translate(12,4)">
+    <polygon points="0,0 0.8,0.3 0,0.6" fill="#FFDE00"/>
+    <polygon points="0,0 0.3,0.8 0.6,0" fill="#FFDE00"/>
+    <polygon points="0.6,0 0,0.6 0.8,0.3" fill="#FFDE00"/>
+    <polygon points="0,0.6 0.6,0 0.3,0.8" fill="#FFDE00"/>
+  </g>
+  <g transform="translate(18,4)">
+    <polygon points="0,0 0.8,0.3 0,0.6" fill="#FFDE00"/>
+    <polygon points="0,0 0.3,0.8 0.6,0" fill="#FFDE00"/>
+    <polygon points="0.6,0 0,0.6 0.8,0.3" fill="#FFDE00"/>
+    <polygon points="0,0.6 0.6,0 0.3,0.8" fill="#FFDE00"/>
+  </g>
+  <g transform="translate(12,11)">
+    <polygon points="0,0 0.8,0.3 0,0.6" fill="#FFDE00"/>
+    <polygon points="0,0 0.3,0.8 0.6,0" fill="#FFDE00"/>
+    <polygon points="0.6,0 0,0.6 0.8,0.3" fill="#FFDE00"/>
+    <polygon points="0,0.6 0.6,0 0.3,0.8" fill="#FFDE00"/>
+  </g>
+  <g transform="translate(18,11)">
+    <polygon points="0,0 0.8,0.3 0,0.6" fill="#FFDE00"/>
+    <polygon points="0,0 0.3,0.8 0.6,0" fill="#FFDE00"/>
+    <polygon points="0.6,0 0,0.6 0.8,0.3" fill="#FFDE00"/>
+    <polygon points="0,0.6 0.6,0 0.3,0.8" fill="#FFDE00"/>
+  </g>
+</svg>
+

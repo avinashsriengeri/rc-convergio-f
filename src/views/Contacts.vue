@@ -5,8 +5,8 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-2xl font-bold text-gray-900">Contacts</h1>
-            <p class="text-sm text-gray-600">Manage your contacts and leads</p>
+            <h1 class="text-2xl font-bold text-gray-900">{{ $t('contacts.title') }}</h1>
+            <p class="text-sm text-gray-600">{{ $t('contacts.subtitle') }}</p>
           </div>
           <div class="flex items-center space-x-3">
             <BaseButton
@@ -15,7 +15,7 @@
               icon="upload"
               @click="showImportModal = true"
             >
-              Import CSV
+              {{ $t('contacts.import_csv') }}
             </BaseButton>
             <BaseButton
               variant="primary"
@@ -23,7 +23,7 @@
               icon="plus"
               @click="showCreateModal = true"
             >
-              Add Contact
+              {{ $t('contacts.add_contact') }}
             </BaseButton>
           </div>
         </div>
@@ -40,7 +40,7 @@
               <input
                 v-model="searchQuery"
                 type="text"
-                placeholder="Search contacts..."
+                :placeholder="$t('contacts.search_placeholder')"
                 class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2596be] focus:border-[#2596be]"
                 @input="debouncedSearch"
               />
@@ -58,21 +58,21 @@
               v-model="filters.status"
               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2596be] focus:border-[#2596be]"
             >
-              <option value="">All Stages</option>
-              <option value="lead">Lead</option>
-              <option value="prospect">Prospect</option>
-              <option value="customer">Customer</option>
-              <option value="inactive">Inactive</option>
+              <option value="">{{ $t('contacts.all_stages') }}</option>
+              <option value="lead">{{ $t('contacts.lead') }}</option>
+              <option value="prospect">{{ $t('contacts.prospect') }}</option>
+              <option value="customer">{{ $t('contacts.customer') }}</option>
+              <option value="inactive">{{ $t('contacts.inactive') }}</option>
             </select>
             
             <select
               v-model="filters.sort"
               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2596be] focus:border-[#2596be]"
             >
-              <option value="-created_at">Newest First</option>
-              <option value="created_at">Oldest First</option>
-              <option value="first_name">Name A-Z</option>
-              <option value="-first_name">Name Z-A</option>
+              <option value="-created_at">{{ $t('contacts.newest_first') }}</option>
+              <option value="created_at">{{ $t('contacts.oldest_first') }}</option>
+              <option value="first_name">{{ $t('contacts.name_az') }}</option>
+              <option value="-first_name">{{ $t('contacts.name_za') }}</option>
             </select>
           </div>
         </div>
@@ -95,14 +95,14 @@
               <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h3 class="text-lg font-medium text-gray-900 mb-2">No contacts found</h3>
-          <p class="text-gray-500 mb-6">Get started by adding your first contact.</p>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">{{ $t('contacts.no_contacts_found') }}</h3>
+          <p class="text-gray-500 mb-6">{{ $t('contacts.get_started_message') }}</p>
           <BaseButton
             variant="primary"
             icon="plus"
             @click="showCreateModal = true"
           >
-            Add Contact
+            {{ $t('contacts.add_contact') }}
           </BaseButton>
         </div>
 
@@ -131,7 +131,7 @@
                   <button
                     @click.stop="viewContact(contact.id)"
                     class="p-1.5 text-gray-400 hover:text-[#2596be] hover:bg-gray-100 rounded-lg transition-colors"
-                    title="View contact"
+                    :title="$t('contacts.view_contact')"
                   >
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
@@ -140,7 +140,7 @@
                   <button
                     @click.stop="editContact(contact)"
                     class="p-1.5 text-gray-400 hover:text-[#2596be] hover:bg-gray-100 rounded-lg transition-colors"
-                    title="Edit contact"
+                    :title="$t('contacts.edit_contact')"
                   >
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
@@ -149,7 +149,7 @@
                   <button
                     @click.stop="deleteContact(contact.id)"
                     class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    title="Delete contact"
+                    :title="$t('contacts.delete_contact')"
                   >
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
@@ -189,7 +189,7 @@
                   class="px-2 py-1 text-xs rounded-full"
                   :class="getStatusClass(contact.lifecycle_stage)"
                 >
-                  {{ contact.lifecycle_stage || 'No Stage' }}
+                  {{ contact.lifecycle_stage ? $t(`contacts.${contact.lifecycle_stage}`) : $t('contacts.no_stage') }}
                 </span>
                 <span class="text-xs text-gray-500">
                   {{ formatDate(contact.created_at) }}
@@ -356,7 +356,7 @@ const editContact = (contact) => {
 }
 
 const deleteContact = async (contactId) => {
-  if (!confirm('Are you sure you want to delete this contact?')) return
+  if (!confirm($t('common.actions.confirm_delete', { name: 'this contact' }))) return
 
   try {
     console.log('Deleting contact with ID:', contactId)

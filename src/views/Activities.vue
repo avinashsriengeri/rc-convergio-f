@@ -5,8 +5,8 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center py-6">
           <div>
-            <h1 class="text-2xl font-bold text-gray-900">Activities</h1>
-            <p class="text-sm text-gray-600 mt-1">Track and manage all your activities</p>
+            <h1 class="text-2xl font-bold text-gray-900">{{ $t('activities.title') }}</h1>
+            <p class="text-sm text-gray-600 mt-1">{{ $t('activities.subtitle') }}</p>
           </div>
           <div class="flex items-center space-x-3">
             <BaseButton
@@ -18,7 +18,7 @@
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              Refresh
+              {{ $t('activities.refresh') }}
             </BaseButton>
             <BaseButton
               variant="outline"
@@ -29,7 +29,7 @@
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              Export CSV
+              {{ $t('activities.export_csv') }}
             </BaseButton>
             <BaseButton
               variant="primary"
@@ -39,7 +39,7 @@
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
-              New Activity
+              {{ $t('activities.new_activity') }}
             </BaseButton>
           </div>
         </div>
@@ -55,7 +55,7 @@
             <div class="flex-1">
               <BaseInput
                 v-model="filters.search"
-                placeholder="Search activities by title or description..."
+                :placeholder="$t('activities.search_placeholder')"
                 @input="debouncedSearch"
                 class="w-full"
               >
@@ -75,7 +75,7 @@
                 @click="setTypeFilter('all')"
                 :class="{ 'bg-blue-50 border-blue-200 text-blue-700': filters.type === 'all' }"
               >
-                All
+                {{ $t('activities.all') }}
               </BaseButton>
               <BaseButton
                 type="button"
@@ -84,7 +84,7 @@
                 @click="setTypeFilter('call')"
                 :class="{ 'bg-green-50 border-green-200 text-green-700': filters.type === 'call' }"
               >
-                Calls
+                {{ $t('activities.calls') }}
               </BaseButton>
               <BaseButton
                 type="button"
@@ -93,7 +93,7 @@
                 @click="setTypeFilter('meeting')"
                 :class="{ 'bg-purple-50 border-purple-200 text-purple-700': filters.type === 'meeting' }"
               >
-                Meetings
+                {{ $t('activities.meetings') }}
               </BaseButton>
               <BaseButton
                 type="button"
@@ -102,7 +102,7 @@
                 @click="setTypeFilter('email')"
                 :class="{ 'bg-yellow-50 border-yellow-200 text-yellow-700': filters.type === 'email' }"
               >
-                Emails
+                {{ $t('activities.emails') }}
               </BaseButton>
             </div>
           </div>
@@ -111,13 +111,13 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <!-- Type Filter -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('activities.type') }}</label>
               <select
                 v-model="filters.type"
                 @change="applyFilters"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="all">All Types</option>
+                <option value="all">{{ $t('activities.all_types') }}</option>
                 <option
                   v-for="type in ACTIVITY_TYPES"
                   :key="type.value"
@@ -130,13 +130,13 @@
 
             <!-- Status Filter -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('activities.status') }}</label>
               <select
                 v-model="filters.status"
                 @change="applyFilters"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="all">All Statuses</option>
+                <option value="all">{{ $t('activities.all_statuses') }}</option>
                 <option value="scheduled">Scheduled</option>
                 <option value="completed">Completed</option>
                 <option value="cancelled">Cancelled</option>
@@ -145,7 +145,7 @@
 
             <!-- Sort -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Sort</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('activities.sort') }}</label>
                              <select
                  v-model="filters.sort"
                  @change="applyFilters"
@@ -170,7 +170,7 @@
                 size="sm"
                 :loading="loading"
               >
-                Apply Filters
+                {{ $t('activities.apply_filters') }}
               </BaseButton>
               <BaseButton
                 type="button"
@@ -178,7 +178,7 @@
                 size="sm"
                 @click="clearFilters"
               >
-                Clear
+                {{ $t('activities.clear') }}
               </BaseButton>
             </div>
           </div>
@@ -195,21 +195,21 @@
             class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
             :class="activeTab === 'all' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
           >
-            All Activities
+            {{ $t('activities.all_activities') }}
           </button>
           <button
             @click="handleTabChange('timeline')"
             class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
             :class="activeTab === 'timeline' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
           >
-            Timeline
+            {{ $t('activities.timeline') }}
           </button>
           <button
             @click="handleTabChange('upcoming')"
             class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
             :class="activeTab === 'upcoming' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
           >
-            Upcoming
+            {{ $t('activities.upcoming') }}
           </button>
           <button
             v-if="entityType && entityId"
@@ -637,9 +637,9 @@
     <!-- Delete Confirmation Modal -->
     <ConfirmationModal
       v-if="showDeleteModal"
-      title="Delete Activity"
-      :message="`Are you sure you want to delete the activity '${activityToDelete?.title}'? This action cannot be undone.`"
-      confirm-text="Delete"
+      :title="$t('common.actions.delete_activity')"
+      :message="$t('common.actions.confirm_delete', { name: activityToDelete?.title })"
+      :confirm-text="$t('common.delete')"
       confirm-variant="danger"
       @confirm="confirmDelete"
       @cancel="showDeleteModal = false"
@@ -1053,7 +1053,7 @@ const bulkUpdate = async () => {
 const bulkDelete = async () => {
   if (selectedActivities.value.length === 0) return
   
-  if (!confirm(`Are you sure you want to delete ${selectedActivities.value.length} activities?`)) {
+  if (!confirm($t('common.actions.confirm_delete_multiple', { count: selectedActivities.value.length }))) {
     return
   }
   

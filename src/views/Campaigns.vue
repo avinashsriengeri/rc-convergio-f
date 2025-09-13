@@ -1,3 +1,4 @@
+
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Header -->
@@ -5,8 +6,8 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center py-6">
           <div>
-            <h1 class="text-2xl font-bold text-gray-900">Campaigns</h1>
-            <p class="text-sm text-gray-600 mt-1">Manage your marketing campaigns</p>
+            <h1 class="text-2xl font-bold text-gray-900">{{ $t('campaigns.title') }}</h1>
+            <p class="text-sm text-gray-600 mt-1">{{ $t('campaigns.subtitle') }}</p>
           </div>
           <div class="flex items-center space-x-3">
             <BaseButton
@@ -18,7 +19,7 @@
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              Refresh
+              {{ $t('campaigns.refresh') }}
             </BaseButton>
             <BaseButton
               variant="outline"
@@ -28,7 +29,7 @@
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
-              Templates
+              {{ $t('campaigns.templates') }}
             </BaseButton>
             <BaseButton
               variant="primary"
@@ -38,7 +39,7 @@
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
-              New Campaign
+              {{ $t('campaigns.new_campaign') }}
             </BaseButton>
           </div>
         </div>
@@ -54,7 +55,7 @@
             <div class="flex-1">
               <BaseInput
                 v-model="filters.search"
-                placeholder="Search campaigns by name or description..."
+                :placeholder="$t('campaigns.search_placeholder')"
                 @input="debouncedSearch"
                 class="w-full"
               >
@@ -74,7 +75,7 @@
                 @click="setStatusFilter('all')"
                 :class="{ 'bg-blue-50 border-blue-200 text-blue-700': filters.status === 'all' }"
               >
-                All
+                {{ $t('campaigns.all') }}
               </BaseButton>
               <BaseButton
                 type="button"
@@ -83,7 +84,7 @@
                 @click="setStatusFilter('draft')"
                 :class="{ 'bg-gray-50 border-gray-200 text-gray-700': filters.status === 'draft' }"
               >
-                Draft
+                {{ $t('campaigns.draft') }}
               </BaseButton>
               <BaseButton
                 type="button"
@@ -92,7 +93,7 @@
                 @click="setStatusFilter('scheduled')"
                 :class="{ 'bg-blue-50 border-blue-200 text-blue-700': filters.status === 'scheduled' }"
               >
-                Scheduled
+                {{ $t('campaigns.scheduled') }}
               </BaseButton>
               <BaseButton
                 type="button"
@@ -101,7 +102,7 @@
                 @click="setStatusFilter('sent')"
                 :class="{ 'bg-green-50 border-green-200 text-green-700': filters.status === 'sent' }"
               >
-                Sent
+                {{ $t('campaigns.sent') }}
               </BaseButton>
             </div>
           </div>
@@ -110,29 +111,29 @@
           <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <!-- Type Filter -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('campaigns.type') }}</label>
               <select
                 v-model="filters.type"
                 @change="applyFilters"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="all">All Types</option>
-                <option value="email">Email</option>
-                <option value="sms">SMS</option>
-                <option value="newsletter">Newsletter</option>
-                <option value="promotional">Promotional</option>
+                <option value="all">{{ $t('campaigns.all_types') }}</option>
+                <option value="email">{{ $t('campaigns.email') }}</option>
+                <option value="sms">{{ $t('campaigns.sms') }}</option>
+                <option value="newsletter">{{ $t('campaigns.newsletter') }}</option>
+                <option value="promotional">{{ $t('campaigns.promotional') }}</option>
               </select>
             </div>
 
             <!-- Owner Filter -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Owner</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('campaigns.owner') }}</label>
               <select
                 v-model="filters.owner_id"
                 @change="applyFilters"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="">All Owners</option>
+                <option value="">{{ $t('campaigns.all_owners') }}</option>
                 <option
                   v-for="user in refsStore.users"
                   :key="user.id"
@@ -145,36 +146,36 @@
 
             <!-- Date Range Filter -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('campaigns.date_range') }}</label>
               <select
                 v-model="filters.date_range"
                 @change="applyFilters"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="all">All Dates</option>
-                <option value="today">Today</option>
-                <option value="yesterday">Yesterday</option>
-                <option value="this_week">This Week</option>
-                <option value="last_week">Last Week</option>
-                <option value="this_month">This Month</option>
-                <option value="last_month">Last Month</option>
+                <option value="all">{{ $t('campaigns.all_dates') }}</option>
+                <option value="today">{{ $t('campaigns.today') }}</option>
+                <option value="yesterday">{{ $t('campaigns.yesterday') }}</option>
+                <option value="this_week">{{ $t('campaigns.this_week') }}</option>
+                <option value="last_week">{{ $t('campaigns.last_week') }}</option>
+                <option value="this_month">{{ $t('campaigns.this_month') }}</option>
+                <option value="last_month">{{ $t('campaigns.last_month') }}</option>
               </select>
             </div>
 
             <!-- Sort -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Sort</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('campaigns.sort') }}</label>
               <select
                 v-model="filters.sort"
                 @change="applyFilters"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="-created_at">Created (Newest)</option>
-                <option value="created_at">Created (Oldest)</option>
-                <option value="name">Name A-Z</option>
-                <option value="-name">Name Z-A</option>
-                <option value="scheduled_at">Scheduled Date</option>
-                <option value="-scheduled_at">Scheduled Date (Latest)</option>
+                <option value="-created_at">{{ $t('campaigns.created_newest') }}</option>
+                <option value="created_at">{{ $t('campaigns.created_oldest') }}</option>
+                <option value="name">{{ $t('campaigns.name_az') }}</option>
+                <option value="-name">{{ $t('campaigns.name_za') }}</option>
+                <option value="scheduled_at">{{ $t('campaigns.scheduled_date') }}</option>
+                <option value="-scheduled_at">{{ $t('campaigns.scheduled_date_latest') }}</option>
               </select>
             </div>
           </div>
@@ -188,7 +189,7 @@
                 size="sm"
                 :loading="loading"
               >
-                Apply Filters
+                {{ $t('campaigns.apply_filters') }}
               </BaseButton>
               <BaseButton
                 type="button"
@@ -196,7 +197,7 @@
                 size="sm"
                 @click="clearFilters"
               >
-                Clear
+                {{ $t('campaigns.clear') }}
               </BaseButton>
             </div>
           </div>
@@ -216,11 +217,11 @@
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
         </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">Error loading campaigns</h3>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">{{ $t('campaigns.error_loading') }}</h3>
         <p class="mt-1 text-sm text-gray-500">{{ error }}</p>
         <div class="mt-6">
           <BaseButton variant="primary" @click="refreshCampaigns">
-            Try Again
+            {{ $t('campaigns.try_again') }}
           </BaseButton>
         </div>
       </div>
@@ -231,14 +232,14 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
         </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">No campaigns found</h3>
-        <p class="mt-1 text-sm text-gray-500">Get started by creating your first campaign.</p>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">{{ $t('campaigns.no_campaigns_found') }}</h3>
+        <p class="mt-1 text-sm text-gray-500">{{ $t('campaigns.get_started_message') }}</p>
         <div class="mt-6">
           <BaseButton variant="primary" @click="showCreateModal = true">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            New Campaign
+            {{ $t('campaigns.new_campaign') }}
           </BaseButton>
         </div>
       </div>
@@ -277,27 +278,27 @@
           <div class="p-6">
             <div class="space-y-3 text-sm">
               <div class="flex items-center justify-between">
-                <span class="text-gray-500">Owner:</span>
-                <span class="font-medium">{{ campaign.owner?.name || 'Unassigned' }}</span>
+                <span class="text-gray-500">{{ $t('campaigns.owner') }}:</span>
+                <span class="font-medium">{{ campaign.owner?.name || $t('campaigns.unassigned') }}</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-gray-500">Recipients:</span>
+                <span class="text-gray-500">{{ $t('campaigns.recipients') }}:</span>
                 <span class="font-medium">{{ campaign.recipient_count || 0 }}</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-gray-500">Sent:</span>
+                <span class="text-gray-500">{{ $t('campaigns.sent') }}:</span>
                 <span class="font-medium">{{ campaign.sent_count || 0 }}</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-gray-500">Opened:</span>
+                <span class="text-gray-500">{{ $t('campaigns.opened') }}:</span>
                 <span class="font-medium">{{ campaign.opened_count || 0 }}</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-gray-500">Clicked:</span>
+                <span class="text-gray-500">{{ $t('campaigns.clicked') }}:</span>
                 <span class="font-medium">{{ campaign.clicked_count || 0 }}</span>
               </div>
               <div v-if="campaign.scheduled_at" class="flex items-center justify-between">
-                <span class="text-gray-500">Scheduled:</span>
+                <span class="text-gray-500">{{ $t('campaigns.scheduled') }}:</span>
                 <span class="font-medium">{{ formatDate(campaign.scheduled_at) }}</span>
               </div>
               <div v-if="campaign.sent_at" class="flex items-center justify-between">

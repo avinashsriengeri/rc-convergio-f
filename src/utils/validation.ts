@@ -5,79 +5,79 @@ import { CURRENCIES } from './constants'
 export const dealFormSchema = yup.object({
   title: yup
     .string()
-    .required('Title is required')
-    .max(255, 'Title must be less than 255 characters'),
+    .required('common.validation.required')
+    .max(255, 'common.validation.max'),
   
   description: yup
     .string()
-    .max(1000, 'Description must be less than 1000 characters'),
+    .max(1000, 'common.validation.max'),
   
   value: yup
     .number()
-    .min(0, 'Value must be greater than or equal to 0')
+    .min(0, 'common.validation.min')
     .nullable()
     .transform((value) => (isNaN(value) || value === '' ? null : value)),
   
   currency: yup
     .string()
-    .length(3, 'Currency must be exactly 3 characters')
+    .length(3, 'common.validation.length')
     .uppercase()
     .oneOf(
       CURRENCIES.map(c => c.code),
-      'Please select a valid currency'
+      'common.validation.valid_currency'
     )
     .nullable()
     .transform((value) => (value === '' ? null : value)),
   
   status: yup
     .string()
-    .required('Status is required')
-    .oneOf(['open', 'won', 'lost', 'closed'], 'Please select a valid status'),
+    .required('common.validation.required')
+    .oneOf(['open', 'won', 'lost', 'closed'], 'common.validation.valid_status'),
   
   pipeline_id: yup
     .number()
-    .required('Pipeline is required')
-    .positive('Please select a valid pipeline'),
+    .required('common.validation.required')
+    .positive('common.validation.valid_pipeline'),
   
   stage_id: yup
     .number()
-    .required('Stage is required')
-    .positive('Please select a valid stage'),
+    .required('common.validation.required')
+    .positive('common.validation.valid_stage'),
   
   owner_id: yup
     .number()
-    .required('Owner is required')
-    .positive('Please select a valid owner'),
+    .required('common.validation.required')
+    .positive('common.validation.valid_owner'),
   
   contact_id: yup
     .number()
-    .positive('Please select a valid contact')
+    .positive('common.validation.valid_contact')
     .nullable()
     .transform((value) => (value === '' ? null : value)),
   
   company_id: yup
     .number()
-    .positive('Please select a valid company')
+    .positive('common.validation.valid_company')
     .nullable()
     .transform((value) => (value === '' ? null : value)),
   
   expected_close_date: yup
     .date()
-    .min(new Date(), 'Expected close date must be in the future')
+    .min(new Date(), 'common.validation.future_date')
     .nullable()
     .transform((value) => (value === '' ? null : value)),
   
   probability: yup
     .number()
-    .min(0, 'Probability must be between 0 and 100')
-    .max(100, 'Probability must be between 0 and 100')
-    .integer('Probability must be a whole number')
+    .min(0, 'common.validation.range')
+    .max(100, 'common.validation.range')
+    .integer('common.validation.integer')
     .required('Probability is required'),
   
   tags: yup
     .array()
-    .of(yup.string().max(30, 'Each tag must be less than 30 characters'))
-    .max(10, 'Maximum 10 tags allowed')
+    .of(yup.string().max(30, 'common.validation.max'))
+    .max(10, 'common.validation.max_tags')
     .default([])
 })
 
@@ -85,12 +85,12 @@ export const dealFormSchema = yup.object({
 export const pipelineFormSchema = yup.object({
   name: yup
     .string()
-    .required('Name is required')
-    .max(255, 'Name must be less than 255 characters'),
+    .required('common.validation.required')
+    .max(255, 'common.validation.max'),
   
   description: yup
     .string()
-    .max(1000, 'Description must be less than 1000 characters'),
+    .max(1000, 'common.validation.max'),
   
   is_active: yup
     .boolean()
@@ -101,28 +101,28 @@ export const pipelineFormSchema = yup.object({
 export const stageFormSchema = yup.object({
   name: yup
     .string()
-    .required('Name is required')
-    .max(255, 'Name must be less than 255 characters'),
+    .required('common.validation.required')
+    .max(255, 'common.validation.max'),
   
   description: yup
     .string()
-    .max(1000, 'Description must be less than 1000 characters'),
+    .max(1000, 'common.validation.max'),
   
   pipeline_id: yup
     .number()
-    .required('Pipeline is required')
-    .positive('Please select a valid pipeline'),
+    .required('common.validation.required')
+    .positive('common.validation.valid_pipeline'),
   
   order: yup
     .number()
-    .min(1, 'Order must be at least 1')
-    .integer('Order must be a whole number')
+    .min(1, 'common.validation.min')
+    .integer('common.validation.integer')
     .required('Order is required'),
   
   color: yup
     .string()
-    .required('Color is required')
-    .matches(/^#[0-9A-F]{6}$/i, 'Color must be a valid hex color (e.g., #FF0000)'),
+    .required('common.validation.required')
+    .matches(/^#[0-9A-F]{6}$/i, 'common.validation.hex_color'),
   
   is_active: yup
     .boolean()
@@ -133,42 +133,42 @@ export const stageFormSchema = yup.object({
 export const searchSchema = yup.object({
   search: yup
     .string()
-    .max(255, 'Search term must be less than 255 characters')
+    .max(255, 'common.validation.max')
 })
 
 // Filter validation schema
 export const filterSchema = yup.object({
   status: yup
     .string()
-    .oneOf(['all', 'open', 'won', 'lost', 'closed'], 'Please select a valid status'),
+    .oneOf(['all', 'open', 'won', 'lost', 'closed'], 'common.validation.valid_status'),
   
   pipeline_id: yup
     .number()
-    .positive('Please select a valid pipeline')
+    .positive('common.validation.valid_pipeline')
     .nullable()
     .transform((value) => (value === '' ? null : value)),
   
   stage_id: yup
     .number()
-    .positive('Please select a valid stage')
+    .positive('common.validation.valid_stage')
     .nullable()
     .transform((value) => (value === '' ? null : value)),
   
   owner_id: yup
     .number()
-    .positive('Please select a valid owner')
+    .positive('common.validation.valid_owner')
     .nullable()
     .transform((value) => (value === '' ? null : value)),
   
   value_min: yup
     .number()
-    .min(0, 'Minimum value must be greater than or equal to 0')
+    .min(0, 'common.validation.min')
     .nullable()
     .transform((value) => (isNaN(value) || value === '' ? null : value)),
   
   value_max: yup
     .number()
-    .min(0, 'Maximum value must be greater than or equal to 0')
+    .min(0, 'common.validation.min')
     .nullable()
     .transform((value) => (isNaN(value) || value === '' ? null : value)),
   
@@ -195,16 +195,16 @@ export const filterSchema = yup.object({
       'expected_close_date',
       '-probability',
       'probability'
-    ], 'Please select a valid sort option'),
+    ], 'common.validation.valid_sort'),
   
   page: yup
     .number()
-    .min(1, 'Page must be at least 1')
-    .integer('Page must be a whole number'),
+    .min(1, 'common.validation.min')
+    .integer('common.validation.integer'),
   
   per_page: yup
     .number()
-    .oneOf([15, 25, 50, 100], 'Please select a valid per page option')
+    .oneOf([15, 25, 50, 100], 'common.validation.valid_per_page')
 })
 
 // Custom validation for stage dependency on pipeline

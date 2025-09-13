@@ -5,7 +5,7 @@
         <!-- Header -->
         <div class="flex items-center justify-between mb-6">
           <h3 class="text-lg font-medium text-gray-900">
-            {{ isEditing ? 'Edit Deal' : 'Create Deal' }}
+            {{ isEditing ? $t('common.edit_deal') : $t('common.add_deal') }}
           </h3>
           <button
             @click="$emit('close')"
@@ -24,13 +24,13 @@
             <!-- Title -->
             <div class="md:col-span-2">
               <label for="title" class="block text-sm font-medium text-gray-700 mb-1">
-                Deal Title *
+                {{ $t('common.title') }} *
               </label>
               <BaseInput
                 id="title"
                 v-model="form.title"
                 :error="errors.title"
-                placeholder="Enter deal title"
+                :placeholder="$t('common.enter_title')"
                 required
               />
             </div>
@@ -38,7 +38,7 @@
             <!-- Description -->
             <div class="md:col-span-2">
               <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
-                Description
+                {{ $t('common.description') }}
               </label>
               <textarea
                 id="description"
@@ -46,7 +46,7 @@
                 rows="3"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 :class="{ 'border-red-500': errors.description }"
-                placeholder="Enter deal description"
+                :placeholder="$t('common.enter_description')"
               ></textarea>
               <p v-if="errors.description" class="mt-1 text-sm text-red-600">{{ errors.description }}</p>
             </div>

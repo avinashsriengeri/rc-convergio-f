@@ -5,8 +5,8 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center py-6">
           <div>
-            <h1 class="text-2xl font-bold text-gray-900">Tasks</h1>
-            <p class="text-sm text-gray-600 mt-1">Manage and track your tasks</p>
+            <h1 class="text-2xl font-bold text-gray-900">{{ $t('tasks.title') }}</h1>
+            <p class="text-sm text-gray-600 mt-1">{{ $t('tasks.subtitle') }}</p>
           </div>
           <div class="flex items-center space-x-3">
             <BaseButton
@@ -18,7 +18,7 @@
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              Refresh
+              {{ $t('tasks.refresh') }}
             </BaseButton>
             <BaseButton
               variant="outline"
@@ -29,7 +29,7 @@
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              Export CSV
+              {{ $t('tasks.export_csv') }}
             </BaseButton>
             <BaseButton
               variant="primary"
@@ -39,7 +39,7 @@
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
-              New Task
+              {{ $t('tasks.new_task') }}
             </BaseButton>
           </div>
         </div>
@@ -55,7 +55,7 @@
             <div class="flex-1">
               <BaseInput
                 v-model="filters.search"
-                placeholder="Search tasks by title or description..."
+                :placeholder="$t('tasks.search_placeholder')"
                 @input="debouncedSearch"
                 class="w-full"
               >
@@ -75,7 +75,7 @@
                 @click="setStatusFilter('all')"
                 :class="{ 'bg-blue-50 border-blue-200 text-blue-700': filters.status === 'all' }"
               >
-                All
+                {{ $t('tasks.all') }}
               </BaseButton>
               <BaseButton
                 type="button"
@@ -84,7 +84,7 @@
                 @click="setStatusFilter('pending')"
                 :class="{ 'bg-yellow-50 border-yellow-200 text-yellow-700': filters.status === 'pending' }"
               >
-                Pending
+                {{ $t('tasks.pending') }}
               </BaseButton>
               <BaseButton
                 type="button"
@@ -93,7 +93,7 @@
                 @click="setStatusFilter('completed')"
                 :class="{ 'bg-green-50 border-green-200 text-green-700': filters.status === 'completed' }"
               >
-                Completed
+                {{ $t('tasks.completed') }}
               </BaseButton>
               <BaseButton
                 type="button"
@@ -102,7 +102,7 @@
                 @click="setStatusFilter('overdue')"
                 :class="{ 'bg-red-50 border-red-200 text-red-700': filters.status === 'overdue' }"
               >
-                Overdue
+                {{ $t('tasks.overdue') }}
               </BaseButton>
             </div>
           </div>
@@ -111,29 +111,29 @@
           <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <!-- Priority Filter -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('tasks.priority') }}</label>
                              <select
                  v-model="filters.priority"
                  @change="applyFilters"
                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                >
-                 <option value="all">Any Priority</option>
-                 <option value="low">Low</option>
-                 <option value="medium">Medium</option>
-                 <option value="high">High</option>
-                 <option value="urgent">Urgent</option>
+                 <option value="all">{{ $t('tasks.any_priority') }}</option>
+                 <option value="low">{{ $t('tasks.low') }}</option>
+                 <option value="medium">{{ $t('tasks.medium') }}</option>
+                 <option value="high">{{ $t('tasks.high') }}</option>
+                 <option value="urgent">{{ $t('tasks.urgent') }}</option>
                </select>
             </div>
 
             <!-- Assignee Filter -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Assignee</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('tasks.assignee') }}</label>
                              <select
                  v-model="filters.assignee_id"
                  @change="applyFilters"
                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                >
-                 <option value="">Any Assignee</option>
+                 <option value="">{{ $t('tasks.any_assignee') }}</option>
                  <option
                    v-for="user in refsStore.users"
                    :key="user.id"
@@ -147,36 +147,36 @@
 
             <!-- Due Date Filter -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('tasks.due_date') }}</label>
                              <select
                  v-model="filters.due_date_filter"
                  @change="applyFilters"
                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                >
-                 <option value="all">Any Time</option>
-                 <option value="today">Today</option>
-                 <option value="tomorrow">Tomorrow</option>
-                 <option value="this_week">This Week</option>
-                 <option value="next_week">Next Week</option>
+                 <option value="all">{{ $t('tasks.any_time') }}</option>
+                 <option value="today">{{ $t('tasks.today') }}</option>
+                 <option value="tomorrow">{{ $t('tasks.tomorrow') }}</option>
+                 <option value="this_week">{{ $t('tasks.this_week') }}</option>
+                 <option value="next_week">{{ $t('tasks.next_week') }}</option>
                </select>
             </div>
 
             <!-- Sort -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Sort</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('tasks.sort') }}</label>
                              <select
                  v-model="filters.sort"
                  @change="applyFilters"
                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                >
-                 <option value="due_date">Due Date (Newest First)</option>
-                 <option value="due_date_oldest">Due Date (Oldest First)</option>
-                 <option value="priority_low_high">Priority (Low to High)</option>
-                 <option value="priority_high_low">Priority (High to Low)</option>
-                 <option value="created_newest">Created (Newest)</option>
-                 <option value="created_oldest">Created (Oldest)</option>
-                 <option value="title_az">Title A-Z</option>
-                 <option value="title_za">Title Z-A</option>
+                 <option value="due_date">{{ $t('tasks.due_date_newest') }}</option>
+                 <option value="due_date_oldest">{{ $t('tasks.due_date_oldest') }}</option>
+                 <option value="priority_low_high">{{ $t('tasks.priority_low_high') }}</option>
+                 <option value="priority_high_low">{{ $t('tasks.priority_high_low') }}</option>
+                 <option value="created_newest">{{ $t('tasks.created_newest') }}</option>
+                 <option value="created_oldest">{{ $t('tasks.created_oldest') }}</option>
+                 <option value="title_az">{{ $t('tasks.title_az') }}</option>
+                 <option value="title_za">{{ $t('tasks.title_za') }}</option>
                </select>
             </div>
           </div>
@@ -191,7 +191,7 @@
                  :loading="loading"
                  :disabled="loading"
                >
-                 Apply Filters
+                 {{ $t('tasks.apply_filters') }}
                </BaseButton>
               <BaseButton
                 type="button"
@@ -199,7 +199,7 @@
                 size="sm"
                 @click="clearFilters"
               >
-                Clear
+                {{ $t('tasks.clear') }}
               </BaseButton>
             </div>
           </div>
@@ -216,21 +216,21 @@
             class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
             :class="activeTab === 'all' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
           >
-            All Tasks
+            {{ $t('tasks.all_tasks') }}
           </button>
           <button
             @click="handleTabChange('overdue')"
             class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
             :class="activeTab === 'overdue' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
           >
-            Overdue
+            {{ $t('tasks.overdue') }}
           </button>
           <button
             @click="handleTabChange('upcoming')"
             class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
             :class="activeTab === 'upcoming' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
           >
-            Upcoming
+            {{ $t('tasks.upcoming') }}
           </button>
           <button
             v-if="assigneeId"
@@ -238,7 +238,7 @@
             class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
             :class="activeTab === 'assignee' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
           >
-            My Tasks
+            {{ $t('tasks.my_tasks') }}
           </button>
           <button
             v-if="ownerId"
@@ -246,7 +246,7 @@
             class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
             :class="activeTab === 'owner' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
           >
-            Created by Me
+            {{ $t('tasks.created_by_me') }}
           </button>
         </nav>
       </div>
@@ -265,11 +265,11 @@
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
         </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">Error loading tasks</h3>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">{{ $t('tasks.error_loading') }}</h3>
         <p class="mt-1 text-sm text-gray-500">{{ error }}</p>
         <div class="mt-6">
           <BaseButton variant="primary" @click="refreshTasks">
-            Try Again
+            {{ $t('tasks.try_again') }}
           </BaseButton>
         </div>
       </div>
@@ -279,14 +279,14 @@
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
         </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">No tasks found</h3>
-        <p class="mt-1 text-sm text-gray-500">Get started by creating your first task.</p>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">{{ $t('tasks.no_tasks_found') }}</h3>
+        <p class="mt-1 text-sm text-gray-500">{{ $t('tasks.get_started_message') }}</p>
         <div class="mt-6">
           <BaseButton variant="primary" @click="showCreateModal = true">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            New Task
+            {{ $t('tasks.new_task') }}
           </BaseButton>
         </div>
       </div>
@@ -302,10 +302,10 @@
                 @change="toggleSelectAll"
                 class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
               />
-              <span class="ml-2 text-sm font-medium text-gray-700">Select All</span>
+              <span class="ml-2 text-sm font-medium text-gray-700">{{ $t('tasks.select_all') }}</span>
             </label>
             <span v-if="selectedTasks.length > 0" class="text-sm text-gray-500">
-              {{ selectedTasks.length }} selected
+              {{ selectedTasks.length }} {{ $t('tasks.selected') }}
             </span>
           </div>
           <div v-if="selectedTasks.length > 0" class="flex items-center space-x-2">
@@ -318,7 +318,7 @@
               <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              Mark Complete
+              {{ $t('tasks.mark_complete') }}
             </BaseButton>
             <BaseButton
               variant="outline"
@@ -329,7 +329,7 @@
               <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
-              Bulk Update
+              {{ $t('tasks.bulk_update') }}
             </BaseButton>
           </div>
         </div>
@@ -396,7 +396,7 @@
                       {{ formatDate(task.due_date) }}
                     </span>
                     <span v-if="isOverdue(task.due_date)" class="ml-1 text-xs text-red-600">
-                      (Overdue)
+                      ({{ $t('tasks.overdue') }})
                     </span>
                   </div>
                   <div class="flex items-center">
@@ -712,9 +712,9 @@
     <!-- Delete Confirmation Modal -->
     <ConfirmationModal
       v-if="showDeleteModal"
-      title="Delete Task"
-      :message="`Are you sure you want to delete the task '${taskToDelete?.title}'? This action cannot be undone.`"
-      confirm-text="Delete"
+      :title="$t('common.actions.delete_task')"
+      :message="$t('common.actions.confirm_delete', { name: taskToDelete?.title })"
+      :confirm-text="$t('common.delete')"
       confirm-variant="danger"
       @confirm="confirmDelete"
       @cancel="showDeleteModal = false"
