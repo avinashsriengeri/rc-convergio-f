@@ -78,6 +78,7 @@ import enActivities from './locales/en/activities.json'
 import enForms from './locales/en/forms.json'
 import enUsers from './locales/en/users.json'
 import enLists from './locales/en/lists.json'
+import enMarketing from './locales/en/marketing.json'
 
 // Import modular translation files for Chinese
 import zhCommon from './locales/zh/common.json'
@@ -93,6 +94,7 @@ import zhActivities from './locales/zh/activities.json'
 import zhForms from './locales/zh/forms.json'
 import zhUsers from './locales/zh/users.json'
 import zhLists from './locales/zh/lists.json'
+import zhMarketing from './locales/zh/marketing.json'
 
 // Import modular translation files for Arabic
 import arCommon from './locales/ar/common.json'
@@ -108,6 +110,7 @@ import arActivities from './locales/ar/activities.json'
 import arForms from './locales/ar/forms.json'
 import arUsers from './locales/ar/users.json'
 import arLists from './locales/ar/lists.json'
+import arMarketing from './locales/ar/marketing.json'
 
 // Import modular translation files for Portuguese
 import ptCommon from './locales/pt/common.json'
@@ -123,6 +126,7 @@ import ptActivities from './locales/pt/activities.json'
 import ptForms from './locales/pt/forms.json'
 import ptUsers from './locales/pt/users.json'
 import ptLists from './locales/pt/lists.json'
+import ptMarketing from './locales/pt/marketing.json'
 
 // Import modular translation files for Afrikaans
 import afCommon from './locales/af/common.json'
@@ -138,6 +142,7 @@ import afActivities from './locales/af/activities.json'
 import afForms from './locales/af/forms.json'
 import afUsers from './locales/af/users.json'
 import afLists from './locales/af/lists.json'
+import afMarketing from './locales/af/marketing.json'
 
 // Import modular translation files for Zulu
 import zuCommon from './locales/zu/common.json'
@@ -153,6 +158,7 @@ import zuActivities from './locales/zu/activities.json'
 import zuForms from './locales/zu/forms.json'
 import zuUsers from './locales/zu/users.json'
 import zuLists from './locales/zu/lists.json'
+import zuMarketing from './locales/zu/marketing.json'
 
 // Import modular translation files for French
 import frCommon from './locales/fr/common.json'
@@ -168,6 +174,7 @@ import frActivities from './locales/fr/activities.json'
 import frForms from './locales/fr/forms.json'
 import frUsers from './locales/fr/users.json'
 import frLists from './locales/fr/lists.json'
+import frMarketing from './locales/fr/marketing.json'
 
 // Import modular translation files for Tswana
 import tnCommon from './locales/tn/common.json'
@@ -183,6 +190,7 @@ import tnActivities from './locales/tn/activities.json'
 import tnForms from './locales/tn/forms.json'
 import tnUsers from './locales/tn/users.json'
 import tnLists from './locales/tn/lists.json'
+import tnMarketing from './locales/tn/marketing.json'
 
 // Import modular translation files for Swahili
 import swCommon from './locales/sw/common.json'
@@ -198,6 +206,7 @@ import swActivities from './locales/sw/activities.json'
 import swForms from './locales/sw/forms.json'
 import swUsers from './locales/sw/users.json'
 import swLists from './locales/sw/lists.json'
+import swMarketing from './locales/sw/marketing.json'
 
 // Get saved language from localStorage or default to English
 const savedLanguage = localStorage.getItem('selectedLanguage') || 'en'
@@ -220,7 +229,8 @@ const i18n = createI18n({
       { activities: enActivities },
       { forms: enForms },
       { users: enUsers },
-      { lists: enLists }
+      { lists: enLists },
+      { marketing: enMarketing }
     ),
     zh: Object.assign({}, 
       { common: zhCommon },
@@ -235,7 +245,8 @@ const i18n = createI18n({
       { activities: zhActivities },
       { forms: zhForms },
       { users: zhUsers },
-      { lists: zhLists }
+      { lists: zhLists },
+      { marketing: zhMarketing }
     ),
     ar: Object.assign({}, 
       { common: arCommon },
@@ -250,7 +261,8 @@ const i18n = createI18n({
       { activities: arActivities },
       { forms: arForms },
       { users: arUsers },
-      { lists: arLists }
+      { lists: arLists },
+      { marketing: arMarketing }
     ),
     pt: Object.assign({}, 
       { common: ptCommon },
@@ -265,7 +277,8 @@ const i18n = createI18n({
       { activities: ptActivities },
       { forms: ptForms },
       { users: ptUsers },
-      { lists: ptLists }
+      { lists: ptLists },
+      { marketing: ptMarketing }
     ),
     af: Object.assign({}, 
       { common: afCommon },
@@ -280,7 +293,8 @@ const i18n = createI18n({
       { activities: afActivities },
       { forms: afForms },
       { users: afUsers },
-      { lists: afLists }
+      { lists: afLists },
+      { marketing: afMarketing }
     ),
     zu: Object.assign({}, 
       { common: zuCommon },
@@ -295,7 +309,8 @@ const i18n = createI18n({
       { activities: zuActivities },
       { forms: zuForms },
       { users: zuUsers },
-      { lists: zuLists }
+      { lists: zuLists },
+      { marketing: zuMarketing }
     ),
     fr: Object.assign({}, 
       { common: frCommon },
@@ -310,7 +325,8 @@ const i18n = createI18n({
       { activities: frActivities },
       { forms: frForms },
       { users: frUsers },
-      { lists: frLists }
+      { lists: frLists },
+      { marketing: frMarketing }
     ),
     tn: Object.assign({}, 
       { common: tnCommon },
@@ -325,7 +341,8 @@ const i18n = createI18n({
       { activities: tnActivities },
       { forms: tnForms },
       { users: tnUsers },
-      { lists: tnLists }
+      { lists: tnLists },
+      { marketing: tnMarketing }
     ),
     sw: Object.assign({}, 
       { common: swCommon },
@@ -340,7 +357,8 @@ const i18n = createI18n({
       { activities: swActivities },
       { forms: swForms },
       { users: swUsers },
-      { lists: swLists }
+      { lists: swLists },
+      { marketing: swMarketing }
     )
   }
 })

@@ -1,0 +1,64 @@
+{
+  "marketing": "Marketing",
+  "overview": {
+    "title": "Aperçu",
+    "subtitle": "Performance marketing et insights d'un coup d'œil",
+    "description": "Obtenez une vue d'ensemble complète de vos efforts marketing sur tous les canaux et campagnes."
+  },
+  "email": {
+    "title": "Marketing Email",
+    "subtitle": "Créer, envoyer et suivre les campagnes email",
+    "description": "Concevez de beaux emails, gérez les listes d'abonnés et analysez les performances des campagnes."
+  },
+  "ads": {
+    "title": "Gestion des Publicités",
+    "subtitle": "Gérez vos campagnes publicitaires",
+    "description": "Créez et optimisez des campagnes publicitaires sur plusieurs plateformes et suivez le ROI."
+  },
+  "events": {
+    "title": "Événements",
+    "subtitle": "Planifiez et gérez les événements marketing",
+    "description": "Organisez des webinaires, salons professionnels et autres événements marketing pour engager votre audience."
+  },
+  "buyer_intent": {
+    "title": "Intention d'Achat",
+    "subtitle": "Identifiez les prospects à forte intention",
+    "description": "Suivez les signaux d'achat et identifiez les prospects prêts à acheter."
+  },
+  "lead_scoring": {
+    "title": "Scoring des Leads",
+    "subtitle": "Scorez et priorisez les leads automatiquement",
+    "description": "Utilisez les données comportementales et démographiques pour scorer et classer automatiquement vos leads."
+  },
+  "journeys": {
+    "title": "Parcours",
+    "subtitle": "Concevez des workflows de parcours client",
+    "description": "Créez des workflows marketing automatisés pour nourrir les leads dans l'entonnoir de vente."
+  },
+  "forecasting": {
+    "title": "Prévision",
+    "subtitle": "Prévoyez les performances marketing",
+    "description": "Utilisez la prévision basée sur l'IA pour prédire les résultats de campagnes et optimiser les budgets."
+  },
+  "meetings": {
+    "title": "Planificateur de Réunions",
+    "subtitle": "Planifiez des réunions avec les prospects",
+    "description": "Permettez aux prospects de réserver des réunions directement et synchronisez avec votre calendrier."
+  },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "Analytics et rapports marketing",
+    "description": "Suivez les métriques de performance, générez des rapports et obtenez des insights sur votre ROI marketing."
+  },
+  "common": {
+    "empty_state": {
+      "title": "Prêt à commencer?",
+      "description": "Connectez vos sources de données et commencez à construire des campagnes marketing puissantes.",
+      "connect_data": "Connecter les Données",
+      "no_data": "Aucune donnée disponible pour le moment"
+    },
+    "breadcrumbs": {
+      "marketing": "Marketing"
+    }
+  }
+}

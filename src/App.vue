@@ -334,6 +334,18 @@
             {{ $t('common.segments') }}
           </router-link>
 
+          <!-- Marketing Link -->
+          <router-link
+            to="/marketing"
+            class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
+            :class="{ 'bg-white/20 text-white': $route.path.startsWith('/marketing'), 'text-white/80 hover:text-white hover:bg-white/10': !$route.path.startsWith('/marketing') }"
+          >
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            {{ $t('common.marketing') }}
+          </router-link>
+
           <!-- Users menu (Admin access OR Feature-based access) - Only for verified users -->
           <router-link
             v-if="(hasFeature('manage_users') || currentUserRole === 'admin') && isEmailVerified"
@@ -371,6 +383,140 @@
             {{ $t('common.features_demo') }}
           </router-link>
         </nav>
+      </div>
+
+      <!-- Marketing Sub-menu (shows when on marketing routes) -->
+      <div v-if="$route.path.startsWith('/marketing')" class="fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-[#973894] to-[#1a1a2e] z-40 transform transition-transform duration-300 ease-in-out">
+        <div class="flex flex-col h-full">
+          <!-- Marketing Header -->
+          <div class="px-6 py-4 border-b border-white/10">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-white">{{ $t('common.marketing') }}</h2>
+              <button
+                @click="$router.push('/dashboard')"
+                class="text-white/70 hover:text-white transition-colors"
+                :title="$t('common.back_to_main_menu')"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Marketing Navigation -->
+          <nav class="flex-1 py-4">
+            <router-link
+              to="/marketing/overview"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
+              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/overview', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/overview' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              {{ $t('marketing.overview.title') }}
+            </router-link>
+
+            <router-link
+              to="/marketing/email"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
+              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/email', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/email' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              {{ $t('marketing.email.title') }}
+            </router-link>
+
+            <router-link
+              to="/marketing/ads"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
+              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/ads', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/ads' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h3a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1h3zM9 4h6V3H9v1zM5 7h14v10H5V7z" />
+              </svg>
+              {{ $t('marketing.ads.title') }}
+            </router-link>
+
+            <router-link
+              to="/marketing/events"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
+              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/events', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/events' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              {{ $t('marketing.events.title') }}
+            </router-link>
+
+            <router-link
+              to="/marketing/buyer-intent"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
+              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/buyer-intent', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/buyer-intent' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              {{ $t('marketing.buyer_intent.title') }}
+            </router-link>
+
+            <router-link
+              to="/marketing/lead-scoring"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
+              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/lead-scoring', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/lead-scoring' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+              </svg>
+              {{ $t('marketing.lead_scoring.title') }}
+            </router-link>
+
+            <router-link
+              to="/marketing/journeys"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
+              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/journeys', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/journeys' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              {{ $t('marketing.journeys.title') }}
+            </router-link>
+
+            <router-link
+              to="/marketing/forecasting"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
+              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/forecasting', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/forecasting' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              {{ $t('marketing.forecasting.title') }}
+            </router-link>
+
+            <router-link
+              to="/marketing/meetings"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
+              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/meetings', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/meetings' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              {{ $t('marketing.meetings.title') }}
+            </router-link>
+
+            <router-link
+              to="/marketing/analytics"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
+              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/analytics', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/analytics' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              {{ $t('marketing.analytics.title') }}
+            </router-link>
+          </nav>
+        </div>
       </div>
 
       <!-- Main content area -->
@@ -420,10 +566,11 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref, computed } from 'vue'
+import { onMounted, onUnmounted, ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuth } from '@/composables/useAuth'
+import { useClickOutside } from '@/composables/useClickOutside'
 import ProductsLauncher from '@/components/ProductsLauncher.vue'
 import { useFeatures } from '@/composables/useFeatures'
 import { useRealTimeUpdates } from '@/composables/useRealTimeUpdates'
@@ -451,6 +598,8 @@ const showDialerDropdown = ref(false)
 // Notifications dropdown state
 const showNotificationsDropdown = ref(false)
 const unreadNotifications = ref(3) // Mock unread count
+
+// Marketing navigation is now handled by router-based sub-menu
 
 const currentLanguage = computed(() => {
   return languages.find(lang => lang.code === locale.value) || languages[0]
@@ -486,6 +635,8 @@ const toggleNotificationsDropdown = () => {
     unreadNotifications.value = 0
   }
 }
+
+// Marketing dropdown functions removed - now using router-based sub-menu
 
 
 const selectLanguage = (languageCode) => {

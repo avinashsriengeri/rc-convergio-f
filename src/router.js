@@ -304,6 +304,76 @@ const routes = [
     name: 'FeaturesDemo',
     component: () => import('./views/FeaturesDemo.vue'),
     meta: { requiresAuth: true }
+  },
+
+  // Marketing Module routes (Parent/Child structure)
+  {
+    path: '/marketing',
+    name: 'Marketing',
+    redirect: '/marketing/overview',
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: 'overview',
+        name: 'MarketingOverview',
+        component: () => import('./views/marketing/Overview.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'email',
+        name: 'MarketingEmail',
+        component: () => import('./views/marketing/Email.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'ads',
+        name: 'MarketingAds',
+        component: () => import('./views/marketing/Ads.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'events',
+        name: 'MarketingEvents',
+        component: () => import('./views/marketing/Events.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'buyer-intent',
+        name: 'MarketingBuyerIntent',
+        component: () => import('./views/marketing/BuyerIntent.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'lead-scoring',
+        name: 'MarketingLeadScoring',
+        component: () => import('./views/marketing/LeadScoring.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'journeys',
+        name: 'MarketingJourneys',
+        component: () => import('./views/marketing/Journeys.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'forecasting',
+        name: 'MarketingForecasting',
+        component: () => import('./views/marketing/Forecasting.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'meetings',
+        name: 'MarketingMeetings',
+        component: () => import('./views/marketing/Meetings.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'analytics',
+        name: 'MarketingAnalytics',
+        component: () => import('./views/marketing/Analytics.vue'),
+        meta: { requiresAuth: true }
+      }
+    ]
   }
 ]
 
@@ -342,20 +412,23 @@ router.beforeEach((to, from, next) => {
   // Check if user needs email verification
   const requiresEmailVerification = isAuthenticated && userData && !userData.email_verified_at
   
-  console.log('Navigation guard - Route:', to.path, 'User role:', userRole, 'Requires admin:', to.meta.requiresAdmin, 'Requires verification:', requiresEmailVerification)
+  // Navigation guard logic (console logs removed for production)
   
-  if (to.meta.requiresAuth && !isAuthenticated) {
+  const requiresAuth = to.meta?.requiresAuth ?? true
+  const requiresAdmin = to.meta?.requiresAdmin ?? false
+  
+  if (requiresAuth && !isAuthenticated) {
     next('/login')
-  } else if (to.meta.requiresAuth === false && isAuthenticated && to.path === '/') {
+  } else if (requiresAuth === false && isAuthenticated && to.path === '/') {
     // Only redirect to dashboard if user is authenticated and trying to access home page
     next('/dashboard')
-  } else if (to.meta.requiresAdmin && userRole !== 'admin') {
+  } else if (requiresAdmin && userRole !== 'admin') {
     // Redirect non-admin users trying to access admin routes
-    console.log('Access denied: User role', userRole, 'is not admin for route', to.path)
+    // Access denied: User role not admin for route
     next('/dashboard')
-  } else if (to.meta.requiresAuth && requiresEmailVerification && to.path !== '/verify-notification') {
+  } else if (requiresAuth && requiresEmailVerification && to.path !== '/verify-notification') {
     // Redirect unverified users to verification page
-    console.log('Email verification required for route:', to.path)
+    // Email verification required for route
     next('/verify-notification')
   } else {
     next()

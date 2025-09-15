@@ -1,0 +1,64 @@
+{
+  "marketing": "Ukumaketha",
+  "overview": {
+    "title": "Isishwankathelo",
+    "subtitle": "Ukusebenza kokumaketha kanye nokuqonda ngaso sonke isikhathi",
+    "description": "Thola umbono ogcwele wezinyathelo zakho zokumaketha kuzo zonke iziteshi nemikhankaso."
+  },
+  "email": {
+    "title": "Ukumaketha Nge-Email",
+    "subtitle": "Dala, thumela, bese ulandele imikhankaso ye-email",
+    "description": "Dizayina ama-email amahle, phatha izinhlu zababhalisile, bese uhlaziya ukusebenza komkhankaso."
+  },
+  "ads": {
+    "title": "Ukuphathwa Kwezikhangiso",
+    "subtitle": "Phatha imikhankaso yakho yezikhangiso",
+    "description": "Dala bese uqinisa imikhankaso yezikhangiso kuma-platform amaningi bese ulandela i-ROI."
+  },
+  "events": {
+    "title": "Imicimbi",
+    "subtitle": "Hlela bese uphatha imicimbi yokumaketha",
+    "description": "Hlela ama-webinar, imikhosi yezohwebo, neminye imicimbi yokumaketha ukuhlanganisa izethameli zakho."
+  },
+  "buyer_intent": {
+    "title": "Inhloso Yomthengi",
+    "subtitle": "Khombisa abangaba abathengi abanezinhloso eziphakeme",
+    "description": "Landa izimpawu zokuthenga bese ubona abangaba abathengi abalungele ukuthenga."
+  },
+  "lead_scoring": {
+    "title": "Ukubalwa Kwama-Lead",
+    "subtitle": "Bala bese ubeka phambili ama-lead ngokuzenzakalelayo",
+    "description": "Sebenzisa idatha yokuziphatha kanye nokubalwa kwabantu ukubala nokuhlela ama-lead akho ngokuzenzakalelayo."
+  },
+  "journeys": {
+    "title": "Izihambo",
+    "subtitle": "Dizayina imisebenzi yohambo lwamakhasimende",
+    "description": "Dala imisebenzi yokumaketha ezenzakalelayo ukondla ama-lead ngaphakathi kwe-funnel yokuthengisa."
+  },
+  "forecasting": {
+    "title": "Ukubikezela",
+    "subtitle": "Bikezela ukusebenza kokumaketha",
+    "description": "Sebenzisa ukubikezela okusekelwe ku-AI ukubikezela imiphumela yomkhankaso bese uqinisa izabelo."
+  },
+  "meetings": {
+    "title": "I-Scheduler Yemihlangano",
+    "subtitle": "Hlela imihlangano nabangaba abathengi",
+    "description": "Vumela abangaba abathengi ukuthi baqophe imihlangano ngqo bese uyivumelanisa nekhaleda yakho."
+  },
+  "analytics": {
+    "title": "I-Analytics",
+    "subtitle": "I-analytics yokumaketha kanye nokubika",
+    "description": "Landa izilinganiso zokusebenza, khipha imibiko, bese uthola ukuqonda mayelana ne-ROI yakho yokumaketha."
+  },
+  "common": {
+    "empty_state": {
+      "title": "Ulungile ukuqala?",
+      "description": "Xhuma imithombo yakho yedatha bese uqala ukwakha imikhankaso yokumaketha enamandla.",
+      "connect_data": "Xhuma Idatha",
+      "no_data": "Ayikho idatha etholakalayo okwamanje"
+    },
+    "breadcrumbs": {
+      "marketing": "Ukumaketha"
+    }
+  }
+}

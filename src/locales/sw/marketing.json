@@ -1,0 +1,64 @@
+{
+  "marketing": "Uuzaji",
+  "overview": {
+    "title": "Muhtasari",
+    "subtitle": "Utendaji wa uuzaji na uelewa kwa macho",
+    "description": "Pata muhtasari wa jumla wa juhudi zako za uuzaji katika vyanzo vyote na kampeni."
+  },
+  "email": {
+    "title": "Uuzaji wa Barua pepe",
+    "subtitle": "Tengeneza, tuma, na ufuatilie kampeni za barua pepe",
+    "description": "Tengeneza barua pepe nzuri, simamia orodha za wanachama, na uchambue utendaji wa kampeni."
+  },
+  "ads": {
+    "title": "Usimamizi wa Matangazo",
+    "subtitle": "Simamia kampeni zako za matangazo",
+    "description": "Tengeneza na kuboresha kampeni za matangazo katika mfumo wa anuwai na ufuatilie ROI."
+  },
+  "events": {
+    "title": "Matukio",
+    "subtitle": "Panga na usimamie matukio ya uuzaji",
+    "description": "Panga webina, maonyesho ya biashara, na matukio mengine ya uuzaji ili kuunganisha watazamaji wako."
+  },
+  "buyer_intent": {
+    "title": "Nia ya Mnunuzi",
+    "subtitle": "Tambua watu wa nia kubwa",
+    "description": "Fuatilia ishara za ununuzi na tambua watu wanao nia ya kununua."
+  },
+  "lead_scoring": {
+    "title": "Kupima Viongozi",
+    "subtitle": "Pima na uweke kipaumbele viongozi kiotomatiki",
+    "description": "Tumia data ya tabia na demografia kupima na kupanga viongozi vyako kiotomatiki."
+  },
+  "journeys": {
+    "title": "Safari",
+    "subtitle": "Tengeneza mifumo ya safari ya mteja",
+    "description": "Tengeneza mifumo ya uuzaji ya kiotomatiki ili kufunza viongozi kupitia funil ya mauzo."
+  },
+  "forecasting": {
+    "title": "Utabiri",
+    "subtitle": "Tabiri utendaji wa uuzaji",
+    "description": "Tumia utabiri wa AI ili kutabiri matokeo ya kampeni na kuboresha bajeti."
+  },
+  "meetings": {
+    "title": "Mpangilio wa Mikutano",
+    "subtitle": "Panga mikutano na watu wa nia",
+    "description": "Ruhusu watu wa nia kupanga mikutano moja kwa moja na kuunganisha na kalenda yako."
+  },
+  "analytics": {
+    "title": "Uchambuzi",
+    "subtitle": "Uchambuzi na taarifa za uuzaji",
+    "description": "Fuatilia vipimo vya utendaji, tengeneza taarifa, na upate uelewa kuhusu ROI yako ya uuzaji."
+  },
+  "common": {
+    "empty_state": {
+      "title": "Uko tayari kuanza?",
+      "description": "Unganisha vyanzo vyako vya data na uanze kujenga kampeni za uuzaji zenye nguvu.",
+      "connect_data": "Unganisha Data",
+      "no_data": "Hakuna data inayopatikana bado"
+    },
+    "breadcrumbs": {
+      "marketing": "Uuzaji"
+    }
+  }
+}

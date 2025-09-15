@@ -2,6 +2,7 @@
   <div class="relative" data-testid="header-products">
     <!-- Trigger Button -->
     <button
+      ref="triggerRef"
       @click="toggleDropdown"
       @keydown.enter="toggleDropdown"
       @keydown.space.prevent="toggleDropdown"
@@ -114,9 +115,11 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { rcProducts } from '../constants/rcProducts'
+import { useClickOutside } from '../composables/useClickOutside'
 
 const isOpen = ref(false)
 const dropdownRef = ref(null)
+const triggerRef = ref(null)
 
 // Crisp inline SVG icons (outline variants)
 const getIconSvg = (iconKey) => {
@@ -146,12 +149,12 @@ const closeDropdown = () => {
   isOpen.value = false
 }
 
-// Handle outside clicks
-const handleClickOutside = (event) => {
-  if (dropdownRef && !dropdownRef.contains(event.target)) {
+// Use click-outside composable
+useClickOutside([triggerRef, dropdownRef], () => {
+  if (isOpen.value) {
     closeDropdown()
   }
-}
+})
 
 // Handle escape key
 const handleEscape = (event) => {
@@ -161,12 +164,10 @@ const handleEscape = (event) => {
 }
 
 onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
   document.addEventListener('keydown', handleEscape)
 })
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
   document.removeEventListener('keydown', handleEscape)
 })
 </script>

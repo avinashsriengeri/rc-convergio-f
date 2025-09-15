@@ -8,9 +8,11 @@
   "campaigns": "Dikhampeini",
   "forms": "Diforme",
   "segments": "Dikarolo",
+  "marketing": "Tshekatsheko",
   "users": "Basebedisi",
   "settings": "Dilao",
   "features_demo": "Ponatsho ya Ditshupo",
+  "back_to_main_menu": "Boela mo Menyung e Kgolo",
   "profile": "Profaele",
   "logout": "Tswa",
   "help": "Thuso",
@@ -155,5 +157,18 @@
     "our_products": "Ditšweletša Tša Rena",
     "open_products_menu": "Bula lenaneo la ditšweletša",
     "no_products": "Ga go na ditšweletša tše di lego gona"
+  },
+  "marketing_overview": {
+    "active_campaigns": "Mekgatlho e e Tsamayang",
+    "ad_spend": "Tsenyo ya Dikgang",
+    "upcoming_events": "Ditiragalo tse di Tlang",
+    "meetings_scheduled": "Dipokano tse di Rulagantsweng",
+    "pipeline_value": "Boleng ba Pipeline",
+    "qualified_leads": "Dikgato tse di Lephodisitsweng",
+    "performance_trend": "Mokgwa wa Tiro ya Go Rekisa",
+    "channel_distribution": "Kabo ya Mekgwa",
+    "no_data_message": "Ga go na data go fitlha — kgokaganya mebala ya data",
+    "retry_button": "Leka Gape",
+    "loading": "Go tsaya data ya go rekisa..."
   }
 }

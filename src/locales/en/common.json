@@ -9,9 +9,11 @@
   "campaigns": "Campaigns",
   "forms": "Forms",
   "segments": "Segments",
+  "marketing": "Marketing",
   "users": "Users",
   "settings": "Settings",
   "features_demo": "Features Demo",
+  "back_to_main_menu": "Back to Main Menu",
   "profile": "Profile",
   "logout": "Logout",
   "help": "Help",
@@ -167,5 +169,18 @@
   "notifications": {
     "title": "Notifications",
     "intro": "Introducing: Notifications (Coming Soon)"
+  },
+  "marketing_overview": {
+    "active_campaigns": "Active Campaigns",
+    "ad_spend": "Ad Spend",
+    "upcoming_events": "Upcoming Events",
+    "meetings_scheduled": "Meetings Scheduled",
+    "pipeline_value": "Pipeline Value",
+    "qualified_leads": "Qualified Leads",
+    "performance_trend": "Marketing Performance Trend",
+    "channel_distribution": "Channel Distribution",
+    "no_data_message": "No data yet — connect data sources",
+    "retry_button": "Retry",
+    "loading": "Loading marketing data..."
   }
 }

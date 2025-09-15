@@ -8,9 +8,11 @@
   "campaigns": "活动",
   "forms": "表单",
   "segments": "细分",
+  "marketing": "营销",
   "users": "用户",
   "settings": "设置",
   "features_demo": "功能演示",
+  "back_to_main_menu": "返回主菜单",
   "profile": "个人资料",
   "logout": "退出登录",
   "help": "帮助",
@@ -155,5 +157,18 @@
     "our_products": "我们的产品",
     "open_products_menu": "打开产品菜单",
     "no_products": "暂无可用产品"
+  },
+  "marketing_overview": {
+    "active_campaigns": "活跃活动",
+    "ad_spend": "广告支出",
+    "upcoming_events": "即将到来的活动",
+    "meetings_scheduled": "已安排会议",
+    "pipeline_value": "管道价值",
+    "qualified_leads": "合格潜在客户",
+    "performance_trend": "营销绩效趋势",
+    "channel_distribution": "渠道分布",
+    "no_data_message": "暂无数据 — 连接数据源",
+    "retry_button": "重试",
+    "loading": "加载营销数据..."
   }
 }

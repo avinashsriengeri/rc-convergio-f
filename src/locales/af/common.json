@@ -8,9 +8,11 @@
   "campaigns": "Veldtogte",
   "forms": "Vorms",
   "segments": "Segmente",
+  "marketing": "Bemarking",
   "users": "Gebruikers",
   "settings": "Instellings",
   "features_demo": "Funksies Demo",
+  "back_to_main_menu": "Terug na Hoofmenu",
   "profile": "Profiel",
   "logout": "Teken Uit",
   "help": "Hulp",
@@ -155,5 +157,18 @@
     "our_products": "Ons Produkte",
     "open_products_menu": "Maak produkmenu oop",
     "no_products": "Geen produkte beskikbaar"
+  },
+  "marketing_overview": {
+    "active_campaigns": "Aktiewe Veldtogte",
+    "ad_spend": "Advertensie Uitgawes",
+    "upcoming_events": "Kommende Gebeure",
+    "meetings_scheduled": "Vergaderings Gerooster",
+    "pipeline_value": "Pipeline Waarde",
+    "qualified_leads": "Gekwalifiseerde Leidrade",
+    "performance_trend": "Bemarking Prestasie Tendens",
+    "channel_distribution": "Kanaal Verspreiding",
+    "no_data_message": "Geen data nog — koppel databronne",
+    "retry_button": "Probeer Weer",
+    "loading": "Laai bemarking data..."
   }
 }

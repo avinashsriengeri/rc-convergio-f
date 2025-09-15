@@ -1,0 +1,64 @@
+{
+  "marketing": "Bemarking",
+  "overview": {
+    "title": "Oorsig",
+    "subtitle": "Bemarkingsprestasie en insigte op 'n oogopslag",
+    "description": "Kry 'n omvattende blik op jou bemarkingspogings oor alle kanale en veldtogte."
+  },
+  "email": {
+    "title": "E-pos Bemarking",
+    "subtitle": "Skep, stuur en volg e-pos veldtogte",
+    "description": "Ontwerp pragtige e-posse, bestuur intekenaarlyste en analiseer veldtogprestasie."
+  },
+  "ads": {
+    "title": "Advertensie Bestuur",
+    "subtitle": "Bestuur jou advertensieveldtogte",
+    "description": "Skep en optimaliseer advertensieveldtogte oor verskeie platforms en volg ROI."
+  },
+  "events": {
+    "title": "Gebeurtenisse",
+    "subtitle": "Beplan en bestuur bemarkingsgebeurtenisse",
+    "description": "Organiseer webinars, handelskoue en ander bemarkingsgebeurtenisse om jou gehoor te betrek."
+  },
+  "buyer_intent": {
+    "title": "Koper Intentie",
+    "subtitle": "Identifiseer hoë-intensie vooruitsigte",
+    "description": "Volg koopsignale en identifiseer vooruitsigte wat gereed is om te koop."
+  },
+  "lead_scoring": {
+    "title": "Leidraad Telling",
+    "subtitle": "Tel en prioritiseer leidrade outomaties",
+    "description": "Gebruik gedragsdata en demografiese data om jou leidrade outomaties te tel en te rangskik."
+  },
+  "journeys": {
+    "title": "Reise",
+    "subtitle": "Ontwerp klantreis werksvloeie",
+    "description": "Skep outomatiese bemarkingswerksvloeie om leidrade deur die verkoopstert te voed."
+  },
+  "forecasting": {
+    "title": "Voorspelling",
+    "subtitle": "Voorspel bemarkingsprestasie",
+    "description": "Gebruik AI-aangedrewe voorspelling om veldtogresultate te voorspel en begrotings te optimaliseer."
+  },
+  "meetings": {
+    "title": "Vergadering Scheduler",
+    "subtitle": "Skeduleer vergaderings met vooruitsigte",
+    "description": "Laat vooruitsigte direk vergaderings bespreek en sinkroniseer met jou kalender."
+  },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "Bemarkingsanalise en verslaggewing",
+    "description": "Volg prestasiemetrieke, genereer verslae en kry insigte oor jou bemarkings-ROI."
+  },
+  "common": {
+    "empty_state": {
+      "title": "Gereed om te begin?",
+      "description": "Verbind jou databronne en begin kragtige bemarkingsveldtogte bou.",
+      "connect_data": "Verbind Data",
+      "no_data": "Nog geen data beskikbaar nie"
+    },
+    "breadcrumbs": {
+      "marketing": "Bemarking"
+    }
+  }
+}

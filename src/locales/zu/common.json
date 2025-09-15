@@ -8,9 +8,11 @@
   "campaigns": "Imikhankaso",
   "forms": "Amafomu",
   "segments": "Izingxenye",
+  "marketing": "Ukumaketha",
   "users": "Abasebenzisi",
   "settings": "Izilungiselelo",
   "features_demo": "Ukubonisa Izici",
+  "back_to_main_menu": "Buyela Emenyu Eyinhloko",
   "profile": "Iphrofayili",
   "logout": "Phuma",
   "help": "Usizo",
@@ -155,5 +157,18 @@
     "our_products": "Imikhiqizo Yethu",
     "open_products_menu": "Vula imenyu yemikhiqizo",
     "no_products": "Awukho umkhiqizo otholakalayo"
+  },
+  "marketing_overview": {
+    "active_campaigns": "Omkhankaso Abasebenzayo",
+    "ad_spend": "Ukuchitha Kwesikhangiso",
+    "upcoming_events": "Imicimbi Ezayo",
+    "meetings_scheduled": "Imihlangano Ehleliwe",
+    "pipeline_value": "Inani Le-Pipeline",
+    "qualified_leads": "Abaholi Abafanelekile",
+    "performance_trend": "Ukuthambekela Komsebenzi Wezokumaketha",
+    "channel_distribution": "Ukusatshalaliswa Kwesiteshi",
+    "no_data_message": "Awukho idatha okwamanje — xhuma imithombo yedatha",
+    "retry_button": "Zama Futhi",
+    "loading": "Iyalayisha idatha yezokumaketha..."
   }
 }

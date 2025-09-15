@@ -8,9 +8,11 @@
   "campaigns": "Kampeni",
   "forms": "Fomu",
   "segments": "Sehemu",
+  "marketing": "Uuzaji",
   "users": "Watumiaji",
   "settings": "Mipangilio",
   "features_demo": "Maonyesho ya Vipengele",
+  "back_to_main_menu": "Rudi kwenye Menyu Kuu",
   "profile": "Wasifu",
   "logout": "Ondoka",
   "help": "Msaada",
@@ -155,5 +157,18 @@
     "our_products": "Bidhaa Zetu",
     "open_products_menu": "Fungua menyu ya bidhaa",
     "no_products": "Hakuna bidhaa zinazopatikana"
+  },
+  "marketing_overview": {
+    "active_campaigns": "Kampeni Zaidi",
+    "ad_spend": "Matumizi ya Matangazo",
+    "upcoming_events": "Matukio Yanayokuja",
+    "meetings_scheduled": "Mikutano Iliyopangwa",
+    "pipeline_value": "Thamani ya Pipeline",
+    "qualified_leads": "Wanafunzi Waliohitimu",
+    "performance_trend": "Mwelekeo wa Utendaji wa Uuzaji",
+    "channel_distribution": "Usambazaji wa Vituo",
+    "no_data_message": "Hakuna data bado — unganisha vyanzo vya data",
+    "retry_button": "Jaribu Tena",
+    "loading": "Inapakia data ya uuzaji..."
   }
 }

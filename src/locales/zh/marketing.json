@@ -1,0 +1,805 @@
+{
+  "marketing": "营销",
+  "overview": {
+    "title": "概览",
+    "subtitle": "营销绩效和洞察一目了然",
+    "description": "全面了解您在所有渠道和活动中的营销努力。"
+  },
+  "email": {
+    "title": "邮件营销",
+    "subtitle": "创建、发送和跟踪邮件活动",
+    "description": "设计精美的邮件，管理订阅者列表，分析活动绩效。",
+    "metrics": {
+      "emails_sent": "已发送邮件",
+      "open_rate": "打开率",
+      "click_rate": "点击率",
+      "bounce_rate": "退信率",
+      "unsubscribe_rate": "取消订阅率"
+    },
+    "filters": {
+      "status": "状态",
+      "owner": "负责人",
+      "template": "模板",
+      "date_range": "日期范围",
+      "all_statuses": "所有状态",
+      "draft": "草稿",
+      "scheduled": "已安排",
+      "sent": "已发送",
+      "completed": "已完成",
+      "paused": "已暂停",
+      "cancelled": "已取消"
+    },
+    "table": {
+      "campaign": "活动",
+      "sent": "已发送",
+      "opens": "打开",
+      "clicks": "点击",
+      "bounces": "退信",
+      "status": "状态",
+      "created_at": "创建时间",
+      "actions": "操作"
+    },
+    "actions": {
+      "create_email": "创建邮件",
+      "view_details": "查看详情",
+      "schedule": "安排",
+      "pause": "暂停",
+      "resume": "恢复",
+      "duplicate": "复制",
+      "delete": "删除"
+    },
+    "drawer": {
+      "overview": "概览",
+      "recipients": "收件人",
+      "activity_log": "活动日志",
+      "metrics": "指标",
+      "performance": "表现",
+      "timeline": "时间线"
+    },
+    "empty_state": {
+      "title": "暂无邮件活动",
+      "message": "创建您的第一个邮件活动来开始与受众互动",
+      "create_campaign": "创建活动"
+    },
+    "loading": "正在加载邮件活动...",
+    "error": "加载邮件活动时出错"
+  },
+  "ads": {
+    "title": "广告管理",
+    "subtitle": "管理您的广告活动",
+    "description": "跨多个平台创建和优化广告活动，跟踪投资回报率。",
+    "connected_accounts": {
+      "title": "已连接的广告账户",
+      "no_accounts": "未连接广告账户",
+      "connect_first": "连接您的第一个广告账户以开始管理活动",
+      "connect_account": "连接账户"
+    },
+    "account_actions": {
+      "edit": "编辑",
+      "deactivate": "停用",
+      "activate": "激活",
+      "delete": "删除",
+      "view_details": "查看详情"
+    },
+    "metrics": {
+      "title": "广告活动指标",
+      "campaign_id": "活动ID",
+      "fetch_metrics": "获取指标",
+      "impressions": "展示次数",
+      "clicks": "点击次数",
+      "ctr": "点击率",
+      "cpc": "每次点击费用",
+      "spend": "支出",
+      "conversions": "转化次数",
+      "conversion_rate": "转化率",
+      "roi": "投资回报率",
+      "no_metrics": "暂无指标数据",
+      "enter_campaign_id": "输入活动ID以查看指标"
+    },
+    "connect_modal": {
+      "title": "连接广告账户",
+      "provider": "提供商",
+      "account_name": "账户名称",
+      "account_id": "账户ID",
+      "budget": "月度预算",
+      "currency": "货币",
+      "connect": "连接账户",
+      "cancel": "取消",
+      "connecting": "连接中...",
+      "select_provider": "选择提供商",
+      "enter_account_name": "输入账户名称",
+      "enter_account_id": "输入账户ID",
+      "enter_budget": "输入月度预算"
+    },
+    "edit_modal": {
+      "title": "编辑广告账户",
+      "account_name": "账户名称",
+      "budget": "月度预算",
+      "currency": "货币",
+      "save": "保存更改",
+      "cancel": "取消",
+      "saving": "保存中..."
+    },
+    "confirmations": {
+      "deactivate_title": "停用账户",
+      "deactivate_message": "您确定要停用此广告账户吗？这将暂停所有活动。",
+      "delete_title": "删除账户",
+      "delete_message": "您确定要删除此广告账户吗？此操作无法撤销，将删除所有相关数据。",
+      "confirm": "确认",
+      "cancel": "取消"
+    },
+    "status": {
+      "active": "活跃",
+      "inactive": "非活跃",
+      "paused": "已暂停",
+      "error": "错误"
+    },
+    "loading": "正在加载广告账户...",
+    "error": "加载广告账户时出错"
+  },
+  "events": {
+    "title": "活动",
+    "subtitle": "规划和管理营销活动",
+    "description": "组织网络研讨会、贸易展览和其他营销活动来吸引您的受众。",
+    "tabs": {
+      "upcoming": "即将到来",
+      "completed": "已完成",
+      "all": "全部"
+    },
+    "filters": {
+      "type": "活动类型",
+      "all_types": "所有类型"
+    },
+    "stats": {
+      "upcoming_events": "即将到来的活动",
+      "total_attendees": "总参会人数",
+      "utilization_rate": "利用率",
+      "revenue_generated": "产生的收入"
+    },
+    "table": {
+      "name": "活动名称",
+      "type": "类型",
+      "scheduled_at": "计划时间",
+      "rsvps": "RSVP",
+      "attended": "已参加",
+      "actions": "操作"
+    },
+    "actions": {
+      "create_event": "创建活动",
+      "edit": "编辑",
+      "delete": "删除",
+      "view_details": "查看详情",
+      "mark_attended": "标记为已参加"
+    },
+    "create_modal": {
+      "title": "创建活动",
+      "name": "活动名称",
+      "description": "描述",
+      "type": "活动类型",
+      "scheduled_at": "计划日期和时间",
+      "duration": "持续时间（分钟）",
+      "location": "地点",
+      "max_attendees": "最大参会人数",
+      "create": "创建活动",
+      "cancel": "取消",
+      "creating": "创建中...",
+      "enter_name": "输入活动名称",
+      "enter_description": "输入活动描述",
+      "select_type": "选择活动类型",
+      "select_datetime": "选择日期和时间",
+      "enter_duration": "输入持续时间（分钟）",
+      "enter_location": "输入地点",
+      "enter_max_attendees": "输入最大参会人数"
+    },
+    "edit_modal": {
+      "title": "编辑活动",
+      "save": "保存更改",
+      "cancel": "取消",
+      "saving": "保存中..."
+    },
+    "details_drawer": {
+      "title": "活动详情",
+      "attendees": "参会者",
+      "rsvp_filter": "RSVP状态",
+      "all_rsvp": "所有RSVP",
+      "going": "参加",
+      "interested": "感兴趣",
+      "declined": "拒绝",
+      "attendee_name": "姓名",
+      "attendee_email": "邮箱",
+      "attendee_company": "公司",
+      "attendee_status": "状态",
+      "attendee_attended": "已参加",
+      "attendee_registered": "注册时间"
+    },
+    "confirmations": {
+      "delete_title": "删除活动",
+      "delete_message": "您确定要删除此活动吗？此操作无法撤销，将删除所有相关数据。",
+      "confirm": "确认",
+      "cancel": "取消"
+    },
+    "status": {
+      "upcoming": "即将到来",
+      "completed": "已完成",
+      "cancelled": "已取消",
+      "draft": "草稿"
+    },
+    "empty_state": {
+      "title": "未找到活动",
+      "message": "创建您的第一个活动来开始与受众互动",
+      "create_event": "创建活动"
+    },
+    "loading": "正在加载活动...",
+    "error": "加载活动时出错"
+  },
+  "buyer_intent": {
+    "title": "购买意向",
+    "subtitle": "识别高意向潜在客户",
+    "description": "跟踪购买信号，识别准备购买的潜在客户。",
+    "filters": {
+      "company": "公司",
+      "contact": "联系人",
+      "page": "页面",
+      "action": "行为",
+      "intent_level": "意向等级",
+      "score_range": "分数范围",
+      "date_range": "日期范围",
+      "all_companies": "所有公司",
+      "all_contacts": "所有联系人",
+      "all_pages": "所有页面",
+      "all_actions": "所有行为",
+      "all_intent_levels": "所有意向等级",
+      "min_score": "最低分数",
+      "max_score": "最高分数",
+      "date_from": "开始日期",
+      "date_to": "结束日期",
+      "apply_filters": "应用筛选",
+      "clear_filters": "清除筛选"
+    },
+    "table": {
+      "when": "时间",
+      "contact": "联系人",
+      "company": "公司",
+      "page": "页面",
+      "action": "行为",
+      "score": "分数",
+      "intent_level": "意向等级",
+      "actions": "操作"
+    },
+    "analytics": {
+      "title": "意向分析",
+      "overview": {
+        "total_events": "总事件数",
+        "unique_contacts": "独立联系人",
+        "unique_companies": "独立公司",
+        "high_intent": "高意向",
+        "medium_intent": "中等意向",
+        "low_intent": "低意向",
+        "average_score": "平均分数",
+        "conversion_rate": "转化率"
+      },
+      "action_breakdown": "行为分析",
+      "top_pages": "热门页面",
+      "intent_trend": "意向趋势"
+    },
+    "actions": {
+      "view_details": "查看详情",
+      "log_test_event": "记录测试事件",
+      "refresh_data": "刷新数据"
+    },
+    "test_event_modal": {
+      "title": "记录测试事件",
+      "contact_name": "联系人姓名",
+      "contact_email": "联系人邮箱",
+      "company_name": "公司名称",
+      "page_url": "页面URL",
+      "action": "行为",
+      "score": "分数",
+      "log_event": "记录事件",
+      "cancel": "取消",
+      "logging": "记录中...",
+      "enter_contact_name": "输入联系人姓名",
+      "enter_contact_email": "输入联系人邮箱",
+      "enter_company_name": "输入公司名称",
+      "enter_page_url": "输入页面URL",
+      "select_action": "选择行为",
+      "enter_score": "输入分数（0-100）"
+    },
+    "intent_levels": {
+      "high": "高意向",
+      "medium": "中等意向",
+      "low": "低意向"
+    },
+    "empty_state": {
+      "title": "未找到意向数据",
+      "message": "没有符合当前筛选条件的购买意向数据",
+      "clear_filters": "清除筛选",
+      "log_test_event": "记录测试事件"
+    },
+    "loading": "正在加载意向数据...",
+    "error": "加载意向数据时出错"
+  },
+  "lead_scoring": {
+    "title": "线索评分",
+    "subtitle": "自动评分和优先排序线索",
+    "description": "使用行为数据和人口统计数据自动评分和排序您的线索。",
+    "rules": {
+      "title": "评分规则",
+      "name": "规则名称",
+      "points": "分数",
+      "priority": "优先级",
+      "active": "激活",
+      "updated_at": "更新时间",
+      "actions": "操作",
+      "create_rule": "创建规则",
+      "edit_rule": "编辑规则",
+      "delete_rule": "删除规则",
+      "view_condition": "查看条件"
+    },
+    "stats": {
+      "title": "评分统计",
+      "total_contacts": "总联系人",
+      "average_score": "平均分数",
+      "high_score": "高分",
+      "medium_score": "中等分数",
+      "low_score": "低分",
+      "active_rules": "活跃规则",
+      "total_points": "总分数"
+    },
+    "top_contacts": {
+      "title": "高分联系人",
+      "name": "姓名",
+      "company": "公司",
+      "score": "分数",
+      "change": "变化",
+      "last_updated": "最后更新"
+    },
+    "rule_modal": {
+      "create_title": "创建评分规则",
+      "edit_title": "编辑评分规则",
+      "name": "规则名称",
+      "description": "描述",
+      "points": "分数",
+      "priority": "优先级",
+      "is_active": "激活",
+      "condition": "条件（JSON）",
+      "create": "创建规则",
+      "update": "更新规则",
+      "cancel": "取消",
+      "creating": "创建中...",
+      "updating": "更新中...",
+      "enter_name": "输入规则名称",
+      "enter_description": "输入规则描述",
+      "enter_points": "输入分数（0-100）",
+      "select_priority": "选择优先级",
+      "enter_condition": "输入JSON条件"
+    },
+    "recalculate": {
+      "title": "重新计算分数",
+      "contact_id": "联系人ID",
+      "recalculate": "重新计算",
+      "recalculating": "计算中...",
+      "enter_contact_id": "输入联系人ID",
+      "success": "分数重新计算成功",
+      "result": "结果"
+    },
+    "confirmations": {
+      "delete_title": "删除评分规则",
+      "delete_message": "您确定要删除此评分规则吗？此操作无法撤销。",
+      "confirm": "确认",
+      "cancel": "取消"
+    },
+    "priorities": {
+      "1": "关键",
+      "2": "高",
+      "3": "中等",
+      "4": "低",
+      "5": "最小"
+    },
+    "empty_state": {
+      "title": "未找到评分规则",
+      "message": "创建您的第一个评分规则以开始自动评分线索",
+      "create_rule": "创建规则"
+    },
+    "loading": "正在加载评分数据...",
+    "error": "加载评分数据时出错"
+  },
+  "journeys": {
+    "title": "客户旅程",
+    "subtitle": "设计客户旅程工作流",
+    "description": "创建自动化营销工作流，在销售漏斗中培养线索。",
+    "table": {
+      "name": "旅程名称",
+      "status": "状态",
+      "steps": "步骤",
+      "active_executions": "活跃",
+      "completed_executions": "已完成",
+      "completion_rate": "完成率",
+      "updated_at": "更新时间",
+      "actions": "操作"
+    },
+    "stats": {
+      "active_journeys": "活跃旅程",
+      "contacts_in_journeys": "旅程中的联系人",
+      "avg_completion_rate": "平均完成率",
+      "conversion_rate": "转化率"
+    },
+    "create_modal": {
+      "title": "创建旅程",
+      "name": "旅程名称",
+      "description": "描述",
+      "status": "状态",
+      "steps": "步骤",
+      "add_step": "添加步骤",
+      "remove_step": "移除步骤",
+      "step_type": "步骤类型",
+      "step_name": "步骤名称",
+      "step_config": "配置",
+      "create": "创建旅程",
+      "cancel": "取消",
+      "creating": "创建中...",
+      "enter_name": "输入旅程名称",
+      "enter_description": "输入旅程描述",
+      "select_step_type": "选择步骤类型",
+      "enter_step_name": "输入步骤名称"
+    },
+    "details_drawer": {
+      "title": "旅程详情",
+      "steps": "步骤",
+      "executions": "执行",
+      "run_test": "运行测试",
+      "contact_id": "联系人ID",
+      "run": "运行",
+      "running": "运行中...",
+      "enter_contact_id": "输入联系人ID",
+      "step_order": "顺序",
+      "step_type": "类型",
+      "step_name": "名称",
+      "step_config": "配置",
+      "execution_contact": "联系人",
+      "execution_status": "状态",
+      "execution_progress": "进度",
+      "execution_started": "开始时间",
+      "execution_next_step": "下一步"
+    },
+    "step_types": {
+      "email": "发送邮件",
+      "wait": "等待",
+      "condition": "条件",
+      "webhook": "网络钩子",
+      "score": "分数更新",
+      "tag": "添加标签",
+      "sms": "发送短信",
+      "task": "创建任务"
+    },
+    "statuses": {
+      "active": "活跃",
+      "draft": "草稿",
+      "paused": "暂停",
+      "archived": "已归档"
+    },
+    "execution_statuses": {
+      "running": "运行中",
+      "completed": "已完成",
+      "failed": "失败",
+      "paused": "暂停"
+    },
+    "actions": {
+      "view_details": "查看详情",
+      "edit_journey": "编辑旅程",
+      "delete_journey": "删除旅程",
+      "duplicate_journey": "复制旅程"
+    },
+    "confirmations": {
+      "delete_title": "删除旅程",
+      "delete_message": "您确定要删除此旅程吗？此操作无法撤销，将停止所有正在运行的执行。",
+      "confirm": "确认",
+      "cancel": "取消"
+    },
+    "empty_state": {
+      "title": "未找到旅程",
+      "message": "创建您的第一个旅程以开始自动化客户工作流",
+      "create_journey": "创建旅程"
+    },
+    "loading": "正在加载旅程...",
+    "error": "加载旅程时出错"
+  },
+  "forecasting": {
+    "title": "预测",
+    "subtitle": "预测营销绩效",
+    "description": "使用AI驱动的预测来预测活动结果并优化预算。",
+    "kpis": {
+      "projected_value": "预测价值",
+      "probability_weighted": "概率加权",
+      "forecast_accuracy": "预测准确性",
+      "active_deals": "活跃交易"
+    },
+    "charts": {
+      "pipeline_breakdown": "按阶段的管道分解",
+      "accuracy_trends": "预测准确性趋势"
+    },
+    "timeframes": {
+      "monthly": "月度",
+      "quarterly": "季度",
+      "yearly": "年度",
+      "select_timeframe": "选择时间范围"
+    },
+    "stages": {
+      "prospecting": "潜在客户开发",
+      "qualification": "资格认证",
+      "proposal": "提案",
+      "negotiation": "谈判",
+      "closed_won": "成交"
+    },
+    "loading": "正在加载预测数据...",
+    "error": "加载预测数据时出错",
+    "no_data": "无预测数据可用",
+    "refresh": "刷新数据"
+  },
+  "meetings": {
+    "title": "会议安排",
+    "subtitle": "与潜在客户安排会议",
+    "description": "允许潜在客户直接预订会议并与您的日历同步。",
+    "stats": {
+      "scheduled": "已安排",
+      "completed": "已完成",
+      "cancelled": "已取消",
+      "no_shows": "未出席"
+    },
+    "table": {
+      "title": "标题",
+      "contact": "联系人",
+      "when": "时间",
+      "duration": "时长",
+      "status": "状态",
+      "provider": "平台",
+      "link": "链接",
+      "actions": "操作"
+    },
+    "filters": {
+      "status": "状态",
+      "provider": "平台",
+      "date_range": "日期范围",
+      "my_meetings": "我的会议",
+      "all_meetings": "所有会议",
+      "upcoming": "即将到来",
+      "today": "今天",
+      "this_week": "本周",
+      "this_month": "本月",
+      "select_status": "选择状态",
+      "select_provider": "选择平台"
+    },
+    "create_modal": {
+      "title": "创建会议",
+      "meeting_title": "会议标题",
+      "description": "描述",
+      "contact": "联系人",
+      "start_time": "开始时间",
+      "end_time": "结束时间",
+      "provider": "平台",
+      "meeting_link": "会议链接",
+      "create": "创建会议",
+      "cancel": "取消",
+      "creating": "创建中...",
+      "enter_title": "输入会议标题",
+      "enter_description": "输入会议描述",
+      "select_contact": "选择联系人",
+      "select_provider": "选择平台",
+      "enter_link": "输入会议链接（可选）"
+    },
+    "sync": {
+      "sync_google": "同步谷歌日历",
+      "sync_outlook": "同步Outlook日历",
+      "syncing_google": "正在同步谷歌...",
+      "syncing_outlook": "正在同步Outlook...",
+      "sync_success": "同步成功完成",
+      "synced_count": "已同步 {{count}} 个会议",
+      "error_count": "发生 {{count}} 个错误",
+      "last_sync": "上次同步：{{date}}"
+    },
+    "statuses": {
+      "scheduled": "已安排",
+      "completed": "已完成",
+      "cancelled": "已取消",
+      "no_show": "未出席",
+      "rescheduled": "已重新安排"
+    },
+    "providers": {
+      "google": "Google Meet",
+      "zoom": "Zoom",
+      "teams": "Microsoft Teams",
+      "webex": "Webex",
+      "phone": "电话",
+      "in_person": "面对面"
+    },
+    "actions": {
+      "view_meeting": "查看会议",
+      "edit_meeting": "编辑会议",
+      "cancel_meeting": "取消会议",
+      "join_meeting": "加入会议",
+      "open_link": "打开链接"
+    },
+    "empty_state": {
+      "title": "未找到会议",
+      "message": "创建您的第一个会议或同步您的日历以开始",
+      "create_meeting": "创建会议"
+    },
+    "loading": "正在加载会议...",
+    "error": "加载会议时出错"
+  },
+  "analytics": {
+    "title": "分析",
+    "subtitle": "营销分析和报告",
+    "description": "跟踪绩效指标，生成报告，获得营销投资回报率的洞察。"
+  },
+  "common": {
+    "empty_state": {
+      "title": "准备开始了吗？",
+      "description": "连接您的数据源，开始构建强大的营销活动。",
+      "connect_data": "连接数据",
+      "no_data": "暂无数据"
+    },
+    "breadcrumbs": {
+      "marketing": "营销"
+    }
+  },
+  "analytics": {
+    "title": "分析",
+    "subtitle": "跨所有模块的综合分析和洞察",
+    "description": "跟踪整个营销生态系统的性能、趋势和关键指标。",
+    "period_switcher": {
+      "week": "本周",
+      "month": "本月", 
+      "quarter": "本季度",
+      "year": "今年"
+    },
+    "summary_grid": {
+      "contacts": {
+        "title": "联系人",
+        "total": "总计",
+        "new": "新增",
+        "growth": "增长"
+      },
+      "deals": {
+        "title": "交易",
+        "total": "总计",
+        "new": "新增",
+        "value": "价值",
+        "growth": "增长"
+      },
+      "campaigns": {
+        "title": "活动",
+        "total": "总计",
+        "active": "活跃",
+        "sent": "已发送",
+        "growth": "增长"
+      },
+      "ads": {
+        "title": "广告",
+        "total": "总计",
+        "active": "活跃",
+        "spend": "支出",
+        "impressions": "展示",
+        "growth": "增长"
+      },
+      "events": {
+        "title": "活动",
+        "total": "总计",
+        "upcoming": "即将到来",
+        "attendees": "参与者",
+        "growth": "增长"
+      },
+      "meetings": {
+        "title": "会议",
+        "total": "总计",
+        "scheduled": "已安排",
+        "completed": "已完成",
+        "growth": "增长"
+      },
+      "tasks": {
+        "title": "任务",
+        "total": "总计",
+        "completed": "已完成",
+        "pending": "待处理",
+        "growth": "增长"
+      },
+      "companies": {
+        "title": "公司",
+        "total": "总计",
+        "new": "新增",
+        "growth": "增长"
+      },
+      "forecast": {
+        "title": "预测",
+        "projected": "预计",
+        "probability_weighted": "概率加权",
+        "accuracy": "准确性",
+        "growth": "增长"
+      },
+      "lead_scoring": {
+        "title": "潜在客户评分",
+        "total_leads": "总潜在客户",
+        "qualified": "合格",
+        "avg_score": "平均分数",
+        "growth": "增长"
+      },
+      "journeys": {
+        "title": "客户旅程",
+        "total": "总计",
+        "active": "活跃",
+        "completed": "已完成",
+        "participants": "参与者",
+        "growth": "增长"
+      },
+      "visitor_intent": {
+        "title": "访客意图",
+        "total_visitors": "总访客",
+        "high_intent": "高意图",
+        "medium_intent": "中等意图",
+        "low_intent": "低意图",
+        "growth": "增长"
+      }
+    },
+    "module_tabs": {
+      "contacts": "联系人",
+      "deals": "交易",
+      "campaigns": "活动",
+      "ads": "广告",
+      "events": "活动",
+      "meetings": "会议",
+      "tasks": "任务",
+      "companies": "公司",
+      "forecast": "预测",
+      "lead_scoring": "潜在客户评分",
+      "journeys": "客户旅程",
+      "visitor_intent": "访客意图"
+    },
+    "chart": {
+      "placeholder": "图表占位符",
+      "loading": "正在加载图表数据...",
+      "no_data": "此期间无数据"
+    },
+    "metrics": {
+      "new_contacts": "新联系人",
+      "converted": "已转化",
+      "active": "活跃",
+      "total_value": "总价值",
+      "avg_deal_size": "平均交易规模",
+      "win_rate": "胜率",
+      "open_rate": "打开率",
+      "click_rate": "点击率",
+      "conversion_rate": "转化率",
+      "spend": "支出",
+      "impressions": "展示",
+      "clicks": "点击",
+      "ctr": "点击率",
+      "attendees": "参与者",
+      "rsvp_rate": "回复率",
+      "attendance_rate": "出席率",
+      "scheduled": "已安排",
+      "completed": "已完成",
+      "avg_duration": "平均时长",
+      "pending": "待处理",
+      "completion_rate": "完成率",
+      "new_companies": "新公司",
+      "converted": "已转化",
+      "probability_weighted": "概率加权",
+      "accuracy": "准确性",
+      "active_deals": "活跃交易",
+      "qualified": "合格",
+      "avg_score": "平均分数",
+      "high_score": "高分",
+      "participants": "参与者",
+      "high_intent": "高意图",
+      "medium_intent": "中等意图",
+      "low_intent": "低意图"
+    },
+    "loading": "正在加载分析...",
+    "error": "加载分析数据时出错",
+    "empty_state": {
+      "title": "无分析数据",
+      "description": "开始使用系统后，分析数据将显示在这里。",
+      "connect_data": "连接数据源"
+    }
+  }
+}

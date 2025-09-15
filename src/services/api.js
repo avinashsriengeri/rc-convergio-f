@@ -7,7 +7,7 @@ const api = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
-  timeout: 10000,
+  timeout: 5000,
 })
 
 // Request interceptor - add auth token
@@ -23,14 +23,7 @@ api.interceptors.request.use(
       }
     }
     
-    // Debug logging
-    console.log('API Request:', {
-      method: config.method,
-      url: config.baseURL + config.url,
-      headers: config.headers,
-      params: config.params,
-      isPublicForm: isPublicFormRequest
-    })
+    // Debug logging removed for production
     return config
   },
   (error) => {
@@ -41,12 +34,7 @@ api.interceptors.request.use(
 // Response interceptor - handle auth errors and token refresh
 api.interceptors.response.use(
   (response) => {
-    // Debug logging for successful responses
-    console.log('API Response:', {
-      status: response.status,
-      url: response.config.url,
-      data: response.data
-    })
+    // Debug logging removed for production
     return response
   },
   async (error) => {
@@ -73,13 +61,7 @@ api.interceptors.response.use(
       // For public form requests, just let the component handle the 401 error
     }
 
-    // Debug logging for errors
-    console.error('API Error:', {
-      status: error.response?.status,
-      url: error.config?.url,
-      data: error.response?.data,
-      message: error.message
-    })
+    // Debug logging removed for production
 
     // Handle 422 Validation errors
     if (error.response?.status === 422) {
@@ -89,7 +71,7 @@ api.interceptors.response.use(
 
     // Handle 500 Server errors
     if (error.response?.status >= 500) {
-      console.error('Server Error:', error.response?.data)
+      // Server Error logged (console.error removed for production)
     }
 
     return Promise.reject(error)

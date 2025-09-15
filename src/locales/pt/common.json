@@ -8,9 +8,11 @@
   "campaigns": "Campanhas",
   "forms": "Formulários",
   "segments": "Segmentos",
+  "marketing": "Marketing",
   "users": "Usuários",
   "settings": "Configurações",
   "features_demo": "Demonstração de Recursos",
+  "back_to_main_menu": "Voltar ao Menu Principal",
   "profile": "Perfil",
   "logout": "Sair",
   "help": "Ajuda",
@@ -155,5 +157,18 @@
     "our_products": "Nossos Produtos",
     "open_products_menu": "Abrir menu de produtos",
     "no_products": "Nenhum produto disponível"
+  },
+  "marketing_overview": {
+    "active_campaigns": "Campanhas Ativas",
+    "ad_spend": "Gasto em Anúncios",
+    "upcoming_events": "Próximos Eventos",
+    "meetings_scheduled": "Reuniões Agendadas",
+    "pipeline_value": "Valor do Pipeline",
+    "qualified_leads": "Leads Qualificados",
+    "performance_trend": "Tendência de Performance de Marketing",
+    "channel_distribution": "Distribuição de Canais",
+    "no_data_message": "Nenhum dado ainda — conectar fontes de dados",
+    "retry_button": "Tentar Novamente",
+    "loading": "Carregando dados de marketing..."
   }
 }

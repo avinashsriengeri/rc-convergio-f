@@ -1,0 +1,64 @@
+{
+  "marketing": "Tshekatsheko",
+  "overview": {
+    "title": "Kakaretso",
+    "subtitle": "Tshekatsheko ya marketing le dikgopolo ka bonako",
+    "description": "Fumana ponelopele e e feletseng ya maiteko a gago a marketing mo metseng yotlhe le dikampanye."
+  },
+  "email": {
+    "title": "Tshekatsheko ya Email",
+    "subtitle": "Tlhola, roma, mme o latele dikampanye tsa email",
+    "description": "Rala di-email tse dintle, busa dipalo tsa ba ba ikwaditseng, mme o sekaseke tshekatsheko ya kampanye."
+  },
+  "ads": {
+    "title": "Tsamaiso ya Ditshwantsho",
+    "subtitle": "Busetsa dikampanye tsa gago tsa ditshwantsho",
+    "description": "Tlhola mme o tokafatse dikampanye tsa ditshwantsho mo maphatleng a le mantsi mme o latele ROI."
+  },
+  "events": {
+    "title": "Ditiragalo",
+    "subtitle": "Rulaganya mme o buse ditiragalo tsa marketing",
+    "description": "Rulaganya di-webinar, mekete ya kgwebo, le ditiragalo tse dingwe tsa marketing go kgomaretsa baetsedi ba gago."
+  },
+  "buyer_intent": {
+    "title": "Maikemisetso a Mmoreki",
+    "subtitle": "Tlhoma ba ba nang le maikemisetso a a kwa godimo",
+    "description": "Latele disegwana tsa theko mme o tlhoma ba ba ikemiseditseng go reka."
+  },
+  "lead_scoring": {
+    "title": "Go Bala ga Ditsenekelelo",
+    "subtitle": "Bala mme o tseye ditsenekelelo tse di botlhokwa ka tshiamiso",
+    "description": "Dirisa data ya boitshwaro le ya batho go bala mme o beke ditsenekelelo tsa gago ka tshiamiso."
+  },
+  "journeys": {
+    "title": "Maeto",
+    "subtitle": "Rala mekgwa ya tshekatsheko ya mokgweetsi",
+    "description": "Tlhola mekgwa ya marketing e e tshiamisitsweng go ntshetsa ditsenekelelo ka funnel ya thekiso."
+  },
+  "forecasting": {
+    "title": "Go Bolela Pele",
+    "subtitle": "Bolela pele tshekatsheko ya marketing",
+    "description": "Dirisa go bolela pele ga AI go bolela pele dipoelo tsa kampanye mme o tokafatse dipeelo."
+  },
+  "meetings": {
+    "title": "Moedi wa Dipitso",
+    "subtitle": "Rulaganya dipitso le ba ba ikemiseditseng",
+    "description": "Letlelela ba ba ikemiseditseng go beka dipitso ka tshiamiso mme o tshwantshetse le kalantare ya gago."
+  },
+  "analytics": {
+    "title": "Dipalopalo",
+    "subtitle": "Dipalopalo tsa marketing le go bega",
+    "description": "Latele dipalo tsa tshekatsheko, tlhola diporofense, mme o fumanne dikgopolo ka ga ROI ya gago ya marketing."
+  },
+  "common": {
+    "empty_state": {
+      "title": "O ikemiseditse go simolola?",
+      "description": "Kopanya mefuta ya gago ya data mme o simolole go aga dikampanye tsa marketing tse di maatla.",
+      "connect_data": "Kopanya Data",
+      "no_data": "Ga go na data e e fitlhelwang go fitlha ga jaanong"
+    },
+    "breadcrumbs": {
+      "marketing": "Tshekatsheko"
+    }
+  }
+}

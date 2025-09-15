@@ -8,9 +8,11 @@
   "campaigns": "الحملات",
   "forms": "النماذج",
   "segments": "الشرائح",
+  "marketing": "التسويق",
   "users": "المستخدمون",
   "settings": "الإعدادات",
   "features_demo": "عرض الميزات",
+  "back_to_main_menu": "العودة إلى القائمة الرئيسية",
   "profile": "الملف الشخصي",
   "logout": "تسجيل الخروج",
   "help": "المساعدة",
@@ -155,5 +157,18 @@
     "our_products": "منتجاتنا",
     "open_products_menu": "فتح قائمة المنتجات",
     "no_products": "لا توجد منتجات متاحة"
+  },
+  "marketing_overview": {
+    "active_campaigns": "الحملات النشطة",
+    "ad_spend": "إنفاق الإعلانات",
+    "upcoming_events": "الأحداث القادمة",
+    "meetings_scheduled": "الاجتماعات المجدولة",
+    "pipeline_value": "قيمة الخط",
+    "qualified_leads": "العملاء المحتملون المؤهلون",
+    "performance_trend": "اتجاه أداء التسويق",
+    "channel_distribution": "توزيع القنوات",
+    "no_data_message": "لا توجد بيانات بعد — ربط مصادر البيانات",
+    "retry_button": "إعادة المحاولة",
+    "loading": "تحميل بيانات التسويق..."
   }
 }
