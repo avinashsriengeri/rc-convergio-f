@@ -3,20 +3,28 @@
     <!-- Fixed Navigation Header -->
     <nav class="fixed top-0 w-full bg-slate-800/80 backdrop-blur-md z-50 shadow-sm border-b border-white/10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-3 items-center h-16">
+        <div class="grid grid-cols-3 items-center h-14">
           <!-- Left: Brand -->
           <div class="flex items-center gap-3">
-            <img :src="logo" alt="RC Convergio" class="h-8 w-8 rounded-full" />
-            <h1 class="text-2xl font-bold text-white">RC Convergio</h1>
+            <img :src="logo" alt="RC Convergio" class="h-10 w-10 object-contain" />
+            <h1 class="text-xl font-bold text-white">RC Convergio</h1>
           </div>
 
           <!-- Center: Navigation Links (desktop) -->
-          <div class="hidden md:grid grid-cols-4 justify-items-center items-center gap-8">
+          <div class="hidden md:grid grid-cols-5 justify-items-center items-center gap-6">
+            <a 
+              href="#hero" 
+              @click="smoothScroll"
+              :class="{ 'text-white font-semibold': activeSection === 'hero' }"
+              class="inline-flex items-center h-8 px-3 whitespace-nowrap text-sm text-gray-300 hover:text-white transition-colors duration-300 rounded-md"
+            >
+              Home
+            </a>
             <a 
               href="#features" 
               @click="smoothScroll"
               :class="{ 'text-white font-semibold': activeSection === 'features' }"
-              class="inline-flex items-center h-10 px-4 whitespace-nowrap text-gray-300 hover:text-white transition-colors duration-300 rounded-md"
+              class="inline-flex items-center h-8 px-3 whitespace-nowrap text-sm text-gray-300 hover:text-white transition-colors duration-300 rounded-md"
             >
               Features
             </a>
@@ -24,7 +32,7 @@
               href="#product" 
               @click="smoothScroll"
               :class="{ 'text-white font-semibold': activeSection === 'product' }"
-              class="inline-flex items-center h-10 px-4 whitespace-nowrap text-gray-300 hover:text-white transition-colors duration-300 rounded-md"
+              class="inline-flex items-center h-8 px-3 whitespace-nowrap text-sm text-gray-300 hover:text-white transition-colors duration-300 rounded-md"
             >
               Our Product
             </a>
@@ -32,7 +40,7 @@
               href="#about" 
               @click="smoothScroll"
               :class="{ 'text-white font-semibold': activeSection === 'about' }"
-              class="inline-flex items-center h-10 px-4 whitespace-nowrap text-gray-300 hover:text-white transition-colors duration-300 rounded-md"
+              class="inline-flex items-center h-8 px-3 whitespace-nowrap text-sm text-gray-300 hover:text-white transition-colors duration-300 rounded-md"
             >
               About Us
             </a>
@@ -40,7 +48,7 @@
               href="#contact" 
               @click="smoothScroll"
               :class="{ 'text-white font-semibold': activeSection === 'contact' }"
-              class="inline-flex items-center h-10 px-4 whitespace-nowrap text-gray-300 hover:text-white transition-colors duration-300 rounded-md"
+              class="inline-flex items-center h-8 px-3 whitespace-nowrap text-sm text-gray-300 hover:text-white transition-colors duration-300 rounded-md"
             >
               Contact
             </a>
@@ -50,15 +58,15 @@
           <div class="flex items-center justify-end gap-4">
             <router-link
               to="/login"
-              class="hidden md:inline-block bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-colors duration-300"
+              class="hidden md:inline-block bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-1.5 text-sm rounded-lg hover:from-blue-600 hover:to-purple-700 transition-colors duration-300"
             >
               Login
             </router-link>
 
             <!-- Mobile menu button -->
             <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-white">
-              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M3 12h18M3 6h18M3 18h18"/>
               </svg>
             </button>
           </div>
@@ -68,6 +76,7 @@
       <!-- Mobile menu -->
       <div v-show="mobileMenuOpen" class="md:hidden bg-slate-800/90 border-t border-white/10 backdrop-blur">
         <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <a href="#hero" @click="smoothScroll" class="block px-3 py-2 text-gray-200 hover:text-white">Home</a>
           <a href="#features" @click="smoothScroll" class="block px-3 py-2 text-gray-200 hover:text-white">Features</a>
           <a href="#product" @click="smoothScroll" class="block px-3 py-2 text-gray-200 hover:text-white">Our Product</a>
           <a href="#about" @click="smoothScroll" class="block px-3 py-2 text-gray-200 hover:text-white">About Us</a>
@@ -84,73 +93,44 @@
     </nav>
 
     <!-- Hero Section -->
-    <section id="hero" class="relative pt-16 min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] overflow-hidden">
-      <!-- Animated Background Logo -->
-      <div class="absolute inset-0 opacity-10">
-        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]">
-          <!-- Placeholder for Relaince Corporation Logo -->
-          <div class="relative w-full h-full">
-            <!-- Logo background with gradient animation -->
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 rounded-full animate-pulse opacity-20"></div>
-            <div class="absolute inset-4 bg-gradient-to-br from-blue-400 via-purple-400 to-indigo-400 rounded-full animate-spin-slow opacity-30"></div>
-            <div class="absolute inset-8 bg-gradient-to-tl from-blue-300 via-purple-300 to-indigo-300 rounded-full animate-bounce-slow opacity-40"></div>
-            <!-- Replace this div with your actual logo -->
-            <div class="absolute inset-16 flex items-center justify-center text-white font-bold text-6xl opacity-50">
-              <img :src="logo" alt="RC Convergio Logo" class="w-16 h-16">
-            </div>
+    <section id="hero" class="relative pt-14 min-h-[70vh] bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] overflow-hidden">
 
-          </div>
-        </div>
-      </div>
 
-      <!-- Floating particles animation -->
-      <div class="absolute inset-0 overflow-hidden">
-        <div class="floating-particles">
-          <div class="particle particle-1"></div>
-          <div class="particle particle-2"></div>
-          <div class="particle particle-3"></div>
-          <div class="particle particle-4"></div>
-          <div class="particle particle-5"></div>
-        </div>
-      </div>
-
-      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-0 flex items-center min-h-[calc(100vh-4rem)]">
-        <div class="grid grid-cols-1 gap-12 items-center w-full">
-          <div class="space-y-8 animate-fade-in-up text-center md:text-left">
+      <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center min-h-[calc(70vh-3.5rem)]">
+        <div class="grid grid-cols-1 gap-6 items-center w-full">
+          <div class="space-y-4 animate-fade-in-up text-center md:text-left">
             <!-- Company Branding -->
-            <div class="mb-6">
-              <div class="flex items-center space-x-3 mb-4">
-                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <img :src="logo" alt="RC Convergio" class="w-8 h-8">
-                </div>
+            <div class="mb-4">
+              <div class="flex items-center space-x-3 mb-3">
+                <img :src="logo" alt="RC Convergio" class="w-12 h-12 object-contain">
                 <div>
-                  <h2 class="text-3xl font-bold text-white">RC Convergio</h2>
-                  <p class="text-blue-300 text-sm">Business Transformation Suite</p>
+                  <h2 class="text-xl font-bold text-white">RC Convergio</h2>
+                  <p class="text-gray-300 text-xs">Business Transformation Suite</p>
                 </div>
               </div>
             </div>
 
-            <h1 class="text-3xl lg:text-6xl font-bold text-white leading-tight ">
+            <h1 class="text-xl lg:text-3xl font-bold text-white leading-tight">
               "Designed to delight.
               <span class="bg-gradient-to-r from-[#2596be] via-[#973894] via-[#655997] to-[#cc3266] bg-clip-text text-transparent animate-gradient-x">
                 Built to deliver value."
               </span>
             </h1>
             
-            <p class="text-xl text-gray-200 leading-relaxed max-w-2xl">
-              Access all Relaince Corporation's powerful software solutions from one unified platform. 
+            <p class="text-sm text-gray-200 leading-relaxed max-w-xl">
+              Access all Reliance Corporation's powerful software solutions from one unified platform. 
               From customer conversions to enterprise management - everything you need to scale your business.
             </p>
 
             <!-- Key Features Pills -->
-            <div class="flex flex-wrap gap-3 mb-8">
-              <span class="px-4 py-2 bg-[#2596be]/20 text-[#2596be] rounded-full text-sm border border-[#2596be]/30 animate-fade-in">
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span class="px-2 py-1 bg-[#2596be]/20 text-[#2596be] rounded-full text-xs border border-[#2596be]/30">
                 Unified Dashboard
               </span>
-              <span class="px-4 py-2 bg-[#973894]/20 text-[#973894] rounded-full text-sm border border-[#973894]/30 animate-fade-in" style="animation-delay: 0.1s">
+              <span class="px-2 py-1 bg-[#973894]/20 text-[#973894] rounded-full text-xs border border-[#973894]/30">
                 Single Sign-On
               </span>
-              <span class="px-4 py-2 bg-[#655997]/20 text-[#655997] rounded-full text-sm border border-[#655997]/30 animate-fade-in" style="animation-delay: 0.2s">
+              <span class="px-2 py-1 bg-[#655997]/20 text-[#655997] rounded-full text-xs border border-[#655997]/30">
                 Integrated Analytics
               </span>
             </div>
@@ -158,18 +138,18 @@
             
 
             <!-- Trust Metrics -->
-            <div class="grid grid-cols-3 gap-6 pt-8 border-t border-white/20">
+            <div class="grid grid-cols-3 gap-3 pt-4 border-t border-white/20">
               <div class="text-center">
-                <div class="text-3xl font-bold text-white mb-1 animate-count-up">500+</div>
-                <div class="text-gray-400 text-sm">Enterprise Clients</div>
+                <div class="text-lg font-bold text-white mb-0.5">500+</div>
+                <div class="text-gray-400 text-xs">Enterprise Clients</div>
               </div>
               <div class="text-center">
-                <div class="text-3xl font-bold text-white mb-1 animate-count-up">15+</div>
-                <div class="text-gray-400 text-sm">Software Solutions</div>
+                <div class="text-lg font-bold text-white mb-0.5">15+</div>
+                <div class="text-gray-400 text-xs">Software Solutions</div>
               </div>
               <div class="text-center">
-                <div class="text-3xl font-bold text-white mb-1 animate-count-up">99.9%</div>
-                <div class="text-gray-400 text-sm">Uptime SLA</div>
+                <div class="text-lg font-bold text-white mb-0.5">99.9%</div>
+                <div class="text-gray-400 text-xs">Uptime SLA</div>
               </div>
             </div>
           </div>
@@ -182,23 +162,26 @@
     </section>
 
     <!-- Our Product Section - Enhanced Professional Version -->
-    <section id="product" class="py-20 bg-gradient-to-b from-[#0f172a] via-[#1e293b] to-[#0f172a]">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="product" class="py-8 bg-gradient-to-b from-[#0f172a] via-[#1e293b] to-[#0f172a]">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
-        <div class="text-center mb-16">
-          <div class="inline-flex items-center justify-center p-2 bg-blue-500/10 rounded-full mb-4">
-            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+        <div class="text-center mb-8">
+          <div class="relative inline-block">
+            <!-- Background gradient for header -->
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-indigo-500/20 rounded-2xl blur-xl"></div>
+            <div class="relative bg-gradient-to-r from-slate-800/60 via-slate-700/60 to-slate-800/60 backdrop-blur-sm rounded-2xl px-8 py-4 border border-slate-600/30">
+              <h2 class="text-2xl lg:text-3xl font-bold text-white mb-2 tracking-tight">
+                Our <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#2596be] to-[#973894]">Products</span>
+              </h2>
+              <p class="text-sm text-gray-300 font-light max-w-2xl mx-auto leading-relaxed">
+                Discover our innovative solutions designed to transform your business and drive success
+              </p>
+            </div>
           </div>
-          <h2 class="text-4xl lg:text-5xl font-bold text-white mb-6 tracking-tight">
-            Our <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#2596be] to-[#973894]">Products</span>
-          </h2>
-          <p class="text-xl text-gray-400 font-light max-w-3xl mx-auto leading-relaxed">
-            Discover our innovative solutions designed to transform your business and drive success
-          </p>
         </div>
 
         <!-- Product Marquee -->
-        <div class="relative overflow-hidden rounded-2xl bg-slate-800/30 backdrop-blur-sm border border-slate-700/50 p-8">
+        <div class="relative overflow-hidden rounded-xl bg-slate-800/30 backdrop-blur-sm border border-slate-700/50 p-4">
           <div class="absolute inset-0 bg-gradient-to-r from-slate-800 via-transparent to-slate-800 z-10 pointer-events-none"></div>
           
           <div class="product-marquee">
@@ -335,34 +318,38 @@
       </div>
     </section>
 
-    <section id="features" class="py-20 bg-gradient-to-b from-[#0f172a] via-[#1e293b] to-[#0f172a]">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="features" class="py-8 bg-gradient-to-b from-[#0f172a] via-[#1e293b] to-[#0f172a]">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Features Header -->
-    <div class="text-center mb-16">
-      <div class="inline-flex items-center justify-center p-2 bg-blue-500/10 rounded-full mb-4">
-        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+    <div class="text-center mb-8">
+      <div class="relative inline-block">
+        <!-- Background gradient for header -->
+        <div class="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-indigo-500/20 to-teal-500/20 rounded-2xl blur-xl"></div>
+        <div class="relative bg-gradient-to-r from-slate-800/60 via-slate-700/60 to-slate-800/60 backdrop-blur-sm rounded-2xl px-8 py-4 border border-slate-600/30">
+          <h2 class="text-2xl lg:text-3xl font-bold text-white mb-2 tracking-tight">
+                        One Platform, <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#2596be] to-[#973894]">Endless Possibilities</span>
+          </h2>
+          <p class="text-sm text-gray-300 font-light max-w-2xl mx-auto leading-relaxed">
+            Access all Reliance Corporation software solutions through a single, unified portal. 
+            Streamline your workflow with seamless integration and centralized management.
+          </p>
+        </div>
       </div>
-      <h2 class="text-4xl lg:text-5xl font-bold text-white mb-6 tracking-tight">
-                    One Platform, <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#2596be] to-[#973894]">Endless Possibilities</span>
-      </h2>
-      <p class="text-xl text-gray-300 font-light max-w-3xl mx-auto leading-relaxed">
-        Access all Reliance Corporation software solutions through a single, unified portal. 
-        Streamline your workflow with seamless integration and centralized management.
-      </p>
     </div>
 
     <!-- Core Platform Features -->
-    <div class="grid md:grid-cols-4 gap-6 mb-20">
+    <div class="grid md:grid-cols-4 gap-4 mb-12">
       <div class="group relative">
         <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        <div class="relative text-center p-8 rounded-2xl bg-gradient-to-br from-slate-700/50 to-slate-800/50 border border-slate-600/30 backdrop-blur-sm hover:border-slate-500/50 transition-all duration-500 hover:transform hover:scale-105">
-          <div class="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+        <div class="relative text-center p-4 rounded-xl bg-gradient-to-br from-slate-700/50 to-slate-800/50 border border-slate-600/30 backdrop-blur-sm hover:border-slate-500/50 transition-all duration-300">
+          <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path d="M9 12l2 2 4-4"/>
+              <path d="M21 12c-1-3.5-4-7-9-7s-8 3.5-9 7c1 3.5 4 7 9 7s8-3.5 9-7"/>
             </svg>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors duration-300">Single Sign-On</h3>
-          <p class="text-gray-400 font-light leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
+          <h3 class="text-lg font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">Single Sign-On</h3>
+          <p class="text-sm text-gray-400 font-light leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
             Access all your enterprise applications with one secure login. Enhanced security with enterprise-grade authentication.
           </p>
         </div>
@@ -370,14 +357,17 @@
       
       <div class="group relative">
         <div class="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-indigo-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        <div class="relative text-center p-8 rounded-2xl bg-gradient-to-br from-slate-700/50 to-slate-800/50 border border-slate-600/30 backdrop-blur-sm hover:border-slate-500/50 transition-all duration-500 hover:transform hover:scale-105">
-          <div class="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
+        <div class="relative text-center p-4 rounded-xl bg-gradient-to-br from-slate-700/50 to-slate-800/50 border border-slate-600/30 backdrop-blur-sm hover:border-slate-500/50 transition-all duration-300">
+          <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <rect width="7" height="9" x="3" y="3" rx="1"/>
+              <rect width="7" height="5" x="14" y="3" rx="1"/>
+              <rect width="7" height="9" x="14" y="12" rx="1"/>
+              <rect width="7" height="5" x="3" y="16" rx="1"/>
             </svg>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors duration-300">Unified Dashboard</h3>
-          <p class="text-gray-400 font-light leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
+          <h3 class="text-lg font-bold text-white mb-2 group-hover:text-purple-400 transition-colors duration-300">Unified Dashboard</h3>
+          <p class="text-sm text-gray-400 font-light leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
             Centralized control panel with real-time insights across all connected applications and business metrics.
           </p>
         </div>
@@ -385,14 +375,15 @@
       
       <div class="group relative">
         <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-teal-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        <div class="relative text-center p-8 rounded-2xl bg-gradient-to-br from-slate-700/50 to-slate-800/50 border border-slate-600/30 backdrop-blur-sm hover:border-slate-500/50 transition-all duration-500 hover:transform hover:scale-105">
-          <div class="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        <div class="relative text-center p-4 rounded-xl bg-gradient-to-br from-slate-700/50 to-slate-800/50 border border-slate-600/30 backdrop-blur-sm hover:border-slate-500/50 transition-all duration-300">
+          <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path d="m8 6 4 4-4 4"/>
+              <path d="m12 6 4 4-4 4"/>
             </svg>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3 group-hover:text-indigo-400 transition-colors duration-300">Smart Integration</h3>
-          <p class="text-gray-400 font-light leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
+          <h3 class="text-lg font-bold text-white mb-2 group-hover:text-indigo-400 transition-colors duration-300">Smart Integration</h3>
+          <p class="text-sm text-gray-400 font-light leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
             Seamless data flow between applications. Real-time synchronization and automated workflow orchestration.
           </p>
         </div>
@@ -400,14 +391,15 @@
       
       <div class="group relative">
         <div class="absolute inset-0 bg-gradient-to-r from-teal-500/20 to-emerald-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        <div class="relative text-center p-8 rounded-2xl bg-gradient-to-br from-slate-700/50 to-slate-800/50 border border-slate-600/30 backdrop-blur-sm hover:border-slate-500/50 transition-all duration-500 hover:transform hover:scale-105">
-          <div class="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        <div class="relative text-center p-4 rounded-xl bg-gradient-to-br from-slate-700/50 to-slate-800/50 border border-slate-600/30 backdrop-blur-sm hover:border-slate-500/50 transition-all duration-300">
+          <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path d="M3 3v18h18"/>
+              <path d="m19 9-5 5-4-4-3 3"/>
             </svg>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3 group-hover:text-teal-400 transition-colors duration-300">Advanced Analytics</h3>
-          <p class="text-gray-400 font-light leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
+          <h3 class="text-lg font-bold text-white mb-2 group-hover:text-teal-400 transition-colors duration-300">Advanced Analytics</h3>
+          <p class="text-sm text-gray-400 font-light leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
             Cross-platform reporting and business intelligence. Data-driven insights with predictive analytics capabilities.
           </p>
         </div>
@@ -629,30 +621,33 @@
 
 
     <!-- About Us Section -->
-    <section id="about" class="py-20 bg-gradient-to-b from-[#0f172a] via-[#1e293b] to-[#0f172a]">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="about" class="py-8 bg-gradient-to-b from-[#0f172a] via-[#1e293b] to-[#0f172a]">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Header -->
-    <div class="text-center mb-16">
-      <div class="inline-flex items-center justify-center p-2 bg-blue-500/10 rounded-full mb-4">
-        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+    <div class="text-center mb-8">
+      <div class="relative inline-block">
+        <!-- Background gradient for header -->
+        <div class="absolute inset-0 bg-gradient-to-r from-teal-500/20 via-emerald-500/20 to-green-500/20 rounded-2xl blur-xl"></div>
+        <div class="relative bg-gradient-to-r from-slate-800/60 via-slate-700/60 to-slate-800/60 backdrop-blur-sm rounded-2xl px-8 py-4 border border-slate-600/30">
+          <h2 class="text-2xl lg:text-3xl font-bold text-white mb-2 tracking-tight">
+                      About <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#2596be] to-[#973894]">RC Convergio</span>
+          </h2>
+          <p class="text-sm text-gray-300 font-light max-w-2xl mx-auto">
+            Pioneering the future of enterprise software integration
+          </p>
+        </div>
       </div>
-      <h2 class="text-4xl lg:text-5xl font-bold text-white mb-6 tracking-tight">
-                  About <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#2596be] to-[#973894]">RC Convergio</span>
-      </h2>
-      <p class="text-xl text-gray-400 font-light max-w-3xl mx-auto">
-        Pioneering the future of enterprise software integration
-      </p>
     </div>
 
     <!-- Content Grid -->
-    <div class="grid lg:grid-cols-2 gap-16 items-center mb-20">
+    <div class="grid lg:grid-cols-2 gap-8 items-center mb-12">
       <!-- Left Content -->
       <div class="space-y-8">
         <div class="space-y-6">
-          <p class="text-lg text-gray-300 font-light leading-relaxed">
+          <p class="text-sm text-gray-300 font-light leading-relaxed">
             We're enterprise software architects dedicated to transforming how businesses operate through unified digital experiences.
           </p>
-          <p class="text-gray-300 font-light leading-relaxed">
+          <p class="text-sm text-gray-300 font-light leading-relaxed">
             Our mission is to eliminate operational silos by connecting all your business applications into one powerful, secure, and intuitive platform. 
             We believe that enterprise software should work together, not in isolation.
           </p>
@@ -779,32 +774,35 @@
 
 
     <!-- Contact Section -->
-    <section id="contact" class="py-20 bg-gradient-to-b from-[#0f172a] via-[#1e293b] to-[#0f172a]">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="contact" class="py-8 bg-gradient-to-b from-[#0f172a] via-[#1e293b] to-[#0f172a]">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Header -->
-    <div class="text-center mb-16">
-      <div class="inline-flex items-center justify-center p-2 bg-blue-500/10 rounded-full mb-4">
-        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+    <div class="text-center mb-8">
+      <div class="relative inline-block">
+        <!-- Background gradient for header -->
+        <div class="absolute inset-0 bg-gradient-to-r from-rose-500/20 via-pink-500/20 to-purple-500/20 rounded-2xl blur-xl"></div>
+        <div class="relative bg-gradient-to-r from-slate-800/60 via-slate-700/60 to-slate-800/60 backdrop-blur-sm rounded-2xl px-8 py-4 border border-slate-600/30">
+          <h2 class="text-2xl lg:text-3xl font-bold text-white mb-2 tracking-tight">
+                      Contact <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#2596be] to-[#973894]">Us</span>
+          </h2>
+          <p class="text-sm text-gray-300 font-light max-w-xl mx-auto">
+            Ready to transform your enterprise? Our experts are here to help you get started with RC Convergio.
+          </p>
+        </div>
       </div>
-      <h2 class="text-4xl lg:text-5xl font-bold text-white mb-6 tracking-tight">
-                  Contact <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#2596be] to-[#973894]">Us</span>
-      </h2>
-      <p class="text-xl text-gray-400 font-light max-w-2xl mx-auto">
-        Ready to transform your enterprise? Our experts are here to help you get started with RC Convergio.
-      </p>
     </div>
 
-    <div class="grid lg:grid-cols-2 gap-16">
+    <div class="grid lg:grid-cols-2 gap-8">
       <!-- Contact Form -->
       <div class="relative">
         <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-3xl blur-2xl opacity-50"></div>
-        <div class="relative bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl p-8 rounded-3xl border border-slate-600/50">
-          <div class="mb-8">
-            <h3 class="text-2xl font-bold text-white mb-2">Get Started Today</h3>
-            <p class="text-gray-400 font-light">Tell us about your needs and we'll create a tailored solution for your enterprise.</p>
+        <div class="relative bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl p-6 rounded-2xl border border-slate-600/50">
+          <div class="mb-6">
+            <h3 class="text-lg font-bold text-white mb-2">Get Started Today</h3>
+            <p class="text-sm text-gray-400 font-light">Tell us about your needs and we'll create a tailored solution for your enterprise.</p>
           </div>
 
-          <form class="space-y-6">
+          <form class="space-y-4">
             <div class="relative group">
               <input 
                 v-model="contactForm.name"
@@ -873,8 +871,9 @@
             <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div class="relative flex items-start space-x-4 p-6 bg-gradient-to-br from-slate-700/50 to-slate-800/50 border border-slate-600/30 rounded-2xl backdrop-blur-sm hover:border-slate-500/50 transition-all duration-300">
               <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <rect width="20" height="16" x="2" y="4" rx="2"/>
+                  <path d="m22 7-10 5L2 7"/>
                 </svg>
               </div>
               <div>
@@ -891,8 +890,8 @@
             <div class="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-indigo-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div class="relative flex items-start space-x-4 p-6 bg-gradient-to-br from-slate-700/50 to-slate-800/50 border border-slate-600/30 rounded-2xl backdrop-blur-sm hover:border-slate-500/50 transition-all duration-300">
               <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
                 </svg>
               </div>
               <div>
@@ -910,9 +909,9 @@
             <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-teal-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div class="relative flex items-start space-x-4 p-6 bg-gradient-to-br from-slate-700/50 to-slate-800/50 border border-slate-600/30 rounded-2xl backdrop-blur-sm hover:border-slate-500/50 transition-all duration-300">
               <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-indigo-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                  <circle cx="12" cy="10" r="3"/>
                 </svg>
               </div>
               <div>
@@ -935,20 +934,27 @@
           <h4 class="font-bold text-white mb-4">Need Immediate Help?</h4>
           <div class="space-y-3">
             <a href="#" class="flex items-center text-gray-300 hover:text-blue-400 transition-colors duration-300 group">
-              <svg class="w-4 h-4 mr-3 text-blue-400 group-hover:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              <svg class="w-4 h-4 mr-3 text-blue-400 group-hover:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14,2 14,8 20,8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10,9 9,9 8,9"/>
               </svg>
               <span>Documentation & Guides</span>
             </a>
             <a href="#" class="flex items-center text-gray-300 hover:text-purple-400 transition-colors duration-300 group">
-              <svg class="w-4 h-4 mr-3 text-purple-400 group-hover:text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              <svg class="w-4 h-4 mr-3 text-purple-400 group-hover:text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <path d="M12 17h.01"/>
               </svg>
               <span>FAQ & Support Center</span>
             </a>
             <a href="#" class="flex items-center text-gray-300 hover:text-teal-400 transition-colors duration-300 group">
-              <svg class="w-4 h-4 mr-3 text-teal-400 group-hover:text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+              <svg class="w-4 h-4 mr-3 text-teal-400 group-hover:text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path d="m22 8-6 4 6 4V8Z"/>
+                <rect width="14" height="12" x="2" y="6" rx="2" ry="2"/>
               </svg>
               <span>Schedule a Demo</span>
             </a>
@@ -961,11 +967,11 @@
 
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
+    <footer class="bg-gray-900 text-white py-8">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid md:grid-cols-4 gap-8">
+        <div class="grid md:grid-cols-4 gap-6">
           <div class="space-y-4">
-            <h3 class="text-2xl font-bold text-primary">RC Convergio</h3>
+            <h3 class="text-xl font-bold text-primary">RC Convergio</h3>
             <p class="text-gray-400 font-calibri">
               Supercharge your customer conversions with powerful automation and insights.
             </p>
@@ -1214,22 +1220,22 @@ onUnmounted(() => {
 </script>
 
 <style>
-/* Custom scrollbar */
+/* Custom scrollbar - thin with standard colors */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2596be;
-  border-radius: 4px;
+  background: #cbd5e1;
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #655997;
+  background: #94a3b8;
 }
 
 /* Smooth scrolling for all elements */

@@ -4,9 +4,9 @@
       :class="[
         'flex items-center gap-2 rounded-[10px] transition-all duration-200 cursor-pointer focus:outline-none',
         'bg-white/20 backdrop-blur-sm ring-1 ring-white/15',
-        'hover:bg-white/30 hover:shadow-sm',
+        'hover:bg-white/30 hover:shadow-sm hover:scale-105',
         'focus-visible:ring-2 focus-visible:ring-offset-0 focus-visible:ring-white/40',
-        active ? 'ring-2 ring-offset-0 ring-white/40 bg-white/30 shadow-sm' : '',
+        active ? 'ring-2 ring-offset-0 ring-white/40 bg-white/30 shadow-sm scale-105' : '',
         withText ? 'px-3 py-2 h-8' : 'p-2 h-9',
         'sm:h-9'
       ]"

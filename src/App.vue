@@ -1,23 +1,24 @@
 <template>
-  <div id="app" class="min-h-screen bg-gray-50">
+  <div id="app" class="bg-gradient-to-br from-[#F8F9FF] to-white flex flex-col" :class="$route.path === '/' ? 'min-h-screen overflow-auto' : 'h-screen overflow-hidden'">
     <!-- Unified Header Bar (for authenticated users) -->
-    <div v-if="isAuthenticated" class="bg-gradient-to-r from-[#2596be] via-[#973894] via-[#655997] to-[#cc3266] text-white shadow-lg h-15 sticky top-0 z-40">
-      <div class="flex items-center justify-between h-full px-4 sm:px-6">
-        <!-- Left side - Brand (at intersection of header and sidebar) -->
-        <div class="flex items-center space-x-3">
-          <!-- Mobile menu button -->
-          <button class="md:hidden p-2 hover:bg-white/10 rounded-lg transition-colors">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-          <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-            <span class="text-[#2596be] font-bold text-lg">RC</span>
-          </div>
-          <span class="text-xl font-bold text-white">RC Convergio</span>
+    <header v-if="isAuthenticated" class="flex w-full z-40 shadow-lg h-15 flex-shrink-0">
+      <!-- Left Section (logo + company name) - aligns with sidebar -->
+      <div class="w-64 flex items-center px-4 bg-sidebar-bg border-r border-gray-200">
+        <!-- Mobile menu button -->
+        <button class="md:hidden p-2 hover:bg-sidebar-active rounded-lg transition-colors mr-3">
+          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <div class="w-12 h-12 flex items-center justify-center">
+          <img src="/src/assets/logo.png" alt="RC Convergio" class="w-12 h-12 object-contain" />
         </div>
-        
-        <!-- Right side - Actions and User -->
+        <span class="ml-3 font-semibold text-gray-800 font-inter">RC Convergio</span>
+      </div>
+
+      <!-- Right Section (main header actions) - aligns with main content -->
+      <div class="flex-1 flex items-center justify-end px-6 bg-sidebar-bg border-l border-gray-200">
+        <!-- Right side content -->
         <div class="flex items-center gap-2">
           <!-- Dialer Button -->
           <div class="relative" data-testid="header-dialer">
@@ -27,7 +28,7 @@
               @click="toggleDialerDropdown"
             >
               <template #icon>
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
               </template>
@@ -61,7 +62,7 @@
               @click="toggleNotificationsDropdown"
             >
               <template #icon>
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
                 </svg>
               </template>
@@ -93,8 +94,8 @@
                 <img :src="getFlag(currentLanguage.code)" :alt="currentLanguage.name" class="w-5 h-5 rounded-sm" />
               </template>
               <template #text>
-                <span class="text-white text-sm hidden sm:block">{{ currentLanguage.name }}</span>
-                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span class="text-gray-600 text-sm hidden sm:block">{{ currentLanguage.name }}</span>
+                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </template>
@@ -139,8 +140,8 @@
               @click="toggleProfileDropdown"
             >
               <template #icon>
-                <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center border border-white/30">
-                  <span class="text-white font-medium text-xs">{{ user && user.name ? user.name.charAt(0) : 'U' }}</span>
+                <div class="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center border border-gray-300">
+                  <span class="text-gray-700 font-medium text-xs">{{ user && user.name ? user.name.charAt(0) : 'U' }}</span>
                 </div>
               </template>
             </HeaderPill>
@@ -153,7 +154,7 @@
               <!-- User Info -->
               <div class="p-4 border-b border-gray-100">
                 <div class="flex items-center space-x-3">
-                  <div class="w-12 h-12 bg-gradient-to-r from-[#2596be] to-[#973894] rounded-full flex items-center justify-center">
+                  <div class="w-12 h-12 bg-gradient-to-r from-primary-purple to-primary-pink rounded-full flex items-center justify-center">
                     <span class="text-white font-medium text-lg">{{ user && user.name ? user.name.charAt(0) : 'U' }}</span>
                   </div>
                   <div class="flex-1 min-w-0">
@@ -217,25 +218,25 @@
               aria-label="Company information"
             >
               <template #text>
-                <span class="hidden sm:inline text-white text-sm font-medium truncate max-w-[140px] sm:max-w-[200px] md:max-w-[260px]" :title="currentOrgName">{{ currentOrgName }}</span>
-                <span class="sm:hidden text-white text-sm font-medium" title="RC">RC</span>
+                <span class="hidden sm:inline text-gray-800 text-sm font-medium truncate max-w-[140px] sm:max-w-[200px] md:max-w-[260px]" :title="currentOrgName">{{ currentOrgName }}</span>
+                <span class="sm:hidden text-gray-800 text-sm font-medium" title="RC">RC</span>
               </template>
             </HeaderPill>
           </div>
         </div>
       </div>
-    </div>
+    </header>
 
     <!-- Main Layout -->
-    <div class="flex h-screen">
+        <div class="flex flex-1" :class="isAuthenticated ? 'overflow-auto' : ($route.path === '/' ? 'overflow-auto' : 'overflow-hidden')">
       <!-- Sidebar (for authenticated users) -->
-      <div v-if="isAuthenticated" class="w-64 bg-gradient-to-b from-[#2596be] to-[#973894] text-white shadow-lg hidden md:block">
+      <div v-if="isAuthenticated" class="w-64 bg-sidebar-bg text-gray-700 shadow-lg border-r border-gray-200 hidden md:block overflow-hidden">
         <!-- Navigation (no duplicate branding) -->
-        <nav class="pt-6">
+        <nav class="pt-2">
           <router-link
             to="/dashboard"
-            class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-            :class="{ 'bg-white/20 text-white': $route.path === '/dashboard', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/dashboard' }"
+            class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+            :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/dashboard', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/dashboard' }"
           >
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
@@ -246,8 +247,8 @@
 
           <router-link
             to="/contacts"
-            class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-            :class="{ 'bg-white/20 text-white': $route.path === '/contacts', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/contacts' }"
+            class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+            :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/contacts', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/contacts' }"
           >
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -257,8 +258,8 @@
 
           <router-link
             to="/companies"
-            class="px-6 py-3 flex items-center text-sm font-medium transition-colors"
-            :class="{ 'text-white bg-white/10': $route.path.startsWith('/companies'), 'text-white/80 hover:text-white': !$route.path.startsWith('/companies') }"
+            class="px-6 py-3 flex items-center text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+            :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/companies'), 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/companies') }"
           >
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -268,8 +269,8 @@
 
           <router-link
             to="/deals"
-            class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-            :class="{ 'bg-white/20 text-white': $route.path === '/deals', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/deals' }"
+            class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+            :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/deals', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/deals' }"
           >
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
@@ -279,8 +280,8 @@
 
           <router-link
             to="/activities"
-            class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-            :class="{ 'bg-white/20 text-white': $route.path === '/activities', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/activities' }"
+            class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+            :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/activities', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/activities' }"
           >
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -290,8 +291,8 @@
 
           <router-link
             to="/tasks"
-            class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-            :class="{ 'bg-white/20 text-white': $route.path === '/tasks', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/tasks' }"
+            class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+            :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/tasks', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/tasks' }"
           >
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
@@ -302,8 +303,8 @@
           <router-link
             v-if="hasFeature('manage_campaigns') || currentUserRole === 'admin'"
             to="/campaigns"
-            class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-            :class="{ 'bg-white/20 text-white': $route.path === '/campaigns', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/campaigns' }"
+            class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+            :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/campaigns', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/campaigns' }"
           >
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
@@ -314,8 +315,8 @@
 
           <router-link
             to="/forms"
-            class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-            :class="{ 'bg-white/20 text-white': $route.path === '/forms', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/forms' }"
+            class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+            :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/forms', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/forms' }"
           >
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -325,8 +326,8 @@
 
           <router-link
             to="/lists"
-            class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-            :class="{ 'bg-white/20 text-white': $route.path === '/lists', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/lists' }"
+            class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+            :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/lists', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/lists' }"
           >
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -337,8 +338,8 @@
           <!-- Marketing Link -->
           <router-link
             to="/marketing"
-            class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-            :class="{ 'bg-white/20 text-white': $route.path.startsWith('/marketing'), 'text-white/80 hover:text-white hover:bg-white/10': !$route.path.startsWith('/marketing') }"
+            class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+            :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/marketing'), 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/marketing') }"
           >
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -350,8 +351,8 @@
           <router-link
             v-if="(hasFeature('manage_users') || currentUserRole === 'admin') && isEmailVerified"
             to="/users"
-            class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-            :class="{ 'bg-white/20 text-white': $route.path === '/users', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/users' }"
+            class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+            :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/users', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/users' }"
           >
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
@@ -362,8 +363,8 @@
           <router-link
             v-if="hasFeature('system_settings') || currentUserRole === 'admin'"
             to="/settings"
-            class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-            :class="{ 'bg-white/20 text-white': $route.path === '/settings', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/settings' }"
+            class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+            :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/settings', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/settings' }"
           >
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -374,8 +375,8 @@
           <!-- Features Demo (for testing) -->
           <router-link
             to="/features-demo"
-            class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-            :class="{ 'bg-white/20 text-white': $route.path === '/features-demo', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/features-demo' }"
+            class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+            :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/features-demo', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/features-demo' }"
           >
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -386,15 +387,15 @@
       </div>
 
       <!-- Marketing Sub-menu (shows when on marketing routes) -->
-      <div v-if="$route.path.startsWith('/marketing')" class="fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-[#973894] to-[#1a1a2e] z-40 transform transition-transform duration-300 ease-in-out">
+      <div v-if="$route.path.startsWith('/marketing')" class="fixed left-0 top-0 h-full w-64 bg-sidebar-bg z-40 transform transition-transform duration-300 ease-in-out">
         <div class="flex flex-col h-full">
           <!-- Marketing Header -->
-          <div class="px-6 py-4 border-b border-white/10">
+          <div class="px-6 py-4 border-b border-gray-200">
             <div class="flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-white">{{ $t('common.marketing') }}</h2>
+              <h2 class="text-lg font-semibold text-gray-800">{{ $t('common.marketing') }}</h2>
               <button
                 @click="$router.push('/dashboard')"
-                class="text-white/70 hover:text-white transition-colors"
+                class="text-gray-500 hover:text-primary-purple transition-colors"
                 :title="$t('common.back_to_main_menu')"
               >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -408,8 +409,8 @@
           <nav class="flex-1 py-4">
             <router-link
               to="/marketing/overview"
-              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/overview', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/overview' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/marketing/overview', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/marketing/overview' }"
             >
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -419,8 +420,8 @@
 
             <router-link
               to="/marketing/email"
-              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/email', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/email' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/marketing/email', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/marketing/email' }"
             >
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -430,8 +431,8 @@
 
             <router-link
               to="/marketing/ads"
-              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/ads', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/ads' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/marketing/ads', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/marketing/ads' }"
             >
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h3a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1h3zM9 4h6V3H9v1zM5 7h14v10H5V7z" />
@@ -441,8 +442,8 @@
 
             <router-link
               to="/marketing/events"
-              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/events', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/events' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/marketing/events', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/marketing/events' }"
             >
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -452,8 +453,8 @@
 
             <router-link
               to="/marketing/buyer-intent"
-              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/buyer-intent', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/buyer-intent' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/marketing/buyer-intent', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/marketing/buyer-intent' }"
             >
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -463,8 +464,8 @@
 
             <router-link
               to="/marketing/lead-scoring"
-              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/lead-scoring', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/lead-scoring' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/marketing/lead-scoring', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/marketing/lead-scoring' }"
             >
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
@@ -474,8 +475,8 @@
 
             <router-link
               to="/marketing/journeys"
-              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/journeys', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/journeys' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/marketing/journeys', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/marketing/journeys' }"
             >
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -485,8 +486,8 @@
 
             <router-link
               to="/marketing/forecasting"
-              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/forecasting', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/forecasting' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/marketing/forecasting', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/marketing/forecasting' }"
             >
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -496,8 +497,8 @@
 
             <router-link
               to="/marketing/meetings"
-              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/meetings', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/meetings' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/marketing/meetings', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/marketing/meetings' }"
             >
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -507,8 +508,8 @@
 
             <router-link
               to="/marketing/analytics"
-              class="flex items-center px-6 py-3 text-sm font-medium transition-colors"
-              :class="{ 'bg-white/20 text-white': $route.path === '/marketing/analytics', 'text-white/80 hover:text-white hover:bg-white/10': $route.path !== '/marketing/analytics' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/marketing/analytics', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/marketing/analytics' }"
             >
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -520,15 +521,15 @@
       </div>
 
       <!-- Main content area -->
-      <div class="flex-1 flex flex-col overflow-hidden">
-        <!-- Top navigation (for unauthenticated users) -->
-        <nav v-if="!isAuthenticated" class="bg-white shadow-sm border-b border-gray-200">
+        <div class="flex-1 flex flex-col" :class="isAuthenticated ? 'overflow-auto' : ($route.path === '/' ? 'overflow-auto' : 'h-full overflow-hidden')">
+        <!-- Top navigation (for unauthenticated users, excluding login page) -->
+        <nav v-if="!isAuthenticated && !['/', '/login', '/register', '/forgot-password'].includes($route.path)" class="bg-white shadow-sm border-b border-gray-200">
           <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
               <div class="flex items-center">
                 <router-link to="/" class="flex items-center space-x-3">
-                  <div class="w-8 h-8 bg-gradient-to-r from-[#2596be] to-[#973894] rounded-lg flex items-center justify-center">
-                    <span class="text-white font-bold text-lg">RC</span>
+                  <div class="w-12 h-12 flex items-center justify-center">
+                    <img src="/src/assets/logo.png" alt="RC Convergio" class="w-12 h-12 object-contain" />
                   </div>
                   <span class="text-xl font-bold text-gray-900">RC Convergio</span>
                 </router-link>
@@ -536,15 +537,15 @@
               <div class="flex items-center space-x-4">
                 <router-link
                   to="/"
-                  class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
-                  :class="{ 'text-[#2596be]': $route.path === '/' }"
+                  class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary-purple transition-colors"
+                  :class="{ 'text-primary-purple': $route.path === '/' }"
                 >
                   Home
                 </router-link>
                 <router-link
                   to="/login"
-                  class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
-                  :class="{ 'text-[#2596be]': $route.path === '/login' }"
+                  class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary-purple transition-colors"
+                  :class="{ 'text-primary-purple': $route.path === '/login' }"
                 >
                   Login
                 </router-link>
@@ -554,7 +555,7 @@
         </nav>
 
         <!-- Main content -->
-        <main class="flex-1 overflow-auto">
+        <main class="flex-1" :class="isAuthenticated ? 'overflow-auto' : ($route.path === '/' ? 'overflow-auto' : 'h-full overflow-hidden')">
           <router-view />
         </main>
       </div>
@@ -711,25 +712,49 @@ onUnmounted(() => {
 <style>
 #app {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400;
 }
 
-/* Custom scrollbar */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+/* Custom scrollbar - thin with standard colors */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #2596be, #973894);
-  border-radius: 3px;
+  background: #cbd5e1;
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #1f7a9a, #7a2f75);
+  background: #94a3b8;
+}
+
+/* Hide scrollbar for dashboard main content */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
 }
 </style>
+
 
 

@@ -111,10 +111,10 @@ const props = defineProps({
 
 const iconBgClass = computed(() => {
   const classes = {
-    blue: 'bg-gradient-to-r from-[#2596be] to-[#973894]',
-    green: 'bg-gradient-to-r from-green-500 to-emerald-600',
-    purple: 'bg-gradient-to-r from-purple-500 to-indigo-600',
-    orange: 'bg-gradient-to-r from-orange-500 to-red-600',
+    blue: 'bg-gradient-to-r from-primary-purple to-primary-pink',
+    green: 'bg-gradient-to-r from-icon-total-income to-green-600',
+    purple: 'bg-gradient-to-r from-icon-orders to-purple-600',
+    orange: 'bg-gradient-to-r from-icon-total-expense to-orange-600',
     red: 'bg-gradient-to-r from-red-500 to-pink-600',
     yellow: 'bg-gradient-to-r from-yellow-500 to-orange-600'
   }

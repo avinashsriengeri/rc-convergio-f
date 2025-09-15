@@ -6,8 +6,8 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-2xl font-bold text-gray-900">{{ $t('dashboard.title') }}</h1>
-            <p class="text-sm text-gray-600">{{ $t('dashboard.welcome', { name: userName }) }}</p>
+            <h1 class="text-2xl font-semibold text-gray-900 font-inter">{{ $t('dashboard.title') }}</h1>
+            <p class="text-sm text-gray-600 font-inter">{{ $t('dashboard.welcome', { name: userName }) }}</p>
           </div>
           <BaseButton
             variant="primary"
@@ -21,8 +21,8 @@
 
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div v-if="loading" class="flex items-center justify-center py-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2596be]"></div>
+        <div v-if="loading" class="flex items-center justify-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-purple"></div>
       </div>
       
       <div v-else class="space-y-8">
@@ -33,7 +33,7 @@
               v-model="searchQuery"
               type="text"
               :placeholder="$t('common.search')"
-              class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2596be] focus:border-[#2596be]"
+              class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-purple focus:border-primary-purple"
               @input="handleSearch"
               @focus="showSearchResults = true"
             />
@@ -82,13 +82,13 @@
             <!-- Loading -->
             <div v-if="searching" class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
               <div class="p-4 text-center">
-                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-[#2596be] mx-auto"></div>
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-purple mx-auto"></div>
                 <p class="text-sm text-gray-500 mt-2">{{ $t('dashboard.searching') }}</p>
               </div>
             </div>
           </div>
           <div class="flex items-center space-x-2">
-            <div class="w-8 h-8 bg-gradient-to-r from-[#2596be] to-[#973894] rounded-full flex items-center justify-center">
+            <div class="w-8 h-8 bg-gradient-to-r from-primary-purple to-primary-pink rounded-full flex items-center justify-center">
               <span class="text-white font-medium text-sm">{{ userName.charAt(0) }}</span>
             </div>
             <span class="text-sm font-medium text-gray-700">{{ userName }}</span>
@@ -98,15 +98,15 @@
         <!-- Metrics Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <!-- Open Deals -->
-          <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow" @click="$router.push('/deals')">
+          <div class="bg-card-gross-sales rounded-xl shadow-sm p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-105" @click="$router.push('/deals')">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-sm font-medium text-gray-600 mb-1">{{ $t('dashboard.open') }}</p>
-                <p class="text-2xl font-bold text-gray-900">${{ formatCurrency(dashboardData?.open_value || 0) }}</p>
-                <p class="text-sm text-gray-500">{{ $t('dashboard.today_won', { count: dashboardData?.won_today || 0 }) }}</p>
+                <p class="text-sm font-medium text-gray-600 mb-1 font-inter">{{ $t('dashboard.open') }}</p>
+                <p class="text-2xl font-semibold text-gray-900 font-inter">${{ formatCurrency(dashboardData?.open_value || 0) }}</p>
+                <p class="text-sm text-gray-500 font-inter">{{ $t('dashboard.today_won', { count: dashboardData?.won_today || 0 }) }}</p>
               </div>
-              <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                <svg class="w-6 h-6 text-icon-gross-sales" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                 </svg>
               </div>
@@ -114,15 +114,15 @@
           </div>
 
           <!-- Won Deals -->
-          <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow" @click="$router.push('/deals')">
+          <div class="bg-card-total-income rounded-xl shadow-sm p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-105" @click="$router.push('/deals')">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-sm font-medium text-gray-600 mb-1">{{ $t('dashboard.won') }}</p>
-                <p class="text-2xl font-bold text-gray-900">{{ dashboardData?.won_today || 0 }}</p>
-                <p class="text-sm text-gray-500">{{ $t('dashboard.week_won', { count: dashboardData?.won_week || 0 }) }}</p>
+                <p class="text-sm font-medium text-gray-600 mb-1 font-inter">{{ $t('dashboard.won') }}</p>
+                <p class="text-2xl font-semibold text-gray-900 font-inter">{{ dashboardData?.won_today || 0 }}</p>
+                <p class="text-sm text-gray-500 font-inter">{{ $t('dashboard.week_won', { count: dashboardData?.won_week || 0 }) }}</p>
               </div>
-              <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                <svg class="w-6 h-6 text-icon-total-income" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -130,15 +130,15 @@
           </div>
 
           <!-- Lost Deals -->
-          <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow" @click="$router.push('/deals')">
+          <div class="bg-card-total-expense rounded-xl shadow-sm p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-105" @click="$router.push('/deals')">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-sm font-medium text-gray-600 mb-1">{{ $t('dashboard.lost') }}</p>
-                <p class="text-2xl font-bold text-gray-900">{{ dashboardData?.lost_today || 0 }}</p>
-                <p class="text-sm text-gray-500">{{ $t('dashboard.week_lost', { count: dashboardData?.lost_week || 0 }) }}</p>
+                <p class="text-sm font-medium text-gray-600 mb-1 font-inter">{{ $t('dashboard.lost') }}</p>
+                <p class="text-2xl font-semibold text-gray-900 font-inter">{{ dashboardData?.lost_today || 0 }}</p>
+                <p class="text-sm text-gray-500 font-inter">{{ $t('dashboard.week_lost', { count: dashboardData?.lost_week || 0 }) }}</p>
               </div>
-              <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                <svg class="w-6 h-6 text-icon-total-expense" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </div>
@@ -151,8 +151,8 @@
           <!-- Left Column -->
           <div class="lg:col-span-2 space-y-6">
             <!-- Follow Ups -->
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow" @click="$router.push('/tasks')">
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('dashboard.follow_ups') }}</h3>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-105" @click="$router.push('/tasks')">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4 font-inter">{{ $t('dashboard.follow_ups') }}</h3>
               <div class="space-y-3">
                 <div v-for="task in todayTasks" :key="task.id" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div class="flex-1">
@@ -171,7 +171,7 @@
 
             <!-- Last Campaign -->
             <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('dashboard.last_campaign') }}</h3>
+              <h3 class="text-lg font-semibold text-gray-900 mb-4 font-inter">{{ $t('dashboard.last_campaign') }}</h3>
               <div class="grid grid-cols-2 gap-4">
                 <div class="text-center">
                   <p class="text-2xl font-bold text-gray-900">{{ campaignMetrics?.sent || 0 }}</p>
@@ -197,7 +197,7 @@
           <div class="space-y-6">
             <!-- Suggestions -->
             <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('dashboard.suggestions') }}</h3>
+              <h3 class="text-lg font-semibold text-gray-900 mb-4 font-inter">{{ $t('dashboard.suggestions') }}</h3>
               <ul class="space-y-3 text-sm text-gray-700">
                 <li class="flex items-start">
                   <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
@@ -227,11 +227,11 @@
 
             <!-- Recent Contacts -->
             <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('dashboard.recent_contacts') }}</h3>
+              <h3 class="text-lg font-semibold text-gray-900 mb-4 font-inter">{{ $t('dashboard.recent_contacts') }}</h3>
               <div class="space-y-3">
                 <div v-for="contact in recentContacts" :key="contact.id" class="flex items-center justify-between">
                   <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-gradient-to-r from-[#2596be] to-[#973894] rounded-full flex items-center justify-center">
+                    <div class="w-8 h-8 bg-gradient-to-r from-primary-purple to-primary-pink rounded-full flex items-center justify-center">
                       <span class="text-white font-medium text-xs">{{ getInitials(contact) }}</span>
                     </div>
                     <div>
