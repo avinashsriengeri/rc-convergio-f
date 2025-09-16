@@ -244,6 +244,73 @@
               </div>
             </div>
           </div>
+
+          <!-- Lead Scoring Analytics -->
+          <div v-if="leadScoringAnalytics" class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="px-6 py-4 border-b border-gray-200">
+              <h3 class="text-lg font-semibold text-gray-900">{{ $t('marketing.lead_scoring.analytics.title') }}</h3>
+            </div>
+            <div class="p-6">
+              <div class="space-y-6">
+                <!-- Summary Stats -->
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="text-center p-4 bg-blue-50 rounded-lg">
+                    <div class="text-2xl font-bold text-blue-600">{{ formatNumber(leadScoringAnalytics.summary?.total_contacts_scored || 0) }}</div>
+                    <div class="text-sm text-blue-600">{{ $t('marketing.lead_scoring.analytics.total_contacts_scored') }}</div>
+                  </div>
+                  <div class="text-center p-4 bg-green-50 rounded-lg">
+                    <div class="text-2xl font-bold text-green-600">{{ leadScoringAnalytics.summary?.conversion_rate || 0 }}%</div>
+                    <div class="text-sm text-green-600">{{ $t('marketing.lead_scoring.analytics.conversion_rate') }}</div>
+                  </div>
+                </div>
+
+                <!-- Score Distribution -->
+                <div>
+                  <h4 class="text-sm font-medium text-gray-900 mb-3">{{ $t('marketing.lead_scoring.analytics.score_distribution') }}</h4>
+                  <div class="space-y-2">
+                    <div v-for="(data, range) in leadScoringAnalytics.score_distribution" :key="range" class="flex justify-between items-center">
+                      <span class="text-sm text-gray-600">{{ range }}</span>
+                      <div class="flex items-center space-x-2">
+                        <span class="text-sm font-medium">{{ formatNumber(data.count) }}</span>
+                        <span class="text-xs text-gray-500">({{ data.percentage }}%)</span>
+                        <span :class="data.trend.startsWith('+') ? 'text-green-600' : 'text-red-600'" class="text-xs">
+                          {{ data.trend }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Top Scoring Rules -->
+                <div>
+                  <h4 class="text-sm font-medium text-gray-900 mb-3">{{ $t('marketing.lead_scoring.analytics.top_scoring_rules') }}</h4>
+                  <div class="space-y-2">
+                    <div v-for="rule in leadScoringAnalytics.top_scoring_rules?.slice(0, 3)" :key="rule.rule_name" class="flex justify-between items-center">
+                      <span class="text-sm text-gray-600">{{ rule.rule_name }}</span>
+                      <div class="flex items-center space-x-2">
+                        <span class="text-sm font-medium">{{ formatNumber(rule.points_awarded) }}</span>
+                        <span class="text-xs text-gray-500">({{ rule.times_triggered }}x)</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Company Breakdown -->
+                <div>
+                  <h4 class="text-sm font-medium text-gray-900 mb-3">{{ $t('marketing.lead_scoring.analytics.company_breakdown') }}</h4>
+                  <div class="space-y-2">
+                    <div v-for="company in leadScoringAnalytics.company_breakdown?.slice(0, 3)" :key="company.company" class="flex justify-between items-center">
+                      <span class="text-sm text-gray-600">{{ company.company }}</span>
+                      <div class="flex items-center space-x-2">
+                        <span class="text-sm font-medium">{{ company.avg_score }}</span>
+                        <span class="text-xs text-gray-500">({{ company.contacts }} contacts)</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -456,6 +523,7 @@ const error = ref(null)
 const rules = ref([])
 const stats = ref(null)
 const topContacts = ref([])
+const leadScoringAnalytics = ref(null)
 
 // Modal states
 const showRuleModal = ref(false)
@@ -511,6 +579,15 @@ const loadTopContacts = async () => {
     topContacts.value = response.data || []
   } catch (err) {
     console.error('Failed to load top contacts:', err)
+  }
+}
+
+const loadLeadScoringAnalytics = async () => {
+  try {
+    const response = await leadScoringService.getLeadScoringAnalytics()
+    leadScoringAnalytics.value = response.data
+  } catch (err) {
+    console.error('Failed to load lead scoring analytics:', err)
   }
 }
 
@@ -648,7 +725,8 @@ onMounted(async () => {
   await Promise.all([
     loadRules(),
     loadStats(),
-    loadTopContacts()
+    loadTopContacts(),
+    loadLeadScoringAnalytics()
   ])
 })
 </script>

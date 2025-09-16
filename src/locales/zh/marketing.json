@@ -62,7 +62,114 @@
       "create_campaign": "创建活动"
     },
     "loading": "正在加载邮件活动...",
-    "error": "加载邮件活动时出错"
+    "error": "加载邮件活动时出错",
+    "overall_metrics": {
+      "title": "邮件总体指标",
+      "total_campaigns": "总活动数",
+      "total_sent": "总发送数",
+      "total_opens": "总打开数",
+      "total_clicks": "总点击数",
+      "total_bounces": "总退回数",
+      "total_unsubscribes": "总退订数",
+      "avg_open_rate": "平均打开率",
+      "avg_click_rate": "平均点击率",
+      "avg_bounce_rate": "平均退回率",
+      "avg_unsubscribe_rate": "平均退订率"
+    },
+    "tracking": {
+      "title": "邮件跟踪",
+      "opens": "邮件打开",
+      "clicks": "邮件点击",
+      "recipient": "收件人",
+      "opened_at": "打开时间",
+      "clicked_at": "点击时间",
+      "clicked_url": "点击链接",
+      "ip_address": "IP地址",
+      "user_agent": "用户代理",
+      "location": "位置",
+      "no_opens": "无打开记录",
+      "no_clicks": "无点击记录",
+      "error": "加载跟踪数据时出错"
+    },
+    "automations": {
+      "title": "邮件自动化",
+      "subtitle": "自动化您的邮件营销工作流程",
+      "create_automation": "创建自动化",
+      "automation_name": "自动化名称",
+      "trigger": "触发器",
+      "status": "状态",
+      "steps": "步骤",
+      "created_at": "创建时间",
+      "actions": "操作",
+      "edit": "编辑",
+      "delete": "删除",
+      "activate": "激活",
+      "pause": "暂停",
+      "triggers": {
+        "contact_created": "联系人创建",
+        "email_opened": "邮件打开",
+        "link_clicked": "链接点击",
+        "form_submitted": "表单提交"
+      },
+      "actions": {
+        "send_email": "发送邮件",
+        "add_tag": "添加标签",
+        "create_task": "创建任务",
+        "update_field": "更新字段"
+      },
+      "conditions": {
+        "tag_has": "有标签",
+        "field_equals": "字段等于",
+        "opened_count": "打开次数"
+      },
+      "statuses": {
+        "active": "激活",
+        "draft": "草稿",
+        "paused": "暂停",
+        "completed": "完成"
+      },
+      "create_modal": {
+        "title": "创建邮件自动化",
+        "name_placeholder": "输入自动化名称",
+        "trigger_label": "此自动化何时触发？",
+        "action_label": "应采取什么操作？",
+        "condition_label": "添加条件（可选）",
+        "create": "创建自动化",
+        "cancel": "取消"
+      },
+      "delete_modal": {
+        "title": "删除自动化",
+        "message": "您确定要删除此自动化吗？此操作无法撤销。",
+        "confirm": "删除",
+        "cancel": "取消"
+      },
+      "empty_state": {
+        "title": "未找到自动化",
+        "message": "创建您的第一个邮件自动化来开始自动与受众互动",
+        "create_automation": "创建自动化"
+      },
+      "loading": "正在加载自动化...",
+      "error": "加载自动化时出错",
+      "delete_success": "自动化删除成功",
+      "delete_error": "删除自动化时出错"
+    },
+    "webhooks": {
+      "title": "邮件Webhook",
+      "subtitle": "处理邮件事件和集成",
+      "event_types": {
+        "sent": "邮件已发送",
+        "delivered": "邮件已送达",
+        "opened": "邮件已打开",
+        "clicked": "链接已点击",
+        "bounced": "邮件已退回",
+        "complained": "垃圾邮件投诉",
+        "unsubscribed": "已退订"
+      },
+      "test_webhook": "测试Webhook",
+      "webhook_url": "Webhook URL",
+      "events_received": "收到的事件",
+      "last_event": "最后事件"
+    }
   },
   "ads": {
     "title": "广告管理",
@@ -135,7 +242,40 @@
       "error": "错误"
     },
     "loading": "正在加载广告账户...",
-    "error": "加载广告账户时出错"
+    "error": "加载广告账户时出错",
+    "analytics": {
+      "title": "广告分析",
+      "refresh": "刷新",
+      "loading": "正在加载分析数据...",
+      "total_spend": "总支出",
+      "total_impressions": "总展示次数",
+      "total_clicks": "总点击次数",
+      "total_conversions": "总转化次数",
+      "avg_ctr": "平均点击率",
+      "avg_cpc": "平均点击成本",
+      "avg_conversion_rate": "平均转化率",
+      "avg_roi": "平均投资回报率",
+      "top_campaigns": "表现最佳的活动",
+      "campaign_name": "活动名称",
+      "spend": "支出",
+      "impressions": "展示次数",
+      "clicks": "点击次数",
+      "conversions": "转化次数",
+      "ctr": "点击率",
+      "roi": "投资回报率",
+      "performance_by_provider": "按平台分析",
+      "trends_chart": "表现趋势",
+      "trends_description": "显示广告表现随时间变化的图表",
+      "no_data": "暂无分析数据",
+      "no_data_description": "开始运行广告活动后，分析数据将在此显示",
+      "load_data": "加载分析数据"
+    },
+    "providers": {
+      "google_ads": "Google广告",
+      "facebook_ads": "Facebook广告",
+      "linkedin_ads": "LinkedIn广告",
+      "twitter_ads": "Twitter广告"
+    }
   },
   "events": {
     "title": "活动",
@@ -144,7 +284,8 @@
     "tabs": {
       "upcoming": "即将到来",
       "completed": "已完成",
-      "all": "全部"
+      "all": "全部",
+      "analytics": "分析"
     },
     "filters": {
       "type": "活动类型",
@@ -230,7 +371,31 @@
       "create_event": "创建活动"
     },
     "loading": "正在加载活动...",
-    "error": "加载活动时出错"
+    "error": "加载活动时出错",
+    "analytics": {
+      "title": "活动分析",
+      "refresh": "刷新",
+      "loading": "正在加载分析数据...",
+      "total_events": "总活动数",
+      "upcoming_events": "即将到来的活动",
+      "completed_events": "已完成的活动",
+      "total_attendees": "总参会人数",
+      "total_rsvps": "总RSVP数",
+      "avg_attendance_rate": "平均出席率",
+      "avg_rsvp_rate": "平均RSVP率",
+      "events_by_type": "按类型分类的活动",
+      "events_count": "活动数量",
+      "top_performing_events": "表现最佳的活动",
+      "event_name": "活动名称",
+      "type": "类型",
+      "attendance_rate": "出席率",
+      "scheduled_at": "计划时间",
+      "monthly_trends": "月度趋势",
+      "trends_description": "显示活动表现随时间变化的图表",
+      "no_data": "暂无分析数据",
+      "no_data_description": "开始创建活动后，分析数据将在此显示",
+      "load_data": "加载分析数据"
+    }
   },
   "buyer_intent": {
     "title": "购买意向",
@@ -248,7 +413,7 @@
       "all_contacts": "所有联系人",
       "all_pages": "所有页面",
       "all_actions": "所有行为",
-      "all_intent_levels": "所有意向等级",
+      "all_levels": "所有等级",
       "min_score": "最低分数",
       "max_score": "最高分数",
       "date_from": "开始日期",
@@ -280,12 +445,23 @@
       },
       "action_breakdown": "行为分析",
       "top_pages": "热门页面",
-      "intent_trend": "意向趋势"
+      "intent_trend": "意向趋势",
+      "visitor_intent": {
+        "title": "访客意向分析",
+        "total_visitors": "总访客数",
+        "conversion_rate": "转化率",
+        "avg_intent_score": "平均意向分数",
+        "intent_distribution": "意向分布",
+        "high_intent": "高意向",
+        "medium_intent": "中等意向",
+        "low_intent": "低意向"
+      }
     },
     "actions": {
       "view_details": "查看详情",
       "log_test_event": "记录测试事件",
-      "refresh_data": "刷新数据"
+      "refresh_data": "刷新数据",
+      "retry": "重试"
     },
     "test_event_modal": {
       "title": "记录测试事件",
@@ -353,6 +529,14 @@
       "score": "分数",
       "change": "变化",
       "last_updated": "最后更新"
+    },
+    "analytics": {
+      "title": "线索评分分析",
+      "total_contacts_scored": "总评分联系人",
+      "conversion_rate": "转化率",
+      "score_distribution": "分数分布",
+      "top_scoring_rules": "高分规则",
+      "company_breakdown": "公司分析"
     },
     "rule_modal": {
       "create_title": "创建评分规则",
@@ -423,6 +607,21 @@
       "contacts_in_journeys": "旅程中的联系人",
       "avg_completion_rate": "平均完成率",
       "conversion_rate": "转化率"
+    },
+    "analytics": {
+      "title": "旅程分析",
+      "journey_performance": "旅程表现",
+      "step_performance": "步骤表现",
+      "top_performing_journeys": "表现最佳旅程",
+      "total_executions": "总执行次数",
+      "conversion_rate": "转化率",
+      "avg_duration": "平均时长",
+      "completed": "已完成",
+      "avg_open_rate": "平均打开率",
+      "avg_click_rate": "平均点击率",
+      "completion_rate": "完成率",
+      "total_revenue": "总收入",
+      "contacts_converted": "转化联系人"
     },
     "create_modal": {
       "title": "创建旅程",
@@ -534,7 +733,12 @@
     "loading": "正在加载预测数据...",
     "error": "加载预测数据时出错",
     "no_data": "无预测数据可用",
-    "refresh": "刷新数据"
+    "refresh": "刷新数据",
+    "multi_timeframe": {
+      "title": "多时间范围比较",
+      "trends_summary": "趋势摘要",
+      "trend": "趋势"
+    }
   },
   "meetings": {
     "title": "会议安排",
@@ -625,7 +829,20 @@
       "create_meeting": "创建会议"
     },
     "loading": "正在加载会议...",
-    "error": "加载会议时出错"
+    "error": "加载会议时出错",
+    "analytics": {
+      "title": "会议分析",
+      "provider_breakdown": "平台分解",
+      "status_breakdown": "状态分解",
+      "top_contacts": "热门联系人",
+      "summary_stats": "汇总统计",
+      "count": "数量",
+      "avg_duration": "平均时长",
+      "meetings_count": "会议数",
+      "completion_rate": "完成率",
+      "no_show_rate": "未出席率",
+      "cancellation_rate": "取消率"
+    }
   },
   "analytics": {
     "title": "分析",

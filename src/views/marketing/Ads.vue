@@ -236,6 +236,193 @@
       </div>
     </div>
 
+    <!-- Ads Analytics Section -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex justify-between items-center">
+          <h3 class="text-lg font-semibold text-gray-900">{{ $t('marketing.ads.analytics.title') }}</h3>
+          <button
+            @click="loadAdsAnalytics"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+          >
+            {{ $t('marketing.ads.analytics.refresh') }}
+          </button>
+        </div>
+      </div>
+
+      <div v-if="analyticsLoading" class="p-12 text-center">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <p class="mt-4 text-gray-600">{{ $t('marketing.ads.analytics.loading') }}</p>
+      </div>
+
+      <div v-else-if="adsAnalytics" class="p-6">
+        <!-- Overall Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-gray-900">{{ formatCurrency(adsAnalytics.total_spend) }}</div>
+            <div class="text-sm text-gray-600">{{ $t('marketing.ads.analytics.total_spend') }}</div>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-gray-900">{{ formatNumber(adsAnalytics.total_impressions) }}</div>
+            <div class="text-sm text-gray-600">{{ $t('marketing.ads.analytics.total_impressions') }}</div>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-gray-900">{{ formatNumber(adsAnalytics.total_clicks) }}</div>
+            <div class="text-sm text-gray-600">{{ $t('marketing.ads.analytics.total_clicks') }}</div>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-gray-900">{{ formatNumber(adsAnalytics.total_conversions) }}</div>
+            <div class="text-sm text-gray-600">{{ $t('marketing.ads.analytics.total_conversions') }}</div>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-gray-900">{{ formatPercentage(adsAnalytics.avg_ctr) }}</div>
+            <div class="text-sm text-gray-600">{{ $t('marketing.ads.analytics.avg_ctr') }}</div>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-gray-900">{{ formatCurrency(adsAnalytics.avg_cpc) }}</div>
+            <div class="text-sm text-gray-600">{{ $t('marketing.ads.analytics.avg_cpc') }}</div>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-gray-900">{{ formatPercentage(adsAnalytics.avg_conversion_rate) }}</div>
+            <div class="text-sm text-gray-600">{{ $t('marketing.ads.analytics.avg_conversion_rate') }}</div>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-gray-900">{{ formatPercentage(adsAnalytics.avg_roi) }}</div>
+            <div class="text-sm text-gray-600">{{ $t('marketing.ads.analytics.avg_roi') }}</div>
+          </div>
+        </div>
+
+        <!-- Top Performing Campaigns -->
+        <div class="mb-8">
+          <h4 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('marketing.ads.analytics.top_campaigns') }}</h4>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.ads.analytics.campaign_name') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.ads.analytics.spend') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.ads.analytics.impressions') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.ads.analytics.clicks') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.ads.analytics.conversions') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.ads.analytics.ctr') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.ads.analytics.roi') }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr v-for="campaign in adsAnalytics.top_performing_campaigns" :key="campaign.id">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {{ campaign.name }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ formatCurrency(campaign.spend) }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ formatNumber(campaign.impressions) }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ formatNumber(campaign.clicks) }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ formatNumber(campaign.conversions) }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ formatPercentage(campaign.ctr) }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ formatPercentage(campaign.roi) }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Performance by Provider -->
+        <div class="mb-8">
+          <h4 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('marketing.ads.analytics.performance_by_provider') }}</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div
+              v-for="provider in adsAnalytics.performance_by_provider"
+              :key="provider.provider"
+              class="border border-gray-200 rounded-lg p-6"
+            >
+              <div class="flex items-center mb-4">
+                <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
+                  <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path :d="getProviderIcon(provider.provider)" />
+                  </svg>
+                </div>
+                <h5 class="font-medium text-gray-900">{{ $t(`marketing.ads.providers.${provider.provider}`) }}</h5>
+              </div>
+              <div class="space-y-2">
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.ads.analytics.spend') }}:</span>
+                  <span class="text-sm font-medium">{{ formatCurrency(provider.spend) }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.ads.analytics.impressions') }}:</span>
+                  <span class="text-sm font-medium">{{ formatNumber(provider.impressions) }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.ads.analytics.clicks') }}:</span>
+                  <span class="text-sm font-medium">{{ formatNumber(provider.clicks) }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.ads.analytics.conversions') }}:</span>
+                  <span class="text-sm font-medium">{{ formatNumber(provider.conversions) }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.ads.analytics.ctr') }}:</span>
+                  <span class="text-sm font-medium">{{ formatPercentage(provider.ctr) }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.ads.analytics.roi') }}:</span>
+                  <span class="text-sm font-medium">{{ formatPercentage(provider.roi) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trends Chart Placeholder -->
+        <div class="bg-gray-50 p-8 rounded-lg text-center">
+          <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <h4 class="text-lg font-medium text-gray-900 mb-2">{{ $t('marketing.ads.analytics.trends_chart') }}</h4>
+          <p class="text-gray-600">{{ $t('marketing.ads.analytics.trends_description') }}</p>
+        </div>
+      </div>
+
+      <div v-else class="p-12 text-center">
+        <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        <h4 class="text-lg font-medium text-gray-900 mb-2">{{ $t('marketing.ads.analytics.no_data') }}</h4>
+        <p class="text-gray-600 mb-6">{{ $t('marketing.ads.analytics.no_data_description') }}</p>
+        <button
+          @click="loadAdsAnalytics"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition-colors"
+        >
+          {{ $t('marketing.ads.analytics.load_data') }}
+        </button>
+      </div>
+    </div>
+
     <!-- Connect Account Modal -->
     <div
       v-if="showConnectModal"
@@ -384,6 +571,8 @@ const providers = ref([])
 const campaignId = ref('')
 const campaignMetrics = ref(null)
 const metricsLoading = ref(false)
+const adsAnalytics = ref(null)
+const analyticsLoading = ref(false)
 
 // Modal states
 const showConnectModal = ref(false)
@@ -539,6 +728,20 @@ const fetchMetrics = async () => {
   }
 }
 
+const loadAdsAnalytics = async () => {
+  analyticsLoading.value = true
+  adsAnalytics.value = null
+  
+  try {
+    const response = await adsService.getAdsAnalytics()
+    adsAnalytics.value = response.data
+  } catch (err) {
+    showError(err.message || 'Failed to fetch ads analytics')
+  } finally {
+    analyticsLoading.value = false
+  }
+}
+
 // Helper methods
 const getProviderIcon = (providerId) => adsHelpers.getProviderIcon(providerId)
 const getStatusBadgeColor = (isActive) => adsHelpers.getStatusBadgeColor(isActive)
@@ -551,7 +754,8 @@ const formatDate = (dateString) => adsHelpers.formatDate(dateString)
 onMounted(async () => {
   await Promise.all([
     loadAdAccounts(),
-    loadProviders()
+    loadProviders(),
+    loadAdsAnalytics()
   ])
 })
 </script>

@@ -449,7 +449,50 @@ const loadModuleData = async () => {
     moduleLoading.value = true
     moduleError.value = null
 
-    const response = await analyticsService.getModuleData(selectedModule.value, selectedPeriod.value)
+    // Use specific endpoint methods for better error handling and type safety
+    let response
+    switch (selectedModule.value) {
+      case 'contacts':
+        response = await analyticsService.getContactsAnalytics(selectedPeriod.value)
+        break
+      case 'companies':
+        response = await analyticsService.getCompaniesAnalytics(selectedPeriod.value)
+        break
+      case 'deals':
+        response = await analyticsService.getDealsAnalytics(selectedPeriod.value)
+        break
+      case 'campaigns':
+        response = await analyticsService.getCampaignsAnalytics(selectedPeriod.value)
+        break
+      case 'ads':
+        response = await analyticsService.getAdsAnalytics(selectedPeriod.value)
+        break
+      case 'events':
+        response = await analyticsService.getEventsAnalytics(selectedPeriod.value)
+        break
+      case 'meetings':
+        response = await analyticsService.getMeetingsAnalytics(selectedPeriod.value)
+        break
+      case 'tasks':
+        response = await analyticsService.getTasksAnalytics(selectedPeriod.value)
+        break
+      case 'forecast':
+        response = await analyticsService.getForecastAnalytics(selectedPeriod.value)
+        break
+      case 'lead_scoring':
+        response = await analyticsService.getLeadScoringAnalytics(selectedPeriod.value)
+        break
+      case 'journeys':
+        response = await analyticsService.getJourneysAnalytics(selectedPeriod.value)
+        break
+      case 'visitor_intent':
+        response = await analyticsService.getVisitorIntentAnalytics(selectedPeriod.value)
+        break
+      default:
+        // Fallback to generic endpoint for any other modules
+        response = await analyticsService.getModuleData(selectedModule.value, selectedPeriod.value)
+    }
+
     moduleData.value = response.data || null
   } catch (err) {
     console.error(`Error loading module data for ${selectedModule.value}:`, err)

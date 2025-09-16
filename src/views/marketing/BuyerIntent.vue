@@ -135,10 +135,212 @@
         </div>
       </div>
 
-      <!-- Simple placeholder for now -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Buyer Intent Tracking</h3>
-        <p class="text-gray-600">Comprehensive buyer intent tracking with filters, analytics, and test event logging coming soon...</p>
+      <!-- Buyer Intent Tracking Interface -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <!-- Left Panel: Intent Data Table -->
+        <div class="lg:col-span-2">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <!-- Filters -->
+            <div class="px-6 py-4 border-b border-gray-200">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('marketing.buyer_intent.filters.company') }}</label>
+                  <select v-model="filters.company_id" @change="applyFilters" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">{{ $t('marketing.buyer_intent.filters.all_companies') }}</option>
+                    <option v-for="company in uniqueCompanies" :key="company.id" :value="company.id">{{ company.name }}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('marketing.buyer_intent.filters.contact') }}</label>
+                  <select v-model="filters.contact_id" @change="applyFilters" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">{{ $t('marketing.buyer_intent.filters.all_contacts') }}</option>
+                    <option v-for="contact in uniqueContacts" :key="contact.id" :value="contact.id">{{ contact.name }}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('marketing.buyer_intent.filters.action') }}</label>
+                  <select v-model="filters.action" @change="applyFilters" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">{{ $t('marketing.buyer_intent.filters.all_actions') }}</option>
+                    <option v-for="action in trackingActions" :key="action.id" :value="action.id">{{ action.name }}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('marketing.buyer_intent.filters.intent_level') }}</label>
+                  <select v-model="filters.intent_level" @change="applyFilters" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">{{ $t('marketing.buyer_intent.filters.all_levels') }}</option>
+                    <option v-for="level in intentLevels" :key="level.id" :value="level.id">{{ level.name }}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mt-4 flex justify-between items-center">
+                <button @click="clearFilters" class="text-sm text-gray-600 hover:text-gray-800">{{ $t('marketing.buyer_intent.filters.clear_filters') }}</button>
+                <button @click="openTestEventModal" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                  {{ $t('marketing.buyer_intent.actions.log_test_event') }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Intent Data Table -->
+            <div v-if="loading" class="p-12 text-center">
+              <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <p class="mt-4 text-gray-600">{{ $t('marketing.buyer_intent.loading') }}</p>
+            </div>
+
+            <div v-else-if="error" class="p-12 text-center">
+              <svg class="mx-auto h-12 w-12 text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h4 class="text-lg font-medium text-gray-900 mb-2">{{ $t('marketing.buyer_intent.error') }}</h4>
+              <p class="text-gray-600 mb-6">{{ error }}</p>
+              <button @click="loadIntentData" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition-colors">
+                {{ $t('marketing.buyer_intent.actions.retry') }}
+              </button>
+            </div>
+
+            <div v-else-if="intentData.length === 0" class="p-12 text-center">
+              <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h4 class="text-lg font-medium text-gray-900 mb-2">{{ $t('marketing.buyer_intent.empty_state.title') }}</h4>
+              <p class="text-gray-600 mb-6">{{ $t('marketing.buyer_intent.empty_state.message') }}</p>
+              <button @click="openTestEventModal" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition-colors">
+                {{ $t('marketing.buyer_intent.empty_state.log_test_event') }}
+              </button>
+            </div>
+
+            <div v-else class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ $t('marketing.buyer_intent.table.when') }}</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ $t('marketing.buyer_intent.table.contact') }}</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ $t('marketing.buyer_intent.table.company') }}</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ $t('marketing.buyer_intent.table.page') }}</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ $t('marketing.buyer_intent.table.action') }}</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ $t('marketing.buyer_intent.table.score') }}</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ $t('marketing.buyer_intent.table.intent_level') }}</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr v-for="item in intentData" :key="item.id" class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ formatTimestamp(item.timestamp) }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ item.contact?.name || 'Unknown' }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ item.company?.name || 'Unknown' }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ getPageTitle(item.page_url) }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ getActionName(item.action) }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" :class="getScoreColor(item.score)">{{ item.score }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span :class="getIntentLevelColor(item.intent_level)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
+                        {{ item.intent_level }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: Intent Analytics -->
+        <div class="space-y-6">
+          <!-- Overview Cards -->
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('marketing.buyer_intent.analytics.overview.title') }}</h3>
+            <div class="space-y-4">
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600">{{ $t('marketing.buyer_intent.analytics.overview.total_events') }}</span>
+                <span class="text-sm font-medium">{{ formatNumber(analyticsData?.overview?.total_events || 0) }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600">{{ $t('marketing.buyer_intent.analytics.overview.unique_contacts') }}</span>
+                <span class="text-sm font-medium">{{ formatNumber(analyticsData?.overview?.unique_contacts || 0) }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600">{{ $t('marketing.buyer_intent.analytics.overview.unique_companies') }}</span>
+                <span class="text-sm font-medium">{{ formatNumber(analyticsData?.overview?.unique_companies || 0) }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600">{{ $t('marketing.buyer_intent.analytics.overview.average_score') }}</span>
+                <span class="text-sm font-medium">{{ analyticsData?.overview?.average_score || 0 }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Breakdown -->
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('marketing.buyer_intent.analytics.action_breakdown') }}</h3>
+            <div class="space-y-3">
+              <div v-for="action in analyticsData?.action_breakdown || []" :key="action.action" class="flex justify-between items-center">
+                <span class="text-sm text-gray-600">{{ getActionName(action.action) }}</span>
+                <div class="flex items-center space-x-2">
+                  <span class="text-sm font-medium">{{ formatNumber(action.count) }}</span>
+                  <span class="text-xs text-gray-500">({{ action.percentage }}%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top Pages -->
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('marketing.buyer_intent.analytics.top_pages') }}</h3>
+            <div class="space-y-3">
+              <div v-for="page in analyticsData?.top_pages || []" :key="page.page" class="flex justify-between items-center">
+                <span class="text-sm text-gray-600">{{ getPageTitle(page.page) }}</span>
+                <div class="flex items-center space-x-2">
+                  <span class="text-sm font-medium">{{ formatNumber(page.views) }}</span>
+                  <span class="text-xs text-gray-500">({{ page.intent_score }})</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Visitor Intent Analytics -->
+          <div v-if="visitorIntentAnalytics" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('marketing.buyer_intent.analytics.visitor_intent.title') }}</h3>
+            <div class="space-y-4">
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600">{{ $t('marketing.buyer_intent.analytics.visitor_intent.total_visitors') }}</span>
+                <span class="text-sm font-medium">{{ formatNumber(visitorIntentAnalytics.summary?.total_visitors || 0) }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600">{{ $t('marketing.buyer_intent.analytics.visitor_intent.conversion_rate') }}</span>
+                <span class="text-sm font-medium">{{ visitorIntentAnalytics.summary?.conversion_rate || 0 }}%</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600">{{ $t('marketing.buyer_intent.analytics.visitor_intent.avg_intent_score') }}</span>
+                <span class="text-sm font-medium">{{ visitorIntentAnalytics.summary?.avg_intent_score || 0 }}</span>
+              </div>
+            </div>
+            
+            <!-- Intent Distribution -->
+            <div class="mt-6">
+              <h4 class="text-sm font-medium text-gray-900 mb-3">{{ $t('marketing.buyer_intent.analytics.visitor_intent.intent_distribution') }}</h4>
+              <div class="space-y-2">
+                <div class="flex justify-between items-center">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.buyer_intent.analytics.visitor_intent.high_intent') }}</span>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-sm font-medium">{{ formatNumber(visitorIntentAnalytics.intent_distribution?.high?.count || 0) }}</span>
+                    <span class="text-xs text-green-600">{{ visitorIntentAnalytics.intent_distribution?.high?.trend || '' }}</span>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.buyer_intent.analytics.visitor_intent.medium_intent') }}</span>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-sm font-medium">{{ formatNumber(visitorIntentAnalytics.intent_distribution?.medium?.count || 0) }}</span>
+                    <span class="text-xs text-green-600">{{ visitorIntentAnalytics.intent_distribution?.medium?.trend || '' }}</span>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.buyer_intent.analytics.visitor_intent.low_intent') }}</span>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-sm font-medium">{{ formatNumber(visitorIntentAnalytics.intent_distribution?.low?.count || 0) }}</span>
+                    <span class="text-xs text-red-600">{{ visitorIntentAnalytics.intent_distribution?.low?.trend || '' }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -260,6 +462,7 @@ const loading = ref(false)
 const error = ref(null)
 const intentData = ref([])
 const analyticsData = ref(null)
+const visitorIntentAnalytics = ref(null)
 const trackingActions = ref([])
 const intentLevels = ref([])
 
@@ -366,6 +569,19 @@ const loadAnalytics = async () => {
   }
 }
 
+const loadVisitorIntentAnalytics = async () => {
+  try {
+    const params = {}
+    if (filters.value.date_from) params.date_from = filters.value.date_from
+    if (filters.value.date_to) params.date_to = filters.value.date_to
+    
+    const response = await buyerIntentService.getVisitorIntentAnalytics(params)
+    visitorIntentAnalytics.value = response.data
+  } catch (err) {
+    console.error('Failed to load visitor intent analytics:', err)
+  }
+}
+
 const loadTrackingActions = async () => {
   try {
     const response = await buyerIntentService.getTrackingActions()
@@ -388,6 +604,7 @@ const applyFilters = () => {
   pagination.value.current_page = 1
   loadIntentData()
   loadAnalytics()
+  loadVisitorIntentAnalytics()
 }
 
 const clearFilters = () => {
@@ -408,6 +625,7 @@ const clearFilters = () => {
 const refreshData = () => {
   loadIntentData()
   loadAnalytics()
+  loadVisitorIntentAnalytics()
 }
 
 const openTestEventModal = () => {
@@ -460,6 +678,7 @@ onMounted(async () => {
   await Promise.all([
     loadIntentData(),
     loadAnalytics(),
+    loadVisitorIntentAnalytics(),
     loadTrackingActions(),
     loadIntentLevels()
   ])

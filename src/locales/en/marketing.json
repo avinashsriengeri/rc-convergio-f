@@ -62,7 +62,114 @@
       "create_campaign": "Create Campaign"
     },
     "loading": "Loading email campaigns...",
-    "error": "Error loading email campaigns"
+    "error": "Error loading email campaigns",
+    "overall_metrics": {
+      "title": "Overall Email Metrics",
+      "total_campaigns": "Total Campaigns",
+      "total_sent": "Total Sent",
+      "total_opens": "Total Opens",
+      "total_clicks": "Total Clicks",
+      "total_bounces": "Total Bounces",
+      "total_unsubscribes": "Total Unsubscribes",
+      "avg_open_rate": "Avg Open Rate",
+      "avg_click_rate": "Avg Click Rate",
+      "avg_bounce_rate": "Avg Bounce Rate",
+      "avg_unsubscribe_rate": "Avg Unsubscribe Rate"
+    },
+    "tracking": {
+      "title": "Email Tracking",
+      "opens": "Email Opens",
+      "clicks": "Email Clicks",
+      "recipient": "Recipient",
+      "opened_at": "Opened At",
+      "clicked_at": "Clicked At",
+      "clicked_url": "Clicked URL",
+      "ip_address": "IP Address",
+      "user_agent": "User Agent",
+      "location": "Location",
+      "no_opens": "No opens recorded",
+      "no_clicks": "No clicks recorded",
+      "error": "Error loading tracking data"
+    },
+    "automations": {
+      "title": "Email Automations",
+      "subtitle": "Automate your email marketing workflows",
+      "create_automation": "Create Automation",
+      "automation_name": "Automation Name",
+      "trigger": "Trigger",
+      "status": "Status",
+      "steps": "Steps",
+      "created_at": "Created",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "activate": "Activate",
+      "pause": "Pause",
+      "triggers": {
+        "contact_created": "Contact Created",
+        "email_opened": "Email Opened",
+        "link_clicked": "Link Clicked",
+        "form_submitted": "Form Submitted"
+      },
+      "automation_actions": {
+        "send_email": "Send Email",
+        "add_tag": "Add Tag",
+        "create_task": "Create Task",
+        "update_field": "Update Field"
+      },
+      "conditions": {
+        "tag_has": "Has Tag",
+        "field_equals": "Field Equals",
+        "opened_count": "Opens Count"
+      },
+      "statuses": {
+        "active": "Active",
+        "draft": "Draft",
+        "paused": "Paused",
+        "completed": "Completed"
+      },
+      "create_modal": {
+        "title": "Create Email Automation",
+        "name_placeholder": "Enter automation name",
+        "trigger_label": "When should this automation trigger?",
+        "action_label": "What action should be taken?",
+        "condition_label": "Add conditions (optional)",
+        "create": "Create Automation",
+        "cancel": "Cancel"
+      },
+      "delete_modal": {
+        "title": "Delete Automation",
+        "message": "Are you sure you want to delete this automation? This action cannot be undone.",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      },
+      "empty_state": {
+        "title": "No automations found",
+        "message": "Create your first email automation to start engaging with your audience automatically",
+        "create_automation": "Create Automation"
+      },
+      "loading": "Loading automations...",
+      "error": "Error loading automations",
+      "delete_success": "Automation deleted successfully",
+      "delete_error": "Error deleting automation"
+    },
+    "webhooks": {
+      "title": "Email Webhooks",
+      "subtitle": "Handle email events and integrations",
+      "event_types": {
+        "sent": "Email Sent",
+        "delivered": "Email Delivered",
+        "opened": "Email Opened",
+        "clicked": "Link Clicked",
+        "bounced": "Email Bounced",
+        "complained": "Spam Complaint",
+        "unsubscribed": "Unsubscribed"
+      },
+      "test_webhook": "Test Webhook",
+      "webhook_url": "Webhook URL",
+      "events_received": "Events Received",
+      "last_event": "Last Event"
+    }
   },
   "ads": {
     "title": "Ads Management",
@@ -135,7 +242,40 @@
       "error": "Error"
     },
     "loading": "Loading ad accounts...",
-    "error": "Error loading ad accounts"
+    "error": "Error loading ad accounts",
+    "analytics": {
+      "title": "Ads Analytics",
+      "refresh": "Refresh",
+      "loading": "Loading analytics...",
+      "total_spend": "Total Spend",
+      "total_impressions": "Total Impressions",
+      "total_clicks": "Total Clicks",
+      "total_conversions": "Total Conversions",
+      "avg_ctr": "Avg CTR",
+      "avg_cpc": "Avg CPC",
+      "avg_conversion_rate": "Avg Conversion Rate",
+      "avg_roi": "Avg ROI",
+      "top_campaigns": "Top Performing Campaigns",
+      "campaign_name": "Campaign Name",
+      "spend": "Spend",
+      "impressions": "Impressions",
+      "clicks": "Clicks",
+      "conversions": "Conversions",
+      "ctr": "CTR",
+      "roi": "ROI",
+      "performance_by_provider": "Performance by Provider",
+      "trends_chart": "Performance Trends",
+      "trends_description": "Chart showing ad performance over time",
+      "no_data": "No analytics data available",
+      "no_data_description": "Analytics data will appear here once you start running ad campaigns",
+      "load_data": "Load Analytics"
+    },
+    "providers": {
+      "google_ads": "Google Ads",
+      "facebook_ads": "Facebook Ads",
+      "linkedin_ads": "LinkedIn Ads",
+      "twitter_ads": "Twitter Ads"
+    }
   },
   "events": {
     "title": "Events",
@@ -144,7 +284,8 @@
     "tabs": {
       "upcoming": "Upcoming",
       "completed": "Completed",
-      "all": "All"
+      "all": "All",
+      "analytics": "Analytics"
     },
     "filters": {
       "type": "Event Type",
@@ -230,7 +371,31 @@
       "create_event": "Create Event"
     },
     "loading": "Loading events...",
-    "error": "Error loading events"
+    "error": "Error loading events",
+    "analytics": {
+      "title": "Events Analytics",
+      "refresh": "Refresh",
+      "loading": "Loading analytics...",
+      "total_events": "Total Events",
+      "upcoming_events": "Upcoming Events",
+      "completed_events": "Completed Events",
+      "total_attendees": "Total Attendees",
+      "total_rsvps": "Total RSVPs",
+      "avg_attendance_rate": "Avg Attendance Rate",
+      "avg_rsvp_rate": "Avg RSVP Rate",
+      "events_by_type": "Events by Type",
+      "events_count": "Events Count",
+      "top_performing_events": "Top Performing Events",
+      "event_name": "Event Name",
+      "type": "Type",
+      "attendance_rate": "Attendance Rate",
+      "scheduled_at": "Scheduled At",
+      "monthly_trends": "Monthly Trends",
+      "trends_description": "Chart showing event performance over time",
+      "no_data": "No analytics data available",
+      "no_data_description": "Analytics data will appear here once you start creating events",
+      "load_data": "Load Analytics"
+    }
   },
   "buyer_intent": {
     "title": "Buyer Intent",
@@ -248,7 +413,7 @@
       "all_contacts": "All Contacts",
       "all_pages": "All Pages",
       "all_actions": "All Actions",
-      "all_intent_levels": "All Intent Levels",
+      "all_levels": "All Levels",
       "min_score": "Min Score",
       "max_score": "Max Score",
       "date_from": "From Date",
@@ -280,12 +445,23 @@
       },
       "action_breakdown": "Action Breakdown",
       "top_pages": "Top Pages",
-      "intent_trend": "Intent Trend"
+      "intent_trend": "Intent Trend",
+      "visitor_intent": {
+        "title": "Visitor Intent Analytics",
+        "total_visitors": "Total Visitors",
+        "conversion_rate": "Conversion Rate",
+        "avg_intent_score": "Avg Intent Score",
+        "intent_distribution": "Intent Distribution",
+        "high_intent": "High Intent",
+        "medium_intent": "Medium Intent",
+        "low_intent": "Low Intent"
+      }
     },
     "actions": {
       "view_details": "View Details",
       "log_test_event": "Log Test Event",
-      "refresh_data": "Refresh Data"
+      "refresh_data": "Refresh Data",
+      "retry": "Retry"
     },
     "test_event_modal": {
       "title": "Log Test Event",
@@ -353,6 +529,14 @@
       "score": "Score",
       "change": "Change",
       "last_updated": "Last Updated"
+    },
+    "analytics": {
+      "title": "Lead Scoring Analytics",
+      "total_contacts_scored": "Total Contacts Scored",
+      "conversion_rate": "Conversion Rate",
+      "score_distribution": "Score Distribution",
+      "top_scoring_rules": "Top Scoring Rules",
+      "company_breakdown": "Company Breakdown"
     },
     "rule_modal": {
       "create_title": "Create Scoring Rule",
@@ -423,6 +607,21 @@
       "contacts_in_journeys": "Contacts in Journeys",
       "avg_completion_rate": "Avg. Completion Rate",
       "conversion_rate": "Conversion Rate"
+    },
+    "analytics": {
+      "title": "Journeys Analytics",
+      "journey_performance": "Journey Performance",
+      "step_performance": "Step Performance",
+      "top_performing_journeys": "Top Performing Journeys",
+      "total_executions": "Total Executions",
+      "conversion_rate": "Conversion Rate",
+      "avg_duration": "Avg Duration",
+      "completed": "Completed",
+      "avg_open_rate": "Avg Open Rate",
+      "avg_click_rate": "Avg Click Rate",
+      "completion_rate": "Completion Rate",
+      "total_revenue": "Total Revenue",
+      "contacts_converted": "Contacts Converted"
     },
     "create_modal": {
       "title": "Create Journey",
@@ -534,7 +733,12 @@
     "loading": "Loading forecast data...",
     "error": "Error loading forecast data",
     "no_data": "No forecast data available",
-    "refresh": "Refresh Data"
+    "refresh": "Refresh Data",
+    "multi_timeframe": {
+      "title": "Multi-Timeframe Comparison",
+      "trends_summary": "Trends Summary",
+      "trend": "Trend"
+    }
   },
   "meetings": {
     "title": "Meeting Scheduler",
@@ -625,12 +829,20 @@
       "create_meeting": "Create Meeting"
     },
     "loading": "Loading meetings...",
-    "error": "Error loading meetings"
-  },
-  "analytics": {
-    "title": "Analytics",
-    "subtitle": "Marketing analytics and reporting",
-    "description": "Track performance metrics, generate reports, and gain insights into your marketing ROI."
+    "error": "Error loading meetings",
+    "analytics": {
+      "title": "Meetings Analytics",
+      "provider_breakdown": "Provider Breakdown",
+      "status_breakdown": "Status Breakdown",
+      "top_contacts": "Top Contacts",
+      "summary_stats": "Summary Statistics",
+      "count": "Count",
+      "avg_duration": "Avg Duration",
+      "meetings_count": "Meetings",
+      "completion_rate": "Completion Rate",
+      "no_show_rate": "No Show Rate",
+      "cancellation_rate": "Cancellation Rate"
+    }
   },
   "common": {
     "empty_state": {
@@ -782,7 +994,7 @@
       "pending": "Pending",
       "completion_rate": "Completion Rate",
       "new_companies": "New Companies",
-      "converted": "Converted",
+      "converted_companies": "Converted",
       "probability_weighted": "Probability Weighted",
       "accuracy": "Accuracy",
       "active_deals": "Active Deals",

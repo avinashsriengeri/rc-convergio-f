@@ -278,6 +278,170 @@
       </div>
     </div>
 
+    <!-- Events Analytics Section -->
+    <div v-if="activeTab === 'analytics'" class="bg-white rounded-lg shadow-sm border border-gray-200">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex justify-between items-center">
+          <h3 class="text-lg font-semibold text-gray-900">{{ $t('marketing.events.analytics.title') }}</h3>
+          <button
+            @click="loadEventsAnalytics"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+          >
+            {{ $t('marketing.events.analytics.refresh') }}
+          </button>
+        </div>
+      </div>
+
+      <div v-if="analyticsLoading" class="p-12 text-center">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <p class="mt-4 text-gray-600">{{ $t('marketing.events.analytics.loading') }}</p>
+      </div>
+
+      <div v-else-if="eventsAnalytics" class="p-6">
+        <!-- Overall Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-gray-900">{{ eventsAnalytics.total_events }}</div>
+            <div class="text-sm text-gray-600">{{ $t('marketing.events.analytics.total_events') }}</div>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-gray-900">{{ eventsAnalytics.upcoming_events }}</div>
+            <div class="text-sm text-gray-600">{{ $t('marketing.events.analytics.upcoming_events') }}</div>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-gray-900">{{ eventsAnalytics.completed_events }}</div>
+            <div class="text-sm text-gray-600">{{ $t('marketing.events.analytics.completed_events') }}</div>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-gray-900">{{ formatNumber(eventsAnalytics.total_attendees) }}</div>
+            <div class="text-sm text-gray-600">{{ $t('marketing.events.analytics.total_attendees') }}</div>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-gray-900">{{ formatNumber(eventsAnalytics.total_rsvps) }}</div>
+            <div class="text-sm text-gray-600">{{ $t('marketing.events.analytics.total_rsvps') }}</div>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-gray-900">{{ eventsAnalytics.avg_attendance_rate }}%</div>
+            <div class="text-sm text-gray-600">{{ $t('marketing.events.analytics.avg_attendance_rate') }}</div>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-gray-900">{{ eventsAnalytics.avg_rsvp_rate }}%</div>
+            <div class="text-sm text-gray-600">{{ $t('marketing.events.analytics.avg_rsvp_rate') }}</div>
+          </div>
+        </div>
+
+        <!-- Events by Type -->
+        <div class="mb-8">
+          <h4 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('marketing.events.analytics.events_by_type') }}</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div
+              v-for="typeData in eventsAnalytics.events_by_type"
+              :key="typeData.type"
+              class="border border-gray-200 rounded-lg p-6"
+            >
+              <div class="flex items-center mb-4">
+                <span :class="getEventTypeColor(typeData.type)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
+                  {{ typeData.type }}
+                </span>
+              </div>
+              <div class="space-y-2">
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.events.analytics.events_count') }}:</span>
+                  <span class="text-sm font-medium">{{ typeData.count }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.events.analytics.total_attendees') }}:</span>
+                  <span class="text-sm font-medium">{{ formatNumber(typeData.total_attendees) }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.events.analytics.avg_attendance_rate') }}:</span>
+                  <span class="text-sm font-medium">{{ typeData.avg_attendance_rate }}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Performing Events -->
+        <div class="mb-8">
+          <h4 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('marketing.events.analytics.top_performing_events') }}</h4>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.events.analytics.event_name') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.events.analytics.type') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.events.analytics.total_rsvps') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.events.analytics.total_attendees') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.events.analytics.attendance_rate') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.events.analytics.scheduled_at') }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr v-for="event in eventsAnalytics.top_performing_events" :key="event.id">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {{ event.name }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span :class="getEventTypeColor(event.type)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
+                      {{ event.type }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ formatNumber(event.total_rsvps) }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ formatNumber(event.total_attendees) }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ event.attendance_rate }}%
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ formatDateTime(event.scheduled_at) }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Monthly Trends Chart Placeholder -->
+        <div class="bg-gray-50 p-8 rounded-lg text-center">
+          <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <h4 class="text-lg font-medium text-gray-900 mb-2">{{ $t('marketing.events.analytics.monthly_trends') }}</h4>
+          <p class="text-gray-600">{{ $t('marketing.events.analytics.trends_description') }}</p>
+        </div>
+      </div>
+
+      <div v-else class="p-12 text-center">
+        <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        <h4 class="text-lg font-medium text-gray-900 mb-2">{{ $t('marketing.events.analytics.no_data') }}</h4>
+        <p class="text-gray-600 mb-6">{{ $t('marketing.events.analytics.no_data_description') }}</p>
+        <button
+          @click="loadEventsAnalytics"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition-colors"
+        >
+          {{ $t('marketing.events.analytics.load_data') }}
+        </button>
+      </div>
+    </div>
+
     <!-- Create Event Modal -->
     <div
       v-if="showCreateModal"
@@ -539,6 +703,8 @@ const eventTypes = ref([])
 const selectedEvent = ref(null)
 const eventAttendees = ref([])
 const attendeeFilter = ref('')
+const eventsAnalytics = ref(null)
+const analyticsLoading = ref(false)
 
 // Modal states
 const showCreateModal = ref(false)
@@ -551,7 +717,8 @@ const selectedType = ref('')
 const tabs = ref([
   { id: 'upcoming', label: 'Upcoming' },
   { id: 'completed', label: 'Completed' },
-  { id: 'all', label: 'All' }
+  { id: 'all', label: 'All' },
+  { id: 'analytics', label: 'Analytics' }
 ])
 
 // Forms
@@ -608,6 +775,11 @@ const averageUtilization = computed(() => {
 
 // Methods
 const loadEvents = async () => {
+  if (activeTab.value === 'analytics') {
+    await loadEventsAnalytics()
+    return
+  }
+  
   loading.value = true
   error.value = null
   
@@ -652,6 +824,20 @@ const loadEventAttendees = async () => {
     eventAttendees.value = response.data || []
   } catch (err) {
     console.error('Failed to load event attendees:', err)
+  }
+}
+
+const loadEventsAnalytics = async () => {
+  analyticsLoading.value = true
+  eventsAnalytics.value = null
+  
+  try {
+    const response = await eventsService.getEventsAnalytics()
+    eventsAnalytics.value = response.data
+  } catch (err) {
+    showError(err.message || 'Failed to fetch events analytics')
+  } finally {
+    analyticsLoading.value = false
   }
 }
 
@@ -748,7 +934,8 @@ const formatDuration = (minutes) => eventsHelpers.formatDuration(minutes)
 onMounted(async () => {
   await Promise.all([
     loadEvents(),
-    loadEventTypes()
+    loadEventTypes(),
+    loadEventsAnalytics()
   ])
 })
 </script>

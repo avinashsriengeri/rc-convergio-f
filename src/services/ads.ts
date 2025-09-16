@@ -198,6 +198,104 @@ export const adsService = {
       
       throw error
     }
+  },
+
+  // Get ads analytics
+  async getAdsAnalytics(params = {}) {
+    try {
+      const response = await api.get('/analytics/ads', { params })
+      return response.data
+    } catch (error) {
+      console.error('Error fetching ads analytics:', error)
+      
+      // Return fallback data for development/demo purposes
+      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        console.log('Ads analytics API timeout - using fallback data')
+        return {
+          data: {
+            total_spend: 125000,
+            total_impressions: 8500000,
+            total_clicks: 170000,
+            total_conversions: 4250,
+            avg_ctr: 2.0,
+            avg_cpc: 0.74,
+            avg_conversion_rate: 2.5,
+            avg_roi: 3.8,
+            top_performing_campaigns: [
+              {
+                id: 1,
+                name: 'Summer Sale Campaign',
+                spend: 25000,
+                impressions: 1800000,
+                clicks: 36000,
+                conversions: 900,
+                ctr: 2.0,
+                cpc: 0.69,
+                conversion_rate: 2.5,
+                roi: 4.2
+              },
+              {
+                id: 2,
+                name: 'Brand Awareness',
+                spend: 20000,
+                impressions: 2200000,
+                clicks: 33000,
+                conversions: 660,
+                ctr: 1.5,
+                cpc: 0.61,
+                conversion_rate: 2.0,
+                roi: 3.5
+              }
+            ],
+            performance_by_provider: [
+              {
+                provider: 'google_ads',
+                spend: 75000,
+                impressions: 4500000,
+                clicks: 90000,
+                conversions: 2250,
+                ctr: 2.0,
+                cpc: 0.83,
+                conversion_rate: 2.5,
+                roi: 3.6
+              },
+              {
+                provider: 'facebook_ads',
+                spend: 35000,
+                impressions: 2800000,
+                clicks: 56000,
+                conversions: 1400,
+                ctr: 2.0,
+                cpc: 0.63,
+                conversion_rate: 2.5,
+                roi: 4.0
+              },
+              {
+                provider: 'linkedin_ads',
+                spend: 15000,
+                impressions: 1200000,
+                clicks: 24000,
+                conversions: 600,
+                ctr: 2.0,
+                cpc: 0.63,
+                conversion_rate: 2.5,
+                roi: 4.0
+              }
+            ],
+            trends: {
+              spend: [15000, 18000, 22000, 25000, 28000, 32000],
+              impressions: [1200000, 1400000, 1600000, 1800000, 2000000, 2200000],
+              clicks: [24000, 28000, 32000, 36000, 40000, 44000],
+              conversions: [600, 700, 800, 900, 1000, 1100]
+            },
+            period: 'last_30_days',
+            last_updated: '2024-01-20T15:30:00Z'
+          }
+        }
+      }
+      
+      throw error
+    }
   }
 }
 

@@ -51,9 +51,9 @@
             @change="handleTimeframeChange"
             class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="monthly">{{ $t('marketing.forecasting.timeframes.monthly') }}</option>
-            <option value="quarterly">{{ $t('marketing.forecasting.timeframes.quarterly') }}</option>
-            <option value="yearly">{{ $t('marketing.forecasting.timeframes.yearly') }}</option>
+            <option v-for="timeframe in availableTimeframes" :key="timeframe.id" :value="timeframe.id">
+              {{ timeframe.name }}
+            </option>
           </select>
           <!-- Refresh Button -->
           <button
@@ -291,6 +291,106 @@
             </div>
           </div>
         </div>
+
+        <!-- Multi-Timeframe Comparison -->
+        <div v-if="multiTimeframeData" class="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-6">{{ $t('marketing.forecasting.multi_timeframe.title') }}</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Monthly Forecast -->
+            <div class="border border-gray-200 rounded-lg p-4">
+              <h4 class="text-sm font-medium text-gray-900 mb-4">{{ $t('marketing.forecasting.timeframes.monthly') }}</h4>
+              <div class="space-y-3">
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.forecasting.kpis.projected_value') }}:</span>
+                  <span class="text-sm font-semibold">{{ formatCurrency(multiTimeframeData.monthly.projected_value) }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.forecasting.kpis.probability_weighted') }}:</span>
+                  <span class="text-sm font-semibold">{{ formatCurrency(multiTimeframeData.monthly.probability_weighted) }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.forecasting.kpis.forecast_accuracy') }}:</span>
+                  <span :class="getAccuracyColor(multiTimeframeData.monthly.forecast_accuracy)" class="text-sm font-semibold">
+                    {{ formatPercentage(multiTimeframeData.monthly.forecast_accuracy) }}
+                  </span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.forecasting.kpis.active_deals') }}:</span>
+                  <span class="text-sm font-semibold">{{ formatNumber(multiTimeframeData.monthly.active_deals) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quarterly Forecast -->
+            <div class="border border-gray-200 rounded-lg p-4">
+              <h4 class="text-sm font-medium text-gray-900 mb-4">{{ $t('marketing.forecasting.timeframes.quarterly') }}</h4>
+              <div class="space-y-3">
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.forecasting.kpis.projected_value') }}:</span>
+                  <span class="text-sm font-semibold">{{ formatCurrency(multiTimeframeData.quarterly.projected_value) }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.forecasting.kpis.probability_weighted') }}:</span>
+                  <span class="text-sm font-semibold">{{ formatCurrency(multiTimeframeData.quarterly.probability_weighted) }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.forecasting.kpis.forecast_accuracy') }}:</span>
+                  <span :class="getAccuracyColor(multiTimeframeData.quarterly.forecast_accuracy)" class="text-sm font-semibold">
+                    {{ formatPercentage(multiTimeframeData.quarterly.forecast_accuracy) }}
+                  </span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.forecasting.kpis.active_deals') }}:</span>
+                  <span class="text-sm font-semibold">{{ formatNumber(multiTimeframeData.quarterly.active_deals) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Yearly Forecast -->
+            <div class="border border-gray-200 rounded-lg p-4">
+              <h4 class="text-sm font-medium text-gray-900 mb-4">{{ $t('marketing.forecasting.timeframes.yearly') }}</h4>
+              <div class="space-y-3">
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.forecasting.kpis.projected_value') }}:</span>
+                  <span class="text-sm font-semibold">{{ formatCurrency(multiTimeframeData.yearly.projected_value) }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.forecasting.kpis.probability_weighted') }}:</span>
+                  <span class="text-sm font-semibold">{{ formatCurrency(multiTimeframeData.yearly.probability_weighted) }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.forecasting.kpis.forecast_accuracy') }}:</span>
+                  <span :class="getAccuracyColor(multiTimeframeData.yearly.forecast_accuracy)" class="text-sm font-semibold">
+                    {{ formatPercentage(multiTimeframeData.yearly.forecast_accuracy) }}
+                  </span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">{{ $t('marketing.forecasting.kpis.active_deals') }}:</span>
+                  <span class="text-sm font-semibold">{{ formatNumber(multiTimeframeData.yearly.active_deals) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trends Summary -->
+          <div v-if="multiTimeframeData.trends" class="mt-6 pt-6 border-t border-gray-200">
+            <h4 class="text-sm font-medium text-gray-900 mb-4">{{ $t('marketing.forecasting.multi_timeframe.trends_summary') }}</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="text-center p-3 bg-blue-50 rounded-lg">
+                <div class="text-lg font-semibold text-blue-600">{{ multiTimeframeData.trends.monthly_trend }}</div>
+                <div class="text-sm text-blue-600">{{ $t('marketing.forecasting.timeframes.monthly') }} {{ $t('marketing.forecasting.multi_timeframe.trend') }}</div>
+              </div>
+              <div class="text-center p-3 bg-purple-50 rounded-lg">
+                <div class="text-lg font-semibold text-purple-600">{{ multiTimeframeData.trends.quarterly_trend }}</div>
+                <div class="text-sm text-purple-600">{{ $t('marketing.forecasting.timeframes.quarterly') }} {{ $t('marketing.forecasting.multi_timeframe.trend') }}</div>
+              </div>
+              <div class="text-center p-3 bg-green-50 rounded-lg">
+                <div class="text-lg font-semibold text-green-600">{{ multiTimeframeData.trends.yearly_trend }}</div>
+                <div class="text-sm text-green-600">{{ $t('marketing.forecasting.timeframes.yearly') }} {{ $t('marketing.forecasting.multi_timeframe.trend') }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- No Data State -->
@@ -329,6 +429,8 @@ const forecastData = ref(null)
 const pipelineData = ref([])
 const accuracyTrends = ref([])
 const selectedTimeframe = ref('monthly')
+const multiTimeframeData = ref(null)
+const availableTimeframes = ref([])
 
 // Computed properties
 const hasData = computed(() => {
@@ -374,6 +476,24 @@ const loadForecastData = async () => {
   }
 }
 
+const loadMultiTimeframeData = async () => {
+  try {
+    const response = await forecastingService.getMultiTimeframeForecast()
+    multiTimeframeData.value = response.data
+  } catch (err) {
+    console.error('Failed to load multi-timeframe data:', err)
+  }
+}
+
+const loadAvailableTimeframes = async () => {
+  try {
+    const response = await forecastingService.getTimeframes()
+    availableTimeframes.value = response.data || []
+  } catch (err) {
+    console.error('Failed to load timeframes:', err)
+  }
+}
+
 const refreshData = async () => {
   await loadForecastData()
   showSuccess('Forecast data refreshed successfully')
@@ -407,6 +527,10 @@ watch(() => route.query.timeframe, (newTimeframe) => {
 // Lifecycle
 onMounted(async () => {
   initializeFromURL()
-  await loadForecastData()
+  await Promise.all([
+    loadForecastData(),
+    loadMultiTimeframeData(),
+    loadAvailableTimeframes()
+  ])
 })
 </script>

@@ -127,6 +127,106 @@
         </div>
       </div>
 
+      <!-- Journeys Analytics -->
+      <div v-if="journeysAnalytics" class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">{{ $t('marketing.journeys.analytics.title') }}</h3>
+        </div>
+        <div class="p-6">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Left Column: Journey Performance -->
+            <div>
+              <h4 class="text-sm font-medium text-gray-900 mb-4">{{ $t('marketing.journeys.analytics.journey_performance') }}</h4>
+              <div class="space-y-4">
+                <div v-for="journey in journeysAnalytics.journey_performance?.slice(0, 3)" :key="journey.journey_id" class="border border-gray-200 rounded-lg p-4">
+                  <div class="flex justify-between items-start mb-2">
+                    <h5 class="text-sm font-medium text-gray-900">{{ journey.journey_name }}</h5>
+                    <span class="text-sm font-medium text-green-600">{{ journey.completion_rate }}%</span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-4 text-xs text-gray-600">
+                    <div>
+                      <span class="font-medium">{{ $t('marketing.journeys.analytics.total_executions') }}:</span>
+                      {{ formatNumber(journey.total_executions) }}
+                    </div>
+                    <div>
+                      <span class="font-medium">{{ $t('marketing.journeys.analytics.conversion_rate') }}:</span>
+                      {{ journey.conversion_rate }}%
+                    </div>
+                    <div>
+                      <span class="font-medium">{{ $t('marketing.journeys.analytics.avg_duration') }}:</span>
+                      {{ journey.avg_duration_hours }}h
+                    </div>
+                    <div>
+                      <span class="font-medium">{{ $t('marketing.journeys.analytics.completed') }}:</span>
+                      {{ formatNumber(journey.completed_executions) }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Step Performance -->
+            <div>
+              <h4 class="text-sm font-medium text-gray-900 mb-4">{{ $t('marketing.journeys.analytics.step_performance') }}</h4>
+              <div class="space-y-4">
+                <div v-for="step in journeysAnalytics.step_performance" :key="step.step_type" class="border border-gray-200 rounded-lg p-4">
+                  <div class="flex justify-between items-start mb-2">
+                    <h5 class="text-sm font-medium text-gray-900 capitalize">{{ step.step_type }}</h5>
+                    <span class="text-sm font-medium text-blue-600">{{ step.success_rate }}%</span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-4 text-xs text-gray-600">
+                    <div>
+                      <span class="font-medium">{{ $t('marketing.journeys.analytics.total_executions') }}:</span>
+                      {{ formatNumber(step.total_executions) }}
+                    </div>
+                    <div v-if="step.avg_open_rate">
+                      <span class="font-medium">{{ $t('marketing.journeys.analytics.avg_open_rate') }}:</span>
+                      {{ step.avg_open_rate }}%
+                    </div>
+                    <div v-if="step.avg_click_rate">
+                      <span class="font-medium">{{ $t('marketing.journeys.analytics.avg_click_rate') }}:</span>
+                      {{ step.avg_click_rate }}%
+                    </div>
+                    <div v-if="step.avg_duration_hours">
+                      <span class="font-medium">{{ $t('marketing.journeys.analytics.avg_duration') }}:</span>
+                      {{ step.avg_duration_hours }}h
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top Performing Journeys -->
+          <div class="mt-8">
+            <h4 class="text-sm font-medium text-gray-900 mb-4">{{ $t('marketing.journeys.analytics.top_performing_journeys') }}</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div v-for="journey in journeysAnalytics.top_performing_journeys?.slice(0, 3)" :key="journey.journey_name" class="border border-gray-200 rounded-lg p-4">
+                <h5 class="text-sm font-medium text-gray-900 mb-2">{{ journey.journey_name }}</h5>
+                <div class="space-y-2 text-xs text-gray-600">
+                  <div class="flex justify-between">
+                    <span>{{ $t('marketing.journeys.analytics.completion_rate') }}:</span>
+                    <span class="font-medium text-green-600">{{ journey.completion_rate }}%</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>{{ $t('marketing.journeys.analytics.conversion_rate') }}:</span>
+                    <span class="font-medium text-blue-600">{{ journey.conversion_rate }}%</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>{{ $t('marketing.journeys.analytics.total_revenue') }}:</span>
+                    <span class="font-medium text-purple-600">${{ formatNumber(journey.total_revenue) }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>{{ $t('marketing.journeys.analytics.contacts_converted') }}:</span>
+                    <span class="font-medium">{{ formatNumber(journey.contacts_converted) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Journeys Table -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200">
         <!-- Table Header -->
@@ -570,6 +670,7 @@ const error = ref(null)
 const journeys = ref([])
 const stepTypes = ref([])
 const executions = ref([])
+const journeysAnalytics = ref(null)
 
 // Modal states
 const showCreateModal = ref(false)
@@ -637,6 +738,15 @@ const loadExecutions = async (journeyId) => {
   } catch (err) {
     console.error('Failed to load executions:', err)
     executions.value = []
+  }
+}
+
+const loadJourneysAnalytics = async () => {
+  try {
+    const response = await journeysService.getJourneysAnalytics()
+    journeysAnalytics.value = response.data
+  } catch (err) {
+    console.error('Failed to load journeys analytics:', err)
   }
 }
 
@@ -782,7 +892,8 @@ const formatNumber = (num) => journeysHelpers.formatNumber(num)
 onMounted(async () => {
   await Promise.all([
     loadJourneys(),
-    loadStepTypes()
+    loadStepTypes(),
+    loadJourneysAnalytics()
   ])
 })
 </script>

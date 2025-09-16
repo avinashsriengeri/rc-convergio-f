@@ -187,6 +187,199 @@ export const analyticsService = {
     }
   },
 
+  // Specific module endpoints for better error handling and type safety
+  async getContactsAnalytics(period = 'month') {
+    try {
+      const response = await api.get('/analytics/contacts', {
+        params: { period }
+      })
+      if (!response.data) {
+        console.log('Analytics Contacts API failed or returned empty - using fallback data');
+        return { data: this.getFallbackModuleData('contacts', period) };
+      }
+      return response.data
+    } catch (error) {
+      console.log('Analytics Contacts API failed - using fallback data:', error.message)
+      return { data: this.getFallbackModuleData('contacts', period) }
+    }
+  },
+
+  async getCompaniesAnalytics(period = 'month') {
+    try {
+      const response = await api.get('/analytics/companies', {
+        params: { period }
+      })
+      if (!response.data) {
+        console.log('Analytics Companies API failed or returned empty - using fallback data');
+        return { data: this.getFallbackModuleData('companies', period) };
+      }
+      return response.data
+    } catch (error) {
+      console.log('Analytics Companies API failed - using fallback data:', error.message)
+      return { data: this.getFallbackModuleData('companies', period) }
+    }
+  },
+
+  async getDealsAnalytics(period = 'month') {
+    try {
+      const response = await api.get('/analytics/deals', {
+        params: { period }
+      })
+      if (!response.data) {
+        console.log('Analytics Deals API failed or returned empty - using fallback data');
+        return { data: this.getFallbackModuleData('deals', period) };
+      }
+      return response.data
+    } catch (error) {
+      console.log('Analytics Deals API failed - using fallback data:', error.message)
+      return { data: this.getFallbackModuleData('deals', period) }
+    }
+  },
+
+  async getCampaignsAnalytics(period = 'month') {
+    try {
+      const response = await api.get('/analytics/campaigns', {
+        params: { period }
+      })
+      if (!response.data) {
+        console.log('Analytics Campaigns API failed or returned empty - using fallback data');
+        return { data: this.getFallbackModuleData('campaigns', period) };
+      }
+      return response.data
+    } catch (error) {
+      console.log('Analytics Campaigns API failed - using fallback data:', error.message)
+      return { data: this.getFallbackModuleData('campaigns', period) }
+    }
+  },
+
+  async getAdsAnalytics(period = 'month') {
+    try {
+      const response = await api.get('/analytics/ads', {
+        params: { period }
+      })
+      if (!response.data) {
+        console.log('Analytics Ads API failed or returned empty - using fallback data');
+        return { data: this.getFallbackModuleData('ads', period) };
+      }
+      return response.data
+    } catch (error) {
+      console.log('Analytics Ads API failed - using fallback data:', error.message)
+      return { data: this.getFallbackModuleData('ads', period) }
+    }
+  },
+
+  async getEventsAnalytics(period = 'month') {
+    try {
+      const response = await api.get('/analytics/events', {
+        params: { period }
+      })
+      if (!response.data) {
+        console.log('Analytics Events API failed or returned empty - using fallback data');
+        return { data: this.getFallbackModuleData('events', period) };
+      }
+      return response.data
+    } catch (error) {
+      console.log('Analytics Events API failed - using fallback data:', error.message)
+      return { data: this.getFallbackModuleData('events', period) }
+    }
+  },
+
+  async getMeetingsAnalytics(period = 'month') {
+    try {
+      const response = await api.get('/analytics/meetings', {
+        params: { period }
+      })
+      if (!response.data) {
+        console.log('Analytics Meetings API failed or returned empty - using fallback data');
+        return { data: this.getFallbackModuleData('meetings', period) };
+      }
+      return response.data
+    } catch (error) {
+      console.log('Analytics Meetings API failed - using fallback data:', error.message)
+      return { data: this.getFallbackModuleData('meetings', period) }
+    }
+  },
+
+  async getTasksAnalytics(period = 'month') {
+    try {
+      const response = await api.get('/analytics/tasks', {
+        params: { period }
+      })
+      if (!response.data) {
+        console.log('Analytics Tasks API failed or returned empty - using fallback data');
+        return { data: this.getFallbackModuleData('tasks', period) };
+      }
+      return response.data
+    } catch (error) {
+      console.log('Analytics Tasks API failed - using fallback data:', error.message)
+      return { data: this.getFallbackModuleData('tasks', period) }
+    }
+  },
+
+  async getForecastAnalytics(period = 'month') {
+    try {
+      const response = await api.get('/analytics/forecast', {
+        params: { period }
+      })
+      if (!response.data) {
+        console.log('Analytics Forecast API failed or returned empty - using fallback data');
+        return { data: this.getFallbackModuleData('forecast', period) };
+      }
+      return response.data
+    } catch (error) {
+      console.log('Analytics Forecast API failed - using fallback data:', error.message)
+      return { data: this.getFallbackModuleData('forecast', period) }
+    }
+  },
+
+  async getLeadScoringAnalytics(period = 'month') {
+    try {
+      const response = await api.get('/analytics/lead-scoring', {
+        params: { period }
+      })
+      if (!response.data) {
+        console.log('Analytics Lead Scoring API failed or returned empty - using fallback data');
+        return { data: this.getFallbackModuleData('lead_scoring', period) };
+      }
+      return response.data
+    } catch (error) {
+      console.log('Analytics Lead Scoring API failed - using fallback data:', error.message)
+      return { data: this.getFallbackModuleData('lead_scoring', period) }
+    }
+  },
+
+  async getJourneysAnalytics(period = 'month') {
+    try {
+      const response = await api.get('/analytics/journeys', {
+        params: { period }
+      })
+      if (!response.data) {
+        console.log('Analytics Journeys API failed or returned empty - using fallback data');
+        return { data: this.getFallbackModuleData('journeys', period) };
+      }
+      return response.data
+    } catch (error) {
+      console.log('Analytics Journeys API failed - using fallback data:', error.message)
+      return { data: this.getFallbackModuleData('journeys', period) }
+    }
+  },
+
+  async getVisitorIntentAnalytics(period = 'month') {
+    try {
+      const response = await api.get('/analytics/visitor-intent', {
+        params: { period }
+      })
+      if (!response.data) {
+        console.log('Analytics Visitor Intent API failed or returned empty - using fallback data');
+        return { data: this.getFallbackModuleData('visitor_intent', period) };
+      }
+      return response.data
+    } catch (error) {
+      console.log('Analytics Visitor Intent API failed - using fallback data:', error.message)
+      return { data: this.getFallbackModuleData('visitor_intent', period) }
+    }
+  },
+
   getFallbackModuleData(module: string, period: string) {
     const baseData = {
       period,

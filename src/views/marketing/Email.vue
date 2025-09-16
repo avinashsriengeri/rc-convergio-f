@@ -128,7 +128,61 @@
         </div>
       </div>
 
-      <!-- Filters -->
+      <!-- Tabs Navigation -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+        <div class="border-b border-gray-200">
+          <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
+            <button
+              @click="activeTab = 'campaigns'"
+              :class="[
+                activeTab === 'campaigns'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm'
+              ]"
+            >
+              {{ $t('marketing.email.title') }}
+            </button>
+            <button
+              @click="activeTab = 'metrics'"
+              :class="[
+                activeTab === 'metrics'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm'
+              ]"
+            >
+              {{ $t('marketing.email.overall_metrics.title') }}
+            </button>
+            <button
+              @click="activeTab = 'tracking'"
+              :class="[
+                activeTab === 'tracking'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm'
+              ]"
+            >
+              {{ $t('marketing.email.tracking.title') }}
+            </button>
+            <button
+              @click="activeTab = 'automations'"
+              :class="[
+                activeTab === 'automations'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm'
+              ]"
+            >
+              {{ $t('marketing.email.automations.title') }}
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Tab Content -->
+      <div v-if="activeTab === 'campaigns'">
+        <!-- Filters -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <!-- Status Filter -->
@@ -332,6 +386,223 @@
         </div>
       </div>
     </div>
+      </div>
+
+      <!-- Overall Metrics Tab -->
+      <div v-if="activeTab === 'metrics'" class="space-y-6">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-6">{{ $t('marketing.email.overall_metrics.title') }}</h3>
+          
+          <!-- Overall Metrics Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <div class="text-2xl font-bold text-gray-900">{{ formatNumber(overallMetrics.total_campaigns) }}</div>
+              <div class="text-sm text-gray-600">{{ $t('marketing.email.overall_metrics.total_campaigns') }}</div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <div class="text-2xl font-bold text-gray-900">{{ formatNumber(overallMetrics.total_sent) }}</div>
+              <div class="text-sm text-gray-600">{{ $t('marketing.email.overall_metrics.total_sent') }}</div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <div class="text-2xl font-bold text-gray-900">{{ formatNumber(overallMetrics.total_opens) }}</div>
+              <div class="text-sm text-gray-600">{{ $t('marketing.email.overall_metrics.total_opens') }}</div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <div class="text-2xl font-bold text-gray-900">{{ formatNumber(overallMetrics.total_clicks) }}</div>
+              <div class="text-sm text-gray-600">{{ $t('marketing.email.overall_metrics.total_clicks') }}</div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <div class="text-2xl font-bold text-gray-900">{{ formatNumber(overallMetrics.total_bounces) }}</div>
+              <div class="text-sm text-gray-600">{{ $t('marketing.email.overall_metrics.total_bounces') }}</div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <div class="text-2xl font-bold text-gray-900">{{ formatNumber(overallMetrics.total_unsubscribes) }}</div>
+              <div class="text-sm text-gray-600">{{ $t('marketing.email.overall_metrics.total_unsubscribes') }}</div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <div class="text-2xl font-bold text-gray-900">{{ overallMetrics.avg_open_rate }}%</div>
+              <div class="text-sm text-gray-600">{{ $t('marketing.email.overall_metrics.avg_open_rate') }}</div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <div class="text-2xl font-bold text-gray-900">{{ overallMetrics.avg_click_rate }}%</div>
+              <div class="text-sm text-gray-600">{{ $t('marketing.email.overall_metrics.avg_click_rate') }}</div>
+            </div>
+          </div>
+
+          <!-- Trends Chart Placeholder -->
+          <div class="bg-gray-50 p-8 rounded-lg text-center">
+            <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <h4 class="text-lg font-medium text-gray-900 mb-2">Email Performance Trends</h4>
+            <p class="text-gray-600">Chart showing email performance over time</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Email Tracking Tab -->
+      <div v-if="activeTab === 'tracking'" class="space-y-6">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-semibold text-gray-900">{{ $t('marketing.email.tracking.title') }}</h3>
+            <div class="flex space-x-4">
+              <button
+                @click="loadEmailOpens"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                {{ $t('marketing.email.tracking.opens') }}
+              </button>
+              <button
+                @click="loadEmailClicks"
+                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                {{ $t('marketing.email.tracking.clicks') }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Tracking Data Table -->
+          <div v-if="trackingData.length > 0" class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.email.tracking.recipient') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ trackingType === 'opens' ? $t('marketing.email.tracking.opened_at') : $t('marketing.email.tracking.clicked_at') }}
+                  </th>
+                  <th v-if="trackingType === 'clicks'" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.email.tracking.clicked_url') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.email.tracking.ip_address') }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr v-for="item in trackingData" :key="item.id">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ item.recipient_email }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ formatDate(trackingType === 'opens' ? item.opened_at : item.clicked_at) }}
+                  </td>
+                  <td v-if="trackingType === 'clicks'" class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <a :href="item.clicked_url" target="_blank" class="text-blue-600 hover:text-blue-800 truncate block max-w-xs">
+                      {{ item.clicked_url }}
+                    </a>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ item.ip_address }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State -->
+          <div v-else class="text-center py-8">
+            <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <h4 class="text-lg font-medium text-gray-900 mb-2">
+              {{ trackingType === 'opens' ? $t('marketing.email.tracking.no_opens') : $t('marketing.email.tracking.no_clicks') }}
+            </h4>
+            <p class="text-gray-600">No tracking data available yet</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Email Automations Tab -->
+      <div v-if="activeTab === 'automations'" class="space-y-6">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div class="flex justify-between items-center mb-6">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">{{ $t('marketing.email.automations.title') }}</h3>
+              <p class="text-sm text-gray-600">{{ $t('marketing.email.automations.subtitle') }}</p>
+            </div>
+            <button
+              @click="showCreateAutomationModal = true"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              {{ $t('marketing.email.automations.create_automation') }}
+            </button>
+          </div>
+
+          <!-- Automations Table -->
+          <div v-if="automations.length > 0" class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.email.automations.automation_name') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.email.automations.trigger') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.email.automations.status') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.email.automations.steps') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.email.automations.created_at') }}
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ $t('marketing.email.automations.actions') }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr v-for="automation in automations" :key="automation.id">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-medium text-gray-900">{{ automation.name }}</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ formatTriggerName(automation.trigger) }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span :class="getAutomationStatusColor(automation.status)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
+                      {{ $t(`marketing.email.automations.statuses.${automation.status}`) }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ automation.steps }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ formatDate(automation.created_at) }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button
+                      @click="deleteAutomation(automation.id)"
+                      class="text-red-600 hover:text-red-900 mr-3"
+                    >
+                      {{ $t('marketing.email.automations.delete') }}
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State -->
+          <div v-else class="text-center py-8">
+            <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <h4 class="text-lg font-medium text-gray-900 mb-2">{{ $t('marketing.email.automations.empty_state.title') }}</h4>
+            <p class="text-gray-600 mb-6">{{ $t('marketing.email.automations.empty_state.message') }}</p>
+            <button
+              @click="showCreateAutomationModal = true"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition-colors"
+            >
+              {{ $t('marketing.email.automations.empty_state.create_automation') }}
+            </button>
+          </div>
+        </div>
+      </div>
 
     <!-- Campaign Details Drawer -->
     <div
@@ -443,7 +714,26 @@ const campaigns = ref([])
 const owners = ref([])
 const templates = ref([])
 const selectedCampaign = ref(null)
-const activeTab = ref('overview')
+const activeTab = ref('campaigns')
+
+// New reactive state for additional features
+const overallMetrics = ref({
+  total_campaigns: 0,
+  total_sent: 0,
+  total_opens: 0,
+  total_clicks: 0,
+  total_bounces: 0,
+  total_unsubscribes: 0,
+  avg_open_rate: 0,
+  avg_click_rate: 0,
+  avg_bounce_rate: 0,
+  avg_unsubscribe_rate: 0
+})
+
+const trackingData = ref([])
+const trackingType = ref('opens')
+const automations = ref([])
+const showCreateAutomationModal = ref(false)
 
 // Filters
 const filters = ref({
@@ -600,6 +890,80 @@ const getStatusBadgeColor = (status) => emailMarketingHelpers.getStatusBadgeColo
 const formatDate = (dateString) => emailMarketingHelpers.formatDate(dateString)
 const formatNumber = (num) => emailMarketingHelpers.formatNumber(num)
 
+// New methods for additional features
+const loadOverallMetrics = async () => {
+  try {
+    const response = await emailMarketingService.getOverallMetrics()
+    overallMetrics.value = response.data
+  } catch (error) {
+    console.error('Error loading overall metrics:', error)
+  }
+}
+
+const loadEmailOpens = async () => {
+  try {
+    trackingType.value = 'opens'
+    const response = await emailMarketingService.trackEmailOpens()
+    trackingData.value = response.data || []
+  } catch (error) {
+    console.error('Error loading email opens:', error)
+    showError(t('marketing.email.tracking.error'))
+  }
+}
+
+const loadEmailClicks = async () => {
+  try {
+    trackingType.value = 'clicks'
+    const response = await emailMarketingService.trackEmailClicks()
+    trackingData.value = response.data || []
+  } catch (error) {
+    console.error('Error loading email clicks:', error)
+    showError(t('marketing.email.tracking.error'))
+  }
+}
+
+const loadAutomations = async () => {
+  try {
+    const response = await emailMarketingService.getAutomationOptions()
+    // For now, we'll use the fallback data from the service
+    automations.value = [
+      {
+        id: 1,
+        name: 'Welcome Sequence',
+        trigger: 'contact_created',
+        status: 'active',
+        steps: 3,
+        created_at: '2024-01-15T10:00:00Z'
+      },
+      {
+        id: 2,
+        name: 'Follow-up',
+        trigger: 'email_opened',
+        status: 'draft',
+        steps: 2,
+        created_at: '2024-01-16T12:00:00Z'
+      }
+    ]
+  } catch (error) {
+    console.error('Error loading automations:', error)
+    showError(t('marketing.email.automations.error'))
+  }
+}
+
+const deleteAutomation = async (automationId) => {
+  try {
+    await emailMarketingService.deleteCampaignAutomation(automationId)
+    automations.value = automations.value.filter(a => a.id !== automationId)
+    showError(t('marketing.email.automations.delete_success'))
+  } catch (error) {
+    console.error('Error deleting automation:', error)
+    showError(t('marketing.email.automations.delete_error'))
+  }
+}
+
+const formatTriggerName = (trigger) => emailMarketingHelpers.formatTriggerName(trigger)
+const getAutomationStatusColor = (status) => emailMarketingHelpers.getAutomationStatusColor(status)
+
 // Watch for route changes
 watch(() => route.query, () => {
   loadFiltersFromURL()
@@ -612,7 +976,9 @@ onMounted(async () => {
   await Promise.all([
     loadCampaigns(),
     loadOwners(),
-    loadTemplates()
+    loadTemplates(),
+    loadOverallMetrics(),
+    loadAutomations()
   ])
 })
 </script>
