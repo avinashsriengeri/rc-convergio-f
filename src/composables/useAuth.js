@@ -10,6 +10,14 @@ const currentOrgName = ref('RC')
 
 // Fetch current user organization data
 const fetchCurrentUserData = async () => {
+  // Only fetch if we have a valid token and are authenticated
+  const token = localStorage.getItem('access_token')
+  if (!token || !isAuthenticated.value) {
+    console.log('Skipping fetchCurrentUserData: no token or not authenticated')
+    currentOrgName.value = 'RC'
+    return
+  }
+
   try {
     const response = await authAPI.getCurrentUser()
     const userData = response.data.data || response.data
@@ -30,6 +38,11 @@ const fetchCurrentUserData = async () => {
     console.warn('Failed to fetch current user data:', error)
     // Use fallback on any error
     currentOrgName.value = 'RC'
+    
+    // If it's an auth error, don't logout during init
+    if (error.response?.status === 401) {
+      console.log('Auth error during fetchCurrentUserData, but not logging out during init')
+    }
   }
 }
 
@@ -39,7 +52,7 @@ const initAuth = () => {
   const userData = localStorage.getItem('user')
   
   console.log('Initializing auth with token:', token ? 'exists' : 'missing')
-  console.log('Initializing auth with user data:', userData)
+  console.log('Initializing auth with user data:', userData ? 'exists' : 'null')
   
   if (token && userData) {
     try {
@@ -47,12 +60,26 @@ const initAuth = () => {
       isAuthenticated.value = true
       console.log('Auth initialized with user:', user.value)
       
-      // Fetch current user data to get organization info
-      fetchCurrentUserData()
+      // Only fetch current user data if we have a valid token and user
+      if (token && user.value) {
+        fetchCurrentUserData().catch((error) => {
+          console.warn('Failed to fetch current user data during init:', error)
+          // Don't logout on init fetch failure, just use cached data
+        })
+      }
     } catch (error) {
       console.error('Failed to parse user data:', error)
-      logout()
+      // Clear invalid data
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('user')
+      localStorage.removeItem('tenant_id')
+      user.value = null
+      isAuthenticated.value = false
     }
+  } else {
+    // Ensure state is properly reset if no valid auth data
+    user.value = null
+    isAuthenticated.value = false
   }
 }
 
@@ -88,6 +115,11 @@ const login = async (credentials) => {
     isAuthenticated.value = true
     
     console.log('User role after login:', userRole.value)
+    console.log('Authentication state updated:', { 
+      isAuthenticated: isAuthenticated.value, 
+      user: user.value?.name,
+      email_verified: user.value?.email_verified_at 
+    })
     
     // Fetch current user data to get organization info
     fetchCurrentUserData()

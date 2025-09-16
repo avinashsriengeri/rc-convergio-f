@@ -1228,6 +1228,11 @@ import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
 // @ts-expect-error - listsAPI is exported from api.js
 import { listsAPI } from '@/services/api'
 
+// Props
+const props = defineProps<{
+  openCreateModal?: boolean
+}>()
+
 // Types for watcher tuple
 type ModalBools = [boolean, boolean]
 
@@ -1929,6 +1934,18 @@ onMounted(() => {
   fetchCampaigns()
   refsStore.fetchUsers()
   loadSegments() // Load segments on mount
+  
+  // Auto-open create modal if prop is set
+  if (props.openCreateModal) {
+    showCreateModal.value = true
+    
+    // Pre-select email type if specified in query
+    const urlParams = new URLSearchParams(window.location.search)
+    const type = urlParams.get('type')
+    if (type === 'email') {
+      campaignForm.type = 'email'
+    }
+  }
 })
 
 // Watch for templates modal opening

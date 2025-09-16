@@ -14,8 +14,8 @@
       class="flex items-center gap-2 rounded-[10px] transition-all duration-200 cursor-pointer focus:outline-none bg-white/20 backdrop-blur-sm ring-1 ring-white/15 hover:bg-white/30 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-offset-0 focus-visible:ring-white/40 p-2 h-9 sm:h-9"
       :class="{ 'ring-2 ring-offset-0 ring-white/40 bg-white/30 shadow-sm': isOpen }"
     >
-      <!-- Professional grid icon - more visible -->
-      <svg class="w-5 h-5 text-white drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24">
+      <!-- Professional grid icon - visible on light background -->
+      <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
         <path d="M3 3h7v7H3V3zm0 11h7v7H3v-7zm11-11h7v7h-7V3zm0 11h7v7h-7v-7z"/>
       </svg>
     </button>

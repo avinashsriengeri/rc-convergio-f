@@ -42,14 +42,29 @@
             <!-- Password -->
             <div>
             <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                <input
-                  id="password"
-                  v-model="form.password"
-                  type="password"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4418e] focus:border-transparent transition-all duration-200 hover:border-gray-400"
-                  placeholder="Enter your password"
-                  required
-                />
+                <div class="relative">
+                  <input
+                    id="password"
+                    v-model="form.password"
+                    :type="showPassword ? 'text' : 'password'"
+                    class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4418e] focus:border-transparent transition-all duration-200 hover:border-gray-400"
+                    placeholder="Enter your password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    @click="showPassword = !showPassword"
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                  >
+                    <svg v-if="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                    </svg>
+                    <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </button>
+                </div>
             <p v-if="errors.password" class="mt-1 text-sm text-red-500">{{ errors.password }}</p>
             </div>
 
@@ -109,50 +124,66 @@
     </div>
     
     <!-- Right Panel - Company Branding & Food Images -->
-    <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-[#f8fafc] to-[#e2e8f0]">
-      <!-- Background Image with Light Transparency -->
-      <div class="absolute inset-0">
-        <img 
-          src="@/assets/save2.png" 
-          alt="RC Convergio Business Suite" 
-          class="w-full h-full object-contain opacity-20"
-        />
+    <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-[#f8fafc] via-white to-[#e2e8f0]">
+      <!-- Background Image with Bold Visibility -->
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="relative w-full h-5/6">
+          <img 
+            src="@/assets/save6.png" 
+            alt="RC Convergio Business Suite" 
+            class="w-full h-full object-contain animate-spin-slow"
+          />
+          <!-- RC Logo Overlay in Center -->
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="w-36 h-36 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-2xl border-4 border-white">
+              <img src="/src/assets/logo.png" alt="RC Logo" class="w-28 h-28 object-contain" />
+            </div>
+          </div>
+        </div>
       </div>
       
-      <!-- Gradient Overlay for Better Text Readability -->
-      <div class="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent"></div>
+      <!-- Professional Logo Color Gradient Overlay -->
+      <div class="absolute inset-0">
+        <!-- Top-left gradient -->
+        <div class="absolute top-0 left-0 w-1/3 h-1/3 bg-gradient-to-br from-[#d4418e]/20 via-[#d4418e]/10 to-transparent"></div>
+        <!-- Top-right gradient -->
+        <div class="absolute top-0 right-0 w-1/3 h-1/3 bg-gradient-to-bl from-[#0652c5]/20 via-[#0652c5]/10 to-transparent"></div>
+        <!-- Bottom-left gradient -->
+        <div class="absolute bottom-0 left-0 w-1/3 h-1/3 bg-gradient-to-tr from-[#0652c5]/15 via-[#0652c5]/8 to-transparent"></div>
+        <!-- Bottom-right gradient -->
+        <div class="absolute bottom-0 right-0 w-1/3 h-1/3 bg-gradient-to-tl from-[#d4418e]/15 via-[#d4418e]/8 to-transparent"></div>
+        <!-- Center overlay for text readability -->
+        <div class="absolute inset-0 bg-gradient-radial from-transparent via-white/10 to-white/20"></div>
+      </div>
       
       <!-- Content -->
-      <div class="relative z-10 flex flex-col justify-center px-8 py-8 w-full">
-        <div class="text-center">
-          <!-- Company Logo -->
-          <div class="mb-8">
-            <div class="w-20 h-20 flex items-center justify-center mx-auto mb-4">
-              <img src="/src/assets/logo.png" alt="RC Convergio" class="w-20 h-20 object-contain" />
-            </div>
-            <h2 class="text-3xl font-bold text-gray-900 mb-2">RC Convergio</h2>
-            <p class="text-lg text-gray-600">Business Transformation Suite</p>
-          </div>
-          
-          <!-- Feature Highlights -->
-          <div class="space-y-4">
-            <div class="flex items-center justify-center space-x-3 bg-white/90 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg">
+      <div class="relative z-10 flex flex-col justify-between px-6 py-6 w-full h-full">
+        <!-- Company Title at Very Top -->
+        <div class="text-center pt-2">
+          <h2 class="text-4xl font-bold text-gray-900 mb-3">RC Convergio</h2>
+          <p class="text-xl text-gray-600">Business Transformation Suite</p>
+        </div>
+        
+        <!-- Feature Highlights at Bottom -->
+        <div class="text-center pb-4">
+          <div class="flex justify-center items-center gap-4 flex-wrap">
+            <div class="flex items-center space-x-2 bg-white/90 backdrop-blur-sm rounded-full px-5 py-3 shadow-lg hover:shadow-xl transition-shadow">
               <svg class="w-5 h-5 text-[#d4418e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
-              <span class="text-sm font-medium text-gray-700">Secure & Reliable Platform</span>
+              <span class="text-sm font-semibold text-gray-700">Secure</span>
             </div>
-            <div class="flex items-center justify-center space-x-3 bg-white/90 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg">
+            <div class="flex items-center space-x-2 bg-white/90 backdrop-blur-sm rounded-full px-5 py-3 shadow-lg hover:shadow-xl transition-shadow">
               <svg class="w-5 h-5 text-[#0652c5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
-              <span class="text-sm font-medium text-gray-700">Fast & Efficient Solutions</span>
+              <span class="text-sm font-semibold text-gray-700">Fast</span>
             </div>
-            <div class="flex items-center justify-center space-x-3 bg-white/90 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg">
+            <div class="flex items-center space-x-2 bg-white/90 backdrop-blur-sm rounded-full px-5 py-3 shadow-lg hover:shadow-xl transition-shadow">
               <svg class="w-5 h-5 text-[#d4418e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6" />
               </svg>
-              <span class="text-sm font-medium text-gray-700">Complete Business Suite</span>
+              <span class="text-sm font-semibold text-gray-700">Complete</span>
             </div>
           </div>
         </div>
@@ -176,6 +207,8 @@ const form = reactive({
   password: '',
   remember: false
 })
+
+const showPassword = ref(false)
 
 const errors = reactive({
   email: '',
@@ -220,7 +253,13 @@ const handleLogin = async () => {
     
     if (result.success) {
       success('Welcome back!')
-      router.push('/dashboard')
+      console.log('Login successful, redirecting to dashboard...')
+      
+      // Small delay to ensure auth state is fully updated
+      setTimeout(async () => {
+        await router.push('/dashboard')
+        console.log('Navigation to dashboard completed')
+      }, 100)
     } else if (result.requiresVerification) {
       // Handle email verification requirement
       error('Please verify your email before logging in.')
@@ -237,4 +276,23 @@ const handleLogin = async () => {
   }
 }
 </script>
+
+<style scoped>
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.bg-gradient-radial {
+  background: radial-gradient(circle at center, transparent 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.2) 100%);
+}
+</style>
 

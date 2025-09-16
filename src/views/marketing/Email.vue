@@ -878,8 +878,11 @@ const closeCampaignDrawer = () => {
 }
 
 const createEmail = () => {
-  // Route to existing compose functionality (do NOT change its internals)
-  router.push('/campaigns/create')
+  // Route to campaign creation page with email type pre-selected
+  router.push({
+    path: '/campaigns/create',
+    query: { type: 'email' }
+  })
 }
 
 // Helper methods

@@ -13,20 +13,27 @@ const api = axios.create({
 // Request interceptor - add auth token
 api.interceptors.request.use(
   (config) => {
-    // Skip authentication for public form endpoints
+    // Skip authentication for public form endpoints and auth endpoints
     const isPublicFormRequest = config.url?.includes('/public/forms/')
+    const isAuthRequest = config.url?.includes('/auth/')
     
-    if (!isPublicFormRequest) {
+    if (!isPublicFormRequest && !isAuthRequest) {
       const token = localStorage.getItem('access_token')
       if (token) {
         config.headers['Authorization'] = `Bearer ${token}`
+      } else {
+        // For requests that require authentication but no token is available,
+        // only warn if we're not on the login page
+        if (window.location.pathname !== '/login' && window.location.pathname !== '/register' && window.location.pathname !== '/forgot-password') {
+          console.warn('Making authenticated request without token:', config.url)
+        }
       }
     }
     
-    // Debug logging removed for production
     return config
   },
   (error) => {
+    console.error('Request interceptor error:', error)
     return Promise.reject(error)
   }
 )

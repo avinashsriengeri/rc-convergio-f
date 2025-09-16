@@ -170,6 +170,13 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/campaigns/create',
+    name: 'CampaignCreate',
+    component: () => import('./views/Campaigns.vue'),
+    meta: { requiresAuth: true },
+    props: { openCreateModal: true }
+  },
+  {
     path: '/tasks',
     name: 'Tasks',
     component: () => import('./views/Tasks.vue'),
@@ -385,6 +392,11 @@ const router = createRouter({
 // Navigation guard
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('access_token')
+  console.log('Router guard:', { 
+    to: to.path, 
+    from: from.path, 
+    isAuthenticated: !!isAuthenticated 
+  })
   
   // Get user role from stored user data (handle both nested roles array and flat role)
   let userRole = null
@@ -418,19 +430,22 @@ router.beforeEach((to, from, next) => {
   const requiresAdmin = to.meta?.requiresAdmin ?? false
   
   if (requiresAuth && !isAuthenticated) {
+    console.log('Router: Redirecting to login - not authenticated')
     next('/login')
-  } else if (requiresAuth === false && isAuthenticated && to.path === '/') {
-    // Only redirect to dashboard if user is authenticated and trying to access home page
+  } else if (requiresAuth === false && isAuthenticated && (to.path === '/' || to.path === '/login')) {
+    // Redirect authenticated users away from login/home to dashboard
+    console.log('Router: Redirecting authenticated user to dashboard from', to.path)
     next('/dashboard')
+  } else if (requiresAuth && requiresEmailVerification && to.path !== '/verify-notification' && to.path !== '/login') {
+    // Redirect unverified users to verification page, but allow login page access
+    console.log('Router: Redirecting to verification - email not verified')
+    next('/verify-notification')
   } else if (requiresAdmin && userRole !== 'admin') {
     // Redirect non-admin users trying to access admin routes
-    // Access denied: User role not admin for route
+    console.log('Router: Redirecting to dashboard - admin required')
     next('/dashboard')
-  } else if (requiresAuth && requiresEmailVerification && to.path !== '/verify-notification') {
-    // Redirect unverified users to verification page
-    // Email verification required for route
-    next('/verify-notification')
   } else {
+    console.log('Router: Allowing navigation to', to.path)
     next()
   }
 })
