@@ -282,11 +282,51 @@ export const campaignsAPI = {
   resumeCampaign: (id) => api.post(`/campaigns/${id}/resume`),
   getCampaignMetrics: (id, params = {}) => api.get(`/campaigns/${id}/metrics`, { params }),
   getTemplates: () => api.get('/campaigns/templates'),
+  getTemplate: (id) => api.get(`/campaigns/templates/${id}`),
+  createTemplate: (data) => api.post('/campaigns/templates', data),
+  updateTemplate: (id, data) => api.put(`/campaigns/templates/${id}`, data),
+  deleteTemplate: (id) => api.delete(`/campaigns/templates/${id}`),
+  instantiateTemplate: (id, overrides = {}) => api.post(`/campaigns/templates/${id}/instantiate`, overrides),
   duplicateCampaign: (id) => api.post(`/campaigns/${id}/duplicate`),
   getRecipients: (id) => api.get(`/campaigns/${id}/recipients`),
   addRecipient: (id, recipientData) => api.post(`/campaigns/${id}/recipients`, recipientData),
   removeRecipient: (id, recipientId) => api.delete(`/campaigns/${id}/recipients/${recipientId}`),
-  getCampaignAuditLogs: (id, params = {}) => api.get('/audit-logs', { params: { campaign_id: id, ...params } })
+  getCampaignAuditLogs: (id, params = {}) => api.get('/audit-logs', { params: { campaign_id: id, ...params } }),
+  
+  // ============= NEW MISSING ENDPOINTS =============
+  
+  // Campaign Enhancements
+  testCampaign: (id, data = {}) => api.post(`/campaigns/${id}/test`, data),
+  previewCampaign: (id) => api.get(`/campaigns/${id}/preview`),
+  validateCampaign: (id) => api.post(`/campaigns/${id}/validate`),
+  unscheduleCampaign: (id) => api.post(`/campaigns/${id}/unschedule`),
+  archiveCampaign: (id) => api.post(`/campaigns/${id}/archive`),
+  restoreCampaign: (id) => api.post(`/campaigns/${id}/restore`),
+  
+  // Bulk Operations
+  bulkSendCampaigns: (campaignIds, data = {}) => api.post('/campaigns/bulk-send', { campaign_ids: campaignIds, ...data }),
+  bulkPauseCampaigns: (campaignIds) => api.post('/campaigns/bulk-pause', { campaign_ids: campaignIds }),
+  bulkResumeCampaigns: (campaignIds) => api.post('/campaigns/bulk-resume', { campaign_ids: campaignIds }),
+  bulkArchiveCampaigns: (campaignIds) => api.post('/campaigns/bulk-archive', { campaign_ids: campaignIds }),
+  
+  // Import/Export
+  exportCampaigns: (params = {}) => api.get('/campaigns/export', { params, responseType: 'blob' }),
+  importCampaigns: (file) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return api.post('/campaigns/import', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  },
+  
+  // Ad Integration
+  attachAdsToCampaign: (id, adData) => api.post(`/campaigns/${id}/ads`, adData),
+  getCampaignAdsMetrics: (id, params = {}) => api.get(`/campaigns/${id}/ads-metrics`, { params }),
+  
+  // Analytics Integration
+  getCampaignAnalytics: (params = {}) => api.get('/analytics/campaigns', { params })
 }
 
 // Forms API endpoints

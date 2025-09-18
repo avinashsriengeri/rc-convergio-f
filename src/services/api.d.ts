@@ -163,12 +163,13 @@ export const campaignsAPI: {
   getCampaign: (id: number) => Promise<AxiosResponse<ApiResponse>>
   createCampaign: (data: any) => Promise<AxiosResponse<ApiResponse>>
   updateCampaign: (id: number, data: any) => Promise<AxiosResponse<ApiResponse>>
+  patchCampaign: (id: number, data: any) => Promise<AxiosResponse<ApiResponse>>
   deleteCampaign: (id: number) => Promise<AxiosResponse<ApiResponse>>
-  sendCampaign: (id: number) => Promise<AxiosResponse<ApiResponse>>
+  sendCampaign: (id: number, data?: any) => Promise<AxiosResponse<ApiResponse>>
   scheduleCampaign: (id: number, scheduledAt: string) => Promise<AxiosResponse<ApiResponse>>
   pauseCampaign: (id: number) => Promise<AxiosResponse<ApiResponse>>
   resumeCampaign: (id: number) => Promise<AxiosResponse<ApiResponse>>
-  getCampaignMetrics: (id: number) => Promise<AxiosResponse<ApiResponse>>
+  getCampaignMetrics: (id: number, params?: any) => Promise<AxiosResponse<ApiResponse>>
   getCampaignRecipients: (id: number, params?: any) => Promise<AxiosResponse<ApiResponse>>
   addRecipients: (id: number, recipientIds: number[]) => Promise<AxiosResponse<ApiResponse>>
   removeRecipients: (id: number, recipientIds: number[]) => Promise<AxiosResponse<ApiResponse>>
@@ -176,6 +177,35 @@ export const campaignsAPI: {
   getWebhookEvents: (params?: any) => Promise<AxiosResponse<ApiResponse>>
   getCampaignTemplates: () => Promise<AxiosResponse<ApiResponse>>
   duplicateCampaign: (id: number) => Promise<AxiosResponse<ApiResponse>>
+  getRecipients: (id: number) => Promise<AxiosResponse<ApiResponse>>
+  addRecipient: (id: number, recipientData: any) => Promise<AxiosResponse<ApiResponse>>
+  removeRecipient: (id: number, recipientId: number) => Promise<AxiosResponse<ApiResponse>>
+  getCampaignAuditLogs: (id: number, params?: any) => Promise<AxiosResponse<ApiResponse>>
+  
+  // Campaign Enhancements
+  testCampaign: (id: number, data?: any) => Promise<AxiosResponse<ApiResponse>>
+  previewCampaign: (id: number) => Promise<AxiosResponse<ApiResponse>>
+  validateCampaign: (id: number) => Promise<AxiosResponse<ApiResponse>>
+  unscheduleCampaign: (id: number) => Promise<AxiosResponse<ApiResponse>>
+  archiveCampaign: (id: number) => Promise<AxiosResponse<ApiResponse>>
+  restoreCampaign: (id: number) => Promise<AxiosResponse<ApiResponse>>
+  
+  // Bulk Operations
+  bulkSendCampaigns: (campaignIds: number[], data?: any) => Promise<AxiosResponse<ApiResponse>>
+  bulkPauseCampaigns: (campaignIds: number[]) => Promise<AxiosResponse<ApiResponse>>
+  bulkResumeCampaigns: (campaignIds: number[]) => Promise<AxiosResponse<ApiResponse>>
+  bulkArchiveCampaigns: (campaignIds: number[]) => Promise<AxiosResponse<ApiResponse>>
+  
+  // Import/Export
+  exportCampaigns: (params?: any) => Promise<AxiosResponse<Blob>>
+  importCampaigns: (file: File) => Promise<AxiosResponse<ApiResponse>>
+  
+  // Ad Integration
+  attachAdsToCampaign: (id: number, adData: any) => Promise<AxiosResponse<ApiResponse>>
+  getCampaignAdsMetrics: (id: number, params?: any) => Promise<AxiosResponse<ApiResponse>>
+  
+  // Analytics Integration
+  getCampaignAnalytics: (params?: any) => Promise<AxiosResponse<ApiResponse>>
 }
 
 // Default export

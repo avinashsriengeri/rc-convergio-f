@@ -380,6 +380,50 @@ export const useCampaignsStore = defineStore('campaigns', () => {
     }
   }
 
+  // Get single template
+  const getTemplate = async (id: number): Promise<any> => {
+    try {
+      const response = await campaignsAPI.getTemplate(id)
+      return response.data
+    } catch (err: unknown) {
+      console.error('Error fetching template:', err)
+      throw err
+    }
+  }
+
+  // Create template
+  const createTemplate = async (data: any): Promise<any> => {
+    try {
+      const response = await campaignsAPI.createTemplate(data)
+      return response.data
+    } catch (err: unknown) {
+      console.error('Error creating template:', err)
+      throw err
+    }
+  }
+
+  // Update template
+  const updateTemplate = async (id: number, data: any): Promise<any> => {
+    try {
+      const response = await campaignsAPI.updateTemplate(id, data)
+      return response.data
+    } catch (err: unknown) {
+      console.error('Error updating template:', err)
+      throw err
+    }
+  }
+
+  // Instantiate template (create campaign from template)
+  const instantiateTemplate = async (templateId: number, overrides: any = {}): Promise<any> => {
+    try {
+      const response = await campaignsAPI.instantiateTemplate(templateId, overrides)
+      return response.data
+    } catch (err: unknown) {
+      console.error('Error instantiating template:', err)
+      throw err
+    }
+  }
+
   // Delete a template (only if is_template=true)
   const deleteTemplate = async (id: number): Promise<void> => {
     if (id === undefined || id === null) {
@@ -388,7 +432,7 @@ export const useCampaignsStore = defineStore('campaigns', () => {
     }
     console.debug('[Templates][Delete][Store] start', { id, typeofId: typeof id })
     try {
-      const res = await campaignsAPI.deleteCampaign(id)
+      const res = await campaignsAPI.deleteTemplate(id)
       console.debug('[Templates][Delete][Store] success', { status: res?.status })
       // Optimistically prune from in-memory list if present
       const index = state.value.campaigns.findIndex(c => c.id === id)
@@ -471,6 +515,210 @@ export const useCampaignsStore = defineStore('campaigns', () => {
     }
   }
 
+  // ============= NEW MISSING METHODS =============
+
+  // Campaign Enhancements
+  const testCampaign = async (id: number, data: any = {}): Promise<any> => {
+    try {
+      const response = await campaignsAPI.testCampaign(id, data)
+      return response.data
+    } catch (err: any) {
+      console.error('Error testing campaign:', err)
+      throw err
+    }
+  }
+
+  const previewCampaign = async (id: number): Promise<any> => {
+    try {
+      const response = await campaignsAPI.previewCampaign(id)
+      return response.data
+    } catch (err: any) {
+      console.error('Error previewing campaign:', err)
+      throw err
+    }
+  }
+
+  const validateCampaign = async (id: number): Promise<any> => {
+    try {
+      const response = await campaignsAPI.validateCampaign(id)
+      return response.data
+    } catch (err: any) {
+      console.error('Error validating campaign:', err)
+      throw err
+    }
+  }
+
+  const unscheduleCampaign = async (id: number): Promise<any> => {
+    try {
+      const response = await campaignsAPI.unscheduleCampaign(id)
+      // Update campaign in list
+      const index = state.value.campaigns.findIndex(c => c.id === id)
+      if (index !== -1) {
+        state.value.campaigns[index].status = 'draft'
+        state.value.campaigns[index].scheduled_at = null
+      }
+      return response.data
+    } catch (err: any) {
+      console.error('Error unscheduling campaign:', err)
+      throw err
+    }
+  }
+
+  const archiveCampaign = async (id: number): Promise<any> => {
+    try {
+      const response = await campaignsAPI.archiveCampaign(id)
+      // Update campaign in list
+      const index = state.value.campaigns.findIndex(c => c.id === id)
+      if (index !== -1) {
+        state.value.campaigns[index].status = 'archived'
+      }
+      return response.data
+    } catch (err: any) {
+      console.error('Error archiving campaign:', err)
+      throw err
+    }
+  }
+
+  const restoreCampaign = async (id: number): Promise<any> => {
+    try {
+      const response = await campaignsAPI.restoreCampaign(id)
+      // Update campaign in list
+      const index = state.value.campaigns.findIndex(c => c.id === id)
+      if (index !== -1) {
+        state.value.campaigns[index].status = 'draft'
+      }
+      return response.data
+    } catch (err: any) {
+      console.error('Error restoring campaign:', err)
+      throw err
+    }
+  }
+
+  // Bulk Operations
+  const bulkSendCampaigns = async (campaignIds: number[], data: any = {}): Promise<any> => {
+    try {
+      const response = await campaignsAPI.bulkSendCampaigns(campaignIds, data)
+      // Update campaigns in list
+      campaignIds.forEach(id => {
+        const index = state.value.campaigns.findIndex(c => c.id === id)
+        if (index !== -1) {
+          state.value.campaigns[index].status = 'sent'
+          state.value.campaigns[index].sent_at = new Date().toISOString()
+        }
+      })
+      return response.data
+    } catch (err: any) {
+      console.error('Error bulk sending campaigns:', err)
+      throw err
+    }
+  }
+
+  const bulkPauseCampaigns = async (campaignIds: number[]): Promise<any> => {
+    try {
+      const response = await campaignsAPI.bulkPauseCampaigns(campaignIds)
+      // Update campaigns in list
+      campaignIds.forEach(id => {
+        const index = state.value.campaigns.findIndex(c => c.id === id)
+        if (index !== -1) {
+          state.value.campaigns[index].status = 'paused'
+        }
+      })
+      return response.data
+    } catch (err: any) {
+      console.error('Error bulk pausing campaigns:', err)
+      throw err
+    }
+  }
+
+  const bulkResumeCampaigns = async (campaignIds: number[]): Promise<any> => {
+    try {
+      const response = await campaignsAPI.bulkResumeCampaigns(campaignIds)
+      // Update campaigns in list
+      campaignIds.forEach(id => {
+        const index = state.value.campaigns.findIndex(c => c.id === id)
+        if (index !== -1) {
+          state.value.campaigns[index].status = 'active'
+        }
+      })
+      return response.data
+    } catch (err: any) {
+      console.error('Error bulk resuming campaigns:', err)
+      throw err
+    }
+  }
+
+  const bulkArchiveCampaigns = async (campaignIds: number[]): Promise<any> => {
+    try {
+      const response = await campaignsAPI.bulkArchiveCampaigns(campaignIds)
+      // Update campaigns in list
+      campaignIds.forEach(id => {
+        const index = state.value.campaigns.findIndex(c => c.id === id)
+        if (index !== -1) {
+          state.value.campaigns[index].status = 'archived'
+        }
+      })
+      return response.data
+    } catch (err: any) {
+      console.error('Error bulk archiving campaigns:', err)
+      throw err
+    }
+  }
+
+  // Import/Export
+  const exportCampaigns = async (params: any = {}): Promise<Blob> => {
+    try {
+      const response = await campaignsAPI.exportCampaigns(params)
+      return response.data
+    } catch (err: any) {
+      console.error('Error exporting campaigns:', err)
+      throw err
+    }
+  }
+
+  const importCampaigns = async (file: File): Promise<any> => {
+    try {
+      const response = await campaignsAPI.importCampaigns(file)
+      // Refresh campaigns list after import
+      await fetchCampaigns()
+      return response.data
+    } catch (err: any) {
+      console.error('Error importing campaigns:', err)
+      throw err
+    }
+  }
+
+  // Ad Integration
+  const attachAdsToCampaign = async (id: number, adData: any): Promise<any> => {
+    try {
+      const response = await campaignsAPI.attachAdsToCampaign(id, adData)
+      return response.data
+    } catch (err: any) {
+      console.error('Error attaching ads to campaign:', err)
+      throw err
+    }
+  }
+
+  const getCampaignAdsMetrics = async (id: number, params: any = {}): Promise<any> => {
+    try {
+      const response = await campaignsAPI.getCampaignAdsMetrics(id, params)
+      return response.data
+    } catch (err: any) {
+      console.error('Error fetching campaign ads metrics:', err)
+      throw err
+    }
+  }
+
+  // Analytics Integration
+  const getCampaignAnalytics = async (params: any = {}): Promise<any> => {
+    try {
+      const response = await campaignsAPI.getCampaignAnalytics(params)
+      return response.data
+    } catch (err: any) {
+      console.error('Error fetching campaign analytics:', err)
+      throw err
+    }
+  }
+
   return {
     // State
     campaigns,
@@ -499,11 +747,41 @@ export const useCampaignsStore = defineStore('campaigns', () => {
     getCampaignMetrics,
     saveAsTemplate,
     getTemplates,
+    getTemplate,
+    createTemplate,
+    updateTemplate,
     deleteTemplate,
+    instantiateTemplate,
     getRecipients,
     addRecipient,
     removeRecipient,
     getCampaignAuditLogs,
+    
+    // Campaign Enhancements
+    testCampaign,
+    previewCampaign,
+    validateCampaign,
+    unscheduleCampaign,
+    archiveCampaign,
+    restoreCampaign,
+    
+    // Bulk Operations
+    bulkSendCampaigns,
+    bulkPauseCampaigns,
+    bulkResumeCampaigns,
+    bulkArchiveCampaigns,
+    
+    // Import/Export
+    exportCampaigns,
+    importCampaigns,
+    
+    // Ad Integration
+    attachAdsToCampaign,
+    getCampaignAdsMetrics,
+    
+    // Analytics Integration
+    getCampaignAnalytics,
+    
     setSelectedCampaign,
     clearError,
     resetFilters

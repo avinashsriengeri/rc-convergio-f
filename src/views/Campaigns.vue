@@ -32,6 +32,37 @@
               {{ $t('campaigns.templates') }}
             </BaseButton>
             <BaseButton
+              variant="outline"
+              @click="exportCampaigns"
+              class="flex items-center"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Export
+            </BaseButton>
+            <BaseButton
+              variant="outline"
+              @click="showImportModal = true"
+              class="flex items-center"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+              </svg>
+              Import
+            </BaseButton>
+            <BaseButton
+              v-if="selectedCampaignIds.length > 0"
+              variant="warning"
+              @click="showBulkActionsModal = true"
+              class="flex items-center"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              Bulk Actions ({{ selectedCampaignIds.length }})
+            </BaseButton>
+            <BaseButton
               variant="primary"
               @click="showCreateModal = true"
               class="flex items-center"
@@ -250,13 +281,22 @@
           v-for="campaign in campaigns"
           :key="campaign.id"
           class="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow"
+          :class="{ 'ring-2 ring-blue-500': selectedCampaignIds.includes(campaign.id) }"
         >
           <!-- Campaign Header -->
           <div class="p-6 border-b border-gray-200">
             <div class="flex items-start justify-between">
+              <div class="flex items-start space-x-3 flex-1">
+                <BaseCheckbox
+                  :model-value="selectedCampaignIds.includes(campaign.id)"
+                  @update:model-value="toggleCampaignSelection(campaign.id)"
+                  label=""
+                  class="mt-1"
+                />
               <div class="flex-1">
                 <h3 class="text-lg font-medium text-gray-900 mb-2">{{ campaign.name }}</h3>
                 <p class="text-sm text-gray-600 line-clamp-2">{{ campaign.description }}</p>
+                </div>
               </div>
               <div class="flex items-center space-x-2 ml-4">
                 <span
@@ -327,6 +367,22 @@
                 </BaseButton>
                 <BaseButton
                   v-if="campaign.status === 'draft'"
+                  variant="secondary"
+                  size="sm"
+                  @click="testCampaign(campaign)"
+                >
+                  Test
+                </BaseButton>
+                <BaseButton
+                  v-if="campaign.status === 'draft'"
+                  variant="secondary"
+                  size="sm"
+                  @click="previewCampaign(campaign)"
+                >
+                  Preview
+                </BaseButton>
+                <BaseButton
+                  v-if="campaign.status === 'draft'"
                   variant="primary"
                   size="sm"
                   @click="scheduleCampaign(campaign)"
@@ -340,6 +396,14 @@
                   @click="sendCampaign(campaign)"
                 >
                   Send Now
+                </BaseButton>
+                <BaseButton
+                  v-if="campaign.status === 'scheduled'"
+                  variant="warning"
+                  size="sm"
+                  @click="unscheduleCampaign(campaign)"
+                >
+                  Unschedule
                 </BaseButton>
                 <BaseButton
                   v-if="campaign.status === 'active'"
@@ -358,6 +422,22 @@
                   Resume
                 </BaseButton>
                 <BaseButton
+                  v-if="campaign.status === 'archived'"
+                  variant="secondary"
+                  size="sm"
+                  @click="restoreCampaign(campaign)"
+                >
+                  Restore
+                </BaseButton>
+                <BaseButton
+                  v-if="campaign.status !== 'archived' && campaign.status !== 'sent'"
+                  variant="outline"
+                  size="sm"
+                  @click="archiveCampaign(campaign)"
+                >
+                  Archive
+                </BaseButton>
+                <BaseButton
                   variant="outline"
                   size="sm"
                   @click="duplicateCampaign(campaign)"
@@ -365,22 +445,23 @@
                   Duplicate
                 </BaseButton>
               </div>
-              <div class="flex items-center space-x-1">
+              <div class="flex items-center space-x-2">
                 <button
                   @click="viewMetrics(campaign)"
-                  class="text-gray-400 hover:text-blue-600 p-1"
+                  class="text-gray-500 hover:text-blue-600 p-2 rounded-md hover:bg-gray-100 transition-colors"
                   title="View metrics"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
                 </button>
                 <button
+                  v-if="campaign.status !== 'sent'"
                   @click="deleteCampaign(campaign)"
-                  class="text-gray-400 hover:text-red-600 p-1"
+                  class="text-gray-500 hover:text-red-600 p-2 rounded-md hover:bg-red-50 transition-colors"
                   title="Delete campaign"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                 </button>
@@ -1210,6 +1291,141 @@
       @confirm="confirmDelete"
       @cancel="showDeleteModal = false"
     />
+
+    <!-- Import Modal -->
+    <div v-if="showImportModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+      <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Import Campaigns</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Select CSV File</label>
+              <input
+                type="file"
+                accept=".csv"
+                @change="handleFileUpload"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div class="text-sm text-gray-600">
+              <p>CSV format should include columns: name, description, type, subject, content, status</p>
+            </div>
+          </div>
+          <div class="flex items-center justify-end space-x-3 mt-6">
+            <BaseButton variant="outline" @click="showImportModal = false">
+              Cancel
+            </BaseButton>
+            <BaseButton variant="primary" @click="importCampaigns" :disabled="!importFile">
+              Import
+            </BaseButton>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bulk Actions Modal -->
+    <div v-if="showBulkActionsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+      <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">
+            Bulk Actions ({{ selectedCampaignIds.length }} campaigns)
+          </h3>
+          <div class="space-y-3">
+            <BaseButton
+              variant="primary"
+              @click="bulkSendCampaigns"
+              class="w-full"
+            >
+              Send Selected Campaigns
+            </BaseButton>
+            <BaseButton
+              variant="warning"
+              @click="bulkPauseCampaigns"
+              class="w-full"
+            >
+              Pause Selected Campaigns
+            </BaseButton>
+            <BaseButton
+              variant="success"
+              @click="bulkResumeCampaigns"
+              class="w-full"
+            >
+              Resume Selected Campaigns
+            </BaseButton>
+            <BaseButton
+              variant="outline"
+              @click="bulkArchiveCampaigns"
+              class="w-full"
+            >
+              Archive Selected Campaigns
+            </BaseButton>
+          </div>
+          <div class="flex items-center justify-end space-x-3 mt-6">
+            <BaseButton variant="outline" @click="showBulkActionsModal = false">
+              Cancel
+            </BaseButton>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div v-if="showPreviewModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+      <div class="relative top-20 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-medium text-gray-900">Campaign Preview</h3>
+            <button
+              @click="showPreviewModal = false"
+              class="text-gray-400 hover:text-gray-600"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div class="border border-gray-200 rounded-lg p-4 max-h-96 overflow-y-auto">
+            <div v-html="campaignPreview"></div>
+          </div>
+          <div class="flex items-center justify-end space-x-3 mt-6">
+            <BaseButton variant="outline" @click="showPreviewModal = false">
+              Close
+            </BaseButton>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Test Modal -->
+    <div v-if="showTestModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+      <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Test Campaign</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Test Email Address</label>
+              <BaseInput
+                v-model="testEmail"
+                type="email"
+                placeholder="Enter test email address"
+                required
+              />
+            </div>
+            <div class="text-sm text-gray-600">
+              <p>Send a test email to verify the campaign content and formatting.</p>
+            </div>
+          </div>
+          <div class="flex items-center justify-end space-x-3 mt-6">
+            <BaseButton variant="outline" @click="showTestModal = false">
+              Cancel
+            </BaseButton>
+            <BaseButton variant="primary" @click="sendTestEmail" :disabled="!testEmail">
+              Send Test
+            </BaseButton>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -1224,6 +1440,7 @@ import { PER_PAGE_OPTIONS } from '@/utils/constants'
 import type { Campaign, CampaignFormData, CampaignMetrics } from '@/types'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
+import BaseCheckbox from '@/components/ui/BaseCheckbox.vue'
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
 // @ts-expect-error - listsAPI is exported from api.js
 import { listsAPI } from '@/services/api'
@@ -1256,9 +1473,17 @@ const showMetricsModal = ref(false)
 const showDeleteModal = ref(false)
 const showTemplatesModal = ref(false)
 const showRecipientsModal = ref(false)
+const showImportModal = ref(false)
+const showBulkActionsModal = ref(false)
+const showPreviewModal = ref(false)
+const showTestModal = ref(false)
 const campaignToDelete = ref<Campaign | null>(null)
 const selectedCampaign = ref<Campaign | null>(null)
 const campaignMetrics = ref<CampaignMetrics | null>(null)
+const campaignPreview = ref<string>('')
+const selectedCampaignIds = ref<number[]>([])
+const importFile = ref<File | null>(null)
+const testEmail = ref<string>('')
 
 // Detail modal tab state
 const activeDetailTab = ref('overview')
@@ -1604,6 +1829,14 @@ const removeRecipient = async (campaignId: number, recipientId: number) => {
   }
 }
 
+// Check if campaign can be deleted
+const canDeleteCampaign = (campaign: Campaign): boolean => {
+  // Allow deletion for draft, scheduled, paused, and archived campaigns
+  // Prevent deletion for sent campaigns (they should be archived instead)
+  const deletableStatuses = ['draft', 'scheduled', 'paused', 'archived']
+  return deletableStatuses.includes(campaign.status)
+}
+
 const deleteCampaign = (campaign: Campaign) => {
   campaignToDelete.value = campaign
   showDeleteModal.value = true
@@ -1702,9 +1935,16 @@ const closeModal = () => {
   showMetricsModal.value = false
   showTemplatesModal.value = false
   showRecipientsModal.value = false
+  showImportModal.value = false
+  showBulkActionsModal.value = false
+  showPreviewModal.value = false
+  showTestModal.value = false
   campaignToDelete.value = null
   selectedCampaign.value = null
   campaignMetrics.value = null
+  campaignPreview.value = ''
+  testEmail.value = ''
+  importFile.value = null
   // Reset recipients data
   campaignRecipients.value = []
   recipientsError.value = ''
@@ -1727,27 +1967,35 @@ const closeModal = () => {
   })
 }
 
-// Use template function
+// Use template function - Simple approach (like before)
 const useTemplate = async (template: any) => {
   try {
-    const full = await campaignsStore.fetchCampaign(template.id)
-    const tpl: any = full || template
+    console.log('[UseTemplate] Using template:', template.id)
+    
+    // Use template data directly - no API call needed
     Object.assign(campaignForm, {
-      name: tpl.name,
-      description: tpl.description || '',
-      type: tpl.type,
-      owner_id: tpl.owner_id,
-      subject: tpl.subject || '',
-      content: tpl.content || '',
+      name: template.name,
+      description: template.description || '',
+      type: template.type,
+      owner_id: template.owner_id,
+      subject: template.subject || '',
+      content: template.content || '',
       scheduled_at: ''
     })
-    // Do not carry over template flags or recipient settings
+    
+    // Reset recipient settings for new campaign
     campaignForm.recipient_mode = ''
     campaignForm.recipient_contact_ids = []
     campaignForm.segment_id = ''
+    
+    // Close templates modal and open create modal
     showTemplatesModal.value = false
     showCreateModal.value = true
+    
+    success('Template loaded successfully')
+    
   } catch (err: any) {
+    console.error('[UseTemplate] Error:', err)
     showError('Failed to load template')
   }
 }
@@ -1831,6 +2079,9 @@ const getStatusBadgeClass = (status: string) => {
     draft: 'bg-gray-100 text-gray-800',
     scheduled: 'bg-blue-100 text-blue-800',
     sent: 'bg-green-100 text-green-800',
+    active: 'bg-green-100 text-green-800',
+    paused: 'bg-yellow-100 text-yellow-800',
+    archived: 'bg-gray-100 text-gray-800',
     cancelled: 'bg-red-100 text-red-800'
   }
   return classes[status as keyof typeof classes] || 'bg-gray-100 text-gray-800'
@@ -1841,6 +2092,9 @@ const getStatusTextClass = (status: string) => {
     draft: 'text-gray-600',
     scheduled: 'text-blue-600',
     sent: 'text-green-600',
+    active: 'text-green-600',
+    paused: 'text-yellow-600',
+    archived: 'text-gray-600',
     cancelled: 'text-red-600'
   }
   return classes[status as keyof typeof classes] || 'text-gray-600'
@@ -1890,22 +2144,13 @@ const saveAsTemplateInline = async () => {
         type: campaignForm.type,
         subject: (campaignForm.subject || '').trim(),
         content: (campaignForm.content || '').trim(),
-        status: 'draft',
-        is_template: true
+        description: (campaignForm.description || '').trim() // Add description for templates
       }
       // owner_id optional; include only if present
       if (campaignForm.owner_id) payload.owner_id = campaignForm.owner_id
       console.log('[SaveTemplate] mode=create, payload=', payload)
-      const created = await campaignsStore.createCampaign(payload)
+      const created = await campaignsStore.createTemplate(payload)
       console.log('[SaveTemplate] response(create):', created)
-      // Some backends ignore is_template on create. Ensure it's flagged via PATCH.
-      if (created?.id) {
-        try {
-          await campaignsStore.saveAsTemplate(created.id)
-        } catch (e) {
-          console.warn('[SaveTemplate] fallback patch failed', e)
-        }
-      }
     }
     success('Template saved')
     showCreateModal.value = false
@@ -1926,6 +2171,181 @@ const saveAsTemplateInline = async () => {
     }
   } finally {
     savingTemplate.value = false
+  }
+}
+
+// ============= NEW MISSING METHODS =============
+
+// Campaign Enhancements
+const testCampaign = async (campaign: Campaign) => {
+  selectedCampaign.value = campaign
+  showTestModal.value = true
+}
+
+const previewCampaign = async (campaign: Campaign) => {
+  try {
+    const preview = await campaignsStore.previewCampaign(campaign.id)
+    campaignPreview.value = preview.data?.html || preview.data?.content || 'No preview available'
+    selectedCampaign.value = campaign
+    showPreviewModal.value = true
+  } catch (err: any) {
+    showError(err.response?.data?.message || 'Failed to load campaign preview')
+  }
+}
+
+const validateCampaign = async (campaign: Campaign) => {
+  try {
+    const validation = await campaignsStore.validateCampaign(campaign.id)
+    if (validation.data?.valid) {
+      success('Campaign validation passed')
+    } else {
+      showError(validation.data?.errors?.join(', ') || 'Campaign validation failed')
+    }
+  } catch (err: any) {
+    showError(err.response?.data?.message || 'Failed to validate campaign')
+  }
+}
+
+const unscheduleCampaign = async (campaign: Campaign) => {
+  try {
+    await campaignsStore.unscheduleCampaign(campaign.id)
+    success('Campaign unscheduled successfully')
+    fetchCampaigns()
+  } catch (err: any) {
+    showError(err.response?.data?.message || 'Failed to unschedule campaign')
+  }
+}
+
+const archiveCampaign = async (campaign: Campaign) => {
+  try {
+    await campaignsStore.archiveCampaign(campaign.id)
+    success('Campaign archived successfully')
+    fetchCampaigns()
+  } catch (err: any) {
+    showError(err.response?.data?.message || 'Failed to archive campaign')
+  }
+}
+
+const restoreCampaign = async (campaign: Campaign) => {
+  try {
+    await campaignsStore.restoreCampaign(campaign.id)
+    success('Campaign restored successfully')
+    fetchCampaigns()
+  } catch (err: any) {
+    showError(err.response?.data?.message || 'Failed to restore campaign')
+  }
+}
+
+// Bulk Operations
+const toggleCampaignSelection = (campaignId: number) => {
+  const index = selectedCampaignIds.value.indexOf(campaignId)
+  if (index > -1) {
+    selectedCampaignIds.value.splice(index, 1)
+  } else {
+    selectedCampaignIds.value.push(campaignId)
+  }
+}
+
+const bulkSendCampaigns = async () => {
+  try {
+    await campaignsStore.bulkSendCampaigns(selectedCampaignIds.value)
+    success(`Successfully sent ${selectedCampaignIds.value.length} campaigns`)
+    selectedCampaignIds.value = []
+    showBulkActionsModal.value = false
+    fetchCampaigns()
+  } catch (err: any) {
+    showError(err.response?.data?.message || 'Failed to send campaigns')
+  }
+}
+
+const bulkPauseCampaigns = async () => {
+  try {
+    await campaignsStore.bulkPauseCampaigns(selectedCampaignIds.value)
+    success(`Successfully paused ${selectedCampaignIds.value.length} campaigns`)
+    selectedCampaignIds.value = []
+    showBulkActionsModal.value = false
+    fetchCampaigns()
+  } catch (err: any) {
+    showError(err.response?.data?.message || 'Failed to pause campaigns')
+  }
+}
+
+const bulkResumeCampaigns = async () => {
+  try {
+    await campaignsStore.bulkResumeCampaigns(selectedCampaignIds.value)
+    success(`Successfully resumed ${selectedCampaignIds.value.length} campaigns`)
+    selectedCampaignIds.value = []
+    showBulkActionsModal.value = false
+    fetchCampaigns()
+  } catch (err: any) {
+    showError(err.response?.data?.message || 'Failed to resume campaigns')
+  }
+}
+
+const bulkArchiveCampaigns = async () => {
+  try {
+    await campaignsStore.bulkArchiveCampaigns(selectedCampaignIds.value)
+    success(`Successfully archived ${selectedCampaignIds.value.length} campaigns`)
+    selectedCampaignIds.value = []
+    showBulkActionsModal.value = false
+    fetchCampaigns()
+  } catch (err: any) {
+    showError(err.response?.data?.message || 'Failed to archive campaigns')
+  }
+}
+
+// Import/Export
+const exportCampaigns = async () => {
+  try {
+    const blob = await campaignsStore.exportCampaigns(filters)
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `campaigns-export-${new Date().toISOString().split('T')[0]}.csv`
+    document.body.appendChild(a)
+    a.click()
+    window.URL.revokeObjectURL(url)
+    document.body.removeChild(a)
+    success('Campaigns exported successfully')
+  } catch (err: any) {
+    showError(err.response?.data?.message || 'Failed to export campaigns')
+  }
+}
+
+const handleFileUpload = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    importFile.value = target.files[0]
+  }
+}
+
+const importCampaigns = async () => {
+  if (!importFile.value) {
+    showError('Please select a file to import')
+    return
+  }
+  
+  try {
+    await campaignsStore.importCampaigns(importFile.value)
+    success('Campaigns imported successfully')
+    showImportModal.value = false
+    importFile.value = null
+    fetchCampaigns()
+  } catch (err: any) {
+    showError(err.response?.data?.message || 'Failed to import campaigns')
+  }
+}
+
+const sendTestEmail = async () => {
+  if (!selectedCampaign.value || !testEmail.value) return
+  
+  try {
+    await campaignsStore.testCampaign(selectedCampaign.value.id, { test_emails: [testEmail.value] })
+    success('Test email sent successfully')
+    showTestModal.value = false
+    testEmail.value = ''
+  } catch (err: any) {
+    showError(err.response?.data?.message || 'Failed to send test email')
   }
 }
 
