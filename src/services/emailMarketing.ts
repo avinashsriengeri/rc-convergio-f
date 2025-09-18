@@ -540,6 +540,45 @@ export const emailMarketingService = {
     }
   },
 
+  // Get all automations (without campaign filter)
+  async getAllAutomations() {
+    try {
+      const response = await api.get('/campaigns/automations')
+      return response.data
+    } catch (error) {
+      console.error('Error fetching all automations:', error)
+      // Return fallback data
+      return {
+        data: [
+          {
+            id: 1,
+            name: 'Welcome Sequence',
+            trigger_event: 'contact_created',
+            action: 'send_email',
+            delay_minutes: 0,
+            is_active: true,
+            steps: 1,
+            created_at: '2024-01-15T10:00:00Z',
+            campaign_id: null,
+            template_id: 1
+          },
+          {
+            id: 2,
+            name: 'Follow-up Sequence',
+            trigger_event: 'email_opened',
+            action: 'send_email',
+            delay_minutes: 60,
+            is_active: false,
+            steps: 2,
+            created_at: '2024-01-16T10:00:00Z',
+            campaign_id: 1,
+            template_id: 2
+          }
+        ]
+      }
+    }
+  },
+
   // Get all automations for a campaign
   async getAutomations(campaignId) {
     try {

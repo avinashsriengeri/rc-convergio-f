@@ -811,13 +811,13 @@
             
             <!-- Campaign Selector for Automations -->
             <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-              <label class="text-sm font-medium text-gray-700 whitespace-nowrap">Select Campaign:</label>
+              <label class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter by Campaign:</label>
               <select
                 v-model="selectedCampaignIdForAutomation"
                 @change="onAutomationCampaignSelect"
                 class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="">Choose a campaign...</option>
+                <option value="">Show all automations</option>
                 <option
                   v-for="campaign in campaigns"
                   :key="campaign.id"
@@ -828,13 +828,17 @@
               </select>
           </div>
             
-            <!-- Selected Campaign Info -->
-            <div v-if="selectedCampaignForAutomation" class="flex items-center text-sm text-gray-600 bg-blue-50 px-3 py-2 rounded-lg">
+            <!-- Filter Info -->
+            <div class="flex items-center text-sm text-gray-600 bg-blue-50 px-3 py-2 rounded-lg">
               <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span class="font-medium">Automation:</span>
-              <span class="ml-1">{{ selectedCampaignForAutomation.name }} ({{ selectedCampaignForAutomation.status }})</span>
+              <span v-if="selectedCampaignForAutomation">
+                <span class="font-medium">Filtered by:</span> {{ selectedCampaignForAutomation.name }} ({{ selectedCampaignForAutomation.status }})
+              </span>
+              <span v-else>
+                <span class="font-medium">Showing all automations</span> ({{ automations.length }} total)
+              </span>
             </div>
           </div>
 
@@ -861,9 +865,6 @@
                   </th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Action
-                  </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
                   </th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Active
@@ -902,11 +903,6 @@
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
                     <div class="text-sm text-gray-900">{{ formatActionName(automation.action) }}</div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span :class="getAutomationStatusColor(automation.status)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
-                      {{ automation.status || 'draft' }}
-                    </span>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
                     <button
@@ -971,8 +967,18 @@
             <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
-            <h4 class="text-lg font-medium text-gray-900 mb-2">{{ $t('marketing.email.automations.empty_state.title') }}</h4>
-            <p class="text-gray-600">{{ $t('marketing.email.automations.empty_state.message') }}</p>
+            <h4 class="text-lg font-medium text-gray-900 mb-2">
+              {{ selectedCampaignForAutomation 
+                ? `No automations found for ${selectedCampaignForAutomation.name}` 
+                : 'No automations found' 
+              }}
+            </h4>
+            <p class="text-gray-600">
+              {{ selectedCampaignForAutomation 
+                ? 'Create your first automation for this campaign to start engaging with your audience automatically.' 
+                : 'Create your first email automation to start engaging with your audience automatically.'
+              }}
+            </p>
           </div>
         </div>
       </div>
@@ -1882,12 +1888,13 @@ const onAutomationCampaignSelect = () => {
     if (campaign) {
       selectedCampaignForAutomation.value = campaign
       console.log('Selected campaign for automation:', campaign.name)
-      // Load automations for this campaign
+      // Load automations for this specific campaign
       loadAutomationsForCampaign(campaign.id)
     }
   } else {
     selectedCampaignForAutomation.value = null
-    automations.value = []
+    // When no campaign is selected, show all automations
+    loadAllAutomations()
   }
 }
 
@@ -2308,14 +2315,22 @@ const loadAutomationsForCampaign = async (campaignId) => {
   }
 }
 
-const loadAutomations = async () => {
-  // This function is now replaced by loadAutomationsForCampaign
-  // But keeping it for backward compatibility
-  if (selectedCampaignForAutomation.value) {
-    await loadAutomationsForCampaign(selectedCampaignForAutomation.value.id)
-  } else {
+// Load all automations (when tab opens)
+const loadAllAutomations = async () => {
+  try {
+    const response = await emailMarketingService.getAllAutomations()
+    automations.value = response.data || []
+    console.log('Loaded all automations:', automations.value)
+  } catch (error) {
+    console.error('Error loading all automations:', error)
     automations.value = []
+    showError('Failed to load automations')
   }
+}
+
+const loadAutomations = async () => {
+  // Load all automations by default when tab opens
+  await loadAllAutomations()
 }
 
 const deleteAutomation = async (automationId) => {

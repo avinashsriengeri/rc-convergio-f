@@ -249,6 +249,7 @@
 <script setup>
 import { ref, reactive, onMounted, watch, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useNotifications } from '@/composables/useNotifications'
 import { contactsAPI } from '@/services/api'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -256,6 +257,7 @@ import ContactModal from '@/components/modals/ContactModal.vue'
 import ImportModal from '@/components/modals/ImportModal.vue'
 
 const router = useRouter()
+const { t } = useI18n()
 const { success, error, warning } = useNotifications()
 
 // Reactive data
@@ -356,7 +358,7 @@ const editContact = (contact) => {
 }
 
 const deleteContact = async (contactId) => {
-  if (!confirm($t('common.actions.confirm_delete', { name: 'this contact' }))) return
+  if (!confirm(t('common.actions.confirm_delete', { name: 'this contact' }))) return
 
   try {
     console.log('Deleting contact with ID:', contactId)

@@ -514,7 +514,9 @@ watch(filters, () => {
 
 // Initialize
 onMounted(async () => {
-  await loadMetadata()
+  // Load companies immediately without waiting for metadata
   fetchCompanies()
+  // Load metadata in background (non-blocking)
+  loadMetadata()
 })
 </script>
