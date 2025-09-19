@@ -58,6 +58,28 @@ const routes = [
     meta: { requiresAuth: false }
   },
   
+  // OAuth callback routes (NEW - for Facebook Ads)
+  {
+    path: '/oauth/facebook/callback',
+    name: 'FacebookOAuthCallback',
+    component: () => import('./views/oauth/FacebookCallback.vue'),
+    meta: { requiresAuth: true }
+  },
+  
+  // Facebook OAuth success/error routes
+  {
+    path: '/facebook/oauth/success',
+    name: 'FacebookOAuthSuccess',
+    component: () => import('./views/oauth/FacebookOAuthSuccess.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/facebook/oauth/error',
+    name: 'FacebookOAuthError',
+    component: () => import('./views/oauth/FacebookOAuthError.vue'),
+    meta: { requiresAuth: true }
+  },
+  
   // Protected routes
   {
     path: '/dashboard',

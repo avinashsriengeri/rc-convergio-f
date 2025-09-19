@@ -216,7 +216,19 @@
       "select_provider": "Select a provider",
       "enter_account_name": "Enter account name",
       "enter_account_id": "Enter account ID",
-      "enter_budget": "Enter monthly budget"
+      "enter_budget": "Enter monthly budget",
+      "credentials": "Credentials",
+      "api_key": "API Key",
+      "client_id": "Client ID",
+      "refresh_token": "Refresh Token",
+      "client_secret": "Client Secret",
+      "enter_api_key": "Enter API key",
+      "enter_client_id": "Enter client ID",
+      "enter_refresh_token": "Enter refresh token",
+      "enter_client_secret": "Enter client secret",
+      "settings": "Settings",
+      "timezone": "Timezone",
+      "language": "Language"
     },
     "edit_modal": {
       "title": "Edit Ad Account",
@@ -255,6 +267,7 @@
       "avg_cpc": "Avg CPC",
       "avg_conversion_rate": "Avg Conversion Rate",
       "avg_roi": "Avg ROI",
+      "avg_cpa": "Avg CPA",
       "top_campaigns": "Top Performing Campaigns",
       "campaign_name": "Campaign Name",
       "spend": "Spend",
@@ -274,7 +287,96 @@
       "google_ads": "Google Ads",
       "facebook_ads": "Facebook Ads",
       "linkedin_ads": "LinkedIn Ads",
-      "twitter_ads": "Twitter Ads"
+      "twitter_ads": "Twitter Ads",
+      "google": "Google Ads",
+      "facebook": "Facebook Ads",
+      "linkedin": "LinkedIn Ads",
+      "twitter": "Twitter Ads",
+      "instagram": "Instagram Ads"
+    },
+    "create_campaign": {
+      "title": "Create Ad Campaign",
+      "description": "Create and configure new ad campaigns with targeting options",
+      "create_campaign": "Create Campaign",
+      "campaign_id": "Campaign ID",
+      "ad_account": "Ad Account",
+      "select_account": "Select an account",
+      "ad_settings": "Ad Settings",
+      "budget": "Budget",
+      "duration_days": "Duration (Days)",
+      "targeting": "Targeting",
+      "age_range": "Age Range",
+      "location": "Location",
+      "gender": "Gender",
+      "cancel": "Cancel",
+      "create": "Create Campaign",
+      "creating": "Creating..."
+    },
+    "oauth": {
+      "title": "Connect Ad Account",
+      "select_provider": "Select a provider to connect",
+      "facebook": {
+        "name": "Facebook Ads",
+        "description": "Connect your Facebook Ads account to manage campaigns and track performance",
+        "connect_button": "Connect Facebook Ads",
+        "connecting": "Connecting...",
+        "coming_soon": "Coming Soon",
+        "redirecting_toast": "Redirecting to Facebook for secure login..."
+      },
+      "google": {
+        "name": "Google Ads",
+        "description": "Connect your Google Ads account to manage campaigns and track performance",
+        "connect_button": "Connect Google Ads",
+        "connecting": "Connecting...",
+        "disabled_message": "Coming soon",
+        "redirecting_toast": "Redirecting to Google for secure login..."
+      },
+      "linkedin": {
+        "name": "LinkedIn Ads",
+        "description": "Connect your LinkedIn Ads account to manage campaigns and track performance",
+        "connect_button": "Connect LinkedIn Ads",
+        "disabled_message": "Coming soon"
+      },
+      "instagram": {
+        "name": "Instagram Ads",
+        "description": "Connect your Instagram Ads account to manage campaigns and track performance",
+        "connect_button": "Connect Instagram Ads",
+        "disabled_message": "Coming soon"
+      },
+      "oauth_flow": {
+        "redirecting": "Redirecting to {{provider}} for authentication...",
+        "success": "Account connected successfully!",
+        "error": "Failed to connect account. Please try again.",
+        "cancel": "Cancel",
+        "close": "Close"
+      },
+      "success_page": {
+        "title": "Facebook Ads Connected Successfully!",
+        "subtitle": "Your Facebook Ads account has been securely connected and is ready to use.",
+        "user_info": "Connected Account Details",
+        "user_name": "User Name",
+        "email": "Email",
+        "ad_accounts": "Ad Accounts Found",
+        "accounts_count": "ad account(s) found and connected",
+        "redirecting": "Redirecting to Ads Dashboard in {{count}}s...",
+        "back_to_ads": "Back to Ads Dashboard",
+        "go_to_dashboard": "Go to Dashboard"
+      },
+      "error_page": {
+        "title": "Connection Failed",
+        "subtitle": "There was an error connecting your Facebook Ads account.",
+        "error_details": "Error Details",
+        "error_code": "Error Code",
+        "description": "Description",
+        "solutions": "Common Solutions",
+        "solution_1": "Make sure you have granted all required permissions for Facebook Ads access",
+        "solution_2": "Check that your Facebook account has access to Facebook Ads Manager",
+        "solution_3": "Try refreshing the page and attempting the connection again",
+        "solution_4": "Contact support if the issue persists",
+        "try_again": "Try Again",
+        "back_to_ads": "Back to Ads Dashboard",
+        "go_to_dashboard": "Go to Dashboard"
+      }
     }
   },
   "events": {
