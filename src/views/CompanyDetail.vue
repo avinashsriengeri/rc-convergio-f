@@ -14,8 +14,8 @@
               </svg>
             </router-link>
             <div>
-              <h1 class="text-2xl font-bold text-gray-900">Company Details</h1>
-              <p class="text-sm text-gray-600">View and manage company information</p>
+              <h1 class="text-2xl font-bold text-gray-900">{{ $t('companies.company_details.title') }}</h1>
+              <p class="text-sm text-gray-600">{{ $t('companies.company_details.subtitle') }}</p>
             </div>
           </div>
           <div class="flex items-center space-x-3">
@@ -25,7 +25,7 @@
               icon="edit"
               @click="editCompany"
             >
-              Edit
+              {{ $t('companies.company_details.edit') }}
             </BaseButton>
             <BaseButton
               variant="danger"
@@ -33,7 +33,7 @@
               icon="trash"
               @click="deleteCompany"
             >
-              Delete
+              {{ $t('companies.company_details.delete') }}
             </BaseButton>
           </div>
         </div>
@@ -60,7 +60,7 @@
               </div>
               <div>
                 <h2 class="text-2xl font-bold text-gray-900">{{ company.name }}</h2>
-                <p class="text-gray-600">{{ company.industry || 'No industry' }}</p>
+                <p class="text-gray-600">{{ company.industry || $t('companies.no_industry') }}</p>
                 <span
                   class="inline-block px-3 py-1 text-sm rounded-full mt-2"
                   :class="getStatusClass(company.status)"
@@ -72,69 +72,69 @@
 
             <!-- Company Details -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">Company Details</h3>
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('companies.company_details.company_details') }}</h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label class="text-sm font-medium text-gray-500">Company Name</label>
+                  <label class='text-sm font-medium text-gray-500'>{{ $t('companies.company_details.company_name') }}</label>
                   <p class="text-sm text-gray-900">{{ company.name }}</p>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-500">Domain</label>
-                  <p class="text-sm text-gray-900">{{ company.domain || 'Not specified' }}</p>
+                  <label class='text-sm font-medium text-gray-500'>{{ $t('companies.company_details.domain') }}</label>
+                  <p class="text-sm text-gray-900">{{ company.domain || $t('companies.company_details.not_specified') }}</p>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-500">Website</label>
+                  <label class='text-sm font-medium text-gray-500'>{{ $t('companies.company_details.website') }}</label>
                   <p class="text-sm text-gray-900">
                     <a v-if="company.website" :href="company.website" target="_blank" class="text-[#2596be] hover:underline">
                       {{ company.website }}
                     </a>
-                    <span v-else class="text-gray-500">Not specified</span>
+                    <span v-else class="text-gray-500">{{ $t('companies.company_details.not_specified') }}</span>
                   </p>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-500">Industry</label>
-                  <p class="text-sm text-gray-900">{{ company.industry || 'Not specified' }}</p>
+                  <label class='text-sm font-medium text-gray-500'>{{ $t('companies.company_details.industry') }}</label>
+                  <p class="text-sm text-gray-900">{{ company.industry || $t('companies.company_details.not_specified') }}</p>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-500">Company Type</label>
-                  <p class="text-sm text-gray-900">{{ company.type || 'Not specified' }}</p>
+                  <label class='text-sm font-medium text-gray-500'>{{ $t('companies.company_details.company_type') }}</label>
+                  <p class="text-sm text-gray-900">{{ company.type || $t('companies.company_details.not_specified') }}</p>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-500">Company Size</label>
-                  <p class="text-sm text-gray-900">{{ company.size ? `${company.size} employees` : 'Not specified' }}</p>
+                  <label class='text-sm font-medium text-gray-500'>{{ $t('companies.company_details.company_size') }}</label>
+                  <p class="text-sm text-gray-900">{{ company.size ? `${company.size} ${$t('companies.company_details.employees')}` : $t('companies.company_details.not_specified') }}</p>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-500">Annual Revenue</label>
-                  <p class="text-sm text-gray-900">{{ company.annual_revenue ? `$${company.annual_revenue.toLocaleString()}` : 'Not specified' }}</p>
+                  <label class='text-sm font-medium text-gray-500'>{{ $t('companies.company_details.annual_revenue') }}</label>
+                  <p class="text-sm text-gray-900">{{ company.annual_revenue ? `$${company.annual_revenue.toLocaleString()}` : $t('companies.company_details.not_specified') }}</p>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-500">Timezone</label>
-                  <p class="text-sm text-gray-900">{{ company.timezone || 'Not specified' }}</p>
+                  <label class='text-sm font-medium text-gray-500'>{{ $t('companies.company_details.timezone') }}</label>
+                  <p class="text-sm text-gray-900">{{ company.timezone || $t('companies.company_details.not_specified') }}</p>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-500">LinkedIn Page</label>
+                  <label class='text-sm font-medium text-gray-500'>{{ $t('companies.company_details.linkedin_page') }}</label>
                   <p class="text-sm text-gray-900">
                     <a v-if="company.linkedin_page" :href="company.linkedin_page" target="_blank" class="text-[#2596be] hover:underline truncate block">
                       {{ company.linkedin_page.length > 40 ? company.linkedin_page.substring(0, 40) + '...' : company.linkedin_page }}
                     </a>
-                    <span v-else class="text-gray-500">Not specified</span>
+                    <span v-else class="text-gray-500">{{ $t('companies.company_details.not_specified') }}</span>
                   </p>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-500">Phone</label>
-                  <p class="text-sm text-gray-900">{{ company.phone || 'Not specified' }}</p>
+                  <label class='text-sm font-medium text-gray-500'>{{ $t('companies.company_details.phone') }}</label>
+                  <p class="text-sm text-gray-900">{{ company.phone || $t('companies.company_details.not_specified') }}</p>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-500">Email</label>
+                  <label class='text-sm font-medium text-gray-500'>{{ $t('companies.company_details.email') }}</label>
                   <p class="text-sm text-gray-900">
                     <a v-if="company.email" :href="`mailto:${company.email}`" class="text-[#2596be] hover:underline">
                       {{ company.email }}
                     </a>
-                    <span v-else class="text-gray-500">Not specified</span>
+                    <span v-else class="text-gray-500">{{ $t('companies.company_details.not_specified') }}</span>
                   </p>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-500">Status</label>
+                  <label class='text-sm font-medium text-gray-500'>{{ $t('companies.company_details.status') }}</label>
                   <span
                     class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
                     :class="getStatusClass(company.status)"
@@ -143,11 +143,11 @@
                   </span>
                 </div>
                 <div class="md:col-span-2">
-                  <label class="text-sm font-medium text-gray-500">Address</label>
-                  <p class="text-sm text-gray-900">{{ formatAddress(company.address) }}</p>
+                  <label class='text-sm font-medium text-gray-500'>{{ $t('companies.company_details.address') }}</label>
+                  <p class="text-sm text-gray-900">{{ formatAddress(company.address) || $t('companies.company_details.not_specified') }}</p>
                 </div>
                 <div class="md:col-span-2" v-if="company.description">
-                  <label class="text-sm font-medium text-gray-500">Description</label>
+                  <label class='text-sm font-medium text-gray-500'>{{ $t('companies.company_details.description') }}</label>
                   <p class="text-sm text-gray-900">{{ company.description }}</p>
                 </div>
               </div>
@@ -155,7 +155,7 @@
 
             <!-- Description -->
             <div v-if="company.description" class="mt-6">
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">Description</h3>
+              <h3 class='text-lg font-semibold text-gray-900 mb-4'>{{ $t('companies.company_details.description') }}</h3>
               <div class="bg-gray-50 rounded-lg p-4">
                 <p class="text-gray-700">{{ company.description }}</p>
               </div>
@@ -164,14 +164,14 @@
             <!-- Deals Section -->
             <div class="mt-6">
               <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">Deals</h3>
+                <h3 class='text-lg font-semibold text-gray-900'>{{ $t('companies.company_details.deals') }}</h3>
                 <div class="flex items-center space-x-2">
                   <BaseButton
                     variant="outline"
                     size="sm"
                     @click="createDeal"
                   >
-                    Create Deal
+                    {{ $t('companies.company_details.create_deal') }}
                   </BaseButton>
                   <BaseButton
                     v-if="companyDeals.length > 0"
@@ -179,7 +179,7 @@
                     size="sm"
                     @click="viewAllDeals"
                   >
-                    View All
+                    {{ $t('companies.company_details.view_all') }}
                   </BaseButton>
                 </div>
               </div>
@@ -201,7 +201,7 @@
                         <h4 class="font-medium text-gray-900">{{ deal.title }}</h4>
                         <div class="flex items-center space-x-4 mt-1 text-sm text-gray-600">
                           <span v-if="deal.value" class="font-medium">${{ formatCurrency(deal.value) }}</span>
-                          <span>{{ deal.stage?.name || 'No Stage' }}</span>
+                          <span>{{ deal.stage?.name || $t('companies.company_details.no_stage') }}</span>
                         </div>
                       </div>
                       <span
@@ -218,7 +218,7 @@
                   <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                   </svg>
-                  <p class="text-sm">No deals yet</p>
+                  <p class="text-sm">{{ $t('companies.company_details.no_deals_yet') }}</p>
                 </div>
               </div>
             </div>
@@ -229,7 +229,7 @@
         <div class="space-y-6">
           <!-- Quick actions -->
           <div class="bg-white rounded-xl shadow-sm p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+            <h3 class='text-lg font-semibold text-gray-900 mb-4'>{{ $t('companies.company_details.quick_actions') }}</h3>
             <div class="space-y-3">
               <BaseButton
                 variant="primary"
@@ -237,7 +237,7 @@
                 full-width
                 @click="addContact"
               >
-                Add Contact
+                {{ $t('companies.company_details.add_contact') }}
               </BaseButton>
               <BaseButton
                 variant="secondary"
@@ -245,7 +245,7 @@
                 full-width
                 @click="createDeal"
               >
-                Create Deal
+                {{ $t('companies.company_details.create_deal') }}
               </BaseButton>
               <BaseButton
                 variant="outline"
@@ -253,7 +253,7 @@
                 full-width
                 @click="viewWebsite"
               >
-                Visit Website
+                {{ $t('companies.company_details.visit_website') }}
               </BaseButton>
             </div>
           </div>
@@ -261,13 +261,13 @@
           <!-- Company contacts -->
           <div class="bg-white rounded-xl shadow-sm p-6">
             <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-semibold text-gray-900">Company Contacts</h3>
+              <h3 class='text-lg font-semibold text-gray-900'>{{ $t('companies.company_details.company_contacts') }}</h3>
               <BaseButton
                 variant="primary"
                 size="sm"
                 @click="showAttachContactModal = true"
               >
-                Attach Contact
+                {{ $t('companies.company_details.attach_contact') }}
               </BaseButton>
             </div>
             
@@ -297,7 +297,7 @@
                 <button
                   @click="detachContact(contact.id)"
                   class="text-red-500 hover:text-red-700 transition-colors"
-                  title="Detach contact"
+                  :title="$t('companies.company_details.detach_contact')"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -308,15 +308,15 @@
             
             <!-- Empty state -->
             <div v-else class="text-center py-8 text-gray-500">
-              <p>No contacts associated</p>
+              <p>{{ $t('companies.company_details.no_contacts_associated') }}</p>
             </div>
           </div>
 
           <!-- Activity -->
           <div class="bg-white rounded-xl shadow-sm p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+            <h3 class='text-lg font-semibold text-gray-900 mb-4'>{{ $t('companies.company_details.recent_activity') }}</h3>
             <div class="text-center py-8 text-gray-500">
-              <p>No recent activity</p>
+              <p>{{ $t('companies.company_details.no_recent_activity') }}</p>
             </div>
           </div>
         </div>
@@ -329,13 +329,13 @@
             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
           </svg>
         </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">Company not found</h3>
-        <p class="text-gray-500 mb-6">The company you're looking for doesn't exist or has been deleted.</p>
+        <h3 class='text-lg font-medium text-gray-900 mb-2'>{{ $t('companies.company_details.company_not_found') }}</h3>
+        <p class="text-gray-500 mb-6">{{ $t('companies.company_details.company_not_found_message') }}</p>
         <router-link
           to="/companies"
           class="text-[#2596be] hover:text-[#973894] transition-colors"
         >
-          Back to companies
+          {{ $t('companies.company_details.back_to_companies') }}
         </router-link>
       </div>
     </div>

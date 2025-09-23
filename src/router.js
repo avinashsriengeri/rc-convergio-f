@@ -272,6 +272,32 @@ const routes = [
     component: () => import('./views/Forms/FormPublicView.vue'),
     meta: { requiresAuth: false }
   },
+  {
+    path: '/public/events/:id',
+    name: 'PublicEventRegistration',
+    component: () => import('./views/PublicEventRegistration.vue'),
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/events/:id/rsvp',
+    name: 'PublicRSVPConfirmation',
+    component: () => import('./views/PublicRSVPConfirmation.vue'),
+    meta: { requiresAuth: false }
+  },
+  // Backend RSVP redirect route - handles backend URLs and redirects to frontend
+  {
+    path: '/api/public/events/:id/rsvp',
+    name: 'BackendRSVPRedirect',
+    component: () => import('./views/BackendRSVPRedirect.vue'),
+    meta: { requiresAuth: false }
+  },
+  // RSVP redirect route for Vite proxy redirects
+  {
+    path: '/rsvp-redirect/:id/rsvp',
+    name: 'RSVPRedirect',
+    component: () => import('./views/BackendRSVPRedirect.vue'),
+    meta: { requiresAuth: false }
+  },
 
   // Lists/Segments Module routes
   {

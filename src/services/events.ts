@@ -9,109 +9,6 @@ export const eventsService = {
       return response.data
     } catch (error) {
       console.error('Error fetching events:', error)
-      
-      // Return fallback data for development/demo purposes
-      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        console.log('Events API timeout - using fallback data')
-        return {
-          data: [
-            {
-              id: 1,
-              name: 'Q4 Product Launch Webinar',
-              description: 'Join us for an exclusive look at our latest product features and roadmap updates.',
-              type: 'webinar',
-              status: 'upcoming',
-              scheduled_at: '2024-12-15T14:00:00Z',
-              duration: 60,
-              location: 'Virtual',
-              max_attendees: 200,
-              rsvp_going: 127,
-              rsvp_interested: 23,
-              rsvp_declined: 8,
-              attended: 0,
-              created_at: '2024-11-01T10:30:00Z',
-              created_by: { id: 1, name: 'John Smith' }
-            },
-            {
-              id: 2,
-              name: 'Customer Success Summit 2025',
-              description: 'Annual customer success conference featuring industry leaders and best practices.',
-              type: 'conference',
-              status: 'upcoming',
-              scheduled_at: '2025-01-20T09:00:00Z',
-              duration: 480,
-              location: 'San Francisco, CA',
-              max_attendees: 500,
-              rsvp_going: 89,
-              rsvp_interested: 45,
-              rsvp_declined: 12,
-              attended: 0,
-              created_at: '2024-10-15T14:20:00Z',
-              created_by: { id: 2, name: 'Sarah Johnson' }
-            },
-            {
-              id: 3,
-              name: 'Sales Training Workshop',
-              description: 'Interactive workshop on advanced sales techniques and CRM optimization.',
-              type: 'workshop',
-              status: 'completed',
-              scheduled_at: '2024-11-28T10:00:00Z',
-              duration: 240,
-              location: 'New York, NY',
-              max_attendees: 50,
-              rsvp_going: 42,
-              rsvp_interested: 8,
-              rsvp_declined: 3,
-              attended: 38,
-              created_at: '2024-10-01T08:15:00Z',
-              created_by: { id: 1, name: 'John Smith' }
-            },
-            {
-              id: 4,
-              name: 'Demo Day - New Features',
-              description: 'Live demonstration of our latest platform features and integrations.',
-              type: 'demo',
-              status: 'completed',
-              scheduled_at: '2024-11-15T15:30:00Z',
-              duration: 90,
-              location: 'Virtual',
-              max_attendees: 100,
-              rsvp_going: 76,
-              rsvp_interested: 15,
-              rsvp_declined: 4,
-              attended: 71,
-              created_at: '2024-10-20T11:45:00Z',
-              created_by: { id: 3, name: 'Mike Wilson' }
-            },
-            {
-              id: 5,
-              name: 'Partner Network Meeting',
-              description: 'Quarterly meeting with our partner network to discuss collaboration opportunities.',
-              type: 'meeting',
-              status: 'upcoming',
-              scheduled_at: '2024-12-30T11:00:00Z',
-              duration: 120,
-              location: 'Chicago, IL',
-              max_attendees: 75,
-              rsvp_going: 34,
-              rsvp_interested: 12,
-              rsvp_declined: 2,
-              attended: 0,
-              created_at: '2024-11-10T16:30:00Z',
-              created_by: { id: 2, name: 'Sarah Johnson' }
-            }
-          ],
-          meta: {
-            current_page: 1,
-            last_page: 1,
-            per_page: 15,
-            total: 5,
-            from: 1,
-            to: 5
-          }
-        }
-      }
-      
       throw error
     }
   },
@@ -123,22 +20,6 @@ export const eventsService = {
       return response.data
     } catch (error) {
       console.error('Error fetching event types:', error)
-      
-      // Return fallback data
-      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        return {
-          data: [
-            { id: 'webinar', name: 'Webinar', description: 'Online presentation or training session' },
-            { id: 'conference', name: 'Conference', description: 'Large-scale professional gathering' },
-            { id: 'workshop', name: 'Workshop', description: 'Interactive training or learning session' },
-            { id: 'demo', name: 'Demo', description: 'Product demonstration or showcase' },
-            { id: 'meeting', name: 'Meeting', description: 'Business or team meeting' },
-            { id: 'networking', name: 'Networking', description: 'Professional networking event' },
-            { id: 'training', name: 'Training', description: 'Educational or skill development session' }
-          ]
-        }
-      }
-      
       throw error
     }
   },
@@ -150,18 +31,6 @@ export const eventsService = {
       return response.data
     } catch (error) {
       console.error('Error fetching RSVP statuses:', error)
-      
-      // Return fallback data
-      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        return {
-          data: [
-            { id: 'going', name: 'Going', description: 'Confirmed attendance' },
-            { id: 'interested', name: 'Interested', description: 'Interested but not confirmed' },
-            { id: 'declined', name: 'Declined', description: 'Cannot attend' }
-          ]
-        }
-      }
-      
       throw error
     }
   },
@@ -228,42 +97,6 @@ export const eventsService = {
       return response.data
     } catch (error) {
       console.error('Error fetching event attendees:', error)
-      
-      // Return fallback data
-      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        return {
-          data: [
-            {
-              id: 1,
-              name: 'Alice Johnson',
-              email: 'alice.johnson@example.com',
-              company: 'Tech Corp',
-              rsvp_status: 'going',
-              attended: false,
-              registered_at: '2024-11-01T10:35:00Z'
-            },
-            {
-              id: 2,
-              name: 'Bob Smith',
-              email: 'bob.smith@example.com',
-              company: 'Innovation Inc',
-              rsvp_status: 'going',
-              attended: false,
-              registered_at: '2024-11-02T14:20:00Z'
-            },
-            {
-              id: 3,
-              name: 'Carol Davis',
-              email: 'carol.davis@example.com',
-              company: 'Future Systems',
-              rsvp_status: 'interested',
-              attended: false,
-              registered_at: '2024-11-03T09:15:00Z'
-            }
-          ]
-        }
-      }
-      
       throw error
     }
   },
@@ -282,116 +115,120 @@ export const eventsService = {
   // Get events analytics
   async getEventsAnalytics(params = {}) {
     try {
-      const response = await api.get('/analytics/events', { params })
+      const response = await api.get('/events/analytics', { params })
       return response.data
     } catch (error) {
       console.error('Error fetching events analytics:', error)
-      
-      // Return fallback data for development/demo purposes
-      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        console.log('Events analytics API timeout - using fallback data')
-        return {
-          data: {
-            total_events: 25,
-            upcoming_events: 8,
-            completed_events: 17,
-            total_attendees: 1247,
-            total_rsvps: 2156,
-            avg_attendance_rate: 78.5,
-            avg_rsvp_rate: 85.2,
-            events_by_type: [
-              {
-                type: 'webinar',
-                count: 12,
-                total_attendees: 456,
-                avg_attendance_rate: 82.1
-              },
-              {
-                type: 'conference',
-                count: 3,
-                total_attendees: 234,
-                avg_attendance_rate: 75.8
-              },
-              {
-                type: 'workshop',
-                count: 6,
-                total_attendees: 312,
-                avg_attendance_rate: 79.2
-              },
-              {
-                type: 'demo',
-                count: 4,
-                total_attendees: 245,
-                avg_attendance_rate: 76.5
-              }
-            ],
-            top_performing_events: [
-              {
-                id: 1,
-                name: 'Q4 Product Launch Webinar',
-                type: 'webinar',
-                total_rsvps: 158,
-                total_attendees: 127,
-                attendance_rate: 80.4,
-                scheduled_at: '2024-12-15T14:00:00Z'
-              },
-              {
-                id: 2,
-                name: 'Customer Success Summit 2025',
-                type: 'conference',
-                total_rsvps: 146,
-                total_attendees: 89,
-                attendance_rate: 61.0,
-                scheduled_at: '2025-01-20T09:00:00Z'
-              },
-              {
-                id: 3,
-                name: 'Sales Training Workshop',
-                type: 'workshop',
-                total_rsvps: 53,
-                total_attendees: 38,
-                attendance_rate: 71.7,
-                scheduled_at: '2024-11-28T10:00:00Z'
-              }
-            ],
-            monthly_trends: [
-              {
-                month: '2024-09',
-                events_count: 3,
-                total_attendees: 156,
-                avg_attendance_rate: 78.2
-              },
-              {
-                month: '2024-10',
-                events_count: 5,
-                total_attendees: 234,
-                avg_attendance_rate: 76.8
-              },
-              {
-                month: '2024-11',
-                events_count: 7,
-                total_attendees: 312,
-                avg_attendance_rate: 79.1
-              },
-              {
-                month: '2024-12',
-                events_count: 4,
-                total_attendees: 189,
-                avg_attendance_rate: 81.3
-              },
-              {
-                month: '2025-01',
-                events_count: 6,
-                total_attendees: 356,
-                avg_attendance_rate: 77.9
-              }
-            ],
-            period: 'last_6_months',
-            last_updated: '2024-01-20T15:30:00Z'
-          }
-        }
-      }
-      
+      throw error
+    }
+  },
+
+  // Public event registration
+  async publicRegister(eventId, attendeeData) {
+    try {
+      const response = await api.post(`/public/events/${eventId}/register`, attendeeData)
+      return response.data
+    } catch (error) {
+      console.error('Error registering for event:', error)
+      throw error
+    }
+  },
+
+  // Get event share link
+  async getEventShareLink(eventId) {
+    try {
+      const response = await api.get(`/events/${eventId}/share-link`)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching event share link:', error)
+      throw error
+    }
+  },
+
+  // Get event QR code
+  async getEventQRCode(eventId) {
+    try {
+      const response = await api.get(`/events/${eventId}/qr-code`)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching event QR code:', error)
+      throw error
+    }
+  },
+
+  // Get event calendar links
+  async getEventCalendarLinks(eventId) {
+    try {
+      const response = await api.get(`/events/${eventId}/calendar`)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching event calendar links:', error)
+      throw error
+    }
+  },
+
+  // Send event invitations
+  async sendEventInvitations(eventId, invitationData) {
+    try {
+      const response = await api.post(`/events/${eventId}/send-invitations`, invitationData)
+      return response.data
+    } catch (error) {
+      console.error('Error sending event invitations:', error)
+      throw error
+    }
+  },
+
+  // Get event analytics
+  async getEventAnalytics(eventId) {
+    try {
+      const response = await api.get(`/events/${eventId}/analytics`)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching event analytics:', error)
+      throw error
+    }
+  },
+
+  // Get public event details (no auth required)
+  async getPublicEvent(eventId) {
+    try {
+      const response = await api.get(`/public/events/${eventId}`)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching public event details:', error)
+      throw error
+    }
+  },
+
+  // Get email templates for invitations
+  async getEmailTemplates() {
+    try {
+      const response = await api.get('/campaigns/templates')
+      return response.data
+    } catch (error) {
+      console.error('Error fetching email templates:', error)
+      throw error
+    }
+  },
+
+  // Get contacts for invitations
+  async getContacts(params = {}) {
+    try {
+      const response = await api.get('/contacts', { params })
+      return response.data
+    } catch (error) {
+      console.error('Error fetching contacts:', error)
+      throw error
+    }
+  },
+
+  // Process RSVP response (for public RSVP confirmation)
+  async processRSVP(eventId, rsvpData) {
+    try {
+      const response = await api.post(`/public/events/${eventId}/rsvp`, rsvpData)
+      return response.data
+    } catch (error) {
+      console.error('Error processing RSVP:', error)
       throw error
     }
   }

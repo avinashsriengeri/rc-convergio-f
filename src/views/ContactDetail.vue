@@ -14,8 +14,8 @@
               </svg>
             </router-link>
             <div>
-              <h1 class="text-2xl font-bold text-gray-900">Contact Details</h1>
-              <p class="text-sm text-gray-600">View and manage contact information</p>
+              <h1 class="text-2xl font-bold text-gray-900">{{ $t('contacts.contact_details.title') }}</h1>
+              <p class="text-sm text-gray-600">{{ $t('contacts.contact_details.subtitle') }}</p>
             </div>
           </div>
           <div class="flex items-center space-x-3">
@@ -24,7 +24,7 @@
               size="sm"
               @click="editContact"
             >
-              Edit Contact
+              {{ $t('contacts.contact_details.edit_contact') }}
             </BaseButton>
             <BaseButton
               variant="danger"
@@ -32,7 +32,7 @@
               icon="trash"
               @click="deleteContact"
             >
-              Delete
+              {{ $t('contacts.contact_details.delete') }}
             </BaseButton>
           </div>
         </div>
@@ -65,7 +65,7 @@
                   class="inline-block px-3 py-1 text-sm rounded-full mt-2"
                   :class="getStatusClass(contact.lifecycle_stage)"
                 >
-                  {{ contact.lifecycle_stage || 'No Stage' }}
+                  {{ contact.lifecycle_stage || $t('contacts.contact_details.no_stage') }}
                 </span>
               </div>
             </div>
@@ -73,7 +73,7 @@
             <!-- Contact information -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('contacts.contact_details.contact_information') }}</h3>
                 <div class="space-y-3">
                   <div v-if="contact.phone" class="flex items-center space-x-3">
                     <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -91,19 +91,19 @@
               </div>
 
               <div v-if="contact.source || contact.owner_id">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Additional Information</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('contacts.contact_details.additional_information') }}</h3>
                 <div class="space-y-3">
                   <div v-if="contact.source" class="flex items-center space-x-3">
                     <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 2h12v8H6V6z" clip-rule="evenodd" />
                     </svg>
-                    <span class="text-gray-700">Source: {{ contact.source }}</span>
+                    <span class="text-gray-700">{{ $t('contacts.contact_details.source') }}: {{ contact.source }}</span>
                   </div>
                   <div v-if="contact.owner_id" class="flex items-center space-x-3">
                     <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd" />
                     </svg>
-                    <span class="text-gray-700">Owner ID: {{ contact.owner_id }}</span>
+                    <span class="text-gray-700">{{ $t('contacts.contact_details.owner_id') }}: {{ contact.owner_id }}</span>
                   </div>
                 </div>
               </div>
@@ -113,14 +113,14 @@
           <!-- Associated Company Card -->
           <div class="bg-white rounded-xl shadow-sm p-6">
             <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-semibold text-gray-900">Associated Company</h3>
+              <h3 class="text-lg font-semibold text-gray-900">{{ $t('contacts.contact_details.associated_company') }}</h3>
               <BaseButton
                 v-if="!contactCompany"
                 variant="outline"
                 size="sm"
                 @click="createCompany"
               >
-                Create Company
+                {{ $t('contacts.contact_details.create_company') }}
               </BaseButton>
             </div>
             
@@ -143,21 +143,21 @@
               <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
-              <p class="text-sm">No company linked</p>
+              <p class="text-sm">{{ $t('contacts.contact_details.no_company_linked') }}</p>
             </div>
           </div>
 
           <!-- Deals Section -->
           <div class="bg-white rounded-xl shadow-sm p-6">
             <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-semibold text-gray-900">Deals</h3>
+              <h3 class="text-lg font-semibold text-gray-900">{{ $t('contacts.contact_details.deals') }}</h3>
               <div class="flex items-center space-x-2">
                 <BaseButton
                   variant="outline"
                   size="sm"
                   @click="createDeal"
                 >
-                  Create Deal
+                  {{ $t('contacts.contact_details.create_deal') }}
                 </BaseButton>
                 <BaseButton
                   v-if="deals.length > 0"
@@ -165,7 +165,7 @@
                   size="sm"
                   @click="viewAllDeals"
                 >
-                  View All
+                  {{ $t('contacts.contact_details.view_all') }}
                 </BaseButton>
               </div>
             </div>
@@ -184,10 +184,10 @@
                 <div class="flex items-center justify-between">
                   <div>
                     <h4 class="font-medium text-gray-900">{{ deal.title }}</h4>
-                    <div class="flex items-center space-x-4 mt-1 text-sm text-gray-600">
-                      <span v-if="deal.value" class="font-medium">${{ formatCurrency(deal.value) }}</span>
-                      <span>{{ deal.stage?.name || 'No Stage' }}</span>
-                    </div>
+                        <div class="flex items-center space-x-4 mt-1 text-sm text-gray-600">
+                          <span v-if="deal.value" class="font-medium">${{ formatCurrency(deal.value) }}</span>
+                          <span>{{ deal.stage?.name || $t('contacts.contact_details.no_stage') }}</span>
+                        </div>
                   </div>
                   <span
                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
@@ -203,21 +203,21 @@
               <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
               </svg>
-              <p class="text-sm">No deals yet</p>
+              <p class="text-sm">{{ $t('contacts.contact_details.no_deals_yet') }}</p>
             </div>
           </div>
 
           <!-- Recent Activities Section -->
           <div class="bg-white rounded-xl shadow-sm p-6">
             <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-semibold text-gray-900">Recent Activities</h3>
+              <h3 class="text-lg font-semibold text-gray-900">{{ $t('contacts.contact_details.recent_activities') }}</h3>
               <div class="flex items-center space-x-2">
                 <BaseButton
                   variant="outline"
                   size="sm"
                   @click="logActivity"
                 >
-                  Log Activity
+                  {{ $t('contacts.contact_details.log_activity') }}
                 </BaseButton>
                 <BaseButton
                   v-if="activities.length > 0"
@@ -225,7 +225,7 @@
                   size="sm"
                   @click="viewAllActivities"
                 >
-                  View All
+                  {{ $t('contacts.contact_details.view_all') }}
                 </BaseButton>
               </div>
             </div>
@@ -260,7 +260,7 @@
               <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p class="text-sm">No recent activities</p>
+              <p class="text-sm">{{ $t('contacts.contact_details.no_recent_activities') }}</p>
             </div>
           </div>
         </div>
@@ -269,7 +269,7 @@
         <div class="space-y-6">
           <!-- Quick actions -->
           <div class="bg-white rounded-xl shadow-sm p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('contacts.contact_details.quick_actions') }}</h3>
             <div class="space-y-3">
               <BaseButton
                 variant="primary"
@@ -277,7 +277,7 @@
                 full-width
                 @click="createCompany"
               >
-                Create Company
+                {{ $t('contacts.contact_details.create_company') }}
               </BaseButton>
               <BaseButton
                 variant="secondary"
@@ -285,7 +285,7 @@
                 full-width
                 @click="createDeal"
               >
-                Create Deal
+                {{ $t('contacts.contact_details.create_deal') }}
               </BaseButton>
               <BaseButton
                 variant="outline"
@@ -293,7 +293,7 @@
                 full-width
                 @click="logActivity"
               >
-                Log Activity
+                {{ $t('contacts.contact_details.log_activity') }}
               </BaseButton>
               <BaseButton
                 variant="outline"
@@ -301,25 +301,25 @@
                 full-width
                 @click="sendEmail"
               >
-                Send Email
+                {{ $t('contacts.contact_details.send_email') }}
               </BaseButton>
             </div>
           </div>
 
           <!-- Contact Stats -->
           <div class="bg-white rounded-xl shadow-sm p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Contact Stats</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('contacts.contact_details.contact_stats') }}</h3>
             <div class="space-y-4">
               <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-600">Total Deals</span>
+                <span class="text-sm text-gray-600">{{ $t('contacts.contact_details.total_deals') }}</span>
                 <span class="text-sm font-medium text-gray-900">{{ deals.length }}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-600">Total Activities</span>
+                <span class="text-sm text-gray-600">{{ $t('contacts.contact_details.total_activities') }}</span>
                 <span class="text-sm font-medium text-gray-900">{{ activities.length }}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-600">Deal Value</span>
+                <span class="text-sm text-gray-600">{{ $t('contacts.contact_details.deal_value') }}</span>
                 <span class="text-sm font-medium text-gray-900">${{ formatCurrency(totalDealValue) }}</span>
               </div>
             </div>
@@ -334,13 +334,13 @@
             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
           </svg>
         </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">Contact not found</h3>
-        <p class="text-gray-500 mb-6">The contact you're looking for doesn't exist or has been deleted.</p>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ $t('contacts.contact_details.contact_not_found') }}</h3>
+        <p class="text-gray-500 mb-6">{{ $t('contacts.contact_details.contact_not_found_message') }}</p>
         <router-link
           to="/contacts"
           class="text-[#2596be] hover:text-[#973894] transition-colors"
         >
-          Back to contacts
+          {{ $t('contacts.contact_details.back_to_contacts') }}
         </router-link>
       </div>
     </div>

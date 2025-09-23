@@ -13,11 +13,13 @@ const api = axios.create({
 // Request interceptor - add auth token
 api.interceptors.request.use(
   (config) => {
-    // Skip authentication for public form endpoints and auth endpoints
+    // Skip authentication for public form endpoints, auth endpoints, and public event endpoints
     const isPublicFormRequest = config.url?.includes('/public/forms/')
     const isAuthRequest = config.url?.includes('/auth/')
+    const isPublicEventRequest = config.url?.includes('/public/events/')
+    const isEventTypesRequest = config.url?.includes('/events/types')
     
-    if (!isPublicFormRequest && !isAuthRequest) {
+    if (!isPublicFormRequest && !isAuthRequest && !isPublicEventRequest && !isEventTypesRequest) {
       const token = localStorage.getItem('access_token')
       if (token) {
         config.headers['Authorization'] = `Bearer ${token}`
@@ -51,10 +53,12 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
       
-      // Check if this is a public form request
+      // Check if this is a public form request, public event request, or event types request
       const isPublicFormRequest = originalRequest.url?.includes('/public/forms/')
+      const isPublicEventRequest = originalRequest.url?.includes('/public/events/')
+      const isEventTypesRequest = originalRequest.url?.includes('/events/types')
       
-      if (!isPublicFormRequest) {
+      if (!isPublicFormRequest && !isPublicEventRequest && !isEventTypesRequest) {
         // Clear stored auth data only for authenticated requests
         localStorage.removeItem('access_token')
         localStorage.removeItem('user')
