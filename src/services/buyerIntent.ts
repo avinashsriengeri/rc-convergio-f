@@ -1,307 +1,487 @@
 import api from './api'
 
-// Buyer Intent Tracking API wrappers
+// Type definitions for buyer intent
+interface EventData {
+  page_url: string
+  action: string
+  score: number
+  contact_id?: number
+  company_id?: number
+  metadata?: Record<string, any>
+}
+
+interface Params {
+  [key: string]: any
+}
+
+interface JobData {
+  [key: string]: any
+}
+
+interface SettingsData {
+  [key: string]: any
+}
+
+// Buyer Intent Tracking API wrappers - Complete 33 APIs Implementation
 export const buyerIntentService = {
-  // Get tracking actions
-  async getTrackingActions() {
+  // =============================================================================
+  // 1. CORE TRACKING APIs (7 APIs)
+  // =============================================================================
+
+  // 1.1 Log Visitor Event
+  async postEvent(eventData: EventData) {
     try {
-      const response = await api.get('/tracking/actions')
+      const response = await api.post('/tracking/events', eventData)
       return response.data
     } catch (error) {
-      console.error('Error fetching tracking actions:', error)
-      
-      // Return fallback data
-      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        return {
-          data: [
-            { id: 'page_view', name: 'Page View', description: 'User viewed a page' },
-            { id: 'download', name: 'Download', description: 'User downloaded a resource' },
-            { id: 'form_submit', name: 'Form Submit', description: 'User submitted a form' },
-            { id: 'email_open', name: 'Email Open', description: 'User opened an email' },
-            { id: 'email_click', name: 'Email Click', description: 'User clicked email link' },
-            { id: 'demo_request', name: 'Demo Request', description: 'User requested a demo' },
-            { id: 'pricing_view', name: 'Pricing View', description: 'User viewed pricing page' },
-            { id: 'contact_view', name: 'Contact View', description: 'User viewed contact page' },
-            { id: 'product_view', name: 'Product View', description: 'User viewed product page' },
-            { id: 'blog_read', name: 'Blog Read', description: 'User read blog post' }
-          ]
-        }
-      }
-      
+      console.error('Error logging visitor event:', error)
       throw error
     }
   },
 
-  // Get intent levels
+  // 1.2 Get Intent Signals
+  async getIntent(params: Params = {}) {
+    try {
+      const response = await api.get('/tracking/intent', { params })
+      return response.data
+    } catch (error) {
+      console.error('Error fetching intent signals:', error)
+      throw error
+    }
+  },
+
+  // 1.3 Get Intent Analytics
+  async getAnalytics(params: Params = {}) {
+    try {
+      const response = await api.get('/tracking/analytics', { params })
+      return response.data
+    } catch (error) {
+      console.error('Error fetching intent analytics:', error)
+      throw error
+    }
+  },
+
+  // 1.4 Get Available Actions
+  async getActions() {
+    try {
+      const response = await api.get('/tracking/actions')
+      return response.data
+    } catch (error) {
+      console.error('Error fetching available actions:', error)
+      throw error
+    }
+  },
+
+  // 1.5 Get Intent Levels
   async getIntentLevels() {
     try {
       const response = await api.get('/tracking/intent-levels')
       return response.data
     } catch (error) {
       console.error('Error fetching intent levels:', error)
-      
-      // Return fallback data
-      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        return {
-          data: [
-            { id: 'high', name: 'High Intent', description: 'Strong buying signals', min_score: 80, color: 'red' },
-            { id: 'medium', name: 'Medium Intent', description: 'Moderate buying signals', min_score: 50, color: 'yellow' },
-            { id: 'low', name: 'Low Intent', description: 'Weak buying signals', min_score: 20, color: 'blue' }
-          ]
-        }
-      }
-      
       throw error
     }
   },
 
-  // Log test event
-  async logTestEvent(eventData) {
+  // 1.6 Get Visitor Analytics
+  async getVisitorAnalytics(params: Params = {}) {
     try {
-      const response = await api.post('/tracking/events', eventData)
+      const response = await api.get('/tracking/visitor-intent-analytics', { params })
       return response.data
     } catch (error) {
-      console.error('Error logging test event:', error)
+      console.error('Error fetching visitor analytics:', error)
       throw error
     }
   },
 
-  // Get intent tracking data
-  async getIntentTracking(params = {}) {
+  // 1.7 Get Visitor Stats
+  async getVisitorStats() {
     try {
-      const response = await api.get('/tracking/intent', { params })
+      const response = await api.get('/tracking/visitor-stats')
       return response.data
     } catch (error) {
-      console.error('Error fetching intent tracking:', error)
-      
-      // Return fallback data
-      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        return {
-          data: [
-            {
-              id: 1,
-              timestamp: '2024-12-10T14:30:00Z',
-              contact: {
-                id: 101,
-                name: 'John Smith',
-                email: 'john.smith@techcorp.com'
-              },
-              company: {
-                id: 201,
-                name: 'Tech Corp Inc.',
-                industry: 'Technology'
-              },
-              page_url: '/pricing/enterprise',
-              action: 'page_view',
-              score: 85,
-              intent_level: 'high',
-              session_id: 'sess_123456',
-              ip_address: '192.168.1.100',
-              user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-            },
-            {
-              id: 2,
-              timestamp: '2024-12-10T14:25:00Z',
-              contact: {
-                id: 102,
-                name: 'Sarah Johnson',
-                email: 'sarah.j@innovation.com'
-              },
-              company: {
-                id: 202,
-                name: 'Innovation Labs',
-                industry: 'Software'
-              },
-              page_url: '/products/analytics',
-              action: 'download',
-              score: 72,
-              intent_level: 'medium',
-              session_id: 'sess_123457',
-              ip_address: '192.168.1.101',
-              user_agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
-            },
-            {
-              id: 3,
-              timestamp: '2024-12-10T14:20:00Z',
-              contact: {
-                id: 103,
-                name: 'Mike Wilson',
-                email: 'mike.w@futuretech.com'
-              },
-              company: {
-                id: 203,
-                name: 'Future Tech Solutions',
-                industry: 'Consulting'
-              },
-              page_url: '/contact',
-              action: 'form_submit',
-              score: 95,
-              intent_level: 'high',
-              session_id: 'sess_123458',
-              ip_address: '192.168.1.102',
-              user_agent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'
-            },
-            {
-              id: 4,
-              timestamp: '2024-12-10T14:15:00Z',
-              contact: {
-                id: 104,
-                name: 'Emily Davis',
-                email: 'emily.d@startup.io'
-              },
-              company: {
-                id: 204,
-                name: 'Startup.io',
-                industry: 'Fintech'
-              },
-              page_url: '/blog/ai-trends-2024',
-              action: 'blog_read',
-              score: 35,
-              intent_level: 'low',
-              session_id: 'sess_123459',
-              ip_address: '192.168.1.103',
-              user_agent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15'
-            },
-            {
-              id: 5,
-              timestamp: '2024-12-10T14:10:00Z',
-              contact: {
-                id: 105,
-                name: 'David Brown',
-                email: 'david.b@enterprise.com'
-              },
-              company: {
-                id: 205,
-                name: 'Enterprise Solutions',
-                industry: 'Manufacturing'
-              },
-              page_url: '/demo',
-              action: 'demo_request',
-              score: 90,
-              intent_level: 'high',
-              session_id: 'sess_123460',
-              ip_address: '192.168.1.104',
-              user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0'
-            },
-            {
-              id: 6,
-              timestamp: '2024-12-10T14:05:00Z',
-              contact: {
-                id: 106,
-                name: 'Lisa Anderson',
-                email: 'lisa.a@retail.com'
-              },
-              company: {
-                id: 206,
-                name: 'Retail Innovations',
-                industry: 'Retail'
-              },
-              page_url: '/products/crm',
-              action: 'product_view',
-              score: 68,
-              intent_level: 'medium',
-              session_id: 'sess_123461',
-              ip_address: '192.168.1.105',
-              user_agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36'
-            }
-          ],
-          meta: {
-            current_page: 1,
-            last_page: 3,
-            per_page: 15,
-            total: 42,
-            from: 1,
-            to: 15
-          }
-        }
-      }
-      
+      console.error('Error fetching visitor stats:', error)
       throw error
     }
   },
 
-  // Get tracking analytics
-  async getTrackingAnalytics(params = {}) {
+  // 1.8 Get Tracking Script
+  async getTrackingScript() {
     try {
-      const response = await api.get('/tracking/analytics', { params })
+      const response = await api.get('/tracking/script')
       return response.data
     } catch (error) {
-      console.error('Error fetching tracking analytics:', error)
-      
-      // Return fallback data
-      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        return {
-          data: {
-            overview: {
-              total_events: 1247,
-              unique_contacts: 892,
-              unique_companies: 456,
-              high_intent_count: 156,
-              medium_intent_count: 342,
-              low_intent_count: 749,
-              average_score: 62.5,
-              conversion_rate: 12.5
-            },
-            action_breakdown: [
-              { action: 'page_view', count: 456, percentage: 36.6 },
-              { action: 'download', count: 234, percentage: 18.8 },
-              { action: 'form_submit', count: 178, percentage: 14.3 },
-              { action: 'email_open', count: 156, percentage: 12.5 },
-              { action: 'email_click', count: 98, percentage: 7.9 },
-              { action: 'demo_request', count: 67, percentage: 5.4 },
-              { action: 'pricing_view', count: 45, percentage: 3.6 },
-              { action: 'contact_view', count: 13, percentage: 1.0 }
-            ],
-            top_pages: [
-              { page: '/pricing/enterprise', views: 234, intent_score: 85.2 },
-              { page: '/products/analytics', views: 198, intent_score: 78.5 },
-              { page: '/demo', views: 156, intent_score: 92.1 },
-              { page: '/contact', views: 134, intent_score: 88.7 },
-              { page: '/products/crm', views: 112, intent_score: 72.3 },
-              { page: '/blog/ai-trends-2024', views: 98, intent_score: 45.6 },
-              { page: '/pricing/startup', views: 87, intent_score: 68.9 },
-              { page: '/about', views: 76, intent_score: 32.1 }
-            ],
-            intent_trend: [
-              { date: '2024-12-04', high: 12, medium: 28, low: 45 },
-              { date: '2024-12-05', high: 15, medium: 32, low: 52 },
-              { date: '2024-12-06', high: 18, medium: 35, low: 48 },
-              { date: '2024-12-07', high: 22, medium: 38, low: 41 },
-              { date: '2024-12-08', high: 25, medium: 42, low: 38 },
-              { date: '2024-12-09', high: 28, medium: 45, low: 35 },
-              { date: '2024-12-10', high: 32, medium: 48, low: 32 }
-            ]
-          }
-        }
-      }
-      
+      console.error('Error fetching tracking script:', error)
       throw error
     }
-  }
+  },
+
+  // =============================================================================
+  // 2. SCORING APIs (5 APIs)
+  // =============================================================================
+
+  // 2.1 Get Scoring Config
+  async getScoringConfig() {
+    try {
+      const response = await api.get('/tracking/scoring/config', {
+        timeout: 30000 // Increase timeout to 30 seconds for scoring config
+      })
+      return response.data
+    } catch (error) {
+      console.error('Error fetching scoring config:', error)
+      throw error
+    }
+  },
+
+  // 2.2 Update Scoring Config
+  async updateScoringConfig(data: JobData) {
+    try {
+      const response = await api.put('/tracking/scoring/config', data, {
+        timeout: 30000 // Increase timeout to 30 seconds for scoring config updates
+      })
+      return response.data
+    } catch (error) {
+      console.error('Error updating scoring config:', error)
+      throw error
+    }
+  },
+
+  // 2.3 Get Scoring Stats
+  async getScoringStats() {
+    try {
+      const response = await api.get('/tracking/scoring/stats')
+      return response.data
+    } catch (error) {
+      console.error('Error fetching scoring stats:', error)
+      throw error
+    }
+  },
+
+  // 2.4 Test Scoring
+  async testScoring(data: JobData) {
+    try {
+      const response = await api.post('/tracking/scoring/test', data)
+      return response.data
+    } catch (error) {
+      console.error('Error testing scoring:', error)
+      throw error
+    }
+  },
+
+  // 2.5 Get URL Stats
+  async getUrlStats() {
+    try {
+      const response = await api.get('/tracking/url-stats')
+      return response.data
+    } catch (error) {
+      console.error('Error fetching URL stats:', error)
+      throw error
+    }
+  },
+
+  // =============================================================================
+  // 3. EXPORTS APIs (4 APIs)
+  // =============================================================================
+
+  // 3.1 Create Export
+  async createExport(data: JobData) {
+    try {
+      const response = await api.post('/tracking/export', data)
+      return response.data
+    } catch (error) {
+      console.error('Error creating export:', error)
+      throw error
+    }
+  },
+
+  // 3.2 Get Export Status
+  async getExportStatus(jobId: string) {
+    try {
+      const response = await api.get(`/tracking/export/${jobId}/status`)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching export status:', error)
+      throw error
+    }
+  },
+
+  // 3.3 List Exports
+  async listExports(params: Params = {}) {
+    try {
+      const response = await api.get('/tracking/exports', { params })
+      return response.data
+    } catch (error) {
+      console.error('Error listing exports:', error)
+      throw error
+    }
+  },
+
+  // 3.4 Download Export
+  async downloadExport(jobId: string) {
+    try {
+      const response = await api.get(`/tracking/export/${jobId}/download`, { responseType: 'blob' })
+      return response.data
+    } catch (error) {
+      console.error('Error downloading export:', error)
+      throw error
+    }
+  },
+
+  // =============================================================================
+  // 4. REPORTS APIs (4 APIs)
+  // =============================================================================
+
+  // 4.1 Create Report
+  async createReport(data: JobData) {
+    try {
+      const response = await api.post('/tracking/reports', data)
+      return response.data
+    } catch (error) {
+      console.error('Error creating report:', error)
+      throw error
+    }
+  },
+
+  // 4.2 Get Report Status
+  async getReportStatus(jobId: string) {
+    try {
+      const response = await api.get(`/tracking/reports/${jobId}/status`)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching report status:', error)
+      throw error
+    }
+  },
+
+  // 4.3 List Reports
+  async listReports(params: Params = {}) {
+    try {
+      const response = await api.get('/tracking/reports', { params })
+      return response.data
+    } catch (error) {
+      console.error('Error listing reports:', error)
+      throw error
+    }
+  },
+
+  // 4.4 Download Report
+  async downloadReport(jobId: string) {
+    try {
+      const response = await api.get(`/tracking/reports/${jobId}/download`, { responseType: 'blob' })
+      return response.data
+    } catch (error) {
+      console.error('Error downloading report:', error)
+      throw error
+    }
+  },
+
+  // =============================================================================
+  // 5. EVENT CRUD APIs (3 APIs)
+  // =============================================================================
+
+  // 5.1 Get Event
+  async getEvent(id: string | number) {
+    try {
+      const response = await api.get(`/tracking/events/${id}`)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching event:', error)
+      throw error
+    }
+  },
+
+  // 5.2 Update Event
+  async updateEvent(id: string | number, data: JobData) {
+    try {
+      const response = await api.put(`/tracking/events/${id}`, data)
+      return response.data
+    } catch (error) {
+      console.error('Error updating event:', error)
+      throw error
+    }
+  },
+
+  // 5.3 Delete Event
+  async deleteEvent(id: string | number) {
+    try {
+      const response = await api.delete(`/tracking/events/${id}`)
+      return response.data
+    } catch (error) {
+      console.error('Error deleting event:', error)
+      throw error
+    }
+  },
+
+  // =============================================================================
+  // 6. MODULE INTEGRATION APIs (4 APIs)
+  // =============================================================================
+
+  // 6.1 Get Contact Intent
+  async getContactIntent(id: string | number) {
+    try {
+      const response = await api.get(`/tracking/contacts/${id}/intent`)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching contact intent:', error)
+      throw error
+    }
+  },
+
+  // 6.2 Get Company Intent
+  async getCompanyIntent(id: string | number) {
+    try {
+      const response = await api.get(`/tracking/companies/${id}/intent`)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching company intent:', error)
+      throw error
+    }
+  },
+
+  // 6.3 Get Campaign Intent
+  async getCampaignIntent(id: string | number) {
+    try {
+      const response = await api.get(`/tracking/campaigns/${id}/intent`)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching campaign intent:', error)
+      throw error
+    }
+  },
+
+  // 6.4 Get Event Intent
+  async getEventIntent(id: string | number) {
+    try {
+      const response = await api.get(`/tracking/events/${id}/intent`)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching event intent:', error)
+      throw error
+    }
+  },
+
+  // =============================================================================
+  // 7. CAMPAIGN INTEGRATION APIs (2 APIs)
+  // =============================================================================
+
+  // 7.1 Post Campaign Webhook
+  async postCampaignWebhook(data: JobData) {
+    try {
+      const response = await api.post('/campaigns/intent-webhook', data)
+      return response.data
+    } catch (error) {
+      console.error('Error posting campaign webhook:', error)
+      throw error
+    }
+  },
+
+  // 7.2 Get Campaign Stats
+  async getCampaignStats(params: Params = {}) {
+    try {
+      const response = await api.get('/campaigns/intent-stats', { params })
+      return response.data
+    } catch (error) {
+      console.error('Error fetching campaign stats:', error)
+      throw error
+    }
+  },
+
+  // =============================================================================
+  // 8. LEGACY APIs (4 APIs) - for backward compatibility
+  // =============================================================================
+
+  // 8.1 Legacy Export
+  async legacyExport(params: Params = {}) {
+    try {
+      const response = await api.get('/tracking/export', { params })
+      return response.data
+    } catch (error) {
+      console.error('Error with legacy export:', error)
+      throw error
+    }
+  },
+
+  // 8.2 Bulk Delete Events
+  async bulkDeleteEvents(data: JobData) {
+    try {
+      const response = await api.post('/tracking/bulk-delete', data)
+      return response.data
+    } catch (error) {
+      console.error('Error bulk deleting events:', error)
+      throw error
+    }
+  },
+
+  // 8.3 Legacy Reports
+  async legacyReports(params: Params = {}) {
+    try {
+      const response = await api.get('/tracking/reports', { params })
+      return response.data
+    } catch (error) {
+      console.error('Error with legacy reports:', error)
+      throw error
+    }
+  },
+
+  // 8.4 Update Tracking Settings
+  async updateTrackingSettings(data: SettingsData) {
+    try {
+      const response = await api.post('/tracking/settings', data)
+      return response.data
+    } catch (error) {
+      console.error('Error updating tracking settings:', error)
+      throw error
+    }
+  },
+
+  // =============================================================================
+  // BACKWARD COMPATIBILITY METHODS
+  // =============================================================================
+
+  // Legacy method names for backward compatibility
+  logVisitorEvent: function(eventData: EventData) { return this.postEvent(eventData) },
+  getIntentSignals: function(params: Params) { return this.getIntent(params) },
+  getIntentAnalytics: function(params: Params) { return this.getAnalytics(params) },
+  getAvailableActions: function() { return this.getActions() },
+  getVisitorIntentAnalytics: function(params: Params) { return this.getVisitorAnalytics(params) },
+  getIntentEventDetails: function(eventId: string | number) { return this.getEvent(eventId) },
+  updateIntentEvent: function(eventId: string | number, updateData: JobData) { return this.updateEvent(eventId, updateData) },
+  deleteIntentEvent: function(eventId: string | number) { return this.deleteEvent(eventId) },
+  exportIntentData: function(params: Params) { return this.legacyExport(params) },
+  generateReports: function(params: Params) { return this.legacyReports(params) },
+  updateSettings: function(settingsData: SettingsData) { return this.updateTrackingSettings(settingsData) },
+  
+  // Additional legacy methods
+  getTrackingActions: function() { return this.getActions() },
+  logTestEvent: function(eventData: EventData) { return this.postEvent(eventData) },
+  getIntentTracking: function(params: Params) { return this.getIntent(params) },
+  getTrackingAnalytics: function(params: Params) { return this.getAnalytics(params) }
 }
 
 // Helper functions for buyer intent data processing
 export const buyerIntentHelpers = {
-  // Get intent level color
-  getIntentLevelColor(level) {
-    const colors = {
-      high: 'bg-red-100 text-red-800',
-      medium: 'bg-yellow-100 text-yellow-800',
-      low: 'bg-blue-100 text-blue-800'
+  // Get intent level color - HubSpot Style
+  getIntentLevelColor(level: string): string {
+    const colors: Record<string, string> = {
+      very_high: 'bg-red-100 text-red-800 border border-red-200',
+      high: 'bg-orange-100 text-orange-800 border border-orange-200',
+      medium: 'bg-yellow-100 text-yellow-800 border border-yellow-200',
+      low: 'bg-green-100 text-green-800 border border-green-200',
+      very_low: 'bg-gray-100 text-gray-800 border border-gray-200'
     }
-    return colors[level] || 'bg-gray-100 text-gray-800'
+    return colors[level] || 'bg-gray-100 text-gray-800 border border-gray-200'
   },
 
   // Get score color based on value
-  getScoreColor(score) {
+  getScoreColor(score: number): string {
     if (score >= 80) return 'text-red-600'
     if (score >= 50) return 'text-yellow-600'
     return 'text-blue-600'
   },
 
   // Get action icon
-  getActionIcon(action) {
-    const icons = {
+  getActionIcon(action: string): string {
+    const icons: Record<string, string> = {
       page_view: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z',
       download: 'M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
       form_submit: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
@@ -317,7 +497,7 @@ export const buyerIntentHelpers = {
   },
 
   // Format timestamp
-  formatTimestamp(timestamp) {
+  formatTimestamp(timestamp: string | Date): string {
     if (!timestamp) return 'Unknown'
     return new Date(timestamp).toLocaleString('en-US', {
       year: 'numeric',
@@ -329,28 +509,28 @@ export const buyerIntentHelpers = {
   },
 
   // Format page URL for display
-  formatPageUrl(url) {
+  formatPageUrl(url: string): string {
     if (!url) return 'Unknown'
     return url.replace(/^https?:\/\/[^\/]+/, '') || '/'
   },
 
   // Format number with commas
-  formatNumber(num) {
+  formatNumber(num: number): string | number {
     if (typeof num !== 'number') return num
     return num.toLocaleString()
   },
 
   // Calculate percentage
-  calculatePercentage(value, total) {
+  calculatePercentage(value: number, total: number): number {
     if (!total || total === 0) return 0
     return Math.round((value / total) * 100)
   },
 
   // Get page title from URL
-  getPageTitle(url) {
+  getPageTitle(url: string): string {
     if (!url) return 'Unknown Page'
     
-    const titles = {
+    const titles: Record<string, string> = {
       '/pricing/enterprise': 'Enterprise Pricing',
       '/products/analytics': 'Analytics Product',
       '/demo': 'Demo Request',
@@ -361,6 +541,29 @@ export const buyerIntentHelpers = {
       '/about': 'About Us'
     }
     
-    return titles[url] || url.split('/').pop().replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+    return titles[url] || url.split('/').pop()?.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || 'Unknown Page'
+  },
+
+  // Get action name from action ID
+  getActionName(actionId: string): string {
+    const actionMap: Record<string, string> = {
+      'page_view': 'Page View',
+      'form_submit': 'Form Submit',
+      'download': 'Download',
+      'click': 'Click',
+      'scroll': 'Scroll',
+      'time_on_page': 'Time on Page',
+      'visit': 'Visit',
+      'bounce': 'Bounce',
+      'conversion': 'Conversion',
+      'email_open': 'Email Open',
+      'email_click': 'Email Click',
+      'demo_request': 'Demo Request',
+      'pricing_view': 'Pricing View',
+      'contact_view': 'Contact View',
+      'product_view': 'Product View',
+      'blog_read': 'Blog Read'
+    }
+    return actionMap[actionId] || actionId
   }
 }

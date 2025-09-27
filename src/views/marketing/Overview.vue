@@ -310,6 +310,7 @@ const loadData = async () => {
     forecast.value = forecastData
 
   } catch (err) {
+    // Handle network errors or other unexpected issues
     console.error('Error loading marketing data:', err)
     error.value = err.response?.data?.message || err.message || 'Failed to load marketing data'
     showError(error.value)

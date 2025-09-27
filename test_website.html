@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Business Website - RC Convergio CRM</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 1rem 0; position: fixed; width: 100%; top: 0; z-index: 1000; box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1); }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; list-style: none; gap: 2rem; }
+        .nav-links a { text-decoration: none; color: #333; font-weight: 500; transition: color 0.3s ease; }
+        .nav-links a:hover { color: #667eea; }
+        main { margin-top: 80px; }
+        section { padding: 4rem 0; min-height: 100vh; display: flex; align-items: center; }
+        .section-content { text-align: center; max-width: 800px; margin: 0 auto; }
+        h1 { font-size: 3rem; margin-bottom: 1rem; color: white; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); }
+        h2 { font-size: 2.5rem; margin-bottom: 1rem; color: white; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); }
+        p { font-size: 1.2rem; margin-bottom: 2rem; color: rgba(255, 255, 255, 0.9); }
+        .btn { display: inline-block; padding: 12px 30px; background: linear-gradient(45deg, #667eea, #764ba2); color: white; text-decoration: none; border-radius: 50px; font-weight: 600; transition: all 0.3s ease; border: none; cursor: pointer; font-size: 1rem; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); margin: 0.5rem; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); }
+        .btn-secondary { background: linear-gradient(45deg, #f093fb, #f5576c); }
+        .btn-success { background: linear-gradient(45deg, #4facfe, #00f2fe); }
+        .btn-warning { background: linear-gradient(45deg, #ffecd2, #fcb69f); color: #333; }
+        #home { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        #features { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        #pricing { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        #products { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); }
+        #downloads { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        #demo { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        #contact { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .card { background: rgba(255, 255, 255, 0.95); padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); transition: transform 0.3s ease; }
+        .card:hover { transform: translateY(-5px); }
+        .card h3 { font-size: 1.5rem; margin-bottom: 1rem; color: #333; }
+        .card h4 { font-size: 1.2rem; margin-bottom: 1rem; color: #333; }
+        .card p { color: #666; font-size: 1rem; }
+        .price { font-size: 2rem; font-weight: bold; color: #667eea; margin-bottom: 1rem; }
+        .card ul { list-style: none; margin-bottom: 2rem; }
+        .card li { padding: 0.5rem 0; color: #666; }
+        .contact-form { max-width: 600px; margin: 0 auto; background: rgba(255, 255, 255, 0.95); padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); }
+        .form-group { margin-bottom: 1.5rem; text-align: left; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #667eea; }
+        .form-group textarea { height: 120px; resize: vertical; }
+        footer { background: rgba(0, 0, 0, 0.8); color: white; text-align: center; padding: 2rem 0; }
+        .tracking-status { position: fixed; bottom: 20px; right: 20px; background: rgba(0, 0, 0, 0.8); color: white; padding: 1rem; border-radius: 10px; font-size: 0.9rem; z-index: 1000; }
+        .tracking-status.success { background: rgba(76, 175, 80, 0.9); }
+        .tracking-status.error { background: rgba(244, 67, 54, 0.9); }
+        @media (max-width: 768px) { .nav-links { display: none; } h1 { font-size: 2rem; } h2 { font-size: 1.8rem; } .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="nav-container">
+                <div class="logo">DemoCorp</div>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#products">Products</a></li>
+                    <li><a href="#downloads">Downloads</a></li>
+                    <li><a href="#demo">Demo</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Home Section -->
+        <section id="home">
+            <div class="container">
+                <div class="section-content">
+                    <h1>Welcome to DemoCorp</h1>
+                    <p>Transform your business with our innovative solutions. We help companies grow and succeed in the digital age.</p>
+                    <a href="#pricing" class="btn">View Our Pricing</a>
+                    <a href="#demo" class="btn btn-secondary">Watch Demo</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features">
+            <div class="container">
+                <div class="section-content">
+                    <h2>Our Features</h2>
+                    <p>Discover what makes us different</p>
+                    <div class="grid">
+                        <div class="card">
+                            <h4>🚀 Advanced Analytics</h4>
+                            <p>Get deep insights into your business performance with our powerful analytics dashboard.</p>
+                        </div>
+                        <div class="card">
+                            <h4>�� Enterprise Security</h4>
+                            <p>Bank-level security with end-to-end encryption and compliance with industry standards.</p>
+                        </div>
+                        <div class="card">
+                            <h4>�� Mobile Ready</h4>
+                            <p>Access your data anywhere with our responsive mobile-first design.</p>
+                        </div>
+                        <div class="card">
+                            <h4>�� Easy Integration</h4>
+                            <p>Connect with your existing tools through our comprehensive API and integrations.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section id="pricing">
+            <div class="container">
+                <div class="section-content">
+                    <h2>Choose Your Plan</h2>
+                    <p>Select the perfect plan for your business needs</p>
+                    <div class="grid">
+                        <div class="card">
+                            <h3>Starter</h3>
+                            <div class="price">$29/month</div>
+                            <ul>
+                                <li>✓ Up to 5 users</li>
+                                <li>✓ Basic analytics</li>
+                                <li>✓ Email support</li>
+                                <li>✓ 10GB storage</li>
+                            </ul>
+                            <a href="#contact" class="btn">Get Started</a>
+                        </div>
+                        <div class="card">
+                            <h3>Professional</h3>
+                            <div class="price">$79/month</div>
+                            <ul>
+                                <li>✓ Up to 25 users</li>
+                                <li>✓ Advanced analytics</li>
+                                <li>✓ Priority support</li>
+                                <li>✓ 100GB storage</li>
+                                <li>✓ API access</li>
+                            </ul>
+                            <a href="#contact" class="btn">Get Started</a>
+                        </div>
+                        <div class="card">
+                            <h3>Enterprise</h3>
+                            <div class="price">$199/month</div>
+                            <ul>
+                                <li>✓ Unlimited users</li>
+                                <li>✓ Custom analytics</li>
+                                <li>✓ 24/7 support</li>
+                                <li>✓ Unlimited storage</li>
+                                <li>✓ Custom integrations</li>
+                            </ul>
+                            <a href="#contact" class="btn">Contact Sales</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section id="products">
+            <div class="container">
+                <div class="section-content">
+                    <h2>Our Products</h2>
+                    <p>Explore our comprehensive suite of business solutions</p>
+                    <div class="grid">
+                        <div class="card">
+                            <h4>CRM System</h4>
+                            <p>Manage your customer relationships with our advanced CRM platform.</p>
+                            <a href="#contact" class="btn btn-success">Learn More</a>
+                        </div>
+                        <div class="card">
+                            <h4>Analytics Dashboard</h4>
+                            <p>Get real-time insights with our powerful analytics tools.</p>
+                            <a href="#contact" class="btn btn-success">Learn More</a>
+                        </div>
+                        <div class="card">
+                            <h4>Marketing Automation</h4>
+                            <p>Automate your marketing campaigns and boost conversions.</p>
+                            <a href="#contact" class="btn btn-success">Learn More</a>
+                        </div>
+                        <div class="card">
+                            <h4>Sales Pipeline</h4>
+                            <p>Track and manage your sales process from lead to close.</p>
+                            <a href="#contact" class="btn btn-success">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Downloads Section -->
+        <section id="downloads">
+            <div class="container">
+                <div class="section-content">
+                    <h2>Resources & Downloads</h2>
+                    <p>Get valuable resources to help your business grow</p>
+                    <div class="grid">
+                        <div class="card">
+                            <h4>📄 Product Brochure</h4>
+                            <a href="#" class="btn btn-warning" onclick="downloadFile('brochure.pdf')">Download PDF</a>
+                        </div>
+                        <div class="card">
+                            <h4>📊 Case Study</h4>
+                            <a href="#" class="btn btn-warning" onclick="downloadFile('case-study.pdf')">Download PDF</a>
+                        </div>
+                        <div class="card">
+                            <h4>📋 White Paper</h4>
+                            <a href="#" class="btn btn-warning" onclick="downloadFile('whitepaper.pdf')">Download PDF</a>
+                        </div>
+                        <div class="card">
+                            <h4>📈 ROI Calculator</h4>
+                            <a href="#" class="btn btn-warning" onclick="downloadFile('roi-calculator.xlsx')">Download Excel</a>
+                        </div>
+                        <div class="card">
+                            <h4>🎥 Demo Video</h4>
+                            <a href="#" class="btn btn-warning" onclick="downloadFile('demo-video.mp4')">Download MP4</a>
+                        </div>
+                        <div class="card">
+                            <h4>📚 User Guide</h4>
+                            <a href="#" class="btn btn-warning" onclick="downloadFile('user-guide.pdf')">Download PDF</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Demo Section -->
+        <section id="demo">
+            <div class="container">
+                <div class="section-content">
+                    <h2>Watch Our Demo</h2>
+                    <p>See how our platform can transform your business</p>
+                    <div class="card">
+                        <h3>�� Product Demo Video</h3>
+                        <p>Watch our comprehensive product demonstration to see all the features in action.</p>
+                        <button class="btn btn-success" onclick="playVideo()">▶️ Play Demo Video</button>
+                        <button class="btn btn-secondary" onclick="requestDemo()">📅 Schedule Live Demo</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact">
+            <div class="container">
+                <div class="section-content">
+                    <h2>Get In Touch</h2>
+                    <p>Ready to get started? Contact us today!</p>
+                    <form class="contact-form" id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="company">Company</label>
+                            <input type="text" id="company" name="company">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="interest">Area of Interest</label>
+                            <select id="interest" name="interest">
+                                <option value="">Select an option</option>
+                                <option value="crm">CRM System</option>
+                                <option value="analytics">Analytics Dashboard</option>
+                                <option value="marketing">Marketing Automation</option>
+                                <option value="sales">Sales Pipeline</option>
+                                <option value="enterprise">Enterprise Solutions</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" placeholder="Tell us about your project..."></textarea>
+                        </div>
+                        <button type="submit" class="btn">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 DemoCorp. All rights reserved. | Demo website for RC Convergio CRM tracking.</p>
+        </div>
+    </footer>
+
+    <!-- Tracking Status -->
+    <div class="tracking-status" id="trackingStatus">
+        <div>🔄 Status: <span id="statusText">Initializing...</span></div>
+        <div>�� Events: <span id="eventCount">0</span></div>
+        <div>🎯 Score: <span id="currentScore">0</span></div>
+    </div>
+
+    <!-- RC Convergio CRM Tracking Script -->
+    <script>
+        (function() {
+            var rc = window.rc = window.rc || {};
+            rc.tracking = {
+                key: 'tk_5_EnsqaKpkLS1cSp6TUpINLgqNwbiZJLp6',
+                url: 'http://localhost:8000/api/tracking/events',
+                events: [],
+                eventCount: 0,
+                currentScore: 0
+            };
+            
+            function updateStatus(message, isSuccess = true) {
+                document.getElementById('statusText').textContent = message;
+                document.getElementById('trackingStatus').className = 'tracking-status ' + (isSuccess ? 'success' : 'error');
+            }
+            
+            function updateEventCount() {
+                document.getElementById('eventCount').textContent = rc.tracking.eventCount;
+            }
+            
+            function updateScore(score) {
+                rc.tracking.currentScore += score;
+                document.getElementById('currentScore').textContent = rc.tracking.currentScore;
+            }
+            
+            rc.tracking.track = function(action, data) {
+                var event = {
+                    action: action,
+                    data: data,
+                    timestamp: new Date().toISOString(),
+                    page_url: window.location.href,
+                    user_agent: navigator.userAgent,
+                    ip_address: 'auto-detected'
+                };
+                
+                rc.tracking.events.push(event);
+                rc.tracking.eventCount++;
+                updateEventCount();
+                
+                var score = 0;
+                switch(action) {
+                    case 'page_view': score = 8; break;
+                    case 'pricing_view': score = 20; break;
+                    case 'contact_view': score = 15; break;
+                    case 'form_submit': score = 40; break;
+                    case 'download': score = 25; break;
+                    case 'video_play': score = 30; break;
+                    case 'demo_request': score = 60; break;
+                    case 'button_click': score = 5; break;
+                    default: score = 10;
+                }
+                updateScore(score);
+                
+                fetch(rc.tracking.url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Tracking-Key': rc.tracking.key
+                    },
+                    body: JSON.stringify(event)
+                }).then(function(response) {
+                    if (response.ok) {
+                        updateStatus('Event tracked: ' + action, true);
+                    } else {
+                        updateStatus('Failed to track: ' + action, false);
+                    }
+                }).catch(function(error) {
+                    updateStatus('Network error: ' + action, false);
+                });
+            };
+            
+            // Track page view automatically
+            rc.tracking.track('page_view', {
+                page_url: window.location.href,
+                page_title: document.title,
+                referrer: document.referrer,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Track form submissions with data extraction
+            document.addEventListener('submit', function(e) {
+                var formData = {};
+                var formElements = e.target.elements;
+                
+                for (var i = 0; i < formElements.length; i++) {
+                    var element = formElements[i];
+                    if (element.name && element.value && element.type !== 'submit' && element.type !== 'button') {
+                        formData[element.name] = element.value;
+                    }
+                }
+                
+                rc.tracking.track('form_submit', {
+                    form_id: e.target.id || 'unknown',
+                    form_action: e.target.action || 'unknown',
+                    page_url: window.location.href,
+                    form_data: formData,
+                    form_fields_count: Object.keys(formData).length
+                });
+            });
+            
+            // Track downloads
+            document.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A' && e.target.href) {
+                    var href = e.target.href;
+                    if (href.match(/\.(pdf|doc|docx|xls|xlsx|zip|rar|mp4)$/i)) {
+                        rc.tracking.track('download', {
+                            file_url: href,
+                            file_name: e.target.textContent || 'unknown',
+                            page_url: window.location.href
+                        });
+                    }
+                }
+            });
+            
+            // Track button clicks
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('btn')) {
+                    rc.tracking.track('button_click', {
+                        button_text: e.target.textContent,
+                        button_class: e.target.className,
+                        page_url: window.location.href
+                    });
+                }
+            });
+            
+            // Track specific page visits
+            if (window.location.pathname.includes('pricing') || window.location.hash === '#pricing') {
+                rc.tracking.track('pricing_view', {
+                    page_url: window.location.href,
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            if (window.location.pathname.includes('contact') || window.location.hash === '#contact') {
+                rc.tracking.track('contact_view', {
+                    page_url: window.location.href,
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            if (window.location.pathname.includes('features') || window.location.hash === '#features') {
+                rc.tracking.track('features_view', {
+                    page_url: window.location.href,
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            if (window.location.pathname.includes('products') || window.location.hash === '#products') {
+                rc.tracking.track('products_view', {
+                    page_url: window.location.href,
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            if (window.location.pathname.includes('downloads') || window.location.hash === '#downloads') {
+                rc.tracking.track('downloads_view', {
+                    page_url: window.location.href,
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            if (window.location.pathname.includes('demo') || window.location.hash === '#demo') {
+                rc.tracking.track('demo_view', {
+                    page_url: window.location.href,
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            updateStatus('Tracking initialized', true);
+        })();
+        
+        function downloadFile(filename) {
+            rc.tracking.track('download', {
+                file_url: filename,
+                file_name: filename,
+                page_url: window.location.href
+            });
+            alert('Download started: ' + filename);
+        }
+        
+        function playVideo() {
+            rc.tracking.track('video_play', {
+                video_title: 'Product Demo Video',
+                page_url: window.location.href
+            });
+            alert('Demo video would play here!');
+        }
+        
+        function requestDemo() {
+            rc.tracking.track('demo_request', {
+                demo_type: 'live_demo',
+                page_url: window.location.href
+            });
+            alert('Demo request submitted! We\'ll contact you soon.');
+        }
+        
+        window.addEventListener('hashchange', function() {
+            var hash = window.location.hash.substring(1);
+            if (hash) {
+                rc.tracking.track('page_view', {
+                    page_url: window.location.href,
+                    page_title: document.title,
+                    section: hash
+                });
+            }
+        });
+    </script>
+</body>
+</html>
