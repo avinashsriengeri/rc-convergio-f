@@ -152,6 +152,14 @@ const login = async (credentials) => {
       }
     }
     
+    // Handle 429 Too Many Requests
+    if (error.response?.status === 429) {
+      return { 
+        success: false, 
+        message: 'Too many login attempts. Please wait a few minutes before trying again.' 
+      }
+    }
+    
     const message = error.response?.data?.error || error.response?.data?.message || 'Login failed'
     return { success: false, message }
   } finally {

@@ -10,8 +10,9 @@ export const meetingsService = {
     } catch (error) {
       console.error('Error fetching meeting statuses:', error)
       
-      // Return fallback data
-      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+      // Return fallback data for development/demo purposes
+      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout') || error.response?.status >= 500) {
+        console.log('Meeting statuses API failed - using fallback data')
         return {
           data: [
             { id: 'scheduled', name: 'Scheduled', description: 'Meeting is scheduled' },
@@ -35,8 +36,9 @@ export const meetingsService = {
     } catch (error) {
       console.error('Error fetching meeting providers:', error)
       
-      // Return fallback data
-      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+      // Return fallback data for development/demo purposes
+      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout') || error.response?.status >= 500) {
+        console.log('Meeting providers API failed - using fallback data')
         return {
           data: [
             { id: 'google', name: 'Google Meet', icon: 'google', color: 'blue' },
@@ -60,118 +62,6 @@ export const meetingsService = {
       return response.data
     } catch (error) {
       console.error('Error fetching meetings:', error)
-      
-      // Return fallback data
-      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        return {
-          data: [
-            {
-              id: 1,
-              title: 'Product Demo',
-              description: 'Sales call with potential customer',
-              contact: {
-                id: 101,
-                name: 'John Smith',
-                email: 'john.smith@techcorp.com'
-              },
-              start_time: '2024-12-15T14:00:00Z',
-              end_time: '2024-12-15T14:30:00Z',
-              duration: 30,
-              status: 'scheduled',
-              provider: 'google',
-              meeting_link: 'https://meet.google.com/abc-def-ghi',
-              created_by: { id: 1, name: 'Sales Team' },
-              created_at: '2024-12-10T10:00:00Z',
-              updated_at: '2024-12-10T10:00:00Z'
-            },
-            {
-              id: 2,
-              title: 'Follow-up Call',
-              description: 'Customer success check-in',
-              contact: {
-                id: 102,
-                name: 'Sarah Johnson',
-                email: 'sarah.j@innovation.com'
-              },
-              start_time: '2024-12-16T10:00:00Z',
-              end_time: '2024-12-16T10:15:00Z',
-              duration: 15,
-              status: 'scheduled',
-              provider: 'phone',
-              meeting_link: null,
-              created_by: { id: 2, name: 'Customer Success' },
-              created_at: '2024-12-11T09:00:00Z',
-              updated_at: '2024-12-11T09:00:00Z'
-            },
-            {
-              id: 3,
-              title: 'Discovery Call',
-              description: 'Sales qualification meeting',
-              contact: {
-                id: 103,
-                name: 'Mike Davis',
-                email: 'mike.d@futuretech.com'
-              },
-              start_time: '2024-12-20T15:30:00Z',
-              end_time: '2024-12-20T16:15:00Z',
-              duration: 45,
-              status: 'scheduled',
-              provider: 'zoom',
-              meeting_link: 'https://zoom.us/j/123456789',
-              created_by: { id: 1, name: 'Sales Team' },
-              created_at: '2024-12-12T14:00:00Z',
-              updated_at: '2024-12-12T14:00:00Z'
-            },
-            {
-              id: 4,
-              title: 'Technical Review',
-              description: 'Technical discussion with engineering team',
-              contact: {
-                id: 104,
-                name: 'Alice Brown',
-                email: 'alice.b@startup.com'
-              },
-              start_time: '2024-12-13T11:00:00Z',
-              end_time: '2024-12-13T12:00:00Z',
-              duration: 60,
-              status: 'completed',
-              provider: 'teams',
-              meeting_link: 'https://teams.microsoft.com/l/meetup-join/abc123',
-              created_by: { id: 3, name: 'Engineering' },
-              created_at: '2024-12-08T16:00:00Z',
-              updated_at: '2024-12-13T12:00:00Z'
-            },
-            {
-              id: 5,
-              title: 'Contract Discussion',
-              description: 'Legal and contract terms discussion',
-              contact: {
-                id: 105,
-                name: 'Bob Wilson',
-                email: 'bob.w@enterprise.com'
-              },
-              start_time: '2024-12-12T09:00:00Z',
-              end_time: '2024-12-12T10:00:00Z',
-              duration: 60,
-              status: 'cancelled',
-              provider: 'in_person',
-              meeting_link: null,
-              created_by: { id: 4, name: 'Legal Team' },
-              created_at: '2024-12-09T11:00:00Z',
-              updated_at: '2024-12-11T15:00:00Z'
-            }
-          ],
-          meta: {
-            current_page: 1,
-            last_page: 1,
-            per_page: 15,
-            total: 5,
-            from: 1,
-            to: 5
-          }
-        }
-      }
-      
       throw error
     }
   },
@@ -194,22 +84,6 @@ export const meetingsService = {
       return response.data
     } catch (error) {
       console.error('Error syncing Google calendar:', error)
-      
-      // Return fallback data
-      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        return {
-          data: {
-            synced_count: 12,
-            error_count: 2,
-            errors: [
-              { meeting_id: 'google_123', error: 'Permission denied' },
-              { meeting_id: 'google_456', error: 'Meeting not found' }
-            ],
-            last_sync: new Date().toISOString()
-          }
-        }
-      }
-      
       throw error
     }
   },
@@ -221,21 +95,6 @@ export const meetingsService = {
       return response.data
     } catch (error) {
       console.error('Error syncing Outlook calendar:', error)
-      
-      // Return fallback data
-      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        return {
-          data: {
-            synced_count: 8,
-            error_count: 1,
-            errors: [
-              { meeting_id: 'outlook_789', error: 'Access token expired' }
-            ],
-            last_sync: new Date().toISOString()
-          }
-        }
-      }
-      
       throw error
     }
   },
@@ -247,73 +106,39 @@ export const meetingsService = {
       return response.data
     } catch (error) {
       console.error('Error fetching meetings analytics:', error)
-      
-      // Return fallback data for development/demo purposes
-      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        console.log('Meetings analytics API timeout - using fallback data')
-        return {
-          data: {
-            summary: {
-              total_meetings: 156,
-              scheduled_meetings: 89,
-              completed_meetings: 45,
-              cancelled_meetings: 12,
-              no_show_meetings: 8,
-              rescheduled_meetings: 2,
-              avg_duration_minutes: 42.5,
-              completion_rate: 78.3,
-              no_show_rate: 8.9,
-              cancellation_rate: 7.7
-            },
-            provider_breakdown: [
-              { provider: 'google', count: 67, percentage: 42.9, avg_duration: 38.5 },
-              { provider: 'zoom', count: 45, percentage: 28.8, avg_duration: 45.2 },
-              { provider: 'teams', count: 23, percentage: 14.7, avg_duration: 48.1 },
-              { provider: 'phone', count: 12, percentage: 7.7, avg_duration: 25.3 },
-              { provider: 'in_person', count: 7, percentage: 4.5, avg_duration: 60.0 },
-              { provider: 'webex', count: 2, percentage: 1.3, avg_duration: 40.0 }
-            ],
-            status_breakdown: [
-              { status: 'scheduled', count: 89, percentage: 57.1 },
-              { status: 'completed', count: 45, percentage: 28.8 },
-              { status: 'cancelled', count: 12, percentage: 7.7 },
-              { status: 'no_show', count: 8, percentage: 5.1 },
-              { status: 'rescheduled', count: 2, percentage: 1.3 }
-            ],
-            trends: [
-              { date: '2024-12-04', scheduled: 8, completed: 6, cancelled: 1, no_show: 1 },
-              { date: '2024-12-05', scheduled: 12, completed: 9, cancelled: 2, no_show: 1 },
-              { date: '2024-12-06', scheduled: 15, completed: 11, cancelled: 2, no_show: 2 },
-              { date: '2024-12-07', scheduled: 18, completed: 14, cancelled: 3, no_show: 1 },
-              { date: '2024-12-08', scheduled: 22, completed: 17, cancelled: 3, no_show: 2 },
-              { date: '2024-12-09', scheduled: 25, completed: 19, cancelled: 4, no_show: 2 },
-              { date: '2024-12-10', scheduled: 28, completed: 22, cancelled: 4, no_show: 2 }
-            ],
-            top_contacts: [
-              { contact_name: 'John Smith', meetings_count: 8, completion_rate: 87.5, avg_duration: 35.2 },
-              { contact_name: 'Sarah Johnson', meetings_count: 6, completion_rate: 83.3, avg_duration: 42.8 },
-              { contact_name: 'Mike Davis', meetings_count: 5, completion_rate: 80.0, avg_duration: 48.5 },
-              { contact_name: 'Alice Brown', meetings_count: 4, completion_rate: 75.0, avg_duration: 38.7 },
-              { contact_name: 'Bob Wilson', meetings_count: 4, completion_rate: 50.0, avg_duration: 52.3 }
-            ],
-            duration_analysis: {
-              '0-15': { count: 12, percentage: 7.7 },
-              '16-30': { count: 45, percentage: 28.8 },
-              '31-45': { count: 67, percentage: 42.9 },
-              '46-60': { count: 28, percentage: 17.9 },
-              '60+': { count: 4, percentage: 2.6 }
-            },
-            time_analysis: {
-              'morning': { count: 45, percentage: 28.8, avg_duration: 38.2 },
-              'afternoon': { count: 78, percentage: 50.0, avg_duration: 44.1 },
-              'evening': { count: 33, percentage: 21.2, avg_duration: 41.8 }
-            },
-            period: 'last_7_days',
-            last_updated: '2024-01-20T15:30:00Z'
-          }
-        }
-      }
-      
+      throw error
+    }
+  },
+
+  // Update meeting
+  async updateMeeting(id, data) {
+    try {
+      const response = await api.put(`/meetings/${id}`, data)
+      return response.data
+    } catch (error) {
+      console.error('Error updating meeting:', error)
+      throw error
+    }
+  },
+
+  // Delete meeting
+  async deleteMeeting(id) {
+    try {
+      const response = await api.delete(`/meetings/${id}`)
+      return response.data
+    } catch (error) {
+      console.error('Error deleting meeting:', error)
+      throw error
+    }
+  },
+
+  // Get meeting details
+  async getMeetingDetails(id) {
+    try {
+      const response = await api.get(`/meetings/${id}`)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching meeting details:', error)
       throw error
     }
   }

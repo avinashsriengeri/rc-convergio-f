@@ -399,45 +399,57 @@
                   class="hover:bg-gray-50"
                 >
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm font-medium text-gray-900">{{ meeting.title }}</div>
-                    <div class="text-sm text-gray-500">{{ meeting.description }}</div>
+                    <div class="text-sm font-medium text-gray-900">{{ meeting.title || 'Untitled Meeting' }}</div>
+                    <div class="text-sm text-gray-500">{{ meeting.description || 'No description' }}</div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm font-medium text-gray-900">{{ meeting.contact.name }}</div>
-                    <div class="text-sm text-gray-500">{{ meeting.contact.email }}</div>
+                    <div class="text-sm font-medium text-gray-900">{{ meeting.contact?.full_name || meeting.contact?.name || 'Unknown Contact' }}</div>
+                    <div class="text-sm text-gray-500">{{ meeting.contact?.email || 'No email' }}</div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm font-medium text-gray-900">{{ formatDateTime(meeting.start_time) }}</div>
-                    <div class="text-sm text-gray-500">{{ getRelativeTime(meeting.start_time) }}</div>
+                    <div class="text-sm font-medium text-gray-900">{{ formatDateTime(meeting.scheduled_at || meeting.start_time) }}</div>
+                    <div class="text-sm text-gray-500">{{ getRelativeTime(meeting.scheduled_at || meeting.start_time) }}</div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {{ formatDuration(meeting.duration) }}
+                    {{ calculateDuration(meeting.scheduled_at || meeting.start_time, meeting.end_time) }}
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
                     <span :class="getStatusColor(meeting.status)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
-                      {{ $t(`marketing.meetings.statuses.${meeting.status}`) }}
+                      {{ meeting.status || 'Unknown' }}
                     </span>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
                     <div class="flex items-center">
-                      <div :class="getProviderColor(meeting.provider)" class="w-3 h-3 rounded-full mr-2"></div>
-                      <span class="text-sm text-gray-900">{{ $t(`marketing.meetings.providers.${meeting.provider}`) }}</span>
+                      <div :class="getProviderColor(meeting.integration_provider || meeting.provider)" class="w-3 h-3 rounded-full mr-2"></div>
+                      <span class="text-sm text-gray-900">{{ getProviderName(meeting.integration_provider || meeting.provider) }}</span>
                     </div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div class="flex space-x-2">
+                    <div class="flex gap-x-2">
                       <button
-                        v-if="meeting.meeting_link"
-                        @click="openMeetingLink(meeting.meeting_link)"
-                        class="text-blue-600 hover:text-blue-900"
+                        v-if="meeting.meeting_link || meeting.integration_data?.join_url"
+                        @click="openMeetingLink(meeting.meeting_link || meeting.integration_data?.join_url)"
+                        class="px-3 py-1 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
                       >
-                        {{ $t('marketing.meetings.actions.join_meeting') }}
+                        Join
                       </button>
                       <button
                         @click="viewMeeting(meeting)"
-                        class="text-gray-600 hover:text-gray-900"
+                        class="px-3 py-1 text-xs font-medium text-gray-800 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors"
                       >
-                        {{ $t('marketing.meetings.actions.view_meeting') }}
+                        View
+                      </button>
+                      <button
+                        @click="editMeeting(meeting)"
+                        class="px-3 py-1 text-xs font-medium text-white bg-yellow-500 hover:bg-yellow-600 rounded-md transition-colors"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        @click="deleteMeeting(meeting)"
+                        class="px-3 py-1 text-xs font-medium text-white bg-red-500 hover:bg-red-600 rounded-md transition-colors"
+                      >
+                        Delete
                       </button>
                     </div>
                   </td>
@@ -506,13 +518,35 @@
                 <div class="grid grid-cols-2 gap-4">
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('marketing.meetings.create_modal.contact') }}</label>
+                    <div class="relative">
+                      <div class="relative">
+                        <input
+                          v-model="contactSearchQuery"
+                          type="text"
+                          placeholder="Search contacts..."
+                          class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          @input="searchContacts"
+                        />
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                          </svg>
+                        </div>
+                        <div v-if="contactsLoading" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                          <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                        </div>
+                      </div>
+                      <div v-if="contactSearchQuery && filteredContacts.length === 0 && !contactsLoading" class="mt-2 text-sm text-gray-500">
+                        No contacts found matching "{{ contactSearchQuery }}"
+                      </div>
+                    </div>
                     <select
                       v-model="meetingForm.contact_id"
                       required
-                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2"
                     >
                       <option value="">{{ $t('marketing.meetings.create_modal.select_contact') }}</option>
-                      <option v-for="contact in contacts" :key="contact.id" :value="contact.id">
+                      <option v-for="contact in filteredContacts" :key="contact.id" :value="contact.id">
                         {{ contact.name }} ({{ contact.email }})
                       </option>
                     </select>
@@ -523,8 +557,9 @@
                       v-model="meetingForm.provider"
                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      <option v-for="provider in meetingProviders" :key="provider.id" :value="provider.id">
-                        {{ provider.name }}
+                      <option value="">{{ $t('marketing.meetings.create_modal.select_provider') }}</option>
+                      <option v-for="(provider, index) in meetingProviders" :key="provider?.id || index" :value="provider?.id">
+                        {{ provider?.name || 'Unknown Provider' }}
                       </option>
                     </select>
                   </div>
@@ -553,6 +588,202 @@
                   class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 rounded-md transition-colors"
                 >
                   {{ creatingMeeting ? $t('marketing.meetings.create_modal.creating') : $t('marketing.meetings.create_modal.create') }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Meeting Modal -->
+    <div
+      v-if="showViewModal"
+      class="fixed inset-0 z-50 overflow-hidden"
+      @click="closeViewModal"
+    >
+      <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+      <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" @click.stop>
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Meeting Details</h3>
+          </div>
+          <div class="p-6" v-if="selectedMeetingDetails">
+            <div v-if="loadingMeetingDetails" class="flex justify-center items-center py-8">
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+            <div v-else class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <p class="text-sm text-gray-900">{{ selectedMeetingDetails.title || 'Untitled Meeting' }}</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <p class="text-sm text-gray-900">{{ selectedMeetingDetails.description || 'No description' }}</p>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
+                  <p class="text-sm text-gray-900">{{ formatDateTime(selectedMeetingDetails.scheduled_at || selectedMeetingDetails.start_time) }}</p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">End Time</label>
+                  <p class="text-sm text-gray-900">{{ formatDateTime(selectedMeetingDetails.end_time) }}</p>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Contact</label>
+                  <p class="text-sm text-gray-900">{{ selectedMeetingDetails.contact?.full_name || selectedMeetingDetails.contact?.name || selectedMeetingDetails.contact?.email || 'Unknown Contact' }}</p>
+                  <p class="text-xs text-gray-500">{{ selectedMeetingDetails.contact?.email || '' }}</p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Provider</label>
+                  <p class="text-sm text-gray-900">{{ getProviderName(selectedMeetingDetails.integration_provider || selectedMeetingDetails.provider) }}</p>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+                <p class="text-sm text-gray-900">{{ calculateDuration(selectedMeetingDetails.scheduled_at || selectedMeetingDetails.start_time, selectedMeetingDetails.end_time) }}</p>
+              </div>
+              <div v-if="selectedMeetingDetails.meeting_link || selectedMeetingDetails.integration_data?.join_url">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Meeting Link</label>
+                <a :href="selectedMeetingDetails.meeting_link || selectedMeetingDetails.integration_data?.join_url" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 break-all">
+                  {{ selectedMeetingDetails.meeting_link || selectedMeetingDetails.integration_data?.join_url }}
+                </a>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <span :class="getStatusColor(selectedMeetingDetails.status)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
+                  {{ selectedMeetingDetails.status || 'Unknown' }}
+                </span>
+              </div>
+            </div>
+            <div class="flex justify-end space-x-3 mt-6">
+              <button
+                @click="closeViewModal"
+                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+              >
+                Close
+              </button>
+              <button
+                v-if="selectedMeetingDetails.meeting_link || selectedMeetingDetails.integration_data?.join_url"
+                @click="openMeetingLink(selectedMeetingDetails.meeting_link || selectedMeetingDetails.integration_data?.join_url)"
+                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
+              >
+                Join Meeting
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Meeting Modal -->
+    <div
+      v-if="showEditModal"
+      class="fixed inset-0 z-50 overflow-hidden"
+      @click="closeEditModal"
+    >
+      <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+      <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" @click.stop>
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Edit Meeting</h3>
+          </div>
+          <div class="p-6">
+            <form @submit.prevent="updateMeeting">
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Meeting Title</label>
+                  <input
+                    v-model="editMeetingForm.title"
+                    type="text"
+                    required
+                    placeholder="Enter meeting title"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                  <textarea
+                    v-model="editMeetingForm.description"
+                    placeholder="Enter meeting description"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  ></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Start Time</label>
+                    <input
+                      v-model="editMeetingForm.start_time"
+                      type="datetime-local"
+                      required
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">End Time</label>
+                    <input
+                      v-model="editMeetingForm.end_time"
+                      type="datetime-local"
+                      required
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Contact</label>
+                    <select
+                      v-model="editMeetingForm.contact_id"
+                      required
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Select Contact</option>
+                      <option v-for="contact in contacts" :key="contact.id" :value="contact.id">
+                        {{ contact.name }} ({{ contact.email }})
+                      </option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Provider</label>
+                    <select
+                      v-model="editMeetingForm.provider"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Select Provider</option>
+                      <option v-for="provider in meetingProviders" :key="provider.id" :value="provider.id">
+                        {{ provider.name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Meeting Link</label>
+                  <input
+                    v-model="editMeetingForm.meeting_link"
+                    type="url"
+                    placeholder="Enter meeting link"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+              <div class="flex justify-end space-x-3 mt-6">
+                <button
+                  type="button"
+                  @click="closeEditModal"
+                  class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  :disabled="editingMeeting"
+                  class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 rounded-md transition-colors"
+                >
+                  {{ editingMeeting ? 'Updating...' : 'Update Meeting' }}
                 </button>
               </div>
             </form>
@@ -612,9 +843,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { meetingsService, meetingsHelpers } from '@/services/meetings'
+import { contactsAPI } from '@/services/api'
 import { error as showError, success as showSuccess } from '@/utils/notifications'
 
 const { t } = useI18n()
@@ -626,7 +858,21 @@ const meetings = ref([])
 const meetingStatuses = ref([])
 const meetingProviders = ref([])
 const contacts = ref([])
+const contactsLoading = ref(false)
+const contactSearchQuery = ref('')
 const meetingsAnalytics = ref(null)
+
+// Computed property for filtered contacts
+const filteredContacts = computed(() => {
+  if (!contactSearchQuery.value) {
+    return contacts.value
+  }
+  const query = contactSearchQuery.value.toLowerCase()
+  return contacts.value.filter(contact => 
+    contact.name?.toLowerCase().includes(query) || 
+    contact.email?.toLowerCase().includes(query)
+  )
+})
 const filters = ref({
   status: '',
   provider: '',
@@ -635,6 +881,13 @@ const filters = ref({
 })
 const showCreateModal = ref(false)
 const showSyncResults = ref(false)
+const showViewModal = ref(false)
+const showEditModal = ref(false)
+const selectedMeeting = ref(null)
+const selectedMeetingDetails = ref(null)
+const loadingMeetingDetails = ref(false)
+const editingMeeting = ref(false)
+const deletingMeeting = ref(false)
 const creatingMeeting = ref(false)
 const syncingGoogle = ref(false)
 const syncingOutlook = ref(false)
@@ -648,6 +901,18 @@ const meetingForm = ref({
   end_time: '',
   contact_id: '',
   provider: 'google',
+  meeting_link: ''
+})
+
+// Edit meeting form
+const editMeetingForm = ref({
+  id: '',
+  title: '',
+  description: '',
+  start_time: '',
+  end_time: '',
+  contact_id: '',
+  provider: '',
   meeting_link: ''
 })
 
@@ -715,26 +980,33 @@ const loadMeetings = async () => {
   
   try {
     const [meetingsResponse, statusesResponse, providersResponse] = await Promise.all([
-      meetingsService.getMeetings(),
-      meetingsService.getMeetingStatuses(),
-      meetingsService.getMeetingProviders()
+      meetingsService.getMeetings().catch(() => ({ data: [] })),
+      meetingsService.getMeetingStatuses().catch(() => ({ data: [] })),
+      meetingsService.getMeetingProviders().catch(() => ({ data: {} }))
     ])
 
     meetings.value = meetingsResponse.data || []
     meetingStatuses.value = statusesResponse.data || []
-    meetingProviders.value = providersResponse.data || []
+    
+    // Convert providers object to array format
+    const providersData = providersResponse.data || {}
+    if (typeof providersData === 'object' && !Array.isArray(providersData)) {
+      meetingProviders.value = Object.entries(providersData).map(([id, name]) => ({
+        id,
+        name
+      }))
+    } else {
+      meetingProviders.value = providersData
+    }
+    
+    console.log('Meeting providers loaded:', meetingProviders.value)
 
-    // Mock contacts data (you would load this from contacts API)
-    contacts.value = [
-      { id: 101, name: 'John Smith', email: 'john.smith@techcorp.com' },
-      { id: 102, name: 'Sarah Johnson', email: 'sarah.j@innovation.com' },
-      { id: 103, name: 'Mike Davis', email: 'mike.d@futuretech.com' },
-      { id: 104, name: 'Alice Brown', email: 'alice.b@startup.com' },
-      { id: 105, name: 'Bob Wilson', email: 'bob.w@enterprise.com' }
-    ]
+    // Load contacts from API
+    await loadContacts()
 
   } catch (err) {
-    error.value = err.message || 'Failed to load meetings'
+    console.error('Unexpected error in loadMeetings:', err)
+    error.value = 'Failed to load meetings'
     showError(error.value)
   } finally {
     loading.value = false
@@ -747,6 +1019,26 @@ const loadMeetingsAnalytics = async () => {
     meetingsAnalytics.value = response.data
   } catch (err) {
     console.error('Failed to load meetings analytics:', err)
+    // Don't show error for analytics, it's optional
+  }
+}
+
+const loadContacts = async (searchQuery = '') => {
+  contactsLoading.value = true
+  try {
+    const params = {
+      per_page: 100,
+      ...(searchQuery && { search: searchQuery })
+    }
+    const response = await contactsAPI.getContacts(params)
+    contacts.value = response.data.data || response.data || []
+  } catch (err) {
+    console.error('Failed to load contacts:', err)
+    showError('Failed to load contacts')
+    // Fallback to empty array
+    contacts.value = []
+  } finally {
+    contactsLoading.value = false
   }
 }
 
@@ -770,9 +1062,10 @@ const openCreateModal = () => {
     start_time: '',
     end_time: '',
     contact_id: '',
-    provider: 'google',
+    provider: '',
     meeting_link: ''
   }
+  contactSearchQuery.value = ''
   showCreateModal.value = true
 }
 
@@ -849,9 +1142,144 @@ const closeSyncResults = () => {
   syncResults.value = {}
 }
 
-const viewMeeting = (meeting) => {
-  // You would implement meeting details view here
-  console.log('View meeting:', meeting)
+const closeViewModal = () => {
+  showViewModal.value = false
+  selectedMeeting.value = null
+  selectedMeetingDetails.value = null
+}
+
+const getProviderName = (provider) => {
+  const providerNames = {
+    'google': 'Google Meet',
+    'teams': 'Microsoft Teams',
+    'zoom': 'Zoom',
+    'webex': 'Webex',
+    'phone': 'Phone Call',
+    'in_person': 'In Person'
+  }
+  return providerNames[provider] || provider || 'Custom'
+}
+
+const calculateDuration = (startTime, endTime) => {
+  if (!startTime || !endTime) return '0 min'
+  
+  const start = new Date(startTime)
+  const end = new Date(endTime)
+  const diffInMinutes = Math.floor((end - start) / (1000 * 60))
+  
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes} min`
+  }
+  
+  const hours = Math.floor(diffInMinutes / 60)
+  const minutes = diffInMinutes % 60
+  
+  return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`
+}
+
+const editMeeting = (meeting) => {
+  selectedMeeting.value = meeting
+  editMeetingForm.value = {
+    id: meeting.id,
+    title: meeting.title || '',
+    description: meeting.description || '',
+    start_time: meeting.scheduled_at ? new Date(meeting.scheduled_at).toISOString().slice(0, 16) : '',
+    end_time: meeting.scheduled_at && meeting.duration_minutes ? 
+      new Date(new Date(meeting.scheduled_at).getTime() + meeting.duration_minutes * 60000).toISOString().slice(0, 16) : '',
+    contact_id: meeting.contact_id || '',
+    provider: meeting.integration_provider || meeting.provider || '',
+    meeting_link: meeting.meeting_link || ''
+  }
+  showEditModal.value = true
+}
+
+const closeEditModal = () => {
+  showEditModal.value = false
+  selectedMeeting.value = null
+  editMeetingForm.value = {
+    id: '',
+    title: '',
+    description: '',
+    start_time: '',
+    end_time: '',
+    contact_id: '',
+    provider: '',
+    meeting_link: ''
+  }
+}
+
+const updateMeeting = async () => {
+  editingMeeting.value = true
+  
+  try {
+    const response = await meetingsService.updateMeeting(editMeetingForm.value.id, editMeetingForm.value)
+    
+    // Update the meeting in the list
+    const index = meetings.value.findIndex(m => m.id === editMeetingForm.value.id)
+    if (index !== -1) {
+      meetings.value[index] = response.data
+    }
+    
+    showSuccess('Meeting updated successfully')
+    closeEditModal()
+    
+  } catch (err) {
+    showError(err.message || 'Failed to update meeting')
+  } finally {
+    editingMeeting.value = false
+  }
+}
+
+const deleteMeeting = async (meeting) => {
+  if (!confirm(`Are you sure you want to delete "${meeting.title}"? This action cannot be undone.`)) {
+    return
+  }
+  
+  deletingMeeting.value = true
+  
+  try {
+    await meetingsService.deleteMeeting(meeting.id)
+    
+    // Remove the meeting from the list
+    meetings.value = meetings.value.filter(m => m.id !== meeting.id)
+    
+    showSuccess('Meeting deleted successfully')
+    
+  } catch (err) {
+    showError(err.message || 'Failed to delete meeting')
+  } finally {
+    deletingMeeting.value = false
+  }
+}
+
+const searchContacts = async () => {
+  // Debounce search to avoid too many API calls
+  clearTimeout(searchContacts.timeoutId)
+  searchContacts.timeoutId = setTimeout(async () => {
+    if (contactSearchQuery.value.length > 2) {
+      await loadContacts(contactSearchQuery.value)
+    } else if (contactSearchQuery.value.length === 0) {
+      await loadContacts()
+    }
+  }, 300)
+}
+
+const viewMeeting = async (meeting) => {
+  selectedMeeting.value = meeting
+  loadingMeetingDetails.value = true
+  showViewModal.value = true
+  
+  try {
+    const response = await meetingsService.getMeetingDetails(meeting.id)
+    selectedMeetingDetails.value = response.data
+  } catch (err) {
+    console.error('Failed to load meeting details:', err)
+    showError('Failed to load meeting details')
+    // Fallback to basic meeting data
+    selectedMeetingDetails.value = meeting
+  } finally {
+    loadingMeetingDetails.value = false
+  }
 }
 
 const openMeetingLink = (link) => {
@@ -861,6 +1289,7 @@ const openMeetingLink = (link) => {
 // Helper methods
 const formatDateTime = (dateString) => meetingsHelpers.formatDateTime(dateString)
 const formatDuration = (minutes) => meetingsHelpers.formatDuration(minutes)
+const formatNumber = (num) => meetingsHelpers.formatNumber(num)
 const getStatusColor = (status) => meetingsHelpers.getStatusColor(status)
 const getProviderColor = (provider) => meetingsHelpers.getProviderColor(provider)
 const getRelativeTime = (dateString) => meetingsHelpers.getRelativeTime(dateString)
