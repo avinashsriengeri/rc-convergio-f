@@ -211,12 +211,18 @@ const refreshSubmissions = () => {
 const reprocessSubmission = async (submissionId: number) => {
   reprocessingId.value = submissionId
   try {
-    const response = await formsAPI.reprocessSubmission(formId.value, submissionId)
+    // Add a small delay to show loading state
+    const [response] = await Promise.all([
+      formsAPI.reprocessSubmission(formId.value, submissionId),
+      new Promise(resolve => setTimeout(resolve, 500)) // Minimum 500ms loading
+    ])
+    
+    // Handle successful response
     success('Submission reprocessed successfully')
     
-    // Attempt to extract contact id from various response shapes
-    const respData: any = (response && response.data && response.data.data) ? response.data.data : (response && response.data) ? response.data : {}
-    const contactIdFromResponse: number | null = respData.contact_id || (respData.contact && respData.contact.id) || null
+    // Safely extract response data
+    const respData = response?.data?.data || response?.data || {}
+    const contactIdFromResponse = respData?.contact_id || respData?.contact?.id || null
 
     // Update the matching submission locally if found
     const submission = submissions.value.find(s => s.id === submissionId)
@@ -255,7 +261,27 @@ const reprocessSubmission = async (submissionId: number) => {
     await loadSubmissions()
   } catch (err) {
     console.error('Failed to reprocess submission:', err)
-    showError('Failed to reprocess submission')
+    
+    // More detailed error message based on response
+    let errorMessage = 'Failed to reprocess submission'
+    if (err.response) {
+      // Server responded with error status code
+      const { status, data } = err.response
+      if (status === 500) {
+        errorMessage = 'Server error occurred while reprocessing. Please try again later.'
+      } else if (data?.message) {
+        errorMessage = data.message
+      } else if (status === 404) {
+        errorMessage = 'Submission not found or already processed'
+      } else if (status === 403) {
+        errorMessage = 'You do not have permission to reprocess this submission'
+      }
+    } else if (err.request) {
+      // Request was made but no response received
+      errorMessage = 'No response from server. Please check your connection.'
+    }
+    
+    showError(errorMessage)
   } finally {
     reprocessingId.value = null
   }

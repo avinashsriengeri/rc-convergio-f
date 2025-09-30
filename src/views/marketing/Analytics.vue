@@ -335,44 +335,158 @@
             </div>
 
             <div v-else-if="moduleData" class="space-y-6">
-              <!-- Module Summary -->
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-gray-50 rounded-lg p-4">
-                  <p class="text-sm font-medium text-gray-600">{{ $t('marketing.analytics.summary_grid.contacts.total') }}</p>
-                  <p class="text-2xl font-bold text-gray-900">{{ analyticsHelpers.formatNumber(moduleData.summary?.total || 0) }}</p>
+              <!-- Lead Scoring Specific Layout -->
+              <div v-if="selectedModule === 'lead_scoring'" class="space-y-6">
+                <!-- Lead Scoring Summary -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div class="bg-blue-50 rounded-lg p-4">
+                    <p class="text-sm font-medium text-blue-600">{{ $t('marketing.analytics.lead_scoring.total_contacts_scored') }}</p>
+                    <p class="text-2xl font-bold text-blue-900">{{ analyticsHelpers.formatNumber(moduleData.summary?.total_contacts_scored || 0) }}</p>
+                  </div>
+                  <div class="bg-green-50 rounded-lg p-4">
+                    <p class="text-sm font-medium text-green-600">{{ $t('marketing.analytics.lead_scoring.conversion_rate') }}</p>
+                    <p class="text-2xl font-bold text-green-900">{{ moduleData.summary?.conversion_rate || 0 }}%</p>
+                  </div>
+                  <div class="bg-purple-50 rounded-lg p-4">
+                    <p class="text-sm font-medium text-purple-600">{{ $t('marketing.analytics.lead_scoring.average_score') }}</p>
+                    <p class="text-2xl font-bold text-purple-900">{{ Math.round(moduleData.summary?.average_score || 0) }}</p>
+                  </div>
+                  <div class="bg-orange-50 rounded-lg p-4">
+                    <p class="text-sm font-medium text-orange-600">{{ $t('marketing.analytics.lead_scoring.active_rules') }}</p>
+                    <p class="text-2xl font-bold text-orange-900">{{ moduleData.summary?.active_rules || 0 }}</p>
+                  </div>
                 </div>
-                <div class="bg-gray-50 rounded-lg p-4">
-                  <p class="text-sm font-medium text-gray-600">{{ $t('marketing.analytics.summary_grid.contacts.growth') }}</p>
-                  <p :class="['text-2xl font-bold', analyticsHelpers.getTrendColor(moduleData.summary?.trend || 'up')]">
-                    {{ analyticsHelpers.getTrendIcon(moduleData.summary?.trend || 'up') }} {{ moduleData.summary?.growth || 0 }}%
-                  </p>
+
+                <!-- Score Distribution -->
+                <div class="bg-white rounded-lg border border-gray-200 p-6">
+                  <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('marketing.analytics.lead_scoring.score_distribution') }}</h3>
+                  <div class="space-y-3">
+                    <div v-for="(data, range) in moduleData.score_distribution" :key="range" class="flex justify-between items-center">
+                      <span class="text-sm text-gray-600">{{ range }} points</span>
+                      <div class="flex items-center space-x-4">
+                        <span class="text-sm font-medium">{{ analyticsHelpers.formatNumber(data.count) }} contacts</span>
+                        <span class="text-xs text-gray-500">({{ data.percentage }}%)</span>
+                        <span :class="data.trend.startsWith('+') ? 'text-green-600' : 'text-red-600'" class="text-xs font-medium">
+                          {{ data.trend }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="bg-gray-50 rounded-lg p-4">
-                  <p class="text-sm font-medium text-gray-600">Period</p>
-                  <p class="text-2xl font-bold text-gray-900">{{ $t(`marketing.analytics.period_switcher.${selectedPeriod}`) }}</p>
+
+                <!-- Top Performing Rules -->
+                <div class="bg-white rounded-lg border border-gray-200 p-6">
+                  <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('marketing.analytics.lead_scoring.top_scoring_rules') }}</h3>
+                  <div class="space-y-3">
+                    <div v-for="rule in moduleData.top_scoring_rules?.slice(0, 5)" :key="rule.rule_name" class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                      <div class="flex-1 min-w-0">
+                        <div class="text-sm font-medium text-gray-900">{{ rule.rule_name }}</div>
+                        <div class="text-xs text-gray-500">{{ rule.times_triggered }} triggers</div>
+                      </div>
+                      <div class="flex items-center space-x-4">
+                        <div class="text-right">
+                          <div class="text-sm font-medium text-gray-900">{{ analyticsHelpers.formatNumber(rule.points_awarded) }}</div>
+                          <div class="text-xs text-gray-500">points</div>
+                        </div>
+                        <div class="text-right">
+                          <div class="text-sm font-medium text-blue-600">{{ rule.avg_score_impact }}</div>
+                          <div class="text-xs text-gray-500">avg impact</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Company Performance -->
+                <div class="bg-white rounded-lg border border-gray-200 p-6">
+                  <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('marketing.analytics.lead_scoring.company_breakdown') }}</h3>
+                  <div class="space-y-3">
+                    <div v-for="company in moduleData.company_breakdown?.slice(0, 5)" :key="company.company" class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                      <div class="flex-1 min-w-0">
+                        <div class="text-sm font-medium text-gray-900">{{ company.company }}</div>
+                        <div class="text-xs text-gray-500">{{ company.contacts }} contacts</div>
+                      </div>
+                      <div class="flex items-center space-x-4">
+                        <div class="text-right">
+                          <div class="text-sm font-medium text-gray-900">{{ company.avg_score }}</div>
+                          <div class="text-xs text-gray-500">avg score</div>
+                        </div>
+                        <div class="text-right">
+                          <div class="text-sm font-medium text-green-600">{{ company.high_scores }}</div>
+                          <div class="text-xs text-gray-500">high scores</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Rule Performance -->
+                <div class="bg-white rounded-lg border border-gray-200 p-6">
+                  <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('marketing.analytics.lead_scoring.rule_performance') }}</h3>
+                  <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                      <thead class="bg-gray-50">
+                        <tr>
+                          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rule</th>
+                          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trigger Rate</th>
+                          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Conversion Rate</th>
+                          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Points</th>
+                        </tr>
+                      </thead>
+                      <tbody class="bg-white divide-y divide-gray-200">
+                        <tr v-for="rule in moduleData.rule_performance?.slice(0, 5)" :key="rule.rule_name">
+                          <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ rule.rule_name }}</td>
+                          <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ rule.trigger_rate }}%</td>
+                          <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ rule.conversion_rate }}%</td>
+                          <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ rule.avg_points }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
 
-              <!-- Chart Placeholder -->
-              <div class="bg-gray-50 rounded-lg p-8 text-center">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-                <h3 class="mt-2 text-sm font-medium text-gray-900">{{ $t('marketing.analytics.chart.placeholder') }}</h3>
-                <p class="mt-1 text-sm text-gray-500">{{ $t('marketing.analytics.chart.no_data') }}</p>
-              </div>
+              <!-- Default Module Layout -->
+              <div v-else class="space-y-6">
+                <!-- Module Summary -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-sm font-medium text-gray-600">{{ $t('marketing.analytics.summary_grid.contacts.total') }}</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ analyticsHelpers.formatNumber(moduleData.summary?.total || 0) }}</p>
+                  </div>
+                  <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-sm font-medium text-gray-600">{{ $t('marketing.analytics.summary_grid.contacts.growth') }}</p>
+                    <p :class="['text-2xl font-bold', analyticsHelpers.getTrendColor(moduleData.summary?.trend || 'up')]">
+                      {{ analyticsHelpers.getTrendIcon(moduleData.summary?.trend || 'up') }} {{ moduleData.summary?.growth || 0 }}%
+                    </p>
+                  </div>
+                  <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-sm font-medium text-gray-600">Period</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ $t(`marketing.analytics.period_switcher.${selectedPeriod}`) }}</p>
+                  </div>
+                </div>
 
-              <!-- Module Metrics -->
-              <div v-if="moduleData.metrics" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div
-                  v-for="(value, key) in moduleData.metrics"
-                  :key="key"
-                  class="bg-white border border-gray-200 rounded-lg p-4"
-                >
-                  <p class="text-sm font-medium text-gray-600">{{ $t(`marketing.analytics.metrics.${key}`) }}</p>
-                  <p class="text-lg font-bold text-gray-900">
-                    {{ typeof value === 'number' ? (value >= 1000 ? analyticsHelpers.formatNumber(value) : value) : value }}
-                  </p>
+                <!-- Chart Placeholder -->
+                <div class="bg-gray-50 rounded-lg p-8 text-center">
+                  <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  <h3 class="mt-2 text-sm font-medium text-gray-900">{{ $t('marketing.analytics.chart.placeholder') }}</h3>
+                  <p class="mt-1 text-sm text-gray-500">{{ $t('marketing.analytics.chart.no_data') }}</p>
+                </div>
+
+                <!-- Module Metrics -->
+                <div v-if="moduleData.metrics" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div
+                    v-for="(value, key) in moduleData.metrics"
+                    :key="key"
+                    class="bg-white border border-gray-200 rounded-lg p-4"
+                  >
+                    <p class="text-sm font-medium text-gray-600">{{ $t(`marketing.analytics.metrics.${key}`) }}</p>
+                    <p class="text-lg font-bold text-gray-900">
+                      {{ typeof value === 'number' ? (value >= 1000 ? analyticsHelpers.formatNumber(value) : value) : value }}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

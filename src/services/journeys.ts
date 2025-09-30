@@ -9,7 +9,6 @@ export const journeysService = {
       return response.data
     } catch (error) {
       console.error('Error fetching journey statuses:', error)
-      
       // Return fallback data
       if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
         return {
@@ -21,7 +20,6 @@ export const journeysService = {
           ]
         }
       }
-      
       throw error
     }
   },
@@ -41,7 +39,6 @@ export const journeysService = {
             { id: 'email', name: 'Send Email', description: 'Send an email to the contact', icon: 'email' },
             { id: 'wait', name: 'Wait', description: 'Wait for a specified time period', icon: 'clock' },
             { id: 'condition', name: 'Condition', description: 'Branch based on conditions', icon: 'branch' },
-            { id: 'webhook', name: 'Webhook', description: 'Trigger an external webhook', icon: 'webhook' },
             { id: 'score', name: 'Score Update', description: 'Update contact score', icon: 'star' },
             { id: 'tag', name: 'Add Tag', description: 'Add tags to contact', icon: 'tag' },
             { id: 'sms', name: 'Send SMS', description: 'Send SMS message', icon: 'phone' },
@@ -278,7 +275,6 @@ export const journeysService = {
       throw error
     }
   },
-
   // Update journey
   async updateJourney(id, data) {
     try {
@@ -290,6 +286,17 @@ export const journeysService = {
     }
   },
 
+  // Simulate journey
+  async simulateJourney(id) {
+    try {
+      const response = await api.post(`/journeys/${id}/simulate`)
+      return response.data
+    } catch (error) {
+      console.error('Error simulating journey:', error)
+      throw error
+    }
+  },
+
   // Delete journey
   async deleteJourney(id) {
     try {
@@ -297,17 +304,6 @@ export const journeysService = {
       return response.data
     } catch (error) {
       console.error('Error deleting journey:', error)
-      throw error
-    }
-  },
-
-  // Run journey on contact
-  async runJourneyOnContact(journeyId, contactId) {
-    try {
-      const response = await api.post(`/journeys/${journeyId}/run/${contactId}`)
-      return response.data
-    } catch (error) {
-      console.error('Error running journey on contact:', error)
       throw error
     }
   },
@@ -381,6 +377,17 @@ export const journeysService = {
         }
       }
       
+      throw error
+    }
+  },
+
+  // Run journey on a specific contact
+  async runJourneyOnContact(journeyId, contactId) {
+    try {
+      const response = await api.post(`/journeys/${journeyId}/run`, { contactId })
+      return response.data
+    } catch (error) {
+      console.error(`Error running journey ${journeyId} on contact ${contactId}:`, error)
       throw error
     }
   },

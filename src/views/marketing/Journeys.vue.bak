@@ -14,6 +14,26 @@
                   <span class="sr-only">Home</span>
                 </router-link>
               </div>
+
+    <!-- Journey Builder Drawer -->
+    <div
+      v-if="showBuilderDrawer"
+      class="fixed inset-y-0 right-0 z-50 w-full max-w-5xl bg-white shadow-2xl"
+    >
+      <div class="flex flex-col h-full">
+        <div class="px-4 sm:px-6 py-3 border-b border-gray-200 flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-gray-900">Journey Designer</h3>
+          <button @click="closeBuilder" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="flex-1 min-h-0">
+          <JourneyBuilder v-if="builderJourneyId" :journey-id="builderJourneyId" />
+        </div>
+      </div>
+    </div>
             </li>
             <li>
               <div class="flex items-center">
@@ -33,26 +53,6 @@
             </li>
           </ol>
         </nav>
-      </div>
-    </div>
-
-    <!-- Journey Builder Drawer -->
-    <div
-      v-if="showBuilderDrawer"
-      class="fixed inset-y-0 right-0 z-50 w-full max-w-5xl bg-white shadow-2xl"
-    >
-      <div class="flex flex-col h-full">
-        <div class="px-4 sm:px-6 py-3 border-b border-gray-200 flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-gray-900">Journey Designer</h3>
-          <button @click="closeBuilder" class="text-gray-400 hover:text-gray-600">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        <div class="flex-1 min-h-0">
-          <JourneyBuilder v-if="builderJourneyId" :journey-id="builderJourneyId" />
-        </div>
       </div>
     </div>
 
@@ -673,7 +673,6 @@
                 class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
               >
                 {{ $t('marketing.journeys.confirmations.confirm') }}
-              </button>
             </div>
           </div>
         </div>
@@ -692,19 +691,6 @@
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </button>
-        </div>
-        <div class="flex-1 min-h-0">
-          <JourneyBuilder v-if="builderJourneyId" :journey-id="builderJourneyId" />
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
-<script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { journeysService, journeysHelpers } from '@/services/journeys'
 import { error as showError, success as showSuccess } from '@/utils/notifications'
 import JourneyBuilder from './JourneyBuilder.vue'

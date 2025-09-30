@@ -541,17 +541,62 @@ export const analyticsService = {
       case 'lead_scoring':
         return {
           ...baseData,
-          summary: { total: 456, growth: 9.4, trend: 'up' },
+          summary: {
+            total_contacts_scored: 2847,
+            average_score: 58.7,
+            high_score_contacts: 456,
+            medium_score_contacts: 892,
+            low_score_contacts: 1499,
+            active_rules: 8,
+            inactive_rules: 2,
+            total_points_awarded: 167420,
+            conversion_rate: 15.2,
+            growth: 9.4,
+            trend: 'up'
+          },
           chart_data: [
-            { date: '2024-01-01', value: 410 },
-            { date: '2024-01-08', value: 425 },
-            { date: '2024-01-15', value: 440 },
-            { date: '2024-01-22', value: 456 }
+            { date: '2024-12-04', avg_score: 56.2, new_scores: 45, high_scores: 8 },
+            { date: '2024-12-05', avg_score: 57.1, new_scores: 52, high_scores: 12 },
+            { date: '2024-12-06', avg_score: 58.3, new_scores: 48, high_scores: 15 },
+            { date: '2024-12-07', avg_score: 59.1, new_scores: 61, high_scores: 18 },
+            { date: '2024-12-08', avg_score: 58.7, new_scores: 55, high_scores: 14 },
+            { date: '2024-12-09', avg_score: 59.5, new_scores: 67, high_scores: 22 },
+            { date: '2024-12-10', avg_score: 60.2, new_scores: 73, high_scores: 25 }
+          ],
+          score_distribution: {
+            '0-25': { count: 1499, percentage: 52.7, trend: '-5%' },
+            '26-50': { count: 892, percentage: 31.3, trend: '+8%' },
+            '51-75': { count: 312, percentage: 11.0, trend: '+12%' },
+            '76-100': { count: 134, percentage: 4.7, trend: '+15%' },
+            '100+': { count: 10, percentage: 0.3, trend: '+25%' }
+          },
+          top_scoring_rules: [
+            { rule_name: 'Demo Request Score', points_awarded: 45600, times_triggered: 608, avg_score_impact: 75.0 },
+            { rule_name: 'Email Engagement Score', points_awarded: 34200, times_triggered: 1140, avg_score_impact: 30.0 },
+            { rule_name: 'Website Behavior Score', points_awarded: 28900, times_triggered: 578, avg_score_impact: 50.0 },
+            { rule_name: 'Form Submission Score', points_awarded: 23400, times_triggered: 936, avg_score_impact: 25.0 },
+            { rule_name: 'Pricing View Score', points_awarded: 18900, times_triggered: 378, avg_score_impact: 50.0 }
+          ],
+          company_breakdown: [
+            { company: 'Tech Corp Inc.', contacts: 234, avg_score: 72.5, high_scores: 45 },
+            { company: 'Innovation Labs', contacts: 189, avg_score: 68.2, high_scores: 32 },
+            { company: 'Future Tech Solutions', contacts: 156, avg_score: 65.8, high_scores: 28 },
+            { company: 'Enterprise Solutions', contacts: 134, avg_score: 62.1, high_scores: 21 },
+            { company: 'Startup.io', contacts: 98, avg_score: 59.7, high_scores: 15 }
+          ],
+          rule_performance: [
+            { rule_name: 'Demo Request Score', trigger_rate: 21.4, conversion_rate: 18.5, avg_points: 75.0 },
+            { rule_name: 'Email Engagement Score', trigger_rate: 40.1, conversion_rate: 12.3, avg_points: 30.0 },
+            { rule_name: 'Website Behavior Score', trigger_rate: 20.3, conversion_rate: 15.8, avg_points: 50.0 },
+            { rule_name: 'Form Submission Score', trigger_rate: 32.9, conversion_rate: 8.9, avg_points: 25.0 },
+            { rule_name: 'Pricing View Score', trigger_rate: 13.3, conversion_rate: 11.2, avg_points: 50.0 }
           ],
           metrics: {
-            qualified: 123,
-            avg_score: 78.5,
-            high_score: 89
+            qualified: 456,
+            avg_score: 58.7,
+            high_score: 95,
+            active_rules: 8,
+            conversion_rate: 15.2
           }
         };
       case 'journeys':

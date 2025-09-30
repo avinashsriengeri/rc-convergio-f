@@ -607,6 +607,7 @@
       "points": "Points",
       "priority": "Priority",
       "active": "Active",
+      "inactive": "Inactive",
       "updated_at": "Updated",
       "actions": "Actions",
       "create_rule": "Create Rule",
@@ -636,9 +637,12 @@
       "title": "Lead Scoring Analytics",
       "total_contacts_scored": "Total Contacts Scored",
       "conversion_rate": "Conversion Rate",
+      "average_score": "Average Score",
+      "active_rules": "Active Rules",
       "score_distribution": "Score Distribution",
       "top_scoring_rules": "Top Scoring Rules",
-      "company_breakdown": "Company Breakdown"
+      "company_breakdown": "Company Breakdown",
+      "rule_performance": "Rule Performance"
     },
     "rule_modal": {
       "create_title": "Create Scoring Rule",
@@ -649,6 +653,12 @@
       "priority": "Priority",
       "is_active": "Active",
       "condition": "Condition (JSON)",
+      "condition_builder": "Condition Builder",
+      "event_type": "Event Type",
+      "operator": "Operator",
+      "threshold_value": "Threshold Value",
+      "time_window": "Time Window",
+      "condition_preview": "Condition Preview",
       "create": "Create Rule",
       "update": "Update Rule",
       "cancel": "Cancel",
@@ -658,14 +668,22 @@
       "enter_description": "Enter rule description",
       "enter_points": "Enter points (0-100)",
       "select_priority": "Select priority",
-      "enter_condition": "Enter JSON condition"
+      "enter_condition": "Enter JSON condition",
+      "select_event_type": "Select event type",
+      "select_operator": "Select operator",
+      "enter_value": "Enter threshold value",
+      "select_time_window": "Select time window",
+      "value_help": "Minimum number of times the event must occur",
+      "time_window_help": "Time period to evaluate the condition",
+      "preview_help": "This JSON will be sent to the API"
     },
     "recalculate": {
       "title": "Recalculate Score",
-      "contact_id": "Contact ID",
+      "contact_email": "Contact Email",
       "recalculate": "Recalculate",
       "recalculating": "Recalculating...",
-      "enter_contact_id": "Enter contact ID",
+      "enter_contact_email": "Enter contact email address",
+      "email_help": "Enter the email address of the contact to recalculate their score",
       "success": "Score recalculated successfully",
       "result": "Result"
     },
@@ -688,7 +706,33 @@
       "create_rule": "Create Rule"
     },
     "loading": "Loading scoring data...",
-    "error": "Error loading scoring data"
+    "error": "Error loading scoring data",
+    "bulk_actions": {
+      "title": "Bulk Actions",
+      "activate": "Activate Selected Rules",
+      "deactivate": "Deactivate Selected Rules",
+      "recalculate": "Bulk Recalculate Scores",
+      "activate_success": "Rules activated successfully",
+      "deactivate_success": "Rules deactivated successfully",
+      "recalculate_title": "Bulk Recalculate Scores",
+      "contact_emails": "Contact Emails",
+      "contact_emails_placeholder": "Enter contact emails, separated by commas or new lines\ne.g., john@example.com, jane@company.com",
+      "contact_emails_help": "Enter one email address per line or separate with commas",
+      "recalculate_success": "Scores recalculated successfully",
+      "recalculating": "Recalculating...",
+      "no_contact_emails": "Please enter at least one valid email address"
+    },
+    "import_export": {
+      "title": "Import/Export",
+      "export": "Export Rules",
+      "import": "Import Rules",
+      "import_title": "Import Scoring Rules",
+      "export_success": "Rules exported successfully",
+      "import_success": "Rules imported successfully",
+      "importing": "Importing...",
+      "select_file": "Select File",
+      "file_formats": "Supported formats: JSON, CSV"
+    }
   },
   "journeys": {
     "title": "Journeys",
@@ -1114,6 +1158,16 @@
       "title": "No analytics data available",
       "description": "Analytics data will appear here once you start using the system.",
       "connect_data": "Connect Data Sources"
+    },
+    "lead_scoring": {
+      "total_contacts_scored": "Total Contacts Scored",
+      "conversion_rate": "Conversion Rate",
+      "average_score": "Average Score",
+      "active_rules": "Active Rules",
+      "score_distribution": "Score Distribution",
+      "top_scoring_rules": "Top Scoring Rules",
+      "company_breakdown": "Company Breakdown",
+      "rule_performance": "Rule Performance"
     }
   }
 }
