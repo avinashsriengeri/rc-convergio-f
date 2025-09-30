@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\FormController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\JourneyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,11 +43,18 @@ Route::prefix('contacts')->group(function () {
     Route::get('/{contactId}/deals', [ContactController::class, 'getDeals']);
     Route::get('/{contactId}/activities', [ContactController::class, 'getActivities']);
     Route::get('/{contactId}/company', [ContactController::class, 'getCompany']);
+    Route::get('/{contactId}/journey', [JourneyController::class, 'getTimeline']);
     
     // Search and import endpoints
     Route::get('/search', [ContactController::class, 'search']);
     Route::post('/import', [ContactController::class, 'import']);
     Route::get('/import/status/{jobId}', [ContactController::class, 'getImportStatus']);
+});
+
+// Journey routes
+Route::prefix('journey')->group(function () {
+    Route::post('/events', [JourneyController::class, 'logEvent']);
+    Route::get('/event-types', [JourneyController::class, 'getEventTypes']);
 });
 
 // Form routes
