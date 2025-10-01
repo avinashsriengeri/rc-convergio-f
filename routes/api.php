@@ -635,3 +635,461 @@ Route::prefix('metadata')->group(function () {
         ]);
     });
 });
+
+// Analytics API Routes
+Route::prefix('analytics')->group(function () {
+    // Configuration endpoints
+    Route::get('/modules', function () {
+        return response()->json([
+            'success' => true,
+            'data' => [
+                ['id' => 'contacts', 'name' => 'Contacts', 'icon' => 'users'],
+                ['id' => 'deals', 'name' => 'Deals', 'icon' => 'handshake'],
+                ['id' => 'campaigns', 'name' => 'Campaigns', 'icon' => 'megaphone'],
+                ['id' => 'ads', 'name' => 'Ads', 'icon' => 'target'],
+                ['id' => 'events', 'name' => 'Events', 'icon' => 'calendar'],
+                ['id' => 'meetings', 'name' => 'Meetings', 'icon' => 'video'],
+                ['id' => 'tasks', 'name' => 'Tasks', 'icon' => 'checklist'],
+                ['id' => 'companies', 'name' => 'Companies', 'icon' => 'building'],
+                ['id' => 'forecast', 'name' => 'Forecast', 'icon' => 'trending-up'],
+                ['id' => 'lead_scoring', 'name' => 'Lead Scoring', 'icon' => 'star'],
+                ['id' => 'journeys', 'name' => 'Journeys', 'icon' => 'route'],
+                ['id' => 'visitor_intent', 'name' => 'Visitor Intent', 'icon' => 'eye'],
+            ]
+        ]);
+    });
+
+    Route::get('/periods', function () {
+        return response()->json([
+            'success' => true,
+            'data' => [
+                ['id' => 'week', 'name' => 'This Week', 'label' => 'week'],
+                ['id' => 'month', 'name' => 'This Month', 'label' => 'month'],
+                ['id' => 'quarter', 'name' => 'This Quarter', 'label' => 'quarter'],
+                ['id' => 'year', 'name' => 'This Year', 'label' => 'year'],
+            ]
+        ]);
+    });
+
+    // Dashboard summary endpoint
+    Route::get('/dashboard', function (Request $request) {
+        $period = $request->query('period', 'month');
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'contacts' => [
+                    'total' => 1247,
+                    'new' => 89,
+                    'growth' => 12.5,
+                    'trend' => 'up'
+                ],
+                'deals' => [
+                    'total' => 156,
+                    'new' => 23,
+                    'value' => 2840000,
+                    'growth' => 8.3,
+                    'trend' => 'up'
+                ],
+                'campaigns' => [
+                    'total' => 45,
+                    'active' => 12,
+                    'sent' => 33,
+                    'growth' => 15.2,
+                    'trend' => 'up'
+                ],
+                'ads' => [
+                    'total' => 8,
+                    'active' => 5,
+                    'spend' => 12500,
+                    'impressions' => 125000,
+                    'growth' => 22.1,
+                    'trend' => 'up'
+                ],
+                'events' => [
+                    'total' => 18,
+                    'upcoming' => 6,
+                    'attendees' => 234,
+                    'growth' => 5.7,
+                    'trend' => 'up'
+                ],
+                'meetings' => [
+                    'total' => 67,
+                    'scheduled' => 12,
+                    'completed' => 55,
+                    'growth' => 18.9,
+                    'trend' => 'up'
+                ],
+                'tasks' => [
+                    'total' => 234,
+                    'completed' => 189,
+                    'pending' => 45,
+                    'growth' => 3.2,
+                    'trend' => 'up'
+                ],
+                'companies' => [
+                    'total' => 89,
+                    'new' => 12,
+                    'growth' => 7.8,
+                    'trend' => 'up'
+                ],
+                'forecast' => [
+                    'projected' => 3200000,
+                    'probability_weighted' => 2560000,
+                    'accuracy' => 87.5,
+                    'growth' => 11.2,
+                    'trend' => 'up'
+                ],
+                'lead_scoring' => [
+                    'total_leads' => 456,
+                    'qualified' => 123,
+                    'avg_score' => 78.5,
+                    'growth' => 9.4,
+                    'trend' => 'up'
+                ],
+                'journeys' => [
+                    'total' => 15,
+                    'active' => 8,
+                    'completed' => 7,
+                    'participants' => 567,
+                    'growth' => 13.6,
+                    'trend' => 'up'
+                ],
+                'visitor_intent' => [
+                    'total_visitors' => 2341,
+                    'high_intent' => 234,
+                    'medium_intent' => 567,
+                    'low_intent' => 1540,
+                    'growth' => 16.8,
+                    'trend' => 'up'
+                ]
+            ]
+        ]);
+    });
+
+    // Module-specific analytics endpoints
+    Route::get('/contacts', function (Request $request) {
+        $period = $request->query('period', 'month');
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'period' => $period,
+                'summary' => [
+                    'total' => 1247,
+                    'growth' => 12.5,
+                    'trend' => 'up'
+                ],
+                'chart_data' => [
+                    ['date' => '2024-01-01', 'value' => 1100],
+                    ['date' => '2024-01-08', 'value' => 1150],
+                    ['date' => '2024-01-15', 'value' => 1200],
+                    ['date' => '2024-01-22', 'value' => 1247]
+                ],
+                'metrics' => [
+                    'new_contacts' => 89,
+                    'converted' => 23,
+                    'active' => 456
+                ]
+            ]
+        ]);
+    });
+
+    Route::get('/companies', function (Request $request) {
+        $period = $request->query('period', 'month');
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'period' => $period,
+                'summary' => [
+                    'total' => 89,
+                    'growth' => 7.8,
+                    'trend' => 'up'
+                ],
+                'chart_data' => [
+                    ['date' => '2024-01-01', 'value' => 82],
+                    ['date' => '2024-01-08', 'value' => 84],
+                    ['date' => '2024-01-15', 'value' => 86],
+                    ['date' => '2024-01-22', 'value' => 89]
+                ],
+                'metrics' => [
+                    'new_companies' => 12,
+                    'active' => 67,
+                    'converted' => 8
+                ]
+            ]
+        ]);
+    });
+
+    Route::get('/deals', function (Request $request) {
+        $period = $request->query('period', 'month');
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'period' => $period,
+                'summary' => [
+                    'total' => 156,
+                    'growth' => 8.3,
+                    'trend' => 'up'
+                ],
+                'chart_data' => [
+                    ['date' => '2024-01-01', 'value' => 140],
+                    ['date' => '2024-01-08', 'value' => 145],
+                    ['date' => '2024-01-15', 'value' => 150],
+                    ['date' => '2024-01-22', 'value' => 156]
+                ],
+                'metrics' => [
+                    'total_value' => 2840000,
+                    'avg_deal_size' => 18205,
+                    'win_rate' => 34.2
+                ]
+            ]
+        ]);
+    });
+
+    Route::get('/campaigns', function (Request $request) {
+        $period = $request->query('period', 'month');
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'period' => $period,
+                'summary' => [
+                    'total' => 45,
+                    'growth' => 15.2,
+                    'trend' => 'up'
+                ],
+                'chart_data' => [
+                    ['date' => '2024-01-01', 'value' => 35],
+                    ['date' => '2024-01-08', 'value' => 38],
+                    ['date' => '2024-01-15', 'value' => 42],
+                    ['date' => '2024-01-22', 'value' => 45]
+                ],
+                'metrics' => [
+                    'open_rate' => 24.5,
+                    'click_rate' => 3.2,
+                    'conversion_rate' => 1.8
+                ]
+            ]
+        ]);
+    });
+
+    Route::get('/ads', function (Request $request) {
+        $period = $request->query('period', 'month');
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'period' => $period,
+                'summary' => [
+                    'total' => 8,
+                    'growth' => 22.1,
+                    'trend' => 'up'
+                ],
+                'chart_data' => [
+                    ['date' => '2024-01-01', 'value' => 6],
+                    ['date' => '2024-01-08', 'value' => 7],
+                    ['date' => '2024-01-15', 'value' => 7],
+                    ['date' => '2024-01-22', 'value' => 8]
+                ],
+                'metrics' => [
+                    'spend' => 12500,
+                    'impressions' => 125000,
+                    'clicks' => 2500,
+                    'ctr' => 2.0
+                ]
+            ]
+        ]);
+    });
+
+    Route::get('/events', function (Request $request) {
+        $period = $request->query('period', 'month');
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'period' => $period,
+                'summary' => [
+                    'total' => 18,
+                    'growth' => 5.7,
+                    'trend' => 'up'
+                ],
+                'chart_data' => [
+                    ['date' => '2024-01-01', 'value' => 16],
+                    ['date' => '2024-01-08', 'value' => 17],
+                    ['date' => '2024-01-15', 'value' => 17],
+                    ['date' => '2024-01-22', 'value' => 18]
+                ],
+                'metrics' => [
+                    'attendees' => 234,
+                    'rsvp_rate' => 78.5,
+                    'attendance_rate' => 65.2
+                ]
+            ]
+        ]);
+    });
+
+    Route::get('/meetings', function (Request $request) {
+        $period = $request->query('period', 'month');
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'period' => $period,
+                'summary' => [
+                    'total' => 67,
+                    'growth' => 18.9,
+                    'trend' => 'up'
+                ],
+                'chart_data' => [
+                    ['date' => '2024-01-01', 'value' => 55],
+                    ['date' => '2024-01-08', 'value' => 58],
+                    ['date' => '2024-01-15', 'value' => 62],
+                    ['date' => '2024-01-22', 'value' => 67]
+                ],
+                'metrics' => [
+                    'scheduled' => 12,
+                    'completed' => 55,
+                    'avg_duration' => 32
+                ]
+            ]
+        ]);
+    });
+
+    Route::get('/tasks', function (Request $request) {
+        $period = $request->query('period', 'month');
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'period' => $period,
+                'summary' => [
+                    'total' => 234,
+                    'growth' => 3.2,
+                    'trend' => 'up'
+                ],
+                'chart_data' => [
+                    ['date' => '2024-01-01', 'value' => 225],
+                    ['date' => '2024-01-08', 'value' => 228],
+                    ['date' => '2024-01-15', 'value' => 231],
+                    ['date' => '2024-01-22', 'value' => 234]
+                ],
+                'metrics' => [
+                    'completed' => 189,
+                    'pending' => 45,
+                    'completion_rate' => 80.8
+                ]
+            ]
+        ]);
+    });
+
+    Route::get('/forecast', function (Request $request) {
+        $period = $request->query('period', 'month');
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'period' => $period,
+                'summary' => [
+                    'total' => 3200000,
+                    'growth' => 11.2,
+                    'trend' => 'up'
+                ],
+                'chart_data' => [
+                    ['date' => '2024-01-01', 'value' => 2800000],
+                    ['date' => '2024-01-08', 'value' => 2900000],
+                    ['date' => '2024-01-15', 'value' => 3050000],
+                    ['date' => '2024-01-22', 'value' => 3200000]
+                ],
+                'metrics' => [
+                    'probability_weighted' => 2560000,
+                    'accuracy' => 87.5,
+                    'active_deals' => 45
+                ]
+            ]
+        ]);
+    });
+
+    Route::get('/lead_scoring', function (Request $request) {
+        $period = $request->query('period', 'month');
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'period' => $period,
+                'summary' => [
+                    'total' => 456,
+                    'growth' => 9.4,
+                    'trend' => 'up'
+                ],
+                'chart_data' => [
+                    ['date' => '2024-01-01', 'value' => 410],
+                    ['date' => '2024-01-08', 'value' => 425],
+                    ['date' => '2024-01-15', 'value' => 440],
+                    ['date' => '2024-01-22', 'value' => 456]
+                ],
+                'metrics' => [
+                    'qualified' => 123,
+                    'avg_score' => 78.5,
+                    'high_score' => 89
+                ]
+            ]
+        ]);
+    });
+
+    Route::get('/journeys', function (Request $request) {
+        $period = $request->query('period', 'month');
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'period' => $period,
+                'summary' => [
+                    'total' => 15,
+                    'growth' => 13.6,
+                    'trend' => 'up'
+                ],
+                'chart_data' => [
+                    ['date' => '2024-01-01', 'value' => 12],
+                    ['date' => '2024-01-08', 'value' => 13],
+                    ['date' => '2024-01-15', 'value' => 14],
+                    ['date' => '2024-01-22', 'value' => 15]
+                ],
+                'metrics' => [
+                    'active' => 8,
+                    'completed' => 7,
+                    'participants' => 567
+                ]
+            ]
+        ]);
+    });
+
+    Route::get('/visitor_intent', function (Request $request) {
+        $period = $request->query('period', 'month');
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'period' => $period,
+                'summary' => [
+                    'total' => 2341,
+                    'growth' => 16.8,
+                    'trend' => 'up'
+                ],
+                'chart_data' => [
+                    ['date' => '2024-01-01', 'value' => 2000],
+                    ['date' => '2024-01-08', 'value' => 2100],
+                    ['date' => '2024-01-15', 'value' => 2200],
+                    ['date' => '2024-01-22', 'value' => 2341]
+                ],
+                'metrics' => [
+                    'high_intent' => 234,
+                    'medium_intent' => 567,
+                    'low_intent' => 1540
+                ]
+            ]
+        ]);
+    });
+});

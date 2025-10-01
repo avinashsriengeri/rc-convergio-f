@@ -392,4 +392,53 @@ export const searchAPI = {
     api.get('/search', { params: { q: query, types, limit } }),
 }
 
+// Analytics API endpoints
+export const analyticsAPI = {
+  // Configuration endpoints
+  getModules: () => api.get('/analytics/modules'),
+  getPeriods: () => api.get('/analytics/periods'),
+  
+  // Dashboard endpoint
+  getDashboard: (params = {}) => api.get('/analytics/dashboard', { params }),
+  
+  // Module-specific analytics
+  getContactsAnalytics: (params = {}) => api.get('/analytics/contacts', { params }),
+  getCompaniesAnalytics: (params = {}) => api.get('/analytics/companies', { params }),
+  getDealsAnalytics: (params = {}) => api.get('/analytics/deals', { params }),
+  getCampaignsAnalytics: (params = {}) => api.get('/analytics/campaigns', { params }),
+  getAdsAnalytics: (params = {}) => api.get('/analytics/ads', { params }),
+  getEventsAnalytics: (params = {}) => api.get('/analytics/events', { params }),
+  getMeetingsAnalytics: (params = {}) => api.get('/analytics/meetings', { params }),
+  getTasksAnalytics: (params = {}) => api.get('/analytics/tasks', { params }),
+  getForecastAnalytics: (params = {}) => api.get('/analytics/forecast', { params }),
+  getLeadScoringAnalytics: (params = {}) => api.get('/analytics/lead-scoring', { params }),
+  getJourneysAnalytics: (params = {}) => api.get('/analytics/journeys', { params }),
+  getVisitorIntentAnalytics: (params = {}) => api.get('/analytics/visitor-intent', { params }),
+  
+  // Generic module endpoint
+  getModuleAnalytics: (module, params = {}) => api.get(`/analytics/${module}`, { params }),
+  
+  // Export & Reports
+  exportAnalytics: (params = {}) => api.get('/analytics/export', { params, responseType: 'blob' }),
+  generateReport: (data) => api.post('/analytics/reports', data),
+  scheduleReport: (data) => api.post('/analytics/schedule-report', data),
+  getScheduledReports: (params = {}) => api.get('/analytics/scheduled-reports', { params }),
+  deleteScheduledReport: (id) => api.delete(`/analytics/scheduled-reports/${id}`),
+  updateScheduledReport: (id, data) => api.put(`/analytics/scheduled-reports/${id}`, data),
+}
+
+// Tracking/Visitor Intent API endpoints
+export const trackingAPI = {
+  // Visitor intent tracking
+  getIntentData: (params = {}) => api.get('/tracking/intent', { params }),
+  getTrackingAnalytics: (params = {}) => api.get('/tracking/analytics', { params }),
+  getActions: (params = {}) => api.get('/tracking/actions', { params }),
+  getIntentLevels: () => api.get('/tracking/intent-levels'),
+  getVisitorIntentAnalytics: (params = {}) => api.get('/tracking/visitor-intent-analytics', { params }),
+  
+  // Track events
+  trackEvent: (data) => api.post('/tracking/events', data),
+  trackPageView: (data) => api.post('/tracking/page-views', data),
+}
+
 export default api
