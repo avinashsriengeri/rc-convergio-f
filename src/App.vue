@@ -1,5 +1,13 @@
 <template>
   <div id="app" class="bg-gradient-to-br from-[#F8F9FF] to-white flex flex-col" :class="$route.path === '/' ? 'min-h-screen overflow-auto' : 'h-screen overflow-hidden'">
+    <!-- Show only login page content for login route - no sidebar/header -->
+    <div v-if="$route.path === '/login' || $route.path === '/register' || $route.path === '/forgot-password' || $route.path === '/reset-password' || $route.path === '/verify-notification'" class="min-h-screen">
+      <router-view />
+      <NotificationToast />
+    </div>
+
+    <!-- Authenticated layout for all other routes -->
+    <template v-else>
     <!-- Unified Header Bar (for authenticated users) -->
     <header v-if="isAuthenticated" class="flex w-full z-40 shadow-lg h-15 flex-shrink-0">
       <!-- Left Section (logo + company name) - aligns with sidebar -->
@@ -563,6 +571,7 @@
 
     <!-- Notification toasts -->
     <NotificationToast />
+    </template>
   </div>
 </template>
 

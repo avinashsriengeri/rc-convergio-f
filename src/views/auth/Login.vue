@@ -117,18 +117,19 @@
             {{ loading ? 'Signing in...' : 'Sign In' }}
             </button>
 
+
             <!-- Register link -->
             <div class="text-center">
             <p class="text-sm text-gray-600">
                 Don't have an account?
                 <router-link
                   to="/register"
-                class="font-medium text-[#d4418e] hover:text-[#0652c5] transition-colors"
+                  class="font-medium text-[#d4418e] hover:text-[#0652c5] transition-colors"
                 >
                   Sign up
                 </router-link>
-              </p>
-          </div>
+            </p>
+            </div>
         </form>
 
         <!-- Copyright -->
@@ -212,6 +213,7 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { useNotifications } from '@/composables/useNotifications'
+import Swal from 'sweetalert2'
 
 const router = useRouter()
 const { login, loading } = useAuth()
@@ -275,14 +277,37 @@ const handleLogin = async () => {
     })
     
     if (result.success) {
-      success('Welcome back!')
-      console.log('Login successful, redirecting to dashboard...')
+      try {
+        // Show professional SweetAlert2 toast notification
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        })
+
+        // Show toast notification (don't await it)
+        Toast.fire({
+          icon: 'success',
+          title: `Login Successful! Welcome back ${result.user?.name || 'User'}! 👋`,
+          background: '#ffffff',
+          color: '#1f2937',
+          iconColor: '#d4418e'
+        })
+        
+      } catch (swalError) {
+        console.error('SweetAlert2 error:', swalError)
+        // Fallback to simple notification if SweetAlert2 fails
+        success('Welcome back!')
+      }
       
-      // Small delay to ensure auth state is fully updated
-      setTimeout(async () => {
-        await router.push('/dashboard')
-        console.log('Navigation to dashboard completed')
-      }, 100)
+      // Redirect to dashboard immediately (don't wait for toast)
+      await router.replace('/dashboard')
     } else if (result.requiresVerification) {
       // Handle email verification requirement
       error('Please verify your email before logging in.')

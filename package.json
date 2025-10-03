@@ -17,6 +17,7 @@
     "dayjs": "^1.11.18",
     "lodash-es": "^4.17.21",
     "pinia": "^2.3.1",
+    "sweetalert2": "^11.23.0",
     "vee-validate": "^4.12.6",
     "vue": "^3.5.18",
     "vue-chartjs": "^5.3.2",
