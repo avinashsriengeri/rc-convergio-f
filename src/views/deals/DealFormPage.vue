@@ -238,7 +238,7 @@
                 >
                   <option value="">Select Owner</option>
                   <option
-                    v-for="user in refsStore.users"
+                    v-for="user in currentUserAsArray"
                     :key="user.id"
                     :value="user.id"
                   >
@@ -488,6 +488,7 @@ import { useDealsStore } from '../../stores/deals'
 import { usePipelinesStore } from '../../stores/pipelines'
 import { useStagesStore } from '../../stores/stages'
 import { useRefsStore } from '../../stores/refs'
+import { useAuth } from '../../composables/useAuth'
 import { success, error } from '../../utils/notifications'
 import { CURRENCIES, DEAL_STATUSES } from '../../utils/constants'
 import { dealFormSchema } from '../../utils/validation'
@@ -503,6 +504,9 @@ const dealsStore = useDealsStore()
 const pipelinesStore = usePipelinesStore()
 const stagesStore = useStagesStore()
 const refsStore = useRefsStore()
+
+// Auth composable
+const { user: currentUser } = useAuth()
 
 // Reactive data
 const saving = ref(false)
@@ -565,6 +569,19 @@ const currencies = computed(() => CURRENCIES)
 const stagesForPipeline = computed(() => {
   if (!selectedPipelineId.value || selectedPipelineId.value === 'create_new') return []
   return stagesStore.stages.filter(stage => stage.pipeline_id === selectedPipelineId.value)
+})
+
+// Get current user as array for dropdown compatibility
+const currentUserAsArray = computed(() => {
+  if (currentUser.value && currentUser.value.id) {
+    return [{
+      id: currentUser.value.id,
+      name: currentUser.value.name || 'Current User',
+      email: currentUser.value.email || '',
+      role: currentUser.value.role || 'user'
+    }]
+  }
+  return []
 })
 
 const isFormValid = computed(() => {
@@ -804,6 +821,11 @@ onMounted(async () => {
   
   // Force contacts to be reactive
   contacts.value = [...refsStore.contacts]
+
+  // Auto-select current user as owner for new deals
+  if (!isEditing.value && currentUser.value && currentUser.value.id) {
+    form.owner_id = currentUser.value.id
+  }
 
   // Check for company pre-fill from query parameters
   if (route.query.company_id && route.query.company_name) {

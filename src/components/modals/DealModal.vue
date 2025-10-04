@@ -198,7 +198,7 @@
                 required
               >
                 <option value="">Select Owner</option>
-                <option v-for="owner in owners" :key="owner.id" :value="owner.id">
+                <option v-for="owner in currentUserAsArray" :key="owner.id" :value="owner.id">
                   {{ owner.name }}
                 </option>
               </select>
@@ -290,6 +290,7 @@
 <script setup>
 import { ref, reactive, computed, watch } from 'vue'
 import { dealsAPI, stagesAPI } from '@/services/api'
+import { useAuth } from '@/composables/useAuth'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 
@@ -330,6 +331,9 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'saved'])
 
+// Auth composable
+const { user: currentUser } = useAuth()
+
 // Reactive data
 const loading = ref(false)
 const submitError = ref('')
@@ -354,6 +358,19 @@ const form = reactive({
 
 // Computed
 const isEditing = computed(() => !!props.deal)
+
+// Get current user as array for dropdown compatibility
+const currentUserAsArray = computed(() => {
+  if (currentUser.value && currentUser.value.id) {
+    return [{
+      id: currentUser.value.id,
+      name: currentUser.value.name || 'Current User',
+      email: currentUser.value.email || '',
+      role: currentUser.value.role || 'user'
+    }]
+  }
+  return []
+})
 
 // Watch for deal changes to populate form
 watch(() => props.deal, (newDeal) => {
@@ -388,6 +405,11 @@ watch(() => props.deal, (newDeal) => {
       }
     })
     availableStages.value = []
+    
+    // Auto-select current user as owner for new deals
+    if (currentUser.value && currentUser.value.id) {
+      form.owner_id = currentUser.value.id
+    }
   }
   // Clear errors
   Object.keys(errors).forEach(key => delete errors[key])
