@@ -299,6 +299,14 @@ const routes = [
     meta: { requiresAuth: false }
   },
 
+  // Public Quote View route - no authentication required
+  {
+    path: '/public/quotes/:uuid/view',
+    name: 'PublicQuoteView',
+    component: () => import('./views/public/QuoteViewPublic.vue'),
+    meta: { requiresAuth: false, public: true }
+  },
+
   // Lists/Segments Module routes
   {
     path: '/lists',
@@ -426,6 +434,58 @@ const routes = [
         path: 'analytics',
         name: 'MarketingAnalytics',
         component: () => import('./views/marketing/Analytics.vue'),
+        meta: { requiresAuth: true }
+      }
+    ]
+  },
+
+  // Sales Platform Module routes (Parent/Child structure)
+  {
+    path: '/sales',
+    name: 'Sales',
+    redirect: '/sales/quotes',
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: 'overview',
+        name: 'SalesOverview',
+        component: () => import('./views/sales/Overview.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'quotes',
+        name: 'SalesQuotes',
+        component: () => import('./views/sales/quotes/QuotesList.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'quotes/create',
+        name: 'SalesQuoteCreate',
+        component: () => import('./views/sales/quotes/QuoteForm.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'quotes/:id',
+        name: 'SalesQuoteView',
+        component: () => import('./views/sales/quotes/QuoteView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'quotes/:id/edit',
+        name: 'SalesQuoteEdit',
+        component: () => import('./views/sales/quotes/QuoteForm.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'products',
+        name: 'SalesProducts',
+        component: () => import('./views/sales/products/ProductsList.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'quote-templates',
+        name: 'SalesQuoteTemplates',
+        component: () => import('./views/sales/quote-templates/TemplatesList.vue'),
         meta: { requiresAuth: true }
       }
     ]

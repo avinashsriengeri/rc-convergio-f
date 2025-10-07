@@ -375,6 +375,32 @@ export const listsAPI = {
   },
 }
 
+// Quotes/CPQ API endpoints
+export const quotesAPI = {
+  getQuotes: (params = {}) => api.get('/quotes', { params }),
+  getQuote: (id) => api.get(`/quotes/${id}`),
+  createQuote: (data) => api.post('/quotes', data),
+  updateQuote: (id, data) => api.put(`/quotes/${id}`, data),
+  deleteQuote: (id) => api.delete(`/quotes/${id}`),
+  sendQuote: (id, data = {}) => api.post(`/quotes/${id}/send`, data),
+  acceptQuote: (id, data = {}) => api.post(`/quotes/${id}/accept`, data),
+  rejectQuote: (id, data = {}) => api.post(`/quotes/${id}/reject`, data),
+  downloadPdf: (id) => api.get(`/quotes/${id}/pdf`, { responseType: 'blob' }),
+  // Products
+  getProducts: (params = {}) => api.get('/products', { params }),
+  getProduct: (id) => api.get(`/products/${id}`),
+  createProduct: (data) => api.post('/products', data),
+  updateProduct: (id, data) => api.put(`/products/${id}`, data),
+  deleteProduct: (id) => api.delete(`/products/${id}`),
+  // Templates
+  getTemplates: (params = {}) => api.get('/quote-templates', { params }),
+  getTemplate: (id) => api.get(`/quote-templates/${id}`),
+  createTemplate: (data) => api.post('/quote-templates', data),
+  updateTemplate: (id, data) => api.put(`/quote-templates/${id}`, data),
+  deleteTemplate: (id) => api.delete(`/quote-templates/${id}`),
+  previewTemplate: (id) => api.get(`/quote-templates/${id}/preview`, { responseType: 'blob' }),
+}
+
 // Users API endpoints
 export const usersAPI = {
   getUsers: (params = {}) => api.get('/users', { params }),
