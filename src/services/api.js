@@ -291,6 +291,8 @@ export const campaignsAPI = {
   updateTemplate: (id, data) => api.put(`/campaigns/templates/${id}`, data),
   deleteTemplate: (id) => api.delete(`/campaigns/templates/${id}`),
   instantiateTemplate: (id, overrides = {}) => api.post(`/campaigns/templates/${id}/instantiate`, overrides),
+  previewTemplate: (data) => api.post('/templates/preview', data),
+  updateTemplateContent: (data) => api.put('/templates/update-content', data),
   duplicateCampaign: (id) => api.post(`/campaigns/${id}/duplicate`),
   getRecipients: (id) => api.get(`/campaigns/${id}/recipients`),
   addRecipient: (id, recipientData) => api.post(`/campaigns/${id}/recipients`, recipientData),
@@ -416,6 +418,23 @@ export const usersAPI = {
 export const searchAPI = {
   globalSearch: (query, types = 'contacts,companies,deals', limit = 10) => 
     api.get('/search', { params: { q: query, types, limit } }),
+}
+
+// Sequences API endpoints
+export const sequencesAPI = {
+  list: (params = {}) => api.get('/sequences', { params }),
+  get: (id) => api.get(`/sequences/${id}`),
+  create: (data) => api.post('/sequences', data),
+  update: (id, data) => api.put(`/sequences/${id}`, data),
+  remove: (id) => api.delete(`/sequences/${id}`),
+  addStep: (id, data) => api.post(`/sequences/${id}/steps`, data),
+  updateStep: (id, data) => api.put(`/sequences/steps/${id}`, data),
+  deleteStep: (id) => api.delete(`/sequences/steps/${id}`),
+  enroll: (id, data) => api.post(`/sequences/${id}/enroll`, data),
+  pause: (id) => api.post(`/sequences/enrollments/${id}/pause`),
+  resume: (id) => api.post(`/sequences/enrollments/${id}/resume`),
+  cancel: (id) => api.post(`/sequences/enrollments/${id}/cancel`),
+  logs: (id) => api.get(`/sequences/${id}/logs`),
 }
 
 // Analytics API endpoints

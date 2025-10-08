@@ -140,3 +140,4 @@ APP_FRONTEND_URL=http://localhost:5173  # For email links
 
 The public quote acceptance feature is fully implemented and ready for use. Simply ensure the backend API endpoints are implemented and email templates are updated with the public URLs.
 
+

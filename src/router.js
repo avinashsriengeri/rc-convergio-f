@@ -487,6 +487,30 @@ const routes = [
         name: 'SalesQuoteTemplates',
         component: () => import('./views/sales/quote-templates/TemplatesList.vue'),
         meta: { requiresAuth: true }
+      },
+      {
+        path: 'sequences',
+        name: 'SalesSequences',
+        component: () => import('./views/sales/sequences/SequencesList.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'sequences/create',
+        name: 'SalesSequenceCreate',
+        component: () => import('./views/sales/sequences/SequenceForm.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'sequences/:id/edit',
+        name: 'SalesSequenceEdit',
+        component: () => import('./views/sales/sequences/SequenceForm.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'sequences/:id/view',
+        name: 'SalesSequenceView',
+        component: () => import('./views/sales/sequences/SequenceView.vue'),
+        meta: { requiresAuth: true }
       }
     ]
   }
