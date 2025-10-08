@@ -419,12 +419,6 @@ const routes = [
         meta: { requiresAuth: true }
       },
       {
-        path: 'forecasting',
-        name: 'MarketingForecasting',
-        component: () => import('./views/marketing/Forecasting.vue'),
-        meta: { requiresAuth: true }
-      },
-      {
         path: 'meetings',
         name: 'MarketingMeetings',
         component: () => import('./views/marketing/Meetings.vue'),
@@ -510,6 +504,12 @@ const routes = [
         path: 'sequences/:id/view',
         name: 'SalesSequenceView',
         component: () => import('./views/sales/sequences/SequenceView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'forecasting',
+        name: 'SalesForecasting',
+        component: () => import('./views/sales/Forecasting.vue'),
         meta: { requiresAuth: true }
       }
     ]
