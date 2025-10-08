@@ -9,7 +9,7 @@
     </div>
 
     <!-- Error State -->
-    <div v-else-if="error" class="flex items-center justify-center min-h-screen">
+    <div v-else-if="hasError" class="flex items-center justify-center min-h-screen">
       <div class="text-center max-w-md mx-auto p-6">
         <div class="bg-red-50 border border-red-200 rounded-lg p-6">
           <svg class="mx-auto h-12 w-12 text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -296,7 +296,7 @@ const route = useRoute()
 // Reactive data
 const quote = ref(null)
 const loading = ref(true)
-const error = ref(false)
+const hasError = ref(false)
 const actionLoading = ref(false)
 const showAcceptModal = ref(false)
 const showRejectModal = ref(false)
@@ -320,7 +320,7 @@ const loadQuote = async () => {
     quote.value = response.data.data || response.data
   } catch (err) {
     console.error('Error loading quote:', err)
-    error.value = true
+    hasError.value = true
   } finally {
     loading.value = false
   }
