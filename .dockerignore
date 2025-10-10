@@ -1,0 +1,24 @@
+# dependencies & caches
+node_modules
+npm-debug.log
+yarn.lock
+pnpm-lock.yaml
+
+# build output (we rebuild inside Docker)
+dist
+
+# Vite caches
+.vite
+.cache
+
+# git & editor junk
+.git
+.gitignore
+.gitattributes
+*.swp
+*.swo
+.DS_Store
+
+# env files (we won’t bake secrets into image)
+.env
+.env.*
