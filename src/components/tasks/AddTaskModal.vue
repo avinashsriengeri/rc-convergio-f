@@ -157,6 +157,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { tasksAPI } from '../../services/api'
 import { success, error as showError } from '../../utils/notifications'
+import { fetchUsersForDropdown } from '../../helpers/fetchUsersForDropdown'
 import BaseButton from '../ui/BaseButton.vue'
 import BaseInput from '../ui/BaseInput.vue'
 
@@ -191,18 +192,8 @@ const form = reactive({
 // Methods
 const loadUsers = async () => {
   try {
-    // For now, we'll use a simple approach to get users
-    // In a real app, you might have a usersAPI or get this from a store
-    const response = await fetch(`${process.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api'}/users`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-      }
-    })
-    
-    if (response.ok) {
-      const data = await response.json()
-      users.value = data.data || []
-    }
+    // Use team-aware helper to fetch users filtered by tenant/team
+    users.value = await fetchUsersForDropdown()
   } catch (err) {
     console.error('Error loading users:', err)
     // Fallback to empty array

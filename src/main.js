@@ -5,6 +5,7 @@ import router from './router.js'
 import { useAuth } from './composables/useAuth'
 import i18n from './i18n.js'
 import './style.css'
+import './assets/css/team-badges.css'
 
 const app = createApp(App)
 const pinia = createPinia()

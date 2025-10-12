@@ -296,6 +296,12 @@
               <div class="flex-1">
                 <h3 class="text-lg font-medium text-gray-900 mb-2">{{ campaign.name }}</h3>
                 <p class="text-sm text-gray-600 line-clamp-2">{{ campaign.description }}</p>
+                <div v-if="campaign.owner" class="text-xs text-gray-500 mt-1">
+                  <strong>Owner:</strong> {{ campaign.owner.name || '—' }}
+                </div>
+                <div v-if="campaign.team" class="text-xs text-gray-500">
+                  <strong>Team:</strong> {{ campaign.team.name || '—' }}
+                </div>
                 </div>
               </div>
               <div class="flex items-center space-x-2 ml-4">
@@ -358,7 +364,7 @@
                   View
                 </BaseButton>
                 <BaseButton
-                  v-if="campaign.status === 'draft'"
+                  v-if="campaign.status === 'draft' && canEdit(campaign)"
                   variant="outline"
                   size="sm"
                   @click="editCampaign(campaign)"
@@ -456,7 +462,7 @@
                   </svg>
                 </button>
                 <button
-                  v-if="campaign.status !== 'sent'"
+                  v-if="campaign.status !== 'sent' && canDelete(campaign)"
                   @click="deleteCampaign(campaign)"
                   class="text-gray-500 hover:text-red-600 p-2 rounded-md hover:bg-red-50 transition-colors"
                   title="Delete campaign"
@@ -1101,7 +1107,7 @@
                 Close
               </BaseButton>
               <BaseButton
-                v-if="selectedCampaign.status === 'draft'"
+                v-if="selectedCampaign.status === 'draft' && canEdit(selectedCampaign)"
                 variant="primary"
                 @click="editCampaign(selectedCampaign)"
               >
@@ -1434,6 +1440,8 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { debounce } from 'lodash-es'
 import { useCampaignsStore } from '@/stores/campaigns'
 import { useRefsStore } from '@/stores/refs'
+import { useContext } from '@/composables/useContext'
+import { usePermission } from '@/composables/usePermission'
 import { success, error as showError } from '@/utils/notifications'
 import { formatDate } from '@/utils/formatters'
 import { PER_PAGE_OPTIONS } from '@/utils/constants'
@@ -1449,6 +1457,10 @@ import { listsAPI } from '@/services/api'
 const props = defineProps<{
   openCreateModal?: boolean
 }>()
+
+// Context and permissions (unused in this component but available for future use)
+// const { tenantId, teamId, isAdmin } = useContext()
+// const { canEdit, canDelete, canView } = usePermission()
 
 // Types for watcher tuple
 type ModalBools = [boolean, boolean]

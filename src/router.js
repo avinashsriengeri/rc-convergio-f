@@ -369,6 +369,14 @@ const routes = [
     meta: { requiresAuth: true }
   },
 
+  // Team Access Demo route
+  {
+    path: '/team-access-demo',
+    name: 'TeamAccessDemo',
+    component: () => import('./examples/TeamAccessOverview.vue'),
+    meta: { requiresAuth: true }
+  },
+
   // Marketing Module routes (Parent/Child structure)
   {
     path: '/marketing',
@@ -510,6 +518,12 @@ const routes = [
         path: 'forecasting',
         name: 'SalesForecasting',
         component: () => import('./views/sales/Forecasting.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'lead-assignment',
+        name: 'SalesLeadAssignment',
+        component: () => import('./views/sales/LeadAssignment.vue'),
         meta: { requiresAuth: true }
       }
     ]

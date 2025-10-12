@@ -20,6 +20,7 @@
           </div>
           <div class="flex items-center space-x-3">
             <BaseButton
+              v-if="canEdit(company)"
               variant="primary"
               size="sm"
               icon="edit"
@@ -28,6 +29,7 @@
               {{ $t('companies.company_details.edit') }}
             </BaseButton>
             <BaseButton
+              v-if="canDelete(company)"
               variant="danger"
               size="sm"
               icon="trash"
@@ -61,12 +63,17 @@
               <div>
                 <h2 class="text-2xl font-bold text-gray-900">{{ company.name }}</h2>
                 <p class="text-gray-600">{{ company.industry || $t('companies.no_industry') }}</p>
-                <span
-                  class="inline-block px-3 py-1 text-sm rounded-full mt-2"
-                  :class="getStatusClass(company.status)"
-                >
-                  {{ company.status }}
-                </span>
+                <div class="flex items-center space-x-2 mt-2">
+                  <span
+                    class="inline-block px-3 py-1 text-sm rounded-full"
+                    :class="getStatusClass(company.status)"
+                  >
+                    {{ company.status }}
+                  </span>
+                  <span v-if="company.team" class="team-badge">
+                    {{ company.team.name }}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -141,6 +148,14 @@
                   >
                     {{ company.status }}
                   </span>
+                </div>
+                <div v-if="company.owner">
+                  <label class='text-sm font-medium text-gray-500'>Owner</label>
+                  <p class="text-sm text-gray-900">{{ company.owner.name || '—' }}</p>
+                </div>
+                <div v-if="company.team">
+                  <label class='text-sm font-medium text-gray-500'>Team</label>
+                  <p class="text-sm text-gray-900">{{ company.team.name || '—' }}</p>
                 </div>
                 <div class="md:col-span-2">
                   <label class='text-sm font-medium text-gray-500'>{{ $t('companies.company_details.address') }}</label>
@@ -363,6 +378,8 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useNotifications } from '@/composables/useNotifications'
+import { useContext } from '@/composables/useContext'
+import { usePermission } from '@/composables/usePermission'
 import { companiesAPI } from '@/services/api'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import AttachContactModal from '@/components/modals/AttachContactModal.vue'
@@ -371,6 +388,8 @@ import CompanyModal from '@/components/modals/CompanyModal.vue'
 const route = useRoute()
 const router = useRouter()
 const { success, error } = useNotifications()
+const { tenantId, teamId, isAdmin } = useContext()
+const { canEdit, canDelete, canView } = usePermission()
 
 const loading = ref(true)
 const loadingContacts = ref(false)

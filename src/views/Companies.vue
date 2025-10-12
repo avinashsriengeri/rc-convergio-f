@@ -186,6 +186,7 @@
                     </svg>
                   </button>
                   <button
+                    v-if="canEdit(company)"
                     @click.stop="editCompany(company)"
                     class="p-1.5 text-gray-400 hover:text-[#2596be] hover:bg-gray-100 rounded-lg transition-colors"
                     :title="$t('companies.edit_company')"
@@ -195,6 +196,7 @@
                     </svg>
                   </button>
                   <button
+                    v-if="canDelete(company)"
                     @click.stop="deleteCompany(company.id)"
                     class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                     :title="$t('companies.delete_company')"
@@ -227,6 +229,20 @@
                     <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
                   </svg>
                   {{ formatAddress(company.address) }}
+                </div>
+                
+                <div v-if="company.owner" class="flex items-center text-sm text-gray-600">
+                  <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                  </svg>
+                  <strong>Owner:</strong> {{ company.owner.name || '—' }}
+                </div>
+                
+                <div v-if="company.team" class="flex items-center text-sm text-gray-600">
+                  <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                  </svg>
+                  <strong>Team:</strong> {{ company.team.name || '—' }}
                 </div>
               </div>
 
@@ -303,6 +319,8 @@
 import { ref, reactive, onMounted, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useNotifications } from '@/composables/useNotifications'
+import { useContext } from '@/composables/useContext'
+import { usePermission } from '@/composables/usePermission'
 import { companiesAPI, metadataAPI } from '@/services/api'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import CompanyModal from '@/components/modals/CompanyModal.vue'
@@ -312,6 +330,8 @@ import { debounce } from 'lodash-es'
 
 const router = useRouter()
 const { success, error } = useNotifications()
+const { tenantId, teamId, isAdmin } = useContext()
+const { canEdit, canDelete, canView } = usePermission()
 
 // Reactive data
 const loading = ref(false)

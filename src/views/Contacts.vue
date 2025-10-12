@@ -138,6 +138,7 @@
                     </svg>
                   </button>
                   <button
+                    v-if="canEdit(contact)"
                     @click.stop="editContact(contact)"
                     class="p-1.5 text-gray-400 hover:text-[#2596be] hover:bg-gray-100 rounded-lg transition-colors"
                     :title="$t('contacts.edit_contact')"
@@ -147,6 +148,7 @@
                     </svg>
                   </button>
                   <button
+                    v-if="canDelete(contact)"
                     @click.stop="deleteContact(contact.id)"
                     class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                     :title="$t('contacts.delete_contact')"
@@ -180,6 +182,20 @@
                     <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd" />
                   </svg>
                   {{ contact.lifecycle_stage }}
+                </div>
+                
+                <div v-if="contact.owner" class="flex items-center text-sm text-gray-600">
+                  <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                  </svg>
+                  <strong>Owner:</strong> {{ contact.owner.name || '—' }}
+                </div>
+                
+                <div v-if="contact.team" class="flex items-center text-sm text-gray-600">
+                  <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                  </svg>
+                  <strong>Team:</strong> {{ contact.team.name || '—' }}
                 </div>
               </div>
 
@@ -251,6 +267,8 @@ import { ref, reactive, onMounted, watch, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useNotifications } from '@/composables/useNotifications'
+import { useContext } from '@/composables/useContext'
+import { usePermission } from '@/composables/usePermission'
 import { contactsAPI } from '@/services/api'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import ContactModal from '@/components/modals/ContactModal.vue'
@@ -259,6 +277,8 @@ import ImportModal from '@/components/modals/ImportModal.vue'
 const router = useRouter()
 const { t } = useI18n()
 const { success, error, warning } = useNotifications()
+const { tenantId, teamId, isAdmin } = useContext()
+const { canEdit, canDelete, canView } = usePermission()
 
 // Reactive data
 const loading = ref(false)

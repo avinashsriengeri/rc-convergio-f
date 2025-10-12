@@ -175,7 +175,7 @@ export const companiesAPI = {
 export const metadataAPI = {
   getIndustries: () => api.get('/metadata/industries'),
   getCompanyTypes: () => api.get('/metadata/company-types'),
-  getOwners: () => api.get('/metadata/owners'),
+  getOwners: () => api.get('/users/for-assignment'),
   getLeadSources: () => api.get('/metadata/lead-sources'),
   getContactTypes: () => api.get('/metadata/contact-types'),
   getDealStages: () => api.get('/metadata/deal-stages'),
@@ -407,6 +407,7 @@ export const quotesAPI = {
 export const usersAPI = {
   getUsers: (params = {}) => api.get('/users', { params }),
   getUser: (id) => api.get(`/users/${id}`),
+  getUsersForAssignment: (params = {}) => api.get('/users/for-assignment', { params }),
   createUser: (data) => api.post('/users', data),
   updateUser: (id, data) => api.put(`/users/${id}`, data),
   deleteUser: (id) => api.delete(`/users/${id}`),

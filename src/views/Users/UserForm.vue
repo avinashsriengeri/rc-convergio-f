@@ -182,6 +182,39 @@
                 <p v-if="errors.role" class="mt-1 text-sm text-red-600">{{ errors.role }}</p>
               </div>
 
+              <!-- Team Assignment -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Team
+                </label>
+                
+                <!-- Loading state -->
+                <div v-if="loadingTeams" class="text-center py-4">
+                  <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                  <p class="text-sm text-gray-500 mt-2">Loading available teams...</p>
+                </div>
+                
+                <!-- Teams dropdown -->
+                <select
+                  v-else
+                  v-model="form.team_id"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                >
+                  <option :value="null">No team assigned</option>
+                  <option
+                    v-for="team in teams"
+                    :key="team.id"
+                    :value="team.id"
+                  >
+                    {{ team.name }}
+                  </option>
+                </select>
+                
+                <p class="mt-1 text-sm text-gray-500">
+                  Assign the user to a team for better organization and collaboration.
+                </p>
+              </div>
+
               <!-- Account Status -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-3">Account Status</label>
@@ -250,6 +283,7 @@ import { useRoute, useRouter } from 'vue-router'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import { usersAPI } from '@/services/api'
+import { teamsAPI, type Team } from '@/services/teams'
 import { useNotifications } from '@/composables/useNotifications'
 
 interface UserFormData {
@@ -258,6 +292,7 @@ interface UserFormData {
   password: string
   password_confirmation: string
   role: number | null // Changed to number for role ID
+  team_id: number | null // Add team_id field
   status: 'active' | 'inactive'
 }
 
@@ -277,6 +312,8 @@ const showPassword = ref(false)
 const isEditing = computed(() => route.name === 'UserEdit')
 const roles = ref<Role[]>([])
 const loadingRoles = ref(false)
+const teams = ref<Team[]>([])
+const loadingTeams = ref(false)
 
 const form = reactive<UserFormData>({
   name: '',
@@ -284,6 +321,7 @@ const form = reactive<UserFormData>({
   password: '',
   password_confirmation: '',
   role: null, // Default to null, will be set after roles are loaded
+  team_id: null, // Default to null, will be set after teams are loaded
   status: 'active' // Default to 'active' status
  })
 
@@ -383,6 +421,7 @@ const saveUser = async () => {
       name: form.name,
       email: form.email,
       roles: [form.role], // Send role ID as array for backend validation
+      team_id: form.team_id, // Include team_id
       status: form.status,
       ...(form.password && { 
         password: form.password,
@@ -406,7 +445,7 @@ const saveUser = async () => {
 
     // Navigate back to users list
     router.push('/users')
-  } catch (err) {
+  } catch (err: any) {
     console.error('Failed to save user:', err)
     console.error('Error response:', err.response?.data)
     showError('Failed to save user')
@@ -449,6 +488,42 @@ const fetchRoles = async () => {
     form.role = 3 // Default to user role ID
   } finally {
     loadingRoles.value = false
+  }
+}
+
+const fetchTeams = async () => {
+  loadingTeams.value = true
+  try {
+    const response = await teamsAPI.getTeams()
+    
+    // Handle Laravel pagination structure: response.data.data.data
+    let apiTeams = []
+    if (response.data.success && response.data.data && response.data.data.data) {
+      // Laravel paginated response
+      apiTeams = response.data.data.data
+    } else if (response.data.data && Array.isArray(response.data.data)) {
+      // Direct array response
+      apiTeams = response.data.data
+    } else if (Array.isArray(response.data)) {
+      // Simple array response
+      apiTeams = response.data
+    }
+    
+    // Transform teams to match our interface
+    teams.value = apiTeams.map((team: any) => ({
+      id: team.id,
+      name: team.name,
+      description: team.description,
+      members_count: team.members?.length || 0,
+      created_at: team.created_at,
+      updated_at: team.updated_at
+    }))
+  } catch (err) {
+    console.error('Failed to fetch teams:', err)
+    // Teams are optional, so we can continue without them
+    teams.value = []
+  } finally {
+    loadingTeams.value = false
   }
 }
 
@@ -522,6 +597,7 @@ const loadUser = async () => {
         password: '',
         password_confirmation: '',
         role: userRoleId,
+        team_id: userData.team_id || null,
         status: userData.status || 'active'
       })
     } catch (err) {
@@ -533,8 +609,11 @@ const loadUser = async () => {
 
 // Lifecycle
 onMounted(async () => {
-  // Always fetch roles first
-  await fetchRoles()
+  // Fetch roles and teams in parallel
+  await Promise.all([
+    fetchRoles(),
+    fetchTeams()
+  ])
   
   if (isEditing.value) {
     await loadUser()

@@ -226,8 +226,57 @@ export const forecastingService = {
         }
       }
     }
+  },
+ 
+    // ✅ Professional export summary integration
+    async exportSummaryNew(timeframe = 'monthly', format = 'excel') {
+      try {
+        const params = {
+          timeframe,
+          format,
+          include_trends: 1,
+          include_pipeline_breakdown: 1
+        }
+  
+        console.log('Making API call to /forecast/export with params:', params)
+  
+        // ✅ Use axios instance — it already respects VITE_API_BASE_URL
+        const response = await api.get('/forecast/export', { 
+          params,
+          responseType: 'blob' // important: tells Axios we expect a file
+        })
+  
+        // ✅ Extract filename from response headers or fallback
+        const contentDisposition = response.headers['content-disposition']
+        let filename = 'forecast_summary.xlsx'
+        if (contentDisposition) {
+          const match = contentDisposition.match(/filename="?([^"]+)"?/)
+          if (match) filename = match[1]
+        }
+  
+        // ✅ Trigger download via Blob
+        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', filename)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(url)
+  
+        console.log('✅ Forecast summary exported successfully:', filename)
+        return true
+      } catch (error) {
+        console.error('❌ Error exporting summary:', error)
+        throw error
+      }
+    }
+  
   }
-}
+
+
+
 
 // Helper functions for forecasting data processing
 export const forecastingHelpers = {
@@ -399,25 +448,4 @@ export const forecastingHelpers = {
     }
   },
 
-  // Export summary with new API endpoint
-  async exportSummary(timeframe = 'monthly', format = 'excel') {
-    try {
-      const params = {
-        timeframe,
-        format,
-        include_trends: true,
-        include_pipeline_breakdown: true
-      }
-      
-      console.log('Making API call to /forecast/export with params:', params)
-      const response = await api.get('/forecast/export', { 
-        params
-      })
-      console.log('API call successful:', response)
-      return response
-    } catch (error) {
-      console.error('Error exporting summary:', error)
-      throw error
-    }
-  }
 }

@@ -351,6 +351,12 @@
                 <div>
                   <h3 class="text-lg font-medium text-gray-900">{{ activity.title || 'Untitled Activity' }}</h3>
                   <p class="text-sm text-gray-500">{{ activity.description || '-' }}</p>
+                  <div v-if="activity.owner" class="text-xs text-gray-500 mt-1">
+                    <strong>Owner:</strong> {{ activity.owner.name || '—' }}
+                  </div>
+                  <div v-if="activity.team" class="text-xs text-gray-500">
+                    <strong>Team:</strong> {{ activity.team.name || '—' }}
+                  </div>
                 </div>
                 <div class="flex items-center space-x-2">
                   <span
@@ -371,6 +377,7 @@
                        </svg>
                      </button>
                      <button
+                       v-if="canEdit(activity)"
                        @click="editActivity(activity)"
                        class="text-gray-400 hover:text-gray-600 p-1"
                        title="Edit activity"
@@ -390,6 +397,7 @@
                        </svg>
                      </button>
                      <button
+                       v-if="canDelete(activity)"
                        @click="deleteActivity(activity)"
                        class="text-gray-400 hover:text-red-600 p-1"
                        title="Delete activity"
@@ -747,6 +755,8 @@ import { useRouter } from 'vue-router'
 import { debounce } from 'lodash-es'
 import { useActivitiesStore } from '@/stores/activities'
 import { useRefsStore } from '@/stores/refs'
+import { useContext } from '@/composables/useContext'
+import { usePermission } from '@/composables/usePermission'
 import { success, error as showError } from '@/utils/notifications'
 import { formatDate, formatTime } from '@/utils/formatters'
 import { PER_PAGE_OPTIONS } from '@/utils/constants'
@@ -761,6 +771,9 @@ const router = useRouter()
 // Stores
 const activitiesStore = useActivitiesStore()
 const refsStore = useRefsStore()
+// Context and permissions (unused in this component but available for future use)
+// const { tenantId, teamId, isAdmin } = useContext()
+// const { canEdit, canDelete, canView } = usePermission()
 
 // Activity types
 const ACTIVITY_TYPES = [

@@ -21,6 +21,7 @@
           </div>
           <div class="flex items-center space-x-3">
             <BaseButton
+              v-if="canEdit(activity)"
               variant="secondary"
               @click="editActivity"
               class="flex items-center"
@@ -31,6 +32,7 @@
               Edit
             </BaseButton>
             <BaseButton
+              v-if="canDelete(activity)"
               variant="danger"
               @click="deleteActivity"
               class="flex items-center"
@@ -82,7 +84,12 @@
                 </svg>
               </div>
               <div>
-                <h2 class="text-xl font-semibold text-gray-900">{{ activity.title }}</h2>
+                <div class="flex items-center space-x-3">
+                  <h2 class="text-xl font-semibold text-gray-900">{{ activity.title }}</h2>
+                  <span v-if="activity.team" class="team-badge">
+                    {{ activity.team.name }}
+                  </span>
+                </div>
                 <p class="text-sm text-gray-500 capitalize">{{ activity.type }} • {{ activity.status }}</p>
               </div>
             </div>
@@ -174,6 +181,19 @@
                   <span>{{ activity.owner.name || activity.owner.email }}</span>
                 </div>
               </div>
+              
+              <!-- Team -->
+              <div v-if="activity.team">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Team</h3>
+                <div class="flex items-center text-gray-700">
+                  <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                    <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <span>{{ activity.team.name || '—' }}</span>
+                </div>
+              </div>
 
               <!-- Timestamps -->
               <div>
@@ -212,6 +232,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useActivitiesStore } from '@/stores/activities'
+import { useContext } from '@/composables/useContext'
+import { usePermission } from '@/composables/usePermission'
 import { success, error as showError } from '@/utils/notifications'
 import { formatDate, formatTime, formatRelativeTime } from '@/utils/formatters'
 import type { Activity } from '@/types'
@@ -224,6 +246,9 @@ const router = useRouter()
 
 // Store
 const activitiesStore = useActivitiesStore()
+// Context and permissions (unused in this component but available for future use)
+// const { tenantId, teamId, isAdmin } = useContext()
+// const { canEdit, canDelete, canView } = usePermission()
 
 // Reactive data
 const loading = ref(false)

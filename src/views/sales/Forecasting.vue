@@ -632,31 +632,16 @@ const exportSummary = async () => {
   try {
     console.log('Export Summary button clicked!')
     console.log('Current timeframe:', selectedTimeframe.value)
-    console.log('forecastingService object:', forecastingService)
-    console.log('exportSummary method exists:', typeof forecastingService.exportSummary)
     exportLoading.value = true
     
-    console.log('Calling forecastingService.exportSummary...')
-    const response = await forecastingService.exportSummary(selectedTimeframe.value, 'excel')
-    console.log('API Response:', response)
+    console.log('Calling forecastingService.exportSummaryNew...')
+    const success = await forecastingService.exportSummaryNew(selectedTimeframe.value, 'excel')
+    console.log('Export result:', success)
     
-    if (response.data.success) {
-      // Download the file using the download_url from response
-      const downloadUrl = response.data.data.download_url
-      const filename = response.data.data.filename
-      
-      // Create download link
-      const link = document.createElement('a')
-      link.href = downloadUrl
-      link.download = filename
-      link.target = '_blank'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      
+    if (success) {
       showSuccess('Export summary completed successfully!')
     } else {
-      throw new Error(response.data.message || 'Export failed')
+      throw new Error('Export failed')
     }
     
   } catch (err) {

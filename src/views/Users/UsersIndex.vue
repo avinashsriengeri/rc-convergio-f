@@ -44,8 +44,8 @@
               type="button"
               variant="outline"
               size="sm"
-              @click="setRoleFilter('all')"
-              :class="{ 'bg-blue-50 border-blue-200 text-blue-700': roleFilter === 'all' }"
+              @click="setActiveTab('users')"
+              :class="{ 'bg-blue-50 border-blue-200 text-blue-700': activeTab === 'users' }"
             >
               All Users
             </BaseButton>
@@ -54,7 +54,8 @@
               variant="outline"
               size="sm"
               @click="setRoleFilter('admin')"
-              :class="{ 'bg-red-50 border-red-200 text-red-700': roleFilter === 'admin' }"
+              :class="{ 'bg-red-50 border-red-200 text-red-700': roleFilter === 'admin' && activeTab === 'users' }"
+              v-if="activeTab === 'users'"
             >
               Administrators
             </BaseButton>
@@ -63,7 +64,8 @@
               variant="outline"
               size="sm"
               @click="setRoleFilter('manager')"
-              :class="{ 'bg-purple-50 border-purple-200 text-purple-700': roleFilter === 'manager' }"
+              :class="{ 'bg-purple-50 border-purple-200 text-purple-700': roleFilter === 'manager' && activeTab === 'users' }"
+              v-if="activeTab === 'users'"
             >
               Managers
             </BaseButton>
@@ -72,14 +74,25 @@
               variant="outline"
               size="sm"
               @click="setRoleFilter('user')"
-              :class="{ 'bg-green-50 border-green-200 text-green-700': roleFilter === 'user' }"
+              :class="{ 'bg-green-50 border-green-200 text-green-700': roleFilter === 'user' && activeTab === 'users' }"
+              v-if="activeTab === 'users'"
             >
               Users
+            </BaseButton>
+            <BaseButton
+              type="button"
+              variant="outline"
+              size="sm"
+              @click="setActiveTab('teams')"
+              :class="{ 'bg-indigo-50 border-indigo-200 text-indigo-700': activeTab === 'teams' }"
+              v-if="isAdmin"
+            >
+              Teams
             </BaseButton>
           </div>
           
           <!-- Status Filter -->
-          <div class="flex flex-wrap gap-2">
+          <div class="flex flex-wrap gap-2" v-if="activeTab === 'users'">
             <BaseButton
               type="button"
               variant="outline"
@@ -109,7 +122,7 @@
             </BaseButton>
           </div>
           
-          <div class="flex items-center space-x-2">
+          <div class="flex items-center space-x-2" v-if="activeTab === 'users'">
             <BaseInput
               v-model="searchQuery"
               placeholder="Search users..."
@@ -129,188 +142,194 @@
 
     <!-- Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Loading State -->
-      <div v-if="loading" class="flex justify-center items-center py-12">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-
-      <!-- Error State -->
-      <div v-else-if="error" class="text-center py-12">
-        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-        </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">Error loading users</h3>
-        <p class="mt-1 text-sm text-gray-500">{{ error }}</p>
-        <div class="mt-6">
-          <BaseButton variant="primary" @click="refreshUsers">
-            Try Again
-          </BaseButton>
+      <!-- Users Tab Content -->
+      <div v-if="activeTab === 'users'">
+        <!-- Loading State -->
+        <div v-if="loading" class="flex justify-center items-center py-12">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
-      </div>
 
-      <!-- Empty State -->
-      <div v-else-if="!loading && filteredUsers.length === 0" class="text-center py-12">
-        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-        </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">
-          {{ searchQuery ? 'No users found' : 'No users created' }}
-        </h3>
-        <p class="mt-1 text-sm text-gray-500">
-          {{ searchQuery ? 'Try adjusting your search criteria.' : 'Get started by adding your first user.' }}
-        </p>
-        <div class="mt-6" v-if="!searchQuery">
-          <BaseButton variant="primary" @click="createUser">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            Add User
-          </BaseButton>
+        <!-- Error State -->
+        <div v-else-if="error" class="text-center py-12">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">Error loading users</h3>
+          <p class="mt-1 text-sm text-gray-500">{{ error }}</p>
+          <div class="mt-6">
+            <BaseButton variant="primary" @click="refreshUsers">
+              Try Again
+            </BaseButton>
+          </div>
         </div>
-      </div>
 
-      <!-- Users Table -->
-      <div v-else class="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Role
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Last Login
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Created
-                </th>
-                <th scope="col" class="relative px-6 py-3">
-                  <span class="sr-only">Actions</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr
-                v-for="user in filteredUsers"
-                :key="user.id"
-                class="hover:bg-gray-50"
-              >
-                <!-- User Info -->
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="flex items-center">
-                    <div class="flex-shrink-0 h-10 w-10">
-                      <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                        <span class="text-sm font-medium text-gray-700">
-                          {{ user.name.charAt(0).toUpperCase() }}
-                        </span>
+        <!-- Empty State -->
+        <div v-else-if="!loading && filteredUsers.length === 0" class="text-center py-12">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">
+            {{ searchQuery ? 'No users found' : 'No users created' }}
+          </h3>
+          <p class="mt-1 text-sm text-gray-500">
+            {{ searchQuery ? 'Try adjusting your search criteria.' : 'Get started by adding your first user.' }}
+          </p>
+          <div class="mt-6" v-if="!searchQuery">
+            <BaseButton variant="primary" @click="createUser">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Add User
+            </BaseButton>
+          </div>
+        </div>
+
+        <!-- Users Table -->
+        <div v-else class="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    User
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Role
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Last Login
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Created
+                  </th>
+                  <th scope="col" class="relative px-6 py-3">
+                    <span class="sr-only">Actions</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr
+                  v-for="user in filteredUsers"
+                  :key="user.id"
+                  class="hover:bg-gray-50"
+                >
+                  <!-- User Info -->
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="flex-shrink-0 h-10 w-10">
+                        <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                          <span class="text-sm font-medium text-gray-700">
+                            {{ user.name.charAt(0).toUpperCase() }}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="ml-4">
+                        <div class="text-sm font-medium text-gray-900">{{ user.name }}</div>
+                        <div class="text-sm text-gray-500">{{ user.email }}</div>
                       </div>
                     </div>
-                    <div class="ml-4">
-                      <div class="text-sm font-medium text-gray-900">{{ user.name }}</div>
-                      <div class="text-sm text-gray-500">{{ user.email }}</div>
+                  </td>
+
+                  <!-- Role -->
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                      :class="getRoleBadgeClass(user.role)"
+                    >
+                      {{ getRoleDisplayName(user.role) }}
+                    </span>
+                  </td>
+
+                  <!-- Status -->
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                      :class="getStatusBadgeClass(user.status)"
+                    >
+                      {{ user.status }}
+                    </span>
+                  </td>
+
+                  <!-- Last Login -->
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ user.last_login ? formatDate(user.last_login) : 'Never' }}
+                  </td>
+
+                  <!-- Created -->
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ formatDate(user.created_at) }}
+                  </td>
+
+                  <!-- Actions -->
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div class="flex items-center justify-end space-x-2">
+                      <BaseButton
+                        variant="outline"
+                        size="sm"
+                        @click="viewUser(user)"
+                        class="flex items-center"
+                      >
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        View
+                      </BaseButton>
+                      <BaseButton
+                        variant="outline"
+                        size="sm"
+                        @click="editUser(user)"
+                        class="flex items-center"
+                      >
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        Edit
+                      </BaseButton>
+                      <button
+                        v-if="user.status === 'active'"
+                        @click="toggleUserStatus(user)"
+                        class="text-yellow-600 hover:text-yellow-900 p-1 rounded"
+                        title="Deactivate user"
+                      >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728" />
+                        </svg>
+                      </button>
+                      <button
+                        v-else
+                        @click="toggleUserStatus(user)"
+                        class="text-green-600 hover:text-green-900 p-1 rounded"
+                        title="Activate user"
+                      >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </button>
+                      <button
+                        @click="deleteUser(user)"
+                        :disabled="user.id === currentUserId"
+                        class="text-gray-400 hover:text-red-600 p-1 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                        :title="user.id === currentUserId ? 'Cannot delete yourself' : 'Delete user'"
+                      >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
                     </div>
-                  </div>
-                </td>
-
-                <!-- Role -->
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                    :class="getRoleBadgeClass(user.role)"
-                  >
-                    {{ getRoleDisplayName(user.role) }}
-                  </span>
-                </td>
-
-                <!-- Status -->
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                    :class="getStatusBadgeClass(user.status)"
-                  >
-                    {{ user.status }}
-                  </span>
-                </td>
-
-                <!-- Last Login -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ user.last_login ? formatDate(user.last_login) : 'Never' }}
-                </td>
-
-                <!-- Created -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatDate(user.created_at) }}
-                </td>
-
-                <!-- Actions -->
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div class="flex items-center justify-end space-x-2">
-                    <BaseButton
-                      variant="outline"
-                      size="sm"
-                      @click="viewUser(user)"
-                      class="flex items-center"
-                    >
-                      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                      View
-                    </BaseButton>
-                    <BaseButton
-                      variant="outline"
-                      size="sm"
-                      @click="editUser(user)"
-                      class="flex items-center"
-                    >
-                      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                      Edit
-                    </BaseButton>
-                    <button
-                      v-if="user.status === 'active'"
-                      @click="toggleUserStatus(user)"
-                      class="text-yellow-600 hover:text-yellow-900 p-1 rounded"
-                      title="Deactivate user"
-                    >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728" />
-                      </svg>
-                    </button>
-                    <button
-                      v-else
-                      @click="toggleUserStatus(user)"
-                      class="text-green-600 hover:text-green-900 p-1 rounded"
-                      title="Activate user"
-                    >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </button>
-                    <button
-                      @click="deleteUser(user)"
-                      :disabled="user.id === currentUserId"
-                      class="text-gray-400 hover:text-red-600 p-1 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                      :title="user.id === currentUserId ? 'Cannot delete yourself' : 'Delete user'"
-                    >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
+
+      <!-- Teams Tab Content -->
+      <TeamsTab v-else-if="activeTab === 'teams'" />
     </div>
 
     <!-- Delete Confirmation Modal -->
@@ -437,9 +456,11 @@ import { useRouter } from 'vue-router'
 import { debounce } from 'lodash-es'
 import { useNotifications } from '@/composables/useNotifications'
 import { usersAPI } from '@/services/api'
+import { useAuth } from '@/composables/useAuth'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
+import TeamsTab from './components/TeamsTab.vue'
 
 interface User {
   id: number
@@ -455,6 +476,7 @@ interface User {
 
 const router = useRouter()
 const { success, error: showError } = useNotifications()
+const { user: currentUser, userRole } = useAuth()
 
 // Reactive data
 const loading = ref(false)
@@ -463,6 +485,7 @@ const users = ref<User[]>([])
 const searchQuery = ref('')
 const roleFilter = ref<'all' | 'admin' | 'manager' | 'user'>('all')
 const statusFilter = ref<'all' | 'active' | 'inactive'>('all')
+const activeTab = ref<'users' | 'teams'>('users')
 const showDeleteModal = ref(false)
 const showStatusModal = ref(false)
 const showViewModal = ref(false)
@@ -525,6 +548,13 @@ const mockUsers: User[] = [
 ]
 
 // Computed
+const isAdmin = computed(() => {
+  const role = userRole.value?.toLowerCase()
+  return role === 'admin' || role === 'administrator' || 
+         currentUser.value?.role_names?.includes('admin') ||
+         currentUser.value?.role_names?.includes('administrator')
+})
+
 const filteredUsers = computed(() => {
   let filtered = users.value
 
@@ -560,13 +590,13 @@ const refreshUsers = async () => {
     const apiUsers = response.data.data || response.data
     
     // Transform backend data to match our interface
-    users.value = apiUsers.map((user: any) => {
+    users.value = apiUsers.map((user: any): User => {
       // Use role_names[0] from backend for display, fallback to role field
-      let userRole = 'user'
+      let userRole: 'admin' | 'manager' | 'user' = 'user'
       if (user.role_names && Array.isArray(user.role_names) && user.role_names.length > 0) {
-        userRole = user.role_names[0]
+        userRole = user.role_names[0] as 'admin' | 'manager' | 'user'
       } else if (user.role) {
-        userRole = user.role
+        userRole = user.role as 'admin' | 'manager' | 'user'
       }
       
       return {
@@ -625,7 +655,7 @@ const confirmDelete = async () => {
     await usersAPI.deleteUser(userToDelete.value.id)
     
     // Remove from local array
-    users.value = users.value.filter(u => u.id !== userToDelete.value!.id)
+    users.value = users.value.filter((u: User) => u.id !== userToDelete.value!.id)
     
     showDeleteModal.value = false
     userToDelete.value = null
@@ -653,7 +683,7 @@ const confirmStatusToggle = async () => {
     })
     
     // Update status in local array
-    const userIndex = users.value.findIndex(u => u.id === userToToggle.value!.id)
+    const userIndex = users.value.findIndex((u: User) => u.id === userToToggle.value!.id)
     if (userIndex !== -1) {
       users.value[userIndex].status = newStatus
       users.value[userIndex].updated_at = new Date().toISOString()
@@ -665,6 +695,16 @@ const confirmStatusToggle = async () => {
   } catch (err) {
     console.error('Failed to toggle user status:', err)
     showError('Failed to update user status')
+  }
+}
+
+const setActiveTab = (tab: 'users' | 'teams') => {
+  activeTab.value = tab
+  // Reset filters when switching tabs
+  if (tab === 'users') {
+    roleFilter.value = 'all'
+    statusFilter.value = 'all'
+    searchQuery.value = ''
   }
 }
 

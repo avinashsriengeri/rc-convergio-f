@@ -15,9 +15,14 @@
                 </svg>
               </button>
               <div>
-                <h1 class="text-2xl font-bold text-gray-900">
-                  {{ deal?.title || 'Loading...' }}
-                </h1>
+                <div class="flex items-center space-x-3">
+                  <h1 class="text-2xl font-bold text-gray-900">
+                    {{ deal?.title || 'Loading...' }}
+                  </h1>
+                  <span v-if="deal?.team" class="team-badge">
+                    {{ deal.team.name }}
+                  </span>
+                </div>
                 <p class="text-sm text-gray-600 mt-1">
                   Deal Details
                 </p>
@@ -32,12 +37,14 @@
               Back to Deals
             </BaseButton>
             <BaseButton
+              v-if="canEdit(deal)"
               variant="secondary"
               @click="editDeal"
             >
               Edit Deal
             </BaseButton>
             <BaseButton
+              v-if="canDelete(deal)"
               variant="danger"
               @click="deleteDeal"
             >
@@ -163,6 +170,20 @@
                   <div>
                     <p class="text-sm font-medium text-gray-900">{{ deal.owner?.name || 'Unassigned' }}</p>
                     <p class="text-xs text-gray-500">{{ deal.owner?.email }}</p>
+                  </div>
+                </div>
+              </div>
+              <div v-if="deal.team">
+                <h3 class="text-sm font-medium text-gray-500 mb-2">Team</h3>
+                <div class="flex items-center">
+                  <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                    <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">{{ deal.team.name || '—' }}</p>
+                    <p class="text-xs text-gray-500">Team</p>
                   </div>
                 </div>
               </div>
@@ -347,6 +368,8 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDealsStore } from '../../stores/deals'
+import { useContext } from '../../composables/useContext'
+import { usePermission } from '../../composables/usePermission'
 import { success, error as showError } from '../../utils/notifications'
 import { formatDate, formatCurrency, formatRelativeTime, getInitials, getValueColor, getProbabilityColor, isOverdue } from '../../utils/formatters'
 import { STATUS_BADGE_COLORS } from '../../utils/constants'
@@ -360,6 +383,9 @@ import AddTaskModal from '../../components/tasks/AddTaskModal.vue'
 const route = useRoute()
 const router = useRouter()
 const dealsStore = useDealsStore()
+// Context and permissions (unused in this component but available for future use)
+// const { tenantId, teamId, isAdmin } = useContext()
+// const { canEdit, canDelete, canView } = usePermission()
 
 // Reactive data
 const loading = ref(false)
