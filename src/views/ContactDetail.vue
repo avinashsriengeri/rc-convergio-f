@@ -339,6 +339,16 @@
               </div>
             </div>
           </div>
+
+          <!-- Documents -->
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <DocumentsTab 
+              relatedType="contact" 
+              :relatedId="contact.id"
+              :initialDocuments="contactDocuments"
+              @document-linked="handleDocumentLinked"
+            />
+          </div>
         </div>
       </div>
 
@@ -370,6 +380,7 @@ import { useContext } from '@/composables/useContext'
 import { usePermission } from '@/composables/usePermission'
 import api, { contactsAPI, usersAPI } from '@/services/api'
 import BaseButton from '@/components/ui/BaseButton.vue'
+import DocumentsTab from '@/components/documents/DocumentsTab.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -382,6 +393,7 @@ const contact = ref(null)
 const contactCompany = ref(null)
 const deals = ref([])
 const activities = ref([])
+const contactDocuments = ref([])
 const dealsLoading = ref(false)
 const activitiesLoading = ref(false)
 
@@ -413,6 +425,11 @@ const loadContactData = async () => {
     const contactResponse = await contactsAPI.getContact(route.params.id)
     contact.value = contactResponse.data.data.contact
     
+    // Extract documents from the API response
+    contactDocuments.value = contactResponse.data.data.documents || []
+    console.log(`ContactDetail: Loaded ${contactDocuments.value.length} documents for contact ${contact.value.id}`)
+    console.log('ContactDetail: Documents data:', contactDocuments.value)
+    
     // Load related data
     await Promise.all([
       loadContactCompany(),
@@ -428,6 +445,20 @@ const loadContactData = async () => {
     loading.value = false
   }
 }
+
+const handleDocumentLinked = (document) => {
+  console.log('ContactDetail: Document linked, adding to contactDocuments:', document)
+  // Add the linked document to the contactDocuments array
+  const existingIndex = contactDocuments.value.findIndex(doc => doc.id === document.id)
+  if (existingIndex === -1) {
+    contactDocuments.value.push(document)
+    console.log('ContactDetail: Added document to contactDocuments array')
+  } else {
+    contactDocuments.value[existingIndex] = document
+    console.log('ContactDetail: Updated existing document in contactDocuments array')
+  }
+}
+
 
 const loadContactCompany = async () => {
   try {

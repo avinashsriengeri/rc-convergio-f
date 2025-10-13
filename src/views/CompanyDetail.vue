@@ -238,6 +238,16 @@
               </div>
             </div>
           </div>
+
+          <!-- Documents -->
+          <div class="bg-white shadow-sm rounded-lg p-6">
+            <DocumentsTab 
+              relatedType="company" 
+              :relatedId="company.id"
+              :initialDocuments="companyDocuments"
+              @document-linked="handleDocumentLinked"
+            />
+          </div>
         </div>
 
         <!-- Sidebar -->
@@ -384,6 +394,7 @@ import { companiesAPI } from '@/services/api'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import AttachContactModal from '@/components/modals/AttachContactModal.vue'
 import CompanyModal from '@/components/modals/CompanyModal.vue'
+import DocumentsTab from '@/components/documents/DocumentsTab.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -397,6 +408,7 @@ const dealsLoading = ref(false)
 const company = ref(null)
 const companyContacts = ref([])
 const companyDeals = ref([])
+const companyDocuments = ref([])
 const showAttachContactModal = ref(false)
 const showEditModal = ref(false)
 
@@ -404,7 +416,13 @@ onMounted(async () => {
   try {
     const response = await companiesAPI.getCompany(route.params.id)
     console.log('Company API response:', response)
-    company.value = response.data.data
+    company.value = response.data.data.company
+    
+    // Extract documents from the API response
+    companyDocuments.value = response.data.data.documents || []
+    console.log(`CompanyDetail: Loaded ${companyDocuments.value.length} documents for company ${company.value.id}`)
+    console.log('CompanyDetail: Documents data:', companyDocuments.value)
+    
     console.log('Company data:', company.value)
     console.log('Phone:', company.value.phone)
     console.log('Email:', company.value.email)
@@ -434,6 +452,19 @@ const loadCompanyContacts = async () => {
     console.error('Error loading company contacts:', err)
   } finally {
     loadingContacts.value = false
+  }
+}
+
+const handleDocumentLinked = (document) => {
+  console.log('CompanyDetail: Document linked, adding to companyDocuments:', document)
+  // Add the linked document to the companyDocuments array
+  const existingIndex = companyDocuments.value.findIndex(doc => doc.id === document.id)
+  if (existingIndex === -1) {
+    companyDocuments.value.push(document)
+    console.log('CompanyDetail: Added document to companyDocuments array')
+  } else {
+    companyDocuments.value[existingIndex] = document
+    console.log('CompanyDetail: Updated existing document in companyDocuments array')
   }
 }
 

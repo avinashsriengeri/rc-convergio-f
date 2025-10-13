@@ -527,6 +527,14 @@ const routes = [
         meta: { requiresAuth: true }
       }
     ]
+  },
+
+  // Documents Module routes (moved to Sales Platform)
+  {
+    path: '/sales/documents',
+    name: 'SalesDocuments',
+    component: () => import('./views/documents/DocumentsPage.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 

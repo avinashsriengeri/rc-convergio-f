@@ -231,6 +231,16 @@
               </span>
             </div>
           </div>
+
+          <!-- Documents -->
+          <div class="bg-white shadow-sm rounded-lg p-6">
+            <DocumentsTab 
+              relatedType="deal" 
+              :relatedId="deal.id"
+              :initialDocuments="dealDocuments"
+              @document-linked="handleDocumentLinked"
+            />
+          </div>
         </div>
 
         <!-- Sidebar -->
@@ -379,18 +389,20 @@ import ConfirmationModal from '../../components/modals/ConfirmationModal.vue'
 import MoveStageModal from '../../components/modals/MoveStageModal.vue'
 import AddActivityModal from '../../components/activities/AddActivityModal.vue'
 import AddTaskModal from '../../components/tasks/AddTaskModal.vue'
+import DocumentsTab from '../../components/documents/DocumentsTab.vue'
 
 const route = useRoute()
 const router = useRouter()
 const dealsStore = useDealsStore()
-// Context and permissions (unused in this component but available for future use)
-// const { tenantId, teamId, isAdmin } = useContext()
-// const { canEdit, canDelete, canView } = usePermission()
+// Context and permissions
+const { tenantId, teamId, isAdmin } = useContext()
+const { canEdit, canDelete, canView } = usePermission()
 
 // Reactive data
 const loading = ref(false)
 const error = ref<string | null>(null)
 const deal = ref<Deal | null>(null)
+const dealDocuments = ref([])
 const showDeleteModal = ref(false)
 const showMoveStageModal = ref(false)
 const showAddActivityModal = ref(false)
@@ -407,6 +419,13 @@ const loadDeal = async () => {
     const dealData = await dealsStore.fetchDeal(parseInt(route.params.id as string))
     if (dealData) {
       deal.value = dealData
+      
+      // Extract documents from the deal data if available
+      if (dealData.documents) {
+        dealDocuments.value = dealData.documents
+        console.log(`DealDetail: Loaded ${dealDocuments.value.length} documents for deal ${deal.value.id}`)
+        console.log('DealDetail: Documents data:', dealDocuments.value)
+      }
     } else {
       error.value = 'Deal not found. The deal may have been deleted or you may not have permission to view it.'
     }
@@ -469,6 +488,19 @@ const onTaskAdded = () => {
   showAddTaskModal.value = false
   // Optionally reload the deal or show a success message
   success('Task added successfully')
+}
+
+const handleDocumentLinked = (document: any) => {
+  console.log('DealDetail: Document linked, adding to dealDocuments:', document)
+  // Add the linked document to the dealDocuments array
+  const existingIndex = dealDocuments.value.findIndex((doc: any) => doc.id === document.id)
+  if (existingIndex === -1) {
+    dealDocuments.value.push(document)
+    console.log('DealDetail: Added document to dealDocuments array')
+  } else {
+    dealDocuments.value[existingIndex] = document
+    console.log('DealDetail: Updated existing document in dealDocuments array')
+  }
 }
 
 // Lifecycle

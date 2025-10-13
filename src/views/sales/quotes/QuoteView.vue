@@ -291,6 +291,14 @@
               </div>
             </div>
           </div>
+
+          <!-- Documents -->
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <DocumentsTab 
+              relatedType="quote" 
+              :relatedId="quote.id" 
+            />
+          </div>
         </div>
 
         <!-- Sidebar -->
@@ -420,6 +428,7 @@ import { useQuotesStore } from '@/stores/quotesStore'
 import { success, error } from '@/utils/notifications'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
+import DocumentsTab from '@/components/documents/DocumentsTab.vue'
 
 const router = useRouter()
 const route = useRoute()
