@@ -296,7 +296,10 @@
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <DocumentsTab 
               relatedType="quote" 
-              :relatedId="quote.id" 
+              :relatedId="quote.id"
+              :initialDocuments="quote.documents || []"
+              @document-linked="handleDocumentLinked"
+              @document-updated="handleDocumentUpdated"
             />
           </div>
         </div>
@@ -582,6 +585,34 @@ const getQuoteTypeBadgeClass = (quoteType) => {
 const changeTemplate = () => {
   // Navigate to edit page to change template
   router.push(`/sales/quotes/${quote.value.id}/edit`)
+}
+
+const handleDocumentLinked = (document) => {
+  console.log('QuoteView: Document linked, adding to quote documents:', document)
+  // Add the linked document to the quote documents array
+  if (!quote.value.documents) {
+    quote.value.documents = []
+  }
+  const existingIndex = quote.value.documents.findIndex(doc => doc.id === document.id)
+  if (existingIndex === -1) {
+    quote.value.documents.push(document)
+    console.log('QuoteView: Added document to quote documents array')
+  } else {
+    quote.value.documents[existingIndex] = document
+    console.log('QuoteView: Updated existing document in quote documents array')
+  }
+}
+
+const handleDocumentUpdated = (updatedDocument) => {
+  console.log('QuoteView: Document updated, refreshing quote documents:', updatedDocument)
+  // Update the document in the quote documents array
+  if (quote.value.documents) {
+    const index = quote.value.documents.findIndex(doc => doc.id === updatedDocument.id)
+    if (index !== -1) {
+      quote.value.documents[index] = updatedDocument
+      console.log('QuoteView: Updated document in quote documents array')
+    }
+  }
 }
 
 // Lifecycle

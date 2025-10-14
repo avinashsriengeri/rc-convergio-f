@@ -242,10 +242,12 @@
           <!-- Documents -->
           <div class="bg-white shadow-sm rounded-lg p-6">
             <DocumentsTab 
+              v-if="company && company.id"
               relatedType="company" 
               :relatedId="company.id"
               :initialDocuments="companyDocuments"
               @document-linked="handleDocumentLinked"
+              @document-updated="handleDocumentUpdated"
             />
           </div>
         </div>
@@ -367,7 +369,7 @@
 
     <!-- Modals -->
     <AttachContactModal
-      v-if="showAttachContactModal"
+      v-if="showAttachContactModal && company && company.id"
       :company-id="company.id"
       :company-name="company.name"
       @close="showAttachContactModal = false"
@@ -375,7 +377,7 @@
     />
     
     <CompanyModal
-      v-if="showEditModal"
+      v-if="showEditModal && company"
       :company="company"
       mode="edit"
       @close="showEditModal = false"
@@ -416,21 +418,39 @@ onMounted(async () => {
   try {
     const response = await companiesAPI.getCompany(route.params.id)
     console.log('Company API response:', response)
-    company.value = response.data.data.company
     
-    // Extract documents from the API response
-    companyDocuments.value = response.data.data.documents || []
-    console.log(`CompanyDetail: Loaded ${companyDocuments.value.length} documents for company ${company.value.id}`)
+    // Safely extract company data with proper null checks
+    const companyData = response.data?.data?.company || response.data?.data || response.data
+    if (!companyData) {
+      throw new Error('Company data not found in API response')
+    }
+    
+    company.value = companyData
+    
+    // Extract documents from the API response with safe access
+    // Documents are at the top level of the response (response.data.documents)
+    companyDocuments.value = response.data?.documents || []
+    
+    // Only log company.id if company.value exists
+    if (company.value && company.value.id) {
+      console.log(`CompanyDetail: Loaded ${companyDocuments.value.length} documents for company ${company.value.id}`)
+    }
     console.log('CompanyDetail: Documents data:', companyDocuments.value)
     
     console.log('Company data:', company.value)
-    console.log('Phone:', company.value.phone)
-    console.log('Email:', company.value.email)
-    console.log('Status:', company.value.status)
-    await Promise.all([
-      loadCompanyContacts(),
-      loadCompanyDeals()
-    ])
+    if (company.value) {
+      console.log('Phone:', company.value.phone)
+      console.log('Email:', company.value.email)
+      console.log('Status:', company.value.status)
+    }
+    
+    // Only load related data if company exists
+    if (company.value && company.value.id) {
+      await Promise.all([
+        loadCompanyContacts(),
+        loadCompanyDeals()
+      ])
+    }
   } catch (err) {
     error('Failed to load company')
     console.error('Company detail error:', err)
@@ -465,6 +485,16 @@ const handleDocumentLinked = (document) => {
   } else {
     companyDocuments.value[existingIndex] = document
     console.log('CompanyDetail: Updated existing document in companyDocuments array')
+  }
+}
+
+const handleDocumentUpdated = (updatedDocument) => {
+  console.log('CompanyDetail: Document updated, refreshing companyDocuments:', updatedDocument)
+  // Update the document in the companyDocuments array
+  const index = companyDocuments.value.findIndex(doc => doc.id === updatedDocument.id)
+  if (index !== -1) {
+    companyDocuments.value[index] = updatedDocument
+    console.log('CompanyDetail: Updated document in companyDocuments array')
   }
 }
 
@@ -519,6 +549,11 @@ const editCompany = () => {
 const deleteCompany = async () => {
   if (!confirm('Are you sure you want to delete this company?')) return
 
+  if (!company.value || !company.value.id) {
+    error('Company information not available')
+    return
+  }
+
   try {
     await companiesAPI.deleteCompany(company.value.id)
     success('Company deleted successfully')
@@ -535,13 +570,15 @@ const addContact = () => {
 
 const createDeal = () => {
   // Navigate to create deal page with company pre-filled
-  router.push({
-    path: '/deals/new',
-    query: {
-      company_id: company.value.id,
-      company_name: company.value.name
-    }
-  })
+  if (company.value && company.value.id) {
+    router.push({
+      path: '/deals/new',
+      query: {
+        company_id: company.value.id,
+        company_name: company.value.name
+      }
+    })
+  }
 }
 
 const viewWebsite = () => {
@@ -555,7 +592,9 @@ const viewDeal = (deal) => {
 }
 
 const viewAllDeals = () => {
-  router.push(`/deals?company_id=${company.value.id}`)
+  if (company.value && company.value.id) {
+    router.push(`/deals?company_id=${company.value.id}`)
+  }
 }
 
 // Contact utility functions
@@ -574,6 +613,11 @@ const getContactFullName = (contact) => {
 // Detach contact from company
 const detachContact = async (contactId) => {
   if (!confirm('Are you sure you want to detach this contact from the company?')) return
+
+  if (!company.value || !company.value.id) {
+    error('Company information not available')
+    return
+  }
 
   try {
     await companiesAPI.detachContact(company.value.id, contactId)

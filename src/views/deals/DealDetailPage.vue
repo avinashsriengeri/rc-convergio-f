@@ -239,6 +239,7 @@
               :relatedId="deal.id"
               :initialDocuments="dealDocuments"
               @document-linked="handleDocumentLinked"
+              @document-updated="handleDocumentUpdated"
             />
           </div>
         </div>
@@ -500,6 +501,16 @@ const handleDocumentLinked = (document: any) => {
   } else {
     dealDocuments.value[existingIndex] = document
     console.log('DealDetail: Updated existing document in dealDocuments array')
+  }
+}
+
+const handleDocumentUpdated = (updatedDocument: any) => {
+  console.log('DealDetail: Document updated, refreshing dealDocuments:', updatedDocument)
+  // Update the document in the dealDocuments array
+  const index = dealDocuments.value.findIndex((doc: any) => doc.id === updatedDocument.id)
+  if (index !== -1) {
+    dealDocuments.value[index] = updatedDocument
+    console.log('DealDetail: Updated document in dealDocuments array')
   }
 }
 

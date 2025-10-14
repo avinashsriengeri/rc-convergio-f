@@ -199,7 +199,7 @@ const props = defineProps({
 })
 
 // Emits
-const emit = defineEmits(['document-linked'])
+const emit = defineEmits(['document-linked', 'document-updated'])
 
 // Composables
 const {
@@ -329,10 +329,21 @@ const handleDocumentUploaded = async (document) => {
   console.log('DocumentsTab: Documents count after update:', documents.value.length)
 }
 
-const handleDocumentUpdated = (document) => {
+const handleDocumentUpdated = (updatedDocument) => {
+  console.log('DocumentsTab: Document updated, refreshing UI:', updatedDocument)
+  
+  // Update the global documents array
+  const globalIndex = allDocuments.value.findIndex(doc => doc.id === updatedDocument.id)
+  if (globalIndex !== -1) {
+    allDocuments.value[globalIndex] = updatedDocument
+    console.log('DocumentsTab: Updated document in global documents array')
+  }
+  
+  // Emit event to parent component to update its local documents array
+  emit('document-updated', updatedDocument)
+  
   showEditModal.value = false
   selectedDocument.value = null
-  // Documents will automatically update via computed property
 }
 
 const handleDocumentDeleted = () => {
