@@ -363,6 +363,12 @@
                       {{ task.title }}
                     </h3>
                     <p class="text-sm text-gray-600 mt-1">{{ task.description }}</p>
+                    <div v-if="task.owner" class="text-xs text-gray-500 mt-1">
+                      <strong>Owner:</strong> {{ task.owner.name || '—' }}
+                    </div>
+                    <div v-if="task.team" class="text-xs text-gray-500">
+                      <strong>Team:</strong> {{ task.team.name || '—' }}
+                    </div>
                   </div>
                   <div class="flex items-center space-x-2">
                     <span
@@ -434,6 +440,7 @@
                 </svg>
               </button>
               <button
+                v-if="canEdit(task)"
                 @click="editTask(task)"
                 class="text-gray-400 hover:text-gray-600 p-1"
                 title="Edit task"
@@ -443,6 +450,7 @@
                 </svg>
               </button>
               <button
+                v-if="canDelete(task)"
                 @click="deleteTask(task)"
                 class="text-gray-400 hover:text-red-600 p-1"
                 title="Delete task"
@@ -851,6 +859,8 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { debounce } from 'lodash-es'
 import { useTasksStore } from '@/stores/tasks'
 import { useRefsStore } from '@/stores/refs'
+import { useContext } from '@/composables/useContext'
+import { usePermission } from '@/composables/usePermission'
 import { success, error as showError } from '@/utils/notifications'
 import { formatDate, formatRelativeTime, isOverdue } from '@/utils/formatters'
 import { PER_PAGE_OPTIONS } from '@/utils/constants'
@@ -862,6 +872,9 @@ import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
 // Stores
 const tasksStore = useTasksStore()
 const refsStore = useRefsStore()
+// Context and permissions (unused in this component but available for future use)
+// const { tenantId, teamId, isAdmin } = useContext()
+// const { canEdit, canDelete, canView } = usePermission()
 
 // Reactive data
 const saving = ref(false)

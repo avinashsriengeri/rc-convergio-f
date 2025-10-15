@@ -175,7 +175,7 @@ export const companiesAPI = {
 export const metadataAPI = {
   getIndustries: () => api.get('/metadata/industries'),
   getCompanyTypes: () => api.get('/metadata/company-types'),
-  getOwners: () => api.get('/metadata/owners'),
+  getOwners: () => api.get('/users/for-assignment'),
   getLeadSources: () => api.get('/metadata/lead-sources'),
   getContactTypes: () => api.get('/metadata/contact-types'),
   getDealStages: () => api.get('/metadata/deal-stages'),
@@ -291,6 +291,8 @@ export const campaignsAPI = {
   updateTemplate: (id, data) => api.put(`/campaigns/templates/${id}`, data),
   deleteTemplate: (id) => api.delete(`/campaigns/templates/${id}`),
   instantiateTemplate: (id, overrides = {}) => api.post(`/campaigns/templates/${id}/instantiate`, overrides),
+  previewTemplate: (data) => api.post('/templates/preview', data),
+  updateTemplateContent: (data) => api.put('/templates/update-content', data),
   duplicateCampaign: (id) => api.post(`/campaigns/${id}/duplicate`),
   getRecipients: (id) => api.get(`/campaigns/${id}/recipients`),
   addRecipient: (id, recipientData) => api.post(`/campaigns/${id}/recipients`, recipientData),
@@ -375,10 +377,37 @@ export const listsAPI = {
   },
 }
 
+// Quotes/CPQ API endpoints
+export const quotesAPI = {
+  getQuotes: (params = {}) => api.get('/quotes', { params }),
+  getQuote: (id) => api.get(`/quotes/${id}`),
+  createQuote: (data) => api.post('/quotes', data),
+  updateQuote: (id, data) => api.put(`/quotes/${id}`, data),
+  deleteQuote: (id) => api.delete(`/quotes/${id}`),
+  sendQuote: (id, data = {}) => api.post(`/quotes/${id}/send`, data),
+  acceptQuote: (id, data = {}) => api.post(`/quotes/${id}/accept`, data),
+  rejectQuote: (id, data = {}) => api.post(`/quotes/${id}/reject`, data),
+  downloadPdf: (id) => api.get(`/quotes/${id}/pdf`, { responseType: 'blob' }),
+  // Products
+  getProducts: (params = {}) => api.get('/products', { params }),
+  getProduct: (id) => api.get(`/products/${id}`),
+  createProduct: (data) => api.post('/products', data),
+  updateProduct: (id, data) => api.put(`/products/${id}`, data),
+  deleteProduct: (id) => api.delete(`/products/${id}`),
+  // Templates
+  getTemplates: (params = {}) => api.get('/quote-templates', { params }),
+  getTemplate: (id) => api.get(`/quote-templates/${id}`),
+  createTemplate: (data) => api.post('/quote-templates', data),
+  updateTemplate: (id, data) => api.put(`/quote-templates/${id}`, data),
+  deleteTemplate: (id) => api.delete(`/quote-templates/${id}`),
+  previewTemplate: (id) => api.get(`/quote-templates/${id}/preview`, { responseType: 'blob' }),
+}
+
 // Users API endpoints
 export const usersAPI = {
   getUsers: (params = {}) => api.get('/users', { params }),
   getUser: (id) => api.get(`/users/${id}`),
+  getUsersForAssignment: (params = {}) => api.get('/users/for-assignment', { params }),
   createUser: (data) => api.post('/users', data),
   updateUser: (id, data) => api.put(`/users/${id}`, data),
   deleteUser: (id) => api.delete(`/users/${id}`),
@@ -390,6 +419,23 @@ export const usersAPI = {
 export const searchAPI = {
   globalSearch: (query, types = 'contacts,companies,deals', limit = 10) => 
     api.get('/search', { params: { q: query, types, limit } }),
+}
+
+// Sequences API endpoints
+export const sequencesAPI = {
+  list: (params = {}) => api.get('/sequences', { params }),
+  get: (id) => api.get(`/sequences/${id}`),
+  create: (data) => api.post('/sequences', data),
+  update: (id, data) => api.put(`/sequences/${id}`, data),
+  remove: (id) => api.delete(`/sequences/${id}`),
+  addStep: (id, data) => api.post(`/sequences/${id}/steps`, data),
+  updateStep: (id, data) => api.put(`/sequences/steps/${id}`, data),
+  deleteStep: (id) => api.delete(`/sequences/steps/${id}`),
+  enroll: (id, data) => api.post(`/sequences/${id}/enroll`, data),
+  pause: (id) => api.post(`/sequences/enrollments/${id}/pause`),
+  resume: (id) => api.post(`/sequences/enrollments/${id}/resume`),
+  cancel: (id) => api.post(`/sequences/enrollments/${id}/cancel`),
+  logs: (id) => api.get(`/sequences/${id}/logs`),
 }
 
 // Analytics API endpoints

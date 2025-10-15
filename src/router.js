@@ -299,6 +299,14 @@ const routes = [
     meta: { requiresAuth: false }
   },
 
+  // Public Quote View route - no authentication required
+  {
+    path: '/public/quotes/:uuid/view',
+    name: 'PublicQuoteView',
+    component: () => import('./views/public/QuoteViewPublic.vue'),
+    meta: { requiresAuth: false, public: true }
+  },
+
   // Lists/Segments Module routes
   {
     path: '/lists',
@@ -361,7 +369,15 @@ const routes = [
     meta: { requiresAuth: true }
   },
 
-  // Marketing Module routes (Individual routes)
+  // Team Access Demo route
+  {
+    path: '/team-access-demo',
+    name: 'TeamAccessDemo',
+    component: () => import('./examples/TeamAccessOverview.vue'),
+    meta: { requiresAuth: true }
+  },
+
+  // Marketing Module routes (Parent/Child structure)
   {
     path: '/marketing',
     redirect: '/marketing/overview'
@@ -473,6 +489,102 @@ const routes = [
     path: '/marketing/social-media',
     name: 'MarketingSocialMedia',
     component: () => import('./views/marketing/SocialMedia.vue'),
+    meta: { requiresAuth: true }
+  },
+
+  // Sales Platform Module routes (Parent/Child structure)
+  {
+    path: '/sales',
+    name: 'Sales',
+    redirect: '/sales/quotes',
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: 'overview',
+        name: 'SalesOverview',
+        component: () => import('./views/sales/Overview.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'quotes',
+        name: 'SalesQuotes',
+        component: () => import('./views/sales/quotes/QuotesList.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'quotes/create',
+        name: 'SalesQuoteCreate',
+        component: () => import('./views/sales/quotes/QuoteForm.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'quotes/:id',
+        name: 'SalesQuoteView',
+        component: () => import('./views/sales/quotes/QuoteView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'quotes/:id/edit',
+        name: 'SalesQuoteEdit',
+        component: () => import('./views/sales/quotes/QuoteForm.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'products',
+        name: 'SalesProducts',
+        component: () => import('./views/sales/products/ProductsList.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'quote-templates',
+        name: 'SalesQuoteTemplates',
+        component: () => import('./views/sales/quote-templates/TemplatesList.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'sequences',
+        name: 'SalesSequences',
+        component: () => import('./views/sales/sequences/SequencesList.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'sequences/create',
+        name: 'SalesSequenceCreate',
+        component: () => import('./views/sales/sequences/SequenceForm.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'sequences/:id/edit',
+        name: 'SalesSequenceEdit',
+        component: () => import('./views/sales/sequences/SequenceForm.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'sequences/:id/view',
+        name: 'SalesSequenceView',
+        component: () => import('./views/sales/sequences/SequenceView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'forecasting',
+        name: 'SalesForecasting',
+        component: () => import('./views/sales/Forecasting.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'lead-assignment',
+        name: 'SalesLeadAssignment',
+        component: () => import('./views/sales/LeadAssignment.vue'),
+        meta: { requiresAuth: true }
+      }
+    ]
+  },
+
+  // Documents Module routes (moved to Sales Platform)
+  {
+    path: '/sales/documents',
+    name: 'SalesDocuments',
+    component: () => import('./views/documents/DocumentsPage.vue'),
     meta: { requiresAuth: true }
   }
 ]

@@ -199,9 +199,21 @@ export const useDealsStore = defineStore('deals', () => {
     try {
       console.log('Fetching deal from API:', id)
       const response = await dealsAPI.getDeal(id)
+      console.log('Full deal API response:', response)
+      
+      // Extract deal data and documents from the response
       const deal = response.data.data
+      const documents = response.data.documents || []
+      
+      // Add documents to the deal object if they exist
+      if (documents.length > 0) {
+        deal.documents = documents
+        console.log(`Deal store: Added ${documents.length} documents to deal ${deal.id}`)
+        console.log('Deal store: Documents data:', documents)
+      }
+      
       state.value.selectedDeal = deal
-      console.log('Deal fetched from API:', deal)
+      console.log('Deal fetched from API with documents:', deal)
       return deal
     } catch (err: unknown) {
       console.error('Error fetching deal from API:', err)

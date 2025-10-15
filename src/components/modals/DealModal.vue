@@ -198,7 +198,7 @@
                 required
               >
                 <option value="">Select Owner</option>
-                <option v-for="owner in currentUserAsArray" :key="owner.id" :value="owner.id">
+                <option v-for="owner in ownersList" :key="owner.id" :value="owner.id">
                   {{ owner.name }}
                 </option>
               </select>
@@ -358,6 +358,12 @@ const form = reactive({
 
 // Computed
 const isEditing = computed(() => !!props.deal)
+
+// Owners list from backend API response
+const ownersList = computed(() => {
+  return props.owners || []
+})
+
 
 // Get current user as array for dropdown compatibility
 const currentUserAsArray = computed(() => {

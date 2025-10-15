@@ -15,9 +15,14 @@
                 </svg>
               </button>
               <div>
-                <h1 class="text-2xl font-bold text-gray-900">
-                  {{ deal?.title || 'Loading...' }}
-                </h1>
+                <div class="flex items-center space-x-3">
+                  <h1 class="text-2xl font-bold text-gray-900">
+                    {{ deal?.title || 'Loading...' }}
+                  </h1>
+                  <span v-if="deal?.team" class="team-badge">
+                    {{ deal.team.name }}
+                  </span>
+                </div>
                 <p class="text-sm text-gray-600 mt-1">
                   Deal Details
                 </p>
@@ -32,12 +37,14 @@
               Back to Deals
             </BaseButton>
             <BaseButton
+              v-if="canEdit(deal)"
               variant="secondary"
               @click="editDeal"
             >
               Edit Deal
             </BaseButton>
             <BaseButton
+              v-if="canDelete(deal)"
               variant="danger"
               @click="deleteDeal"
             >
@@ -166,6 +173,20 @@
                   </div>
                 </div>
               </div>
+              <div v-if="deal.team">
+                <h3 class="text-sm font-medium text-gray-500 mb-2">Team</h3>
+                <div class="flex items-center">
+                  <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                    <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">{{ deal.team.name || '—' }}</p>
+                    <p class="text-xs text-gray-500">Team</p>
+                  </div>
+                </div>
+              </div>
               <div v-if="deal.contact">
                 <h3 class="text-sm font-medium text-gray-500 mb-2">Contact</h3>
                 <div class="flex items-center">
@@ -209,6 +230,17 @@
                 {{ tag }}
               </span>
             </div>
+          </div>
+
+          <!-- Documents -->
+          <div class="bg-white shadow-sm rounded-lg p-6">
+            <DocumentsTab 
+              relatedType="deal" 
+              :relatedId="deal.id"
+              :initialDocuments="dealDocuments"
+              @document-linked="handleDocumentLinked"
+              @document-updated="handleDocumentUpdated"
+            />
           </div>
         </div>
 
@@ -347,6 +379,8 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDealsStore } from '../../stores/deals'
+import { useContext } from '../../composables/useContext'
+import { usePermission } from '../../composables/usePermission'
 import { success, error as showError } from '../../utils/notifications'
 import { formatDate, formatCurrency, formatRelativeTime, getInitials, getValueColor, getProbabilityColor, isOverdue } from '../../utils/formatters'
 import { STATUS_BADGE_COLORS } from '../../utils/constants'
@@ -356,15 +390,20 @@ import ConfirmationModal from '../../components/modals/ConfirmationModal.vue'
 import MoveStageModal from '../../components/modals/MoveStageModal.vue'
 import AddActivityModal from '../../components/activities/AddActivityModal.vue'
 import AddTaskModal from '../../components/tasks/AddTaskModal.vue'
+import DocumentsTab from '../../components/documents/DocumentsTab.vue'
 
 const route = useRoute()
 const router = useRouter()
 const dealsStore = useDealsStore()
+// Context and permissions
+const { tenantId, teamId, isAdmin } = useContext()
+const { canEdit, canDelete, canView } = usePermission()
 
 // Reactive data
 const loading = ref(false)
 const error = ref<string | null>(null)
 const deal = ref<Deal | null>(null)
+const dealDocuments = ref([])
 const showDeleteModal = ref(false)
 const showMoveStageModal = ref(false)
 const showAddActivityModal = ref(false)
@@ -381,6 +420,13 @@ const loadDeal = async () => {
     const dealData = await dealsStore.fetchDeal(parseInt(route.params.id as string))
     if (dealData) {
       deal.value = dealData
+      
+      // Extract documents from the deal data if available
+      if (dealData.documents) {
+        dealDocuments.value = dealData.documents
+        console.log(`DealDetail: Loaded ${dealDocuments.value.length} documents for deal ${deal.value.id}`)
+        console.log('DealDetail: Documents data:', dealDocuments.value)
+      }
     } else {
       error.value = 'Deal not found. The deal may have been deleted or you may not have permission to view it.'
     }
@@ -443,6 +489,29 @@ const onTaskAdded = () => {
   showAddTaskModal.value = false
   // Optionally reload the deal or show a success message
   success('Task added successfully')
+}
+
+const handleDocumentLinked = (document: any) => {
+  console.log('DealDetail: Document linked, adding to dealDocuments:', document)
+  // Add the linked document to the dealDocuments array
+  const existingIndex = dealDocuments.value.findIndex((doc: any) => doc.id === document.id)
+  if (existingIndex === -1) {
+    dealDocuments.value.push(document)
+    console.log('DealDetail: Added document to dealDocuments array')
+  } else {
+    dealDocuments.value[existingIndex] = document
+    console.log('DealDetail: Updated existing document in dealDocuments array')
+  }
+}
+
+const handleDocumentUpdated = (updatedDocument: any) => {
+  console.log('DealDetail: Document updated, refreshing dealDocuments:', updatedDocument)
+  // Update the document in the dealDocuments array
+  const index = dealDocuments.value.findIndex((doc: any) => doc.id === updatedDocument.id)
+  if (index !== -1) {
+    dealDocuments.value[index] = updatedDocument
+    console.log('DealDetail: Updated document in dealDocuments array')
+  }
 }
 
 // Lifecycle

@@ -220,6 +220,12 @@
                       <div class="text-xs text-gray-400">
                         {{ deal.company?.name || 'No company' }} • {{ deal.contact?.name || 'No contact' }}
                       </div>
+                      <div v-if="deal.owner" class="text-xs text-gray-400 mt-1">
+                        <strong>Owner:</strong> {{ deal.owner.name || '—' }}
+                      </div>
+                      <div v-if="deal.team" class="text-xs text-gray-400">
+                        <strong>Team:</strong> {{ deal.team.name || '—' }}
+                      </div>
                     </div>
                   </div>
                 </td>
@@ -258,6 +264,7 @@
                       </svg>
                     </button>
                     <button
+                      v-if="canEdit(deal)"
                       @click="editDeal(deal)"
                       class="text-indigo-600 hover:text-indigo-900"
                     >
@@ -266,6 +273,7 @@
                       </svg>
                     </button>
                     <button
+                      v-if="canDelete(deal)"
                       @click="deleteDeal(deal)"
                       class="text-red-600 hover:text-red-900"
                     >
@@ -351,6 +359,7 @@
                       </div>
                       <div class="flex items-center space-x-1 ml-2">
                         <button
+                          v-if="canEdit(deal)"
                           @click="editDeal(deal)"
                           class="text-gray-400 hover:text-gray-600"
                         >
@@ -437,6 +446,8 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useContext } from '@/composables/useContext'
+import { usePermission } from '@/composables/usePermission'
 import { dealsAPI, pipelinesAPI, stagesAPI, metadataAPI, contactsAPI, companiesAPI } from '@/services/api'
 import { success, error } from '@/utils/notifications'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -446,6 +457,8 @@ import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
 import { debounce } from 'lodash-es'
 
 const router = useRouter()
+const { tenantId, teamId, isAdmin } = useContext()
+const { canEdit, canDelete, canView } = usePermission()
 
 // Reactive data
 const loading = ref(false)
@@ -541,7 +554,14 @@ const loadMetadata = async () => {
     pipelines.value = pipelinesRes.data.data || []
     dealStatuses.value = statusesRes.data.data || ['Open', 'Won', 'Lost', 'Closed']
     currencies.value = currenciesRes.data.data || ['USD', 'EUR', 'GBP']
-    owners.value = ownersRes.data.data || []
+    // Handle the API response structure
+    if (ownersRes.data && ownersRes.data.data && Array.isArray(ownersRes.data.data)) {
+      owners.value = ownersRes.data.data
+    } else if (ownersRes.data && Array.isArray(ownersRes.data)) {
+      owners.value = ownersRes.data
+    } else {
+      owners.value = []
+    }
     contacts.value = contactsRes.data.data || []
     companies.value = companiesRes.data.data || []
   } catch (err) {
@@ -609,9 +629,11 @@ const refreshDeals = () => {
   }
 }
 
-const openCreateModal = () => {
+const openCreateModal = async () => {
   editingDeal.value = null
   showModal.value = true
+  // Reload metadata when modal opens
+  await loadMetadata()
 }
 
 const editDeal = (deal) => {
