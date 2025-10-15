@@ -361,74 +361,119 @@ const routes = [
     meta: { requiresAuth: true }
   },
 
-  // Marketing Module routes (Parent/Child structure)
+  // Marketing Module routes (Individual routes)
   {
     path: '/marketing',
-    name: 'Marketing',
-    redirect: '/marketing/overview',
+    redirect: '/marketing/overview'
+  },
+  {
+    path: '/marketing/overview',
+    name: 'MarketingOverview',
+    component: () => import('./views/marketing/Overview.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/marketing/email',
+    name: 'MarketingEmail',
+    component: () => import('./views/marketing/Email.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/marketing/ads',
+    name: 'MarketingAds',
+    component: () => import('./views/marketing/Ads.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/marketing/events',
+    name: 'MarketingEvents',
+    component: () => import('./views/marketing/Events.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/marketing/buyer-intent',
+    name: 'MarketingBuyerIntent',
+    component: () => import('./views/marketing/BuyerIntent.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/marketing/lead-scoring',
+    name: 'MarketingLeadScoring',
+    component: () => import('./views/marketing/LeadScoring.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/marketing/journeys',
+    name: 'MarketingJourneys',
+    component: () => import('./views/marketing/Journeys.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/marketing/forecasting',
+    name: 'MarketingForecasting',
+    component: () => import('./views/marketing/Forecasting.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/marketing/meetings',
+    name: 'MarketingMeetings',
+    component: () => import('./views/marketing/Meetings.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/marketing/analytics',
+    name: 'MarketingAnalytics',
+    component: () => import('./views/marketing/Analytics.vue'),
+    meta: { requiresAuth: true }
+  },
+  // SEO Tools routes with nested children
+  {
+    path: '/marketing/seo',
+    component: () => import('./views/marketing/seo/SeoLayout.vue'),
     meta: { requiresAuth: true },
     children: [
       {
-        path: 'overview',
-        name: 'MarketingOverview',
-        component: () => import('./views/marketing/Overview.vue'),
+        path: '',
+        name: 'SeoDashboard',
+        component: () => import('./views/marketing/seo/DashboardView.vue'),
         meta: { requiresAuth: true }
       },
       {
-        path: 'email',
-        name: 'MarketingEmail',
-        component: () => import('./views/marketing/Email.vue'),
+        path: 'pages',
+        name: 'SeoPages',
+        component: () => import('./views/marketing/seo/PagesView.vue'),
         meta: { requiresAuth: true }
       },
       {
-        path: 'ads',
-        name: 'MarketingAds',
-        component: () => import('./views/marketing/Ads.vue'),
+        path: 'pages/:id',
+        name: 'SeoPageDetail',
+        component: () => import('./views/marketing/seo/PageDetailView.vue'),
         meta: { requiresAuth: true }
       },
       {
-        path: 'events',
-        name: 'MarketingEvents',
-        component: () => import('./views/marketing/Events.vue'),
+        path: 'recommendations',
+        name: 'SeoRecommendations',
+        component: () => import('./views/marketing/seo/RecommendationsView.vue'),
         meta: { requiresAuth: true }
       },
       {
-        path: 'buyer-intent',
-        name: 'MarketingBuyerIntent',
-        component: () => import('./views/marketing/BuyerIntent.vue'),
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'lead-scoring',
-        name: 'MarketingLeadScoring',
-        component: () => import('./views/marketing/LeadScoring.vue'),
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'journeys',
-        name: 'MarketingJourneys',
-        component: () => import('./views/marketing/Journeys.vue'),
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'forecasting',
-        name: 'MarketingForecasting',
-        component: () => import('./views/marketing/Forecasting.vue'),
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'meetings',
-        name: 'MarketingMeetings',
-        component: () => import('./views/marketing/Meetings.vue'),
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'analytics',
-        name: 'MarketingAnalytics',
-        component: () => import('./views/marketing/Analytics.vue'),
+        path: 'settings',
+        name: 'SeoSettings',
+        component: () => import('./views/marketing/seo/SettingsView.vue'),
         meta: { requiresAuth: true }
       }
     ]
+  },
+  // Legacy route redirect for backwards compatibility
+  {
+    path: '/marketing/seo-tools',
+    redirect: '/marketing/seo'
+  },
+  {
+    path: '/marketing/social-media',
+    name: 'MarketingSocialMedia',
+    component: () => import('./views/marketing/SocialMedia.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 

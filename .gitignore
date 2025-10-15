@@ -11,6 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
+.env          # ← Add this line
+.env.*        # ← Optionally add this to ignore all .env variants
+!.env.example # ← Optionally add this to allow .env.example
+
 
 # Editor directories and files
 .vscode/*

@@ -1,0 +1,1176 @@
+<template>
+  <div class="min-h-screen bg-gray-50">
+    <!-- Breadcrumbs -->
+    <div class="bg-white border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex py-4" aria-label="Breadcrumb">
+          <ol class="flex items-center space-x-4">
+            <li>
+              <div class="flex items-center">
+                <router-link to="/marketing" class="text-gray-400 hover:text-gray-500">
+                  <svg class="flex-shrink-0 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                  </svg>
+                  <span class="sr-only">Home</span>
+                </router-link>
+              </div>
+            </li>
+            <li>
+              <div class="flex items-center">
+                <svg class="flex-shrink-0 h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span class="ml-4 text-sm font-medium text-gray-500">{{ $t('common.marketing') }}</span>
+              </div>
+            </li>
+            <li>
+              <div class="flex items-center">
+                <svg class="flex-shrink-0 h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span class="ml-4 text-sm font-medium text-gray-900">Contact Journeys</span>
+              </div>
+            </li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Contact Journey Tracker</h1>
+        <p class="mt-2 text-lg text-gray-600">Track and analyze contact interactions and journey progress</p>
+      </div>
+
+      <!-- Search Section -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+        <div class="flex items-end space-x-4">
+          <div class="flex-1">
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Search by Email</label>
+            <div class="mt-1 flex rounded-md shadow-sm">
+              <input
+                type="email"
+                v-model="searchEmail"
+                @keyup.enter="searchContactJourney"
+                class="focus:ring-blue-500 focus:border-blue-500 flex-1 block w-full rounded-md sm:text-sm border-gray-300"
+                placeholder="Enter contact email"
+              />
+              <button
+                @click="searchContactJourney"
+                :disabled="!searchEmail || loading"
+                class="ml-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg v-if="loading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>{{ loading ? 'Searching...' : 'Search' }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Journey Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Active Journeys -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">{{ $t('marketing.journeys.stats.active_journeys') }}</p>
+              <p class="text-2xl font-bold text-gray-900">{{ activeJourneysCount }}</p>
+              <p class="text-sm text-green-600">+3 this month</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contacts in Journeys -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">{{ $t('marketing.journeys.stats.contacts_in_journeys') }}</p>
+              <p class="text-2xl font-bold text-gray-900">{{ totalContactsInJourneys }}</p>
+              <p class="text-sm text-green-600">+15% from last month</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Average Completion Rate -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">{{ $t('marketing.journeys.stats.avg_completion_rate') }}</p>
+              <p class="text-2xl font-bold text-gray-900">{{ averageCompletionRate }}%</p>
+              <p class="text-sm text-green-600">+5% from last month</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Journey Performance -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">{{ $t('marketing.journeys.stats.conversion_rate') }}</p>
+              <p class="text-2xl font-bold text-gray-900">23%</p>
+              <p class="text-sm text-green-600">+3% from last month</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Journeys Analytics -->
+      <div v-if="journeysAnalytics" class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">{{ $t('marketing.journeys.analytics.title') }}</h3>
+        </div>
+        <div class="p-6">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Left Column: Journey Performance -->
+            <div>
+              <h4 class="text-sm font-medium text-gray-900 mb-4">{{ $t('marketing.journeys.analytics.journey_performance') }}</h4>
+              <div class="space-y-4">
+                <div v-for="journey in journeysAnalytics.journey_performance?.slice(0, 3)" :key="journey.journey_id" class="border border-gray-200 rounded-lg p-4">
+                  <div class="flex justify-between items-start mb-2">
+                    <h5 class="text-sm font-medium text-gray-900">{{ journey.journey_name }}</h5>
+                    <span class="text-sm font-medium text-green-600">{{ journey.completion_rate }}%</span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-4 text-xs text-gray-600">
+                    <div>
+                      <span class="font-medium">{{ $t('marketing.journeys.analytics.total_executions') }}:</span>
+                      {{ formatNumber(journey.total_executions) }}
+                    </div>
+                    <div>
+                      <span class="font-medium">{{ $t('marketing.journeys.analytics.conversion_rate') }}:</span>
+                      {{ journey.conversion_rate }}%
+                    </div>
+                    <div>
+                      <span class="font-medium">{{ $t('marketing.journeys.analytics.avg_duration') }}:</span>
+                      {{ journey.avg_duration_hours }}h
+                    </div>
+                    <div>
+                      <span class="font-medium">{{ $t('marketing.journeys.analytics.completed') }}:</span>
+                      {{ formatNumber(journey.completed_executions) }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Step Performance -->
+            <div>
+              <h4 class="text-sm font-medium text-gray-900 mb-4">{{ $t('marketing.journeys.analytics.step_performance') }}</h4>
+              <div class="space-y-4">
+                <div v-for="step in journeysAnalytics.step_performance" :key="step.step_type" class="border border-gray-200 rounded-lg p-4">
+                  <div class="flex justify-between items-start mb-2">
+                    <h5 class="text-sm font-medium text-gray-900 capitalize">{{ step.step_type }}</h5>
+                    <span class="text-sm font-medium text-blue-600">{{ step.success_rate }}%</span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-4 text-xs text-gray-600">
+                    <div>
+                      <span class="font-medium">{{ $t('marketing.journeys.analytics.total_executions') }}:</span>
+                      {{ formatNumber(step.total_executions) }}
+                    </div>
+                    <div v-if="step.avg_open_rate">
+                      <span class="font-medium">{{ $t('marketing.journeys.analytics.avg_open_rate') }}:</span>
+                      {{ step.avg_open_rate }}%
+                    </div>
+                    <div v-if="step.avg_click_rate">
+                      <span class="font-medium">{{ $t('marketing.journeys.analytics.avg_click_rate') }}:</span>
+                      {{ step.avg_click_rate }}%
+                    </div>
+                    <div v-if="step.avg_duration_hours">
+                      <span class="font-medium">{{ $t('marketing.journeys.analytics.avg_duration') }}:</span>
+                      {{ step.avg_duration_hours }}h
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top Performing Journeys -->
+          <div class="mt-8">
+            <h4 class="text-sm font-medium text-gray-900 mb-4">{{ $t('marketing.journeys.analytics.top_performing_journeys') }}</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div v-for="journey in journeysAnalytics.top_performing_journeys?.slice(0, 3)" :key="journey.journey_name" class="border border-gray-200 rounded-lg p-4">
+                <h5 class="text-sm font-medium text-gray-900 mb-2">{{ journey.journey_name }}</h5>
+                <div class="space-y-2 text-xs text-gray-600">
+                  <div class="flex justify-between">
+                    <span>{{ $t('marketing.journeys.analytics.completion_rate') }}:</span>
+                    <span class="font-medium text-green-600">{{ journey.completion_rate }}%</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>{{ $t('marketing.journeys.analytics.conversion_rate') }}:</span>
+                    <span class="font-medium text-blue-600">{{ journey.conversion_rate }}%</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>{{ $t('marketing.journeys.analytics.total_revenue') }}:</span>
+                    <span class="font-medium text-purple-600">${{ formatNumber(journey.total_revenue) }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>{{ $t('marketing.journeys.analytics.contacts_converted') }}:</span>
+                    <span class="font-medium">{{ formatNumber(journey.contacts_converted) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Contacts Table -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Recent Contacts</h3>
+
+        <!-- Loading State -->
+        <div v-if="loading" class="p-12 text-center">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <p class="mt-4 text-gray-600">{{ $t('marketing.journeys.loading') }}</p>
+        </div>
+
+        <!-- Error State -->
+        <div v-else-if="error" class="p-12 text-center">
+          <div class="text-red-600 mb-4">
+            <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">{{ $t('marketing.journeys.error') }}</h3>
+          <button
+            @click="loadJourneys"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+          >
+            {{ $t('common.marketing_overview.retry_button') }}
+          </button>
+        </div>
+
+        <!-- Empty State -->
+        <div v-else-if="journeys.length === 0" class="p-12 text-center">
+          <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">{{ $t('marketing.journeys.empty_state.title') }}</h3>
+          <p class="text-gray-600 mb-6">{{ $t('marketing.journeys.empty_state.message') }}</p>
+          <button
+            @click="openCreateModal"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition-colors"
+          >
+            {{ $t('marketing.journeys.empty_state.create_journey') }}
+          </button>
+        </div>
+
+        <!-- Journeys Table -->
+        <div v-else class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {{ $t('marketing.journeys.table.name') }}
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {{ $t('marketing.journeys.table.status') }}
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {{ $t('marketing.journeys.table.steps') }}
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {{ $t('marketing.journeys.table.active_executions') }}
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {{ $t('marketing.journeys.table.completed_executions') }}
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {{ $t('marketing.journeys.table.completion_rate') }}
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {{ $t('marketing.journeys.table.updated_at') }}
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {{ $t('marketing.journeys.table.actions') }}
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr
+                v-for="journey in journeys"
+                :key="journey.id"
+                class="hover:bg-gray-50"
+              >
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ journey.name }}</div>
+                  <div class="text-sm text-gray-500">{{ journey.description }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span :class="getStatusColor(journey.status)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
+                    {{ $t(`marketing.journeys.statuses.${journey.status}`) }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ journey.steps_count }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ formatNumber(journey.active_executions) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ formatNumber(journey.completed_executions) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="flex-1 bg-gray-200 rounded-full h-2 mr-3">
+                      <div
+                        :class="getProgressColor(journey.completion_rate)"
+                        class="h-2 rounded-full"
+                        :style="{ width: `${journey.completion_rate}%` }"
+                      ></div>
+                    </div>
+                    <span class="text-sm text-gray-600">{{ journey.completion_rate }}%</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ formatDate(journey.updated_at) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div class="flex space-x-2">
+                    <button
+                      @click="viewJourneyDetails(journey)"
+                      class="text-blue-600 hover:text-blue-900"
+                    >
+                      {{ $t('marketing.journeys.actions.view_details') }}
+                    </button>
+                    <button
+                      @click="deleteJourney(journey)"
+                      class="text-red-600 hover:text-red-900"
+                    >
+                      {{ $t('marketing.journeys.actions.delete_journey') }}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Journey Modal -->
+    <div
+      v-if="showCreateModal"
+      class="fixed inset-0 z-50 overflow-hidden"
+      @click="closeCreateModal"
+    >
+      <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+      <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto" @click.stop>
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">{{ $t('marketing.journeys.create_modal.title') }}</h3>
+          </div>
+          <div class="p-6">
+            <form @submit.prevent="createJourney">
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('marketing.journeys.create_modal.name') }}</label>
+                  <input
+                    v-model="journeyForm.name"
+                    type="text"
+                    required
+                    :placeholder="$t('marketing.journeys.create_modal.enter_name')"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('marketing.journeys.create_modal.description') }}</label>
+                  <textarea
+                    v-model="journeyForm.description"
+                    :placeholder="$t('marketing.journeys.create_modal.enter_description')"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  ></textarea>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('marketing.journeys.create_modal.status') }}</label>
+                  <select
+                    v-model="journeyForm.status"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="draft">{{ $t('marketing.journeys.statuses.draft') }}</option>
+                    <option value="active">{{ $t('marketing.journeys.statuses.active') }}</option>
+                    <option value="paused">{{ $t('marketing.journeys.statuses.paused') }}</option>
+                  </select>
+                </div>
+                <div>
+                  <div class="flex justify-between items-center mb-2">
+                    <label class="block text-sm font-medium text-gray-700">{{ $t('marketing.journeys.create_modal.steps') }}</label>
+                    <button
+                      type="button"
+                      @click="addStep"
+                      class="text-sm text-blue-600 hover:text-blue-800"
+                    >
+                      {{ $t('marketing.journeys.create_modal.add_step') }}
+                    </button>
+                  </div>
+                  <div class="space-y-4">
+                    <div
+                      v-for="(step, index) in journeyForm.steps"
+                      :key="index"
+                      class="border border-gray-200 rounded-lg p-4"
+                    >
+                      <div class="flex justify-between items-center mb-3">
+                        <span class="text-sm font-medium text-gray-700">Step {{ index + 1 }}</span>
+                        <button
+                          type="button"
+                          @click="removeStep(index)"
+                          class="text-sm text-red-600 hover:text-red-800"
+                        >
+                          {{ $t('marketing.journeys.create_modal.remove_step') }}
+                        </button>
+                      </div>
+                      <div class="grid grid-cols-2 gap-4">
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('marketing.journeys.create_modal.step_type') }}</label>
+                          <select
+                            v-model="step.type"
+                            @change="updateStepSchema(index)"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">{{ $t('marketing.journeys.create_modal.select_step_type') }}</option>
+                            <option v-for="stepType in stepTypes" :key="stepType.id" :value="stepType.id">
+                              {{ stepType.name }}
+                            </option>
+                          </select>
+                        </div>
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('marketing.journeys.create_modal.step_name') }}</label>
+                          <input
+                            v-model="step.name"
+                            type="text"
+                            :placeholder="$t('marketing.journeys.create_modal.enter_step_name')"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                      </div>
+                      <div v-if="step.config" class="mt-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('marketing.journeys.create_modal.step_config') }}</label>
+                        <textarea
+                          v-model="step.config"
+                          rows="3"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                          placeholder="Enter JSON configuration"
+                        ></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex justify-end space-x-3 mt-6">
+                <button
+                  type="button"
+                  @click="closeCreateModal"
+                  class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+                >
+                  {{ $t('marketing.journeys.create_modal.cancel') }}
+                </button>
+                <button
+                  type="submit"
+                  :disabled="creatingJourney"
+                  class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 rounded-md transition-colors"
+                >
+                  {{ creatingJourney ? $t('marketing.journeys.create_modal.creating') : $t('marketing.journeys.create_modal.create') }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Journey Details Drawer -->
+    <div
+      v-if="showDetailsDrawer"
+      class="fixed inset-y-0 right-0 z-50 w-full max-w-4xl bg-white shadow-xl"
+    >
+      <div class="flex flex-col h-full">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-900">{{ $t('marketing.journeys.details_drawer.title') }}</h3>
+            <button
+              @click="closeDetailsDrawer"
+              class="text-gray-400 hover:text-gray-600"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="flex-1 overflow-y-auto">
+          <div class="p-6">
+            <div v-if="selectedJourney" class="space-y-6">
+              <!-- Journey Info -->
+              <div class="bg-gray-50 rounded-lg p-4">
+                <h4 class="font-medium text-gray-900 mb-2">{{ selectedJourney.name }}</h4>
+                <p class="text-sm text-gray-600 mb-3">{{ selectedJourney.description }}</p>
+                <div class="flex items-center space-x-4">
+                  <span :class="getStatusColor(selectedJourney.status)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
+                    {{ $t(`marketing.journeys.statuses.${selectedJourney.status}`) }}
+                  </span>
+                  <span class="text-sm text-gray-600">{{ selectedJourney.steps_count }} steps</span>
+                  <span class="text-sm text-gray-600">{{ selectedJourney.completion_rate }}% completion rate</span>
+                </div>
+              </div>
+
+              <!-- Steps -->
+              <div>
+                <h4 class="font-medium text-gray-900 mb-3">{{ $t('marketing.journeys.details_drawer.steps') }}</h4>
+                <div class="space-y-2">
+                  <div
+                    v-for="step in selectedJourney.steps"
+                    :key="step.id"
+                    class="flex items-center p-3 bg-gray-50 rounded-lg"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="getStepTypeIcon(step.type)" />
+                      </svg>
+                      <div>
+                        <div class="text-sm font-medium text-gray-900">{{ step.name }}</div>
+                        <div class="text-sm text-gray-500">{{ $t(`marketing.journeys.step_types.${step.type}`) }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Run Test -->
+              <div class="border-t pt-6">
+                <h4 class="font-medium text-gray-900 mb-3">{{ $t('marketing.journeys.details_drawer.run_test') }}</h4>
+                <div class="flex space-x-3">
+                  <input
+                    v-model="testContactId"
+                    type="text"
+                    :placeholder="$t('marketing.journeys.details_drawer.enter_contact_id')"
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button
+                    @click="runTest"
+                    :disabled="runningTest"
+                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 rounded-md transition-colors"
+                  >
+                    {{ runningTest ? $t('marketing.journeys.details_drawer.running') : $t('marketing.journeys.details_drawer.run') }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Executions -->
+              <div class="border-t pt-6">
+                <h4 class="font-medium text-gray-900 mb-3">{{ $t('marketing.journeys.details_drawer.executions') }}</h4>
+                <div v-if="executions.length === 0" class="text-center py-8">
+                  <p class="text-gray-500">No executions found</p>
+                </div>
+                <div v-else class="space-y-3">
+                  <div
+                    v-for="execution in executions"
+                    :key="execution.id"
+                    class="border border-gray-200 rounded-lg p-4"
+                  >
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <div class="text-sm font-medium text-gray-900">{{ execution.contact.name }}</div>
+                        <div class="text-sm text-gray-500">{{ execution.contact.email }}</div>
+                      </div>
+                      <span :class="getExecutionStatusColor(execution.status)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
+                        {{ $t(`marketing.journeys.execution_statuses.${execution.status}`) }}
+                      </span>
+                    </div>
+                    <div class="mt-3">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-600">{{ $t('marketing.journeys.details_drawer.execution_progress') }}</span>
+                        <span class="text-sm text-gray-900">{{ execution.progress_percentage }}%</span>
+                      </div>
+                      <div class="flex-1 bg-gray-200 rounded-full h-2">
+                        <div
+                          :class="getProgressColor(execution.progress_percentage)"
+                          class="h-2 rounded-full"
+                          :style="{ width: `${execution.progress_percentage}%` }"
+                        ></div>
+                      </div>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-500">
+                      {{ $t('marketing.journeys.details_drawer.execution_started') }}: {{ formatDateTime(execution.started_at) }}
+                      <span v-if="execution.next_step_at">
+                        | {{ $t('marketing.journeys.details_drawer.execution_next_step') }}: {{ formatDateTime(execution.next_step_at) }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div
+      v-if="showConfirmModal"
+      class="fixed inset-0 z-50 overflow-hidden"
+      @click="closeConfirmModal"
+    >
+      <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+      <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full" @click.stop>
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">{{ $t('marketing.journeys.confirmations.delete_title') }}</h3>
+          </div>
+          <div class="p-6">
+            <p class="text-gray-600 mb-6">{{ $t('marketing.journeys.confirmations.delete_message') }}</p>
+            <div class="flex justify-end space-x-3">
+              <button
+                @click="closeConfirmModal"
+                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+              >
+                {{ $t('marketing.journeys.confirmations.cancel') }}
+              </button>
+              <button
+                @click="confirmDelete"
+                class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
+              >
+                {{ $t('marketing.journeys.confirmations.confirm') }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { error as showError, success as showSuccess } from '@/utils/notifications'
+
+const { t } = useI18n()
+
+// Reactive state
+const loading = ref(false)
+const error = ref(null)
+const searchEmail = ref('')
+const contactJourney = ref(null)
+const recentContacts = ref([])
+
+// Modal states
+const showDetailsDrawer = ref(false)
+const selectedContact = ref(null)
+
+// Status mapping
+const statusMap = {
+  lead: 'Lead',
+  prospect: 'Prospect',
+  customer: 'Customer',
+  repeat_customer: 'Repeat Customer',
+  inactive: 'Inactive'
+}
+
+// Event type icons
+const eventIcons = {
+  created: 'UserAddIcon',
+  email_sent: 'MailIcon',
+  email_opened: 'InboxInIcon',
+  email_clicked: 'CursorClickIcon',
+  deal_created: 'DocumentAddIcon',
+  deal_updated: 'RefreshIcon',
+  deal_won: 'CheckCircleIcon',
+  deal_lost: 'XCircleIcon',
+  stage_updated: 'ArrowCircleRightIcon',
+  form_submitted: 'DocumentTextIcon',
+  page_visited: 'GlobeAltIcon',
+  meeting_scheduled: 'CalendarIcon'
+}
+
+// Event type colors
+const eventColors = {
+  created: 'bg-green-500',
+  email_sent: 'bg-blue-500',
+  email_opened: 'bg-indigo-500',
+  email_clicked: 'bg-purple-500',
+  deal_created: 'bg-yellow-500',
+  deal_updated: 'bg-amber-500',
+  deal_won: 'bg-green-500',
+  deal_lost: 'bg-red-500',
+  stage_updated: 'bg-cyan-500',
+  form_submitted: 'bg-pink-500',
+  page_visited: 'bg-gray-500',
+  meeting_scheduled: 'bg-teal-500'
+}
+
+// Activity type icons
+const activityIcons = {
+  email: 'MailIcon',
+  call: 'PhoneIcon',
+  meeting: 'CalendarIcon',
+  note: 'DocumentTextIcon',
+  task: 'ClipboardCheckIcon'
+}
+
+// Activity type colors
+const activityColors = {
+  email: 'bg-blue-500',
+  call: 'bg-green-500',
+  meeting: 'bg-purple-500',
+  note: 'bg-yellow-500',
+  task: 'bg-indigo-500'
+}
+
+// Methods
+const searchContactJourney = async () => {
+  if (!searchEmail.value.trim()) return
+  
+  loading.value = true
+  error.value = null
+  
+  try {
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    // Mock data - in a real app, this would come from your API
+    contactJourney.value = {
+      contact: {
+        id: '123',
+        name: 'John Doe',
+        email: searchEmail.value,
+        phone: '+1 (555) 123-4567',
+        company: 'Acme Inc',
+        status: 'customer',
+        lastActivity: new Date().toISOString()
+      },
+      events: [
+        {
+          id: '1',
+          type: 'created',
+          message: 'Contact created from form submission',
+          details: 'Contact form on homepage',
+          timestamp: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          id: '2',
+          type: 'email_sent',
+          message: 'Welcome email sent',
+          details: 'Welcome to our platform',
+          timestamp: new Date(Date.now() - 29 * 24 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          id: '3',
+          type: 'email_opened',
+          message: 'Welcome email opened',
+          timestamp: new Date(Date.now() - 28 * 24 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          id: '4',
+          type: 'deal_created',
+          message: 'Deal created: Premium Plan',
+          details: 'Value: $999',
+          timestamp: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          id: '5',
+          type: 'deal_won',
+          message: 'Deal won: Premium Plan',
+          details: 'Value: $999',
+          timestamp: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          id: '6',
+          type: 'email_clicked',
+          message: 'Clicked link in monthly newsletter',
+          details: 'Link: New Features',
+          timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          id: '7',
+          type: 'page_visited',
+          message: 'Visited Pricing page',
+          timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          id: '8',
+          type: 'meeting_scheduled',
+          message: 'Demo meeting scheduled',
+          details: 'With: Sales Team',
+          timestamp: new Date().toISOString()
+        }
+      ],
+      metrics: {
+        emailSent: 5,
+        emailOpenRate: 80,
+        clickThroughRate: 40,
+        lastActive: new Date().toISOString()
+      },
+      recentActivities: [
+        {
+          id: 'a1',
+          type: 'email',
+          title: 'Sent follow-up email',
+          description: 'Regarding your recent demo request',
+          timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+          metadata: {
+            subject: 'Follow-up: Demo Request',
+            status: 'delivered'
+          }
+        },
+        {
+          id: 'a2',
+          type: 'call',
+          title: 'Outbound call',
+          description: 'Discussed product features and pricing',
+          timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+          metadata: {
+            duration: '15m 32s',
+            outcome: 'interested'
+          }
+        },
+        {
+          id: 'a3',
+          type: 'meeting',
+          title: 'Product demo',
+          description: 'Showed platform features and answered questions',
+          timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+          metadata: {
+            duration: '45m',
+            attendees: 'John Doe, Sarah Smith'
+          }
+        },
+        {
+          id: 'a4',
+          type: 'note',
+          title: 'Added internal note',
+          description: 'Customer is interested in enterprise plan with SSO integration',
+          timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+          metadata: {
+            author: 'Sarah Smith'
+          }
+        }
+      ]
+    }
+    
+    // Add to recent contacts if not already there
+    if (!recentContacts.value.some(c => c.email === contactJourney.value.contact.email)) {
+      recentContacts.value.unshift(contactJourney.value.contact)
+      if (recentContacts.value.length > 10) {
+        recentContacts.value.pop()
+      }
+    }
+    
+    // Show details drawer
+    viewContactJourney(contactJourney.value.contact)
+    
+  } catch (err) {
+    error.value = 'Failed to load contact journey. Please try again.'
+    console.error('Error searching contact journey:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+const viewContactJourney = (contact) => {
+  selectedContact.value = contact
+  showDetailsDrawer.value = true
+}
+
+const closeDetailsDrawer = () => {
+  showDetailsDrawer.value = false
+  selectedContact.value = null
+}
+
+const formatStatus = (status) => {
+  return statusMap[status] || status
+}
+
+const getStatusClass = (status) => {
+  const statusClasses = {
+    lead: 'bg-blue-100 text-blue-800',
+    prospect: 'bg-purple-100 text-purple-800',
+    customer: 'bg-green-100 text-green-800',
+    repeat_customer: 'bg-indigo-100 text-indigo-800',
+    inactive: 'bg-gray-100 text-gray-800'
+  }
+  return statusClasses[status] || 'bg-gray-100 text-gray-800'
+}
+
+const getEventIcon = (type) => {
+  return eventIcons[type] || 'QuestionMarkCircleIcon'
+}
+
+const getEventIconClass = (type) => {
+  return eventColors[type] || 'bg-gray-500'
+}
+
+const getActivityIcon = (type) => {
+  return activityIcons[type] || 'QuestionMarkCircleIcon'
+}
+
+const getActivityIconClass = (type) => {
+  return activityColors[type] || 'bg-gray-500'
+}
+
+const formatDateTime = (dateString) => {
+  if (!dateString) return ''
+  const options = { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }
+  return new Date(dateString).toLocaleString(undefined, options)
+}
+
+// Lifecycle
+onMounted(() => {
+  // Load recent contacts from localStorage or API
+  const savedContacts = localStorage.getItem('recentContacts')
+  if (savedContacts) {
+    try {
+      recentContacts.value = JSON.parse(savedContacts)
+    } catch (e) {
+      console.error('Error parsing recent contacts:', e)
+    }
+  }
+})
+
+// Save recent contacts to localStorage
+const saveRecentContacts = () => {
+  try {
+    localStorage.setItem('recentContacts', JSON.stringify(recentContacts.value))
+  } catch (e) {
+    console.error('Error saving recent contacts:', e)
+  }
+}
+
+// Watch for changes to recentContacts and save to localStorage
+watch(recentContacts, () => {
+  saveRecentContacts()
+}, { deep: true })
+
+// Load contact journey by ID (for recent contacts)
+const loadContactJourney = async (contactId) => {
+  loading.value = true
+  error.value = null
+  
+  try {
+    // Simulate API call to get contact journey by ID
+    await new Promise(resolve => setTimeout(resolve, 500))
+    
+    // In a real app, this would be an API call like:
+    // const response = await journeysService.getContactJourney(contactId)
+    // contactJourney.value = response.data
+    
+    // For demo, we'll just use the first recent contact that matches the ID
+    const contact = recentContacts.value.find(c => c.id === contactId)
+    if (contact) {
+      searchEmail.value = contact.email
+      await searchContactJourney()
+    }
+  } catch (err) {
+    error.value = 'Failed to load contact journey. Please try again.'
+    console.error('Error loading contact journey:', err)
+  } finally {
+    loading.value = false
+  }
+// Initialize component
+onMounted(() => {
+  // Load recent contacts from localStorage
+  const savedContacts = localStorage.getItem('recentContacts')
+  if (savedContacts) {
+    try {
+      recentContacts.value = JSON.parse(savedContacts)
+    } catch (e) {
+      console.error('Error parsing recent contacts:', e)
+    }
+  }
+})
+  try {
+    const response = await journeysService.getStepTypes()
+    stepTypes.value = response.data || []
+  } catch (err) {
+    console.error('Failed to load step types:', err)
+  }
+}
+
+const loadExecutions = async (journeyId) => {
+  try {
+    name: '',
+    description: '',
+    status: 'draft',
+    steps: []
+  }
+  showCreateModal.value = true
+}
+
+const closeCreateModal = () => {
+  showCreateModal.value = false
+  creatingJourney.value = false
+}
+
+const addStep = () => {
+  journeyForm.value.steps.push({
+    type: '',
+    name: '',
+    config: ''
+  })
+}
+
+const removeStep = (index) => {
+  journeyForm.value.steps.splice(index, 1)
+}
+
+const updateStepSchema = async (index) => {
+  const step = journeyForm.value.steps[index]
+  if (step.type) {
+    try {
+      const response = await journeysService.getStepSchema(step.type)
+      const schema = response.data
+      if (schema && schema.fields) {
+        // Create a default configuration based on the schema
+        const config = {}
+        schema.fields.forEach(field => {
+          config[field.name] = field.default || ''
+        })
+        step.config = JSON.stringify(config, null, 2)
+      }
+    } catch (err) {
+      console.error('Failed to load step schema:', err)
+    }
+  }
+}
+
+const createJourney = async () => {
+  creatingJourney.value = true
+  
+  try {
+    // Validate steps
+    const validSteps = journeyForm.value.steps.filter(step => step.type && step.name)
+    
+    const data = {
+      name: journeyForm.value.name,
+      description: journeyForm.value.description,
+      status: journeyForm.value.status,
+      steps: validSteps.map((step, index) => ({
+        type: step.type,
+        name: step.name,
+        order: index + 1,
+        config: step.config ? JSON.parse(step.config) : {}
+      }))
+    }
+
+    await journeysService.createJourney(data)
+    showSuccess('Journey created successfully')
+    closeCreateModal()
+    loadJourneys()
+  } catch (err) {
+    showError(err.message || 'Failed to create journey')
+  } finally {
+    creatingJourney.value = false
+  }
+}
+
+const viewJourneyDetails = async (journey) => {
+  selectedJourney.value = journey
+  showDetailsDrawer.value = true
+  await loadExecutions(journey.id)
+}
+
+const closeDetailsDrawer = () => {
+  showDetailsDrawer.value = false
+  selectedJourney.value = null
+  executions.value = []
+}
+
+const runTest = async () => {
+  if (!testContactId.value || !selectedJourney.value) return
+  
+  runningTest.value = true
+  
+  try {
+    await journeysService.runJourneyOnContact(selectedJourney.value.id, testContactId.value)
+    showSuccess('Test journey started successfully')
+    testContactId.value = ''
+    await loadExecutions(selectedJourney.value.id)
+  } catch (err) {
+    showError(err.message || 'Failed to run test journey')
+  } finally {
+    runningTest.value = false
+  }
+}
+
+const deleteJourney = (journey) => {
+  journeyToDelete.value = journey
+  showConfirmModal.value = true
+}
+
+const confirmDelete = async () => {
+  if (!journeyToDelete.value) return
+  
+  try {
+    await journeysService.deleteJourney(journeyToDelete.value.id)
+    showSuccess('Journey deleted successfully')
+    closeConfirmModal()
+    loadJourneys()
+  } catch (err) {
+    showError(err.message || 'Failed to delete journey')
+  }
+}
+
+const closeConfirmModal = () => {
+  showConfirmModal.value = false
+  journeyToDelete.value = null
+}
+
+// Helper methods
+const getStatusColor = (status) => journeysHelpers.getStatusColor(status)
+const getExecutionStatusColor = (status) => journeysHelpers.getExecutionStatusColor(status)
+const getStepTypeIcon = (type) => journeysHelpers.getStepTypeIcon(type)
+const getProgressColor = (percentage) => journeysHelpers.getProgressColor(percentage)
+const formatDate = (dateString) => journeysHelpers.formatDate(dateString)
+const formatDateTime = (dateString) => journeysHelpers.formatDateTime(dateString)
+const formatNumber = (num) => journeysHelpers.formatNumber(num)
+
+// Lifecycle
+onMounted(async () => {
+  await Promise.all([
+    loadJourneys(),
+    loadStepTypes(),
+    loadJourneysAnalytics()
+  ])
+})
+</script>
