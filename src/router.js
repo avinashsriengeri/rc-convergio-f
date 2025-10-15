@@ -427,7 +427,7 @@ const routes = [
   {
     path: '/marketing/forecasting',
     name: 'MarketingForecasting',
-    component: () => import('./views/marketing/Forecasting.vue'),
+    component: () => import('./views/sales/Forecasting.vue'),
     meta: { requiresAuth: true }
   },
   {
