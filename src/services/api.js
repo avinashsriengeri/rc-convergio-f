@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api/',
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -14,6 +14,20 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // Skip authentication for public form endpoints, auth endpoints, public event endpoints, and commerce checkout
+
+    // Debug logging for help articles requests
+    if (config.url?.includes('help/articles')) {
+      console.log('API Request:', {
+        url: config.url,
+        baseURL: config.baseURL,
+        fullURL: config.baseURL + config.url,
+        method: config.method,
+        data: config.data
+      })
+    }
+    
+    // Skip authentication for public form endpoints, auth endpoints, and public event endpoints
+
     const isPublicFormRequest = config.url?.includes('/public/forms/')
     const isAuthRequest = config.url?.includes('/auth/')
     const isPublicEventRequest = config.url?.includes('/public/events/')

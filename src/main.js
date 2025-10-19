@@ -6,6 +6,7 @@ import { useAuth } from './composables/useAuth'
 import i18n from './i18n.js'
 import './style.css'
 import './assets/css/team-badges.css'
+import './assets/css/help.css'
 
 const app = createApp(App)
 const pinia = createPinia()

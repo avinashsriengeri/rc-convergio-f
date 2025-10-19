@@ -58,6 +58,20 @@ const routes = [
     meta: { requiresAuth: false }
   },
   
+  // Public Contact Form Routes
+  {
+    path: '/contact',
+    name: 'ContactForm',
+    component: () => import('./views/public/ContactForm.vue'),
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/contact/success/:ticketId?',
+    name: 'ContactSuccess',
+    component: () => import('./views/public/ContactSuccess.vue'),
+    meta: { requiresAuth: false }
+  },
+  
   // OAuth callback routes (NEW - for Facebook Ads)
   {
     path: '/oauth/facebook/callback',
@@ -603,7 +617,137 @@ const routes = [
     name: 'SalesDocuments',
     component: () => import('./views/documents/DocumentsPage.vue'),
     meta: { requiresAuth: true }
-  }
+  },
+
+  // Service Platform Module routes (Parent/Child structure)
+  {
+    path: '/service',
+    name: 'ServicePlatform',
+    component: () => import('./modules/service/pages/ServicePlatform.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'TicketsView',
+        component: () => import('./modules/service/pages/TicketsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: ':id',
+        name: 'TicketDetailView',
+        component: () => import('./modules/service/pages/TicketDetailView.vue'),
+        props: true,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'closed',
+        name: 'ClosedTicketsView',
+        component: () => import('./modules/service/pages/TicketsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'open',
+        name: 'OpenTicketsView',
+        component: () => import('./modules/service/pages/TicketsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'in-progress',
+        name: 'InProgressTicketsView',
+        component: () => import('./modules/service/pages/TicketsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'resolved',
+        name: 'ResolvedTicketsView',
+        component: () => import('./modules/service/pages/TicketsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'feedback-analytics',
+        name: 'FeedbackAnalytics',
+        component: () => import('./modules/service/pages/FeedbackAnalytics.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'email-integration',
+        name: 'EmailIntegration',
+        component: () => import('./modules/service/pages/EmailIntegration.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'live-chat',
+        name: 'LiveChat',
+        component: () => import('./modules/service/pages/LiveChat.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'integration',
+        name: 'IntegrationWidget',
+        component: () => import('./views/Service/IntegrationWidget.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'help',
+        name: 'ServiceHelpCenter',
+        component: () => import('./modules/service/pages/help/PublicHelpCenter.vue'),
+        meta: { requiresAuth: false }
+      },
+      {
+        path: 'help/article/:slug',
+        name: 'ServiceArticleDetail',
+        component: () => import('./modules/service/pages/help/ArticleDetail.vue'),
+        meta: { requiresAuth: false }
+      },
+      {
+        path: 'help/admin',
+        name: 'ServiceHelpAdmin',
+        component: () => import('./modules/service/pages/help/AdminKnowledgeBase.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'help/admin/analytics',
+        name: 'ServiceHelpAnalytics',
+        component: () => import('./modules/service/pages/help/AnalyticsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'help/admin/articles/:id',
+        name: 'ServiceHelpArticleDetail',
+        component: () => import('./modules/service/pages/help/admin/ArticleDetail.vue'),
+        meta: { requiresAuth: true }
+      }
+    ]
+  },
+
+  // Help Center Public Routes (standalone, no authentication required)
+  {
+    path: '/help',
+    name: 'PublicHelpCenter',
+    component: () => import('./modules/service/pages/help/PublicHelpCenter.vue'),
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/help/advanced',
+    name: 'HelpCenterAdvanced',
+    component: () => import('./modules/service/pages/help/HelpCenter.vue'),
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/help/article/:slug',
+    name: 'PublicArticleDetail',
+    component: () => import('./modules/service/pages/help/ArticleDetail.vue'),
+    meta: { requiresAuth: false }
+  },
+
+  // Widget routes (public)
+  {
+    path: '/widget',
+    name: 'WidgetView',
+    component: () => import('./views/EnhancedWidgetView.vue'),
+    meta: { requiresAuth: false }
+  },
+
 ]
 
 const router = createRouter({

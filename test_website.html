@@ -48,7 +48,7 @@
         .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #667eea; }
         .form-group textarea { height: 120px; resize: vertical; }
         footer { background: rgba(0, 0, 0, 0.8); color: white; text-align: center; padding: 2rem 0; }
-        .tracking-status { position: fixed; bottom: 20px; right: 20px; background: rgba(0, 0, 0, 0.8); color: white; padding: 1rem; border-radius: 10px; font-size: 0.9rem; z-index: 1000; }
+        .tracking-status { display: none; }
         .tracking-status.success { background: rgba(76, 175, 80, 0.9); }
         .tracking-status.error { background: rgba(244, 67, 54, 0.9); }
         @media (max-width: 768px) { .nav-links { display: none; } h1 { font-size: 2rem; } h2 { font-size: 1.8rem; } .grid { grid-template-columns: 1fr; } }
@@ -298,7 +298,17 @@
         </div>
     </footer>
 
-    <!-- Tracking Status -->
+
+
+    <!-- RC Widget Script -->
+    <script>
+    window.RCWidgetConfig = {
+        tenant: 42,
+        modules: ['ticket', 'faq', 'ai']
+    };
+    </script>
+    <script src="http://localhost:5173/embed/rc-widget.js" async></script>
+
     <div class="tracking-status" id="trackingStatus">
         <div>🔄 Status: <span id="statusText">Initializing...</span></div>
         <div>�� Events: <span id="eventCount">0</span></div>
@@ -513,5 +523,15 @@
             }
         });
     </script>
+
+
+<script>
+    window.RCLiveChatConfig = {
+        tenant: 42,
+        modules: ['livechat']
+    };
+    </script>
+    <script src="http://localhost:5173/embed/rc-livechat.js" async></script>
+    
 </body>
 </html>

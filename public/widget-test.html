@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RC Convergio Widget Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #1f2937;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .description {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .feature {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        .feature h3 {
+            color: #1f2937;
+            margin: 0 0 10px 0;
+        }
+        .feature p {
+            color: #6b7280;
+            margin: 0;
+            font-size: 14px;
+        }
+        .widget-info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .widget-info h3 {
+            color: #1e40af;
+            margin: 0 0 10px 0;
+        }
+        .widget-info p {
+            color: #1e40af;
+            margin: 0;
+            font-size: 14px;
+        }
+        .code-block {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .highlight {
+            background: #fef3c7;
+            padding: 2px 4px;
+            border-radius: 4px;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 RC Convergio Widget Test Page</h1>
+        
+        <p class="description">
+            This is a test page to demonstrate the RC Convergio Support Widget integration. 
+            The widget should appear as a floating button in the bottom-right corner.
+        </p>
+
+        <div class="widget-info">
+            <h3>💬 Widget Features</h3>
+            <p>
+                The RC Convergio Support Widget provides unified support functionality including 
+                ticket submission and knowledge base access. Click the floating button to test it!
+            </p>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <h3>🎫 Ticket Submission</h3>
+                <p>Users can submit support tickets directly from your website with a simple form.</p>
+            </div>
+            <div class="feature">
+                <h3>📚 Knowledge Base</h3>
+                <p>Searchable knowledge base with popular articles and FAQ content.</p>
+            </div>
+            <div class="feature">
+                <h3>📱 Mobile Friendly</h3>
+                <p>Responsive design that works perfectly on all devices and screen sizes.</p>
+            </div>
+            <div class="feature">
+                <h3>⚡ Real-time</h3>
+                <p>Instant ticket creation and immediate access to support resources.</p>
+            </div>
+        </div>
+
+        <h3>🔧 Integration Code</h3>
+        <p>To integrate this widget on your website, add the following code before the closing <code>&lt;/body&gt;</code> tag:</p>
+        
+        <div class="code-block">
+&lt;script&gt;
+  window.RCWidgetConfig = {
+    tenant: <span class="highlight">44</span>,  // Your tenant ID
+    modules: ['ticket', 'faq'],
+    theme: 'light',
+    buttonText: '💬 Help & Support',
+    debug: true
+  };
+&lt;/script&gt;
+&lt;script src="<span class="highlight">http://localhost:5173/embed/rc-widget.js</span>"&gt;&lt;/script&gt;
+        </div>
+
+        <div class="widget-info">
+            <h3>🎯 Testing Instructions</h3>
+            <p>
+                1. Look for the floating "💬 Help & Support" button in the bottom-right corner<br>
+                2. Click the button to open the widget<br>
+                3. Try submitting a ticket in the "Submit Ticket" tab<br>
+                4. Browse articles in the "Knowledge Base" tab<br>
+                5. Test the responsive design by resizing your browser window
+            </p>
+        </div>
+
+        <h3>📋 Sample Content</h3>
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor 
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud 
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </p>
+        <p>
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
+            fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in 
+            culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+        <p>
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque 
+            laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi 
+            architecto beatae vitae dicta sunt explicabo.
+        </p>
+    </div>
+
+    <!-- RC Convergio Widget Configuration -->
+    <script>
+        window.RCWidgetConfig = {
+            tenant: 44,  // Replace with your actual tenant ID
+            modules: ['ticket', 'faq'],
+            theme: 'light',
+            buttonText: '💬 Help & Support',
+            debug: true
+        };
+    </script>
+    
+    <!-- RC Convergio Widget Script -->
+    <script src="/embed/rc-widget.js"></script>
+</body>
+</html>
+
