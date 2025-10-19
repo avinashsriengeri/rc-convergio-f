@@ -13,13 +13,14 @@ const api = axios.create({
 // Request interceptor - add auth token
 api.interceptors.request.use(
   (config) => {
-    // Skip authentication for public form endpoints, auth endpoints, and public event endpoints
+    // Skip authentication for public form endpoints, auth endpoints, public event endpoints, and commerce checkout
     const isPublicFormRequest = config.url?.includes('/public/forms/')
     const isAuthRequest = config.url?.includes('/auth/')
     const isPublicEventRequest = config.url?.includes('/public/events/')
     const isEventTypesRequest = config.url?.includes('/events/types')
+    const isCommerceCheckoutRequest = config.url?.includes('/commerce/payment-links/') && config.method === 'get'
     
-    if (!isPublicFormRequest && !isAuthRequest && !isPublicEventRequest && !isEventTypesRequest) {
+    if (!isPublicFormRequest && !isAuthRequest && !isPublicEventRequest && !isEventTypesRequest && !isCommerceCheckoutRequest) {
       const token = localStorage.getItem('access_token')
       if (token) {
         config.headers['Authorization'] = `Bearer ${token}`
@@ -485,6 +486,79 @@ export const trackingAPI = {
   // Track events
   trackEvent: (data) => api.post('/tracking/events', data),
   trackPageView: (data) => api.post('/tracking/page-views', data),
+}
+
+// Commerce Platform API endpoints
+export const commerceAPI = {
+  // Orders API endpoints
+  getOrders: (params = {}) => api.get('/commerce/orders', { params }),
+  getOrder: (id) => api.get(`/commerce/orders/${id}`),
+  createOrder: (data) => api.post('/commerce/orders', data),
+  updateOrder: (id, data) => api.put(`/commerce/orders/${id}`, data),
+  deleteOrder: (id) => api.delete(`/commerce/orders/${id}`),
+  getOrderStats: () => api.get('/commerce/orders/stats'),
+  
+  // Payment Links API endpoints
+  getPaymentLinks: (params = {}) => api.get('/commerce/payment-links', { params }),
+  getPaymentLink: (id) => api.get(`/commerce/payment-links/${id}`),
+  createPaymentLink: (data) => api.post('/commerce/payment-links', data),
+  updatePaymentLink: (id, data) => api.put(`/commerce/payment-links/${id}`, data),
+  deletePaymentLink: (id) => api.delete(`/commerce/payment-links/${id}`),
+  activatePaymentLink: (id) => api.post(`/commerce/payment-links/${id}/activate`),
+  deactivatePaymentLink: (id) => api.post(`/commerce/payment-links/${id}/deactivate`),
+  completePaymentLink: (id) => api.post(`/commerce/payment-links/${id}/complete`),
+  sendPaymentLinkEmail: (id, data) => api.post(`/commerce/payment-links/${id}/send-email`, data),
+  sendBulkPaymentLinkEmails: (data) => api.post('/commerce/payment-links/send-bulk-emails', data),
+  
+  // Settings API endpoints
+  getSettings: () => api.get('/commerce/settings'),
+  updateSettings: (data) => api.post('/commerce/settings', data),
+  testConnection: () => api.post('/commerce/settings/test-connection'),
+  resetSettings: () => api.post('/commerce/settings/reset'),
+  sendTestEmail: (data) => api.post('/commerce/settings/send-test-email', data),
+  
+  // Analytics endpoints
+  getCommerceAnalytics: (params = {}) => api.get('/commerce/analytics', { params }),
+  getRevenueChart: (params = {}) => api.get('/commerce/revenue-chart', { params }),
+  
+  // Subscription Plans API endpoints
+  getSubscriptionPlans: (params = {}) => api.get('/commerce/subscription-plans', { params }),
+  createSubscriptionPlan: (data) => api.post('/commerce/subscription-plans', data),
+  updateSubscriptionPlan: (id, data) => api.put(`/commerce/subscription-plans/${id}`, data),
+  deleteSubscriptionPlan: (id) => api.delete(`/commerce/subscription-plans/${id}`),
+  
+  // Subscriptions API endpoints
+  getSubscriptions: (params = {}) => api.get('/commerce/subscriptions', { params }),
+  getSubscription: (id) => api.get(`/commerce/subscriptions/${id}`),
+  getSubscriptionActivity: (id) => api.get(`/commerce/subscriptions/${id}/activity`),
+  cancelSubscription: (id, data) => api.post(`/commerce/subscriptions/${id}/cancel`, data),
+  changePlan: (id, data) => api.post(`/commerce/subscriptions/${id}/change-plan`, data),
+  openPortal: (id) => api.post(`/commerce/subscriptions/${id}/portal`),
+  
+  // Public checkout endpoints
+  createCheckoutSession: (data) => api.post('/public/commerce/checkout/create-subscription-session', data),
+  getCheckoutSession: (sessionId) => api.get(`/public/commerce/checkout/session/${sessionId}`),
+  
+  // Branding API endpoints
+  getBranding: () => api.get('/commerce/branding'),
+  updateBranding: (data) => {
+    // Check if data is FormData (for file uploads)
+    if (data instanceof FormData) {
+      return api.put('/commerce/branding', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+    }
+    // Regular JSON data
+    return api.put('/commerce/branding', data)
+  },
+  resetBranding: () => api.post('/commerce/branding/reset'),
+  
+  // Invoice API endpoints
+  viewInvoicePDF: (invoiceId) => api.get(`/commerce/invoices/${invoiceId}/preview`),
+  downloadInvoicePDF: (invoiceId) => api.get(`/commerce/invoices/${invoiceId}/download`, { responseType: 'blob' }),
+  sendInvoiceEmail: (invoiceId) => api.post(`/commerce/invoices/${invoiceId}/send-email`),
 }
 
 export default api

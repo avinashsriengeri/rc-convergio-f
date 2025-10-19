@@ -529,6 +529,74 @@ const routes = [
     ]
   },
 
+  // Public Commerce Checkout Route (must be outside commerce parent)
+  {
+    path: '/commerce/checkout/:id',
+    name: 'CommerceCheckout',
+    component: () => import('./views/commerce/CommerceCheckout.vue'),
+    meta: { requiresAuth: false, public: true }
+  },
+
+  // Commerce Platform Module routes (Parent/Child structure)
+  {
+    path: '/commerce',
+    name: 'Commerce',
+    redirect: '/commerce/overview',
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: 'overview',
+        name: 'CommerceOverview',
+        component: () => import('./views/commerce/CommerceOverview.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'orders',
+        name: 'CommerceOrders',
+        component: () => import('./views/commerce/CommerceOrders.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'payment-links',
+        name: 'CommercePaymentLinks',
+        component: () => import('./views/commerce/CommercePaymentLinks.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'settings',
+        name: 'CommerceSettings',
+        component: () => import('./views/commerce/CommerceSettings.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'subscription-plans',
+        name: 'SubscriptionPlans',
+        component: () => import('./views/commerce/SubscriptionPlans.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'subscriptions',
+        name: 'SubscriptionsDashboard',
+        component: () => import('./views/commerce/SubscriptionsDashboard.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'branding',
+        name: 'CommerceBranding',
+        component: () => import('./views/commerce/CommerceBranding.vue'),
+        meta: { requiresAuth: true }
+      }
+    ]
+  },
+
+  // Public Subscription Checkout Route
+  {
+    path: '/commerce/subscription-checkout/:sessionId',
+    name: 'SubscriptionCheckout',
+    component: () => import('./views/commerce/PublicCheckout.vue'),
+    meta: { requiresAuth: false, public: true }
+  },
+
   // Documents Module routes (moved to Sales Platform)
   {
     path: '/sales/documents',
@@ -549,7 +617,9 @@ router.beforeEach((to, from, next) => {
   console.log('Router guard:', { 
     to: to.path, 
     from: from.path, 
-    isAuthenticated: !!isAuthenticated 
+    isAuthenticated: !!isAuthenticated,
+    toMeta: to.meta,
+    toName: to.name
   })
   
   // Get user role from stored user data (handle both nested roles array and flat role)
@@ -580,8 +650,17 @@ router.beforeEach((to, from, next) => {
   
   // Navigation guard logic (console logs removed for production)
   
-  const requiresAuth = to.meta?.requiresAuth ?? true
+  const requiresAuth = to.meta?.public ? false : (to.meta?.requiresAuth ?? true)
   const requiresAdmin = to.meta?.requiresAdmin ?? false
+  
+  console.log('Router guard decision:', {
+    path: to.path,
+    isPublic: to.meta?.public,
+    requiresAuth,
+    requiresAdmin,
+    isAuthenticated: !!isAuthenticated,
+    requiresEmailVerification
+  })
   
   if (requiresAuth && !isAuthenticated) {
     console.log('Router: Redirecting to login - not authenticated')
