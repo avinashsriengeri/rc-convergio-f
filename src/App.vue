@@ -368,7 +368,6 @@
             Sales Platform
           </router-link>
 
-
           <!-- Commerce Platform Link -->
           <router-link
             to="/commerce"
@@ -381,8 +380,7 @@
             Commerce Platform
           </router-link>
 
-
-          <!-- Service Platform Link -->
+            <!-- Service Platform Link -->
           <router-link
             to="/service"
             class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
@@ -393,8 +391,6 @@
             </svg>
             Service Platform
           </router-link>
-
-
 
           <!-- Users menu (Admin access OR Feature-based access) - Only for verified users -->
           <router-link
@@ -670,7 +666,6 @@
         </div>
       </div>
 
-
       <!-- Commerce Platform Sub-menu (shows when on commerce routes) -->
       <div v-if="$route.path.startsWith('/commerce')" class="fixed left-0 top-0 h-full w-64 bg-sidebar-bg z-40 transform transition-transform duration-300 ease-in-out">
         <div class="flex flex-col h-full">
@@ -678,15 +673,6 @@
           <div class="px-6 py-4 border-b border-gray-200">
             <div class="flex items-center justify-between">
               <h2 class="text-lg font-semibold text-gray-800">Commerce Platform</h2>
-
-      <!-- Service Platform Sub-menu (shows when on service routes or help center) -->
-      <div v-if="$route.path.startsWith('/service') || $route.path.startsWith('/help')" class="fixed left-0 top-0 h-full w-64 bg-sidebar-bg z-40 transform transition-transform duration-300 ease-in-out">
-        <div class="flex flex-col h-full">
-          <!-- Service Platform Header -->
-          <div class="px-6 py-4 border-b border-gray-200">
-            <div class="flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-gray-800">Service Platform</h2>
-
               <button
                 @click="$router.push('/dashboard')"
                 class="text-gray-500 hover:text-primary-purple transition-colors"
@@ -698,7 +684,6 @@
               </button>
             </div>
           </div>
-
 
           <!-- Commerce Platform Navigation -->
           <nav class="flex-1 py-4">
@@ -739,19 +724,10 @@
               to="/commerce/subscription-plans"
               class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
               :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/commerce/subscription-plans'), 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/commerce/subscription-plans') }"
-
-          <!-- Service Platform Navigation -->
-          <nav class="flex-1 py-4">
-            <router-link
-              to="/service"
-              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
-              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/service', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/service' }"
-
             >
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-
               Subscription Plans
             </router-link>
 
@@ -787,7 +763,40 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
               Settings
+            </router-link>
+          </nav>
+        </div>
+      </div>
 
+       <!-- Service Platform Sub-menu (shows when on service routes or help center) -->
+      <div v-if="$route.path.startsWith('/service') || $route.path.startsWith('/help')" class="fixed left-0 top-0 h-full w-64 bg-sidebar-bg z-40 transform transition-transform duration-300 ease-in-out">
+        <div class="flex flex-col h-full">
+          <!-- Service Platform Header -->
+          <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-gray-800">Service Platform</h2>
+              <button
+                @click="$router.push('/dashboard')"
+                class="text-gray-500 hover:text-primary-purple transition-colors"
+                title="Back to main menu"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Service Platform Navigation -->
+          <nav class="flex-1 py-4">
+            <router-link
+              to="/service"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/service', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/service' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
               All Tickets
             </router-link>
 
@@ -923,13 +932,6 @@
                   Home
                 </router-link>
                 <router-link
-                  to="/contact"
-                  class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary-purple transition-colors"
-                  :class="{ 'text-primary-purple': $route.path === '/contact' }"
-                >
-                  Contact Us
-                </router-link>
-                <router-link
                   to="/login"
                   class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary-purple transition-colors"
                   :class="{ 'text-primary-purple': $route.path === '/login' }"
@@ -1056,7 +1058,8 @@ const goToAccountDetails = () => {
 
 const goToHelp = () => {
   showProfileDropdown.value = false
-  router.push('/help')
+  // TODO: Navigate to help/support page when created
+  // router.push('/help')
 }
 
 const handleLogout = async () => {
@@ -1142,6 +1145,5 @@ h1, h2, h3, h4, h5, h6 {
   display: none;  /* Safari and Chrome */
 }
 </style>
-
 
 
