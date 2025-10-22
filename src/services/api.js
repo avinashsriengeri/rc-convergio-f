@@ -575,4 +575,198 @@ export const commerceAPI = {
   sendInvoiceEmail: (invoiceId) => api.post(`/commerce/invoices/${invoiceId}/send-email`),
 }
 
+// CMS / Content Platform API endpoints
+export const cmsAPI = {
+  // Pages Management
+  getPages: (params = {}) => api.get('/cms/pages', { params }),
+  getPage: (id) => api.get(`/cms/pages/${id}`),
+  createPage: (data) => api.post('/cms/pages', data),
+  updatePage: (id, data) => api.put(`/cms/pages/${id}`, data),
+  deletePage: (id) => api.delete(`/cms/pages/${id}`),
+  publishPage: (id) => api.post(`/cms/pages/${id}/publish`),
+  unpublishPage: (id) => api.post(`/cms/pages/${id}/unpublish`),
+  duplicatePage: (id) => api.post(`/cms/pages/${id}/duplicate`),
+  archivePage: (id) => api.post(`/cms/pages/${id}/archive`),
+  restorePage: (id) => api.post(`/cms/pages/${id}/restore`),
+  getPageVersions: (id, params = {}) => api.get(`/cms/pages/${id}/versions`, { params }),
+  restorePageVersion: (id, versionId) => api.post(`/cms/pages/${id}/versions/${versionId}/restore`),
+  getPageAnalytics: (id, params = {}) => api.get(`/cms/pages/${id}/analytics`, { params }),
+  previewPage: (id) => api.get(`/cms/pages/${id}/preview`),
+ 
+  // Templates Management
+  getTemplates: (params = {}) => api.get('/cms/templates', { params }),
+  getTemplate: (id) => api.get(`/cms/templates/${id}`),
+  createTemplate: (data) => api.post('/cms/templates', data),
+  updateTemplate: (id, data) => api.put(`/cms/templates/${id}`, data),
+  deleteTemplate: (id) => api.delete(`/cms/templates/${id}`),
+  duplicateTemplate: (id) => api.post(`/cms/templates/${id}/duplicate`),
+  publishTemplate: (id) => api.post(`/cms/templates/${id}/publish`),
+  unpublishTemplate: (id) => api.post(`/cms/templates/${id}/unpublish`),
+  getTemplatePreview: (id) => api.get(`/cms/templates/${id}/preview`),
+  useTemplate: (id, data = {}) => api.post(`/cms/templates/${id}/use`, data),
+ 
+  // SEO Tools
+  analyzeSeo: (data) => api.post('/cms/seo/analyze', data),
+  getSeoSuggestions: (pageId) => api.get(`/cms/seo/suggestions/${pageId}`),
+  getSeoScore: (pageId) => api.get(`/cms/seo/score/${pageId}`),
+  optimizeSeo: (pageId, data) => api.post(`/cms/seo/optimize/${pageId}`, data),
+  bulkAnalyzeSeo: (data) => api.post('/cms/seo/bulk-analyze', data),
+  getSeoReport: (params = {}) => api.get('/cms/seo/report', { params }),
+  exportSeoReport: (params = {}) => api.get('/cms/seo/export', { params, responseType: 'blob' }),
+ 
+  // Personalization & Smart Content
+  getPersonalizationRules: (pageId) => api.get(`/cms/personalization/${pageId}`),
+  createPersonalizationRule: (data) => api.post('/cms/personalization', data),
+  updatePersonalizationRule: (id, data) => api.put(`/cms/personalization/${id}`, data),
+  deletePersonalizationRule: (id) => api.delete(`/cms/personalization/${id}`),
+  togglePersonalizationRule: (id) => api.post(`/cms/personalization/${id}/toggle`),
+  testPersonalizationRule: (id, data) => api.post(`/cms/personalization/${id}/test`, data),
+  getPersonalizationAnalytics: (id, params = {}) => api.get(`/cms/personalization/${id}/analytics`, { params }),
+ 
+  // A/B Testing (Adaptive Testing)
+  getAbTests: (params = {}) => api.get('/cms/abtesting', { params }),
+  getAbTest: (id) => api.get(`/cms/abtesting/${id}`),
+  createAbTest: (data) => api.post('/cms/abtesting', data),
+  updateAbTest: (id, data) => api.put(`/cms/abtesting/${id}`, data),
+  deleteAbTest: (id) => api.delete(`/cms/abtesting/${id}`),
+  startAbTest: (id) => api.post(`/cms/abtesting/${id}/start`),
+  stopAbTest: (id) => api.post(`/cms/abtesting/${id}/stop`),
+  setAbTestWinner: (id) => api.post(`/cms/abtesting/${id}/winner`),
+  getAbTestResults: (id) => api.get(`/cms/abtesting/${id}/results`),
+  getAbTestAnalytics: (id, params = {}) => api.get(`/cms/abtesting/${id}/analytics`, { params }),
+ 
+  // Memberships & Access Control
+  getMemberships: (params = {}) => api.get('/cms/memberships', { params }),
+  getMembership: (id) => api.get(`/cms/memberships/${id}`),
+  createMembership: (data) => api.post('/cms/memberships', data),
+  updateMembership: (id, data) => api.put(`/cms/memberships/${id}`, data),
+  deleteMembership: (id) => api.delete(`/cms/memberships/${id}`),
+  getMembershipMembers: (id, params = {}) => api.get(`/cms/memberships/${id}/members`, { params }),
+  addMembershipMember: (id, data) => api.post(`/cms/memberships/${id}/members`, data),
+  removeMembershipMember: (id, memberId) => api.delete(`/cms/memberships/${id}/members/${memberId}`),
+  getMembershipPages: (id, params = {}) => api.get(`/cms/memberships/${id}/pages`, { params }),
+  assignPageToMembership: (id, pageId) => api.post(`/cms/memberships/${id}/pages/${pageId}`),
+  removePageFromMembership: (id, pageId) => api.delete(`/cms/memberships/${id}/pages/${pageId}`),
+ 
+  // Domains Management
+  getDomains: (params = {}) => api.get('/cms/domains', { params }),
+  getDomain: (id) => api.get(`/cms/domains/${id}`),
+  createDomain: (data) => api.post('/cms/domains', data),
+  updateDomain: (id, data) => api.put(`/cms/domains/${id}`, data),
+  deleteDomain: (id) => api.delete(`/cms/domains/${id}`),
+  setPrimaryDomain: (id) => api.post(`/cms/domains/${id}/set-primary`),
+  verifyDomain: (id) => api.post(`/cms/domains/${id}/verify`),
+  getDomainDnsRecords: (id) => api.get(`/cms/domains/${id}/dns`),
+  enableDomainSsl: (id) => api.post(`/cms/domains/${id}/enable-ssl`),
+ 
+  // Languages & Localization
+  getLanguages: (params = {}) => api.get('/cms/languages', { params }),
+  getLanguage: (code) => api.get(`/cms/languages/${code}`),
+  createLanguage: (data) => api.post('/cms/languages', data),
+  updateLanguage: (code, data) => api.put(`/cms/languages/${code}`, data),
+  deleteLanguage: (code) => api.delete(`/cms/languages/${code}`),
+  setDefaultLanguage: (code) => api.post(`/cms/languages/${code}/set-default`),
+  translatePage: (pageId, targetLanguage) => api.post(`/cms/pages/${pageId}/translate`, { target_language: targetLanguage }),
+  getTranslations: (pageId, params = {}) => api.get(`/cms/pages/${pageId}/translations`, { params }),
+ 
+  // Media Library
+  getMedia: (params = {}) => api.get('/cms/media', { params }),
+  uploadMedia: (file, data = {}) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    Object.keys(data).forEach(key => formData.append(key, data[key]))
+    return api.post('/cms/media', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  },
+  deleteMedia: (id) => api.delete(`/cms/media/${id}`),
+  updateMediaMetadata: (id, data) => api.put(`/cms/media/${id}`, data),
+  getMediaFolders: () => api.get('/cms/media/folders'),
+  createMediaFolder: (data) => api.post('/cms/media/folders', data),
+ 
+  // Forms (CMS-specific forms, distinct from marketing forms)
+  getCmsForms: (params = {}) => api.get('/cms/forms', { params }),
+  getCmsForm: (id) => api.get(`/cms/forms/${id}`),
+  createCmsForm: (data) => api.post('/cms/forms', data),
+  updateCmsForm: (id, data) => api.put(`/cms/forms/${id}`, data),
+  deleteCmsForm: (id) => api.delete(`/cms/forms/${id}`),
+  getCmsFormSubmissions: (id, params = {}) => api.get(`/cms/forms/${id}/submissions`, { params }),
+  exportCmsFormSubmissions: (id, params = {}) => api.get(`/cms/forms/${id}/submissions/export`, { params, responseType: 'blob' }),
+ 
+  // Navigation & Menus
+  getMenus: (params = {}) => api.get('/cms/menus', { params }),
+  getMenu: (id) => api.get(`/cms/menus/${id}`),
+  createMenu: (data) => api.post('/cms/menus', data),
+  updateMenu: (id, data) => api.put(`/cms/menus/${id}`, data),
+  deleteMenu: (id) => api.delete(`/cms/menus/${id}`),
+  reorderMenuItems: (id, items) => api.post(`/cms/menus/${id}/reorder`, { items }),
+ 
+  // Site Settings
+  getSiteSettings: () => api.get('/cms/settings'),
+  updateSiteSettings: (data) => api.put('/cms/settings', data),
+  getSiteSeoSettings: () => api.get('/cms/settings/seo'),
+  updateSiteSeoSettings: (data) => api.put('/cms/settings/seo', data),
+  getSiteAnalytics: (params = {}) => api.get('/cms/analytics', { params }),
+ 
+  // Content Blocks (Reusable Components)
+  getContentBlocks: (params = {}) => api.get('/cms/content-blocks', { params }),
+  getContentBlock: (id) => api.get(`/cms/content-blocks/${id}`),
+  createContentBlock: (data) => api.post('/cms/content-blocks', data),
+  updateContentBlock: (id, data) => api.put(`/cms/content-blocks/${id}`, data),
+  deleteContentBlock: (id) => api.delete(`/cms/content-blocks/${id}`),
+ 
+  // Redirects & URL Management
+  getRedirects: (params = {}) => api.get('/cms/redirects', { params }),
+  createRedirect: (data) => api.post('/cms/redirects', data),
+  updateRedirect: (id, data) => api.put(`/cms/redirects/${id}`, data),
+  deleteRedirect: (id) => api.delete(`/cms/redirects/${id}`),
+  bulkImportRedirects: (file) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return api.post('/cms/redirects/import', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  },
+ 
+  // Bulk Operations
+  bulkPublishPages: (pageIds) => api.post('/cms/pages/bulk-publish', { page_ids: pageIds }),
+  bulkUnpublishPages: (pageIds) => api.post('/cms/pages/bulk-unpublish', { page_ids: pageIds }),
+  bulkDeletePages: (pageIds) => api.post('/cms/pages/bulk-delete', { page_ids: pageIds }),
+  bulkArchivePages: (pageIds) => api.post('/cms/pages/bulk-archive', { page_ids: pageIds }),
+ 
+  // Export & Import
+  exportPages: (params = {}) => api.get('/cms/pages/export', { params, responseType: 'blob' }),
+  importPages: (file) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return api.post('/cms/pages/import', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  },
+  exportSite: (params = {}) => api.get('/cms/export', { params, responseType: 'blob' }),
+  importSite: (file) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return api.post('/cms/import', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  },
+ 
+  // Webhooks
+  getWebhooks: (params = {}) => api.get('/cms/webhooks', { params }),
+  createWebhook: (data) => api.post('/cms/webhooks', data),
+  updateWebhook: (id, data) => api.put(`/cms/webhooks/${id}`, data),
+  deleteWebhook: (id) => api.delete(`/cms/webhooks/${id}`),
+  testWebhook: (id) => api.post(`/cms/webhooks/${id}/test`),
+  getWebhookLogs: (id, params = {}) => api.get(`/cms/webhooks/${id}/logs`, { params }),
+}
+
 export default api

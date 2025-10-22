@@ -720,6 +720,53 @@ const routes = [
     ]
   },
 
+   // CMS / Content Platform Module routes
+   {
+    path: '/cms',
+    name: 'CMS',
+    component: () => import('./views/cms/CmsLayout.vue'),
+    redirect: '/cms/pages',
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: 'pages',
+        name: 'CmsPages',
+        component: () => import('./views/cms/PagesView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'editor/:id',
+        name: 'CmsPageEditor',
+        component: () => import('./views/cms/PageEditor.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'templates',
+        name: 'CmsTemplates',
+        component: () => import('./views/cms/TemplatesView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'personalization',
+        name: 'CmsPersonalization',
+        component: () => import('./views/cms/PersonalizationView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'ab-testing',
+        name: 'CmsAbTesting',
+        component: () => import('./views/cms/AbTestingView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'memberships',
+        name: 'CmsMemberships',
+        component: () => import('./views/cms/MembershipsView.vue'),
+        meta: { requiresAuth: true }
+      }
+    ]
+  },
+
   // Help Center Public Routes (standalone, no authentication required)
   {
     path: '/help',
