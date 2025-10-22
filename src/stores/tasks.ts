@@ -31,9 +31,13 @@ export const useTasksStore = defineStore('tasks', () => {
     
     try {
       const response = await tasksAPI.getTasks(filters)
+      
+      // Based on your network logs, the API returns: { data: [...tasks], meta: {...} }
+      // So tasks are in response.data.data and meta is in response.data.meta
       state.value.tasks = response.data.data || []
-      state.value.meta = response.data.meta || state.value.meta
+      state.value.meta = response.data.meta || {}
     } catch (err) {
+      console.error('Store: Error fetching tasks:', err)
       state.value.error = 'Failed to fetch tasks'
       state.value.tasks = []
     } finally {

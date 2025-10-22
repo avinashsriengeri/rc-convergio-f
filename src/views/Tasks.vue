@@ -255,6 +255,9 @@
     <!-- Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+
+
+
       <!-- Loading State -->
       <div v-if="loading && (!tasks || tasks.length === 0)" class="flex justify-center items-center py-12">
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -872,9 +875,13 @@ import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
 // Stores
 const tasksStore = useTasksStore()
 const refsStore = useRefsStore()
-// Context and permissions (unused in this component but available for future use)
-// const { tenantId, teamId, isAdmin } = useContext()
-// const { canEdit, canDelete, canView } = usePermission()
+// Context and permissions
+const { tenantId, teamId, isAdmin, userId } = useContext()
+const { canEdit, canDelete, canView } = usePermission()
+
+// User context variables for conditional tabs
+const assigneeId = computed(() => userId.value)
+const ownerId = computed(() => userId.value)
 
 // Reactive data
 const saving = ref(false)
@@ -1086,7 +1093,6 @@ const buildParams = (filters: any) => {
 const fetchTasks = async () => {
   try {
     const params = buildParams(filters)
-
     await tasksStore.fetchTasks(params)
 
     // Safety fallback: if params are non-empty and result is empty, try unfiltered

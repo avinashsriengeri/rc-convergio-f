@@ -248,7 +248,7 @@ const router = useRouter()
 const activitiesStore = useActivitiesStore()
 // Context and permissions (unused in this component but available for future use)
 // const { tenantId, teamId, isAdmin } = useContext()
-// const { canEdit, canDelete, canView } = usePermission()
+const { canEdit, canDelete, canView } = usePermission()
 
 // Reactive data
 const loading = ref(false)

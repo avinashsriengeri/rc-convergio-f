@@ -124,7 +124,7 @@ export function useDocuments() {
       return response
     } catch (error) {
       console.error('Error fetching documents:', error)
-      showNotification('Failed to fetch documents', 'error')
+      error('Failed to fetch documents')
       throw error
     } finally {
       loading.value = false
@@ -137,7 +137,7 @@ export function useDocuments() {
       return response.data
     } catch (error) {
       console.error('Error fetching document:', error)
-      showNotification('Failed to fetch document', 'error')
+      error('Failed to fetch document')
       throw error
     }
   }
@@ -170,11 +170,11 @@ export function useDocuments() {
         pagination.total += 1
       }
       
-      showNotification('Document uploaded successfully', 'success')
+      success('Document uploaded successfully')
       return response
     } catch (error) {
       console.error('Error uploading document:', error)
-      showNotification('Failed to upload document', 'error')
+      error('Failed to upload document')
       throw error
     } finally {
       uploading.value = false
@@ -191,11 +191,11 @@ export function useDocuments() {
         documents.value[index] = { ...documents.value[index], ...response.data }
       }
       
-      showNotification('Document updated successfully', 'success')
+      success('Document updated successfully')
       return response
     } catch (error) {
       console.error('Error updating document:', error)
-      showNotification('Failed to update document', 'error')
+      error('Failed to update document')
       throw error
     }
   }

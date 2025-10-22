@@ -606,7 +606,7 @@ const createCompany = () => {
 
 const createDeal = () => {
   // Navigate to deal creation with contact pre-filled
-  router.push(`/deals/create?contact_id=${contact.value.id}`)
+  router.push(`/deals/new?contact_id=${contact.value.id}`)
 }
 
 const logActivity = () => {

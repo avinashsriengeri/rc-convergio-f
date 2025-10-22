@@ -73,21 +73,26 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">
                   Currency <span class="text-red-500">*</span>
                 </label>
-                <select
-                  v-model="form.currency"
-                  @change="onCurrencyChange"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  required
-                >
-                  <option value="">Select Currency</option>
-                  <option
-                    v-for="currency in currencies"
-                    :key="currency.code"
-                    :value="currency.code"
+                <div class="relative">
+                  <select
+                    v-model="form.currency"
+                    @change="onCurrencyChange"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
                   >
-                    {{ currency.code }} - {{ currency.name }}
-                  </option>
-                </select>
+                    <option value="">Select Currency</option>
+                    <option
+                      v-for="currency in allCurrencies"
+                      :key="currency.code"
+                      :value="currency.code"
+                    >
+                      {{ currency.code }} - {{ currency.name }}
+                    </option>
+                    <option value="add_custom" class="text-blue-600 font-medium">
+                      ➕ Add Custom Currency
+                    </option>
+                  </select>
+                </div>
                 <p v-if="errors.currency" class="mt-1 text-sm text-red-600">{{ errors.currency }}</p>
               </div>
 
@@ -478,6 +483,69 @@
         </div>
       </div>
     </div>
+
+    <!-- Custom Currency Modal -->
+    <div v-if="showCustomCurrencyModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">
+            Add Custom Currency
+          </h3>
+          <form @submit.prevent="saveCustomCurrency">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Currency Code <span class="text-red-500">*</span>
+                </label>
+                <BaseInput
+                  v-model="customCurrencyForm.code"
+                  placeholder="e.g., BTC, ETH, CUSTOM"
+                  maxlength="10"
+                  required
+                />
+                <p class="mt-1 text-sm text-gray-500">Enter a unique 3-10 character code</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Currency Name <span class="text-red-500">*</span>
+                </label>
+                <BaseInput
+                  v-model="customCurrencyForm.name"
+                  placeholder="e.g., Bitcoin, Ethereum, Custom Currency"
+                  required
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Symbol (Optional)
+                </label>
+                <BaseInput
+                  v-model="customCurrencyForm.symbol"
+                  placeholder="e.g., ₿, Ξ, $"
+                  maxlength="5"
+                />
+              </div>
+              <div class="flex justify-end space-x-3 pt-4">
+                <BaseButton
+                  type="button"
+                  variant="outline"
+                  @click="cancelCustomCurrency"
+                >
+                  Cancel
+                </BaseButton>
+                <BaseButton
+                  type="submit"
+                  variant="primary"
+                  :disabled="!customCurrencyForm.code || !customCurrencyForm.name"
+                >
+                  Add Currency
+                </BaseButton>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -559,12 +627,26 @@ const stageForm = reactive<StageFormData>({
 // Tags input
 const tagsInput = ref('')
 
+// Custom currency functionality
+const showCustomCurrencyModal = ref(false)
+const customCurrencies = ref<Array<{code: string, name: string, symbol: string}>>([])
+const customCurrencyForm = reactive({
+  code: '',
+  name: '',
+  symbol: ''
+})
+
 // Computed
 const isEditing = computed(() => {
   return route.name === 'DealEdit'
 })
 
 const currencies = computed(() => CURRENCIES)
+
+// Combined currencies (default + custom)
+const allCurrencies = computed(() => {
+  return [...CURRENCIES, ...customCurrencies.value]
+})
 
 const stagesForPipeline = computed(() => {
   if (!selectedPipelineId.value || selectedPipelineId.value === 'create_new') return []
@@ -676,7 +758,11 @@ const saveDeal = async () => {
 }
 
 const onCurrencyChange = () => {
-  if (!form.currency) {
+  if (form.currency === 'add_custom') {
+    // Open custom currency modal
+    showCustomCurrencyModal.value = true
+    form.currency = '' // Reset selection
+  } else if (!form.currency) {
     form.value = undefined
   }
 }
@@ -835,6 +921,14 @@ onMounted(async () => {
     }
   }
 
+  // Check for contact pre-fill from query parameters
+  if (route.query.contact_id) {
+    const contactId = parseInt(route.query.contact_id as string)
+    if (!isNaN(contactId)) {
+      form.contact_id = contactId
+    }
+  }
+
   if (isEditing.value && route.params.id) {
     // Load deal data for editing
     const deal = await dealsStore.fetchDeal(parseInt(route.params.id as string))
@@ -891,4 +985,49 @@ watch(() => refsStore.contactsLoading, (loading) => {
     })
   }
 })
+
+// Custom currency methods
+const saveCustomCurrency = () => {
+  // Validate form
+  if (!customCurrencyForm.code || !customCurrencyForm.name) {
+    return
+  }
+
+  // Check if currency code already exists
+  const existingCurrency = allCurrencies.value.find(
+    currency => currency.code.toUpperCase() === customCurrencyForm.code.toUpperCase()
+  )
+  
+  if (existingCurrency) {
+    error('Currency code already exists. Please choose a different code.')
+    return
+  }
+
+  // Add custom currency
+  const newCurrency = {
+    code: customCurrencyForm.code.toUpperCase(),
+    name: customCurrencyForm.name,
+    symbol: customCurrencyForm.symbol || customCurrencyForm.code.toUpperCase()
+  }
+  
+  customCurrencies.value.push(newCurrency)
+  
+  // Select the new currency
+  form.currency = newCurrency.code
+  
+  // Close modal and reset form
+  showCustomCurrencyModal.value = false
+  customCurrencyForm.code = ''
+  customCurrencyForm.name = ''
+  customCurrencyForm.symbol = ''
+  
+  success('Custom currency added successfully!')
+}
+
+const cancelCustomCurrency = () => {
+  showCustomCurrencyModal.value = false
+  customCurrencyForm.code = ''
+  customCurrencyForm.name = ''
+  customCurrencyForm.symbol = ''
+}
 </script>

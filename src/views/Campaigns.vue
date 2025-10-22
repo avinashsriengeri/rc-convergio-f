@@ -1458,9 +1458,9 @@ const props = defineProps<{
   openCreateModal?: boolean
 }>()
 
-// Context and permissions (unused in this component but available for future use)
-// const { tenantId, teamId, isAdmin } = useContext()
-// const { canEdit, canDelete, canView } = usePermission()
+// Context and permissions
+const { tenantId, teamId, isAdmin } = useContext()
+const { canEdit, canDelete, canView } = usePermission()
 
 // Types for watcher tuple
 type ModalBools = [boolean, boolean]
