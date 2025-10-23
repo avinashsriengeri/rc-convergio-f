@@ -451,8 +451,62 @@ const routes = [
         name: 'MarketingAnalytics',
         component: () => import('./views/marketing/Analytics.vue'),
         meta: { requiresAuth: true }
+      },
+  //   ]
+  // },
+  {
+    path: '/marketing/social-media',
+    name: 'MarketingSocialMedia',
+    component: () => import('./views/marketing/SocialMedia.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/marketing/seo',
+    component: () => import('./views/marketing/seo/SeoLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'SeoDashboard',
+        component: () => import('./views/marketing/seo/DashboardView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'pages',
+        name: 'SeoPages',
+        component: () => import('./views/marketing/seo/PagesView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'pages/:id',
+        name: 'SeoPageDetail',
+        component: () => import('./views/marketing/seo/PageDetailView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'recommendations',
+        name: 'SeoRecommendations',
+        component: () => import('./views/marketing/seo/RecommendationsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'settings',
+        name: 'SeoSettings',
+        component: () => import('./views/marketing/seo/SettingsView.vue'),
+        meta: { requiresAuth: true }
       }
     ]
+  },
+  // Legacy route redirect for backwards compatibility
+  {
+    path: '/marketing/seo-tools',
+    redirect: '/marketing/seo'
+  },
+  {
+    path: '/marketing/social-media',
+    name: 'MarketingSocialMedia',
+    component: () => import('./views/marketing/SocialMedia.vue'),
+    meta: { requiresAuth: true }
   },
 
   // Sales Platform Module routes (Parent/Child structure)
