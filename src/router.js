@@ -504,7 +504,6 @@ const routes = [
   redirect: '/marketing/seo'
 },
   
-
   // Sales Platform Module routes (Parent/Child structure)
   {
     path: '/sales',
