@@ -4,10 +4,11 @@ import App from './App.vue'
 import router from './router.js'
 import { useAuth } from './composables/useAuth'
 import i18n from './i18n.js'
-import abTestingPlugin from './plugins/abTesting'
+
 import './style.css'
 import './assets/css/team-badges.css'
 import './assets/css/help.css'
+import abTestingPlugin from './plugins/abTesting'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -22,6 +23,5 @@ app.use(i18n)
 app.use(abTestingPlugin, {
     autoInit: true,
     debugMode: process.env.NODE_ENV === 'development'
-  }
+  })
 app.mount('#app')
-
