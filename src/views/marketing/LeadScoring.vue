@@ -50,11 +50,11 @@
           <!-- Quick Stats Cards -->
           <div class="flex space-x-4">
             <div class="bg-blue-50 rounded-lg px-4 py-3 text-center">
-              <div class="text-2xl font-bold text-blue-600">{{ formatNumber(stats?.total_contacts_scored || 0) }}</div>
+              <div class="text-2xl font-bold text-blue-600">{{ formatNumber(stats?.contacts_with_score || stats?.scored_contacts || 0) }}</div>
               <div class="text-sm text-blue-600">Total Scored</div>
             </div>
             <div class="bg-green-50 rounded-lg px-4 py-3 text-center">
-              <div class="text-2xl font-bold text-green-600">{{ stats?.high_score_contacts || 0 }}</div>
+              <div class="text-2xl font-bold text-green-600">{{ stats?.high_score_contacts || stats?.high_score || 0 }}</div>
               <div class="text-sm text-green-600">Hot Leads</div>
             </div>
             <div class="bg-orange-50 rounded-lg px-4 py-3 text-center">
@@ -440,7 +440,7 @@
                 <div class="flex justify-between items-center">
                   <div>
                     <p class="text-sm font-medium text-blue-600">Total Contacts</p>
-                    <p class="text-2xl font-bold text-blue-700">{{ formatNumber(stats?.total_contacts_scored || 0) }}</p>
+                    <p class="text-2xl font-bold text-blue-700">{{ formatNumber(stats?.total_contacts || 0) }}</p>
                   </div>
                   <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                     <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -455,7 +455,7 @@
                 <div class="flex justify-between items-center">
                   <div>
                     <p class="text-sm font-medium text-green-600">Average Score</p>
-                    <p class="text-2xl font-bold text-green-700">{{ Math.round(stats?.average_score || 0) }}</p>
+                    <p class="text-2xl font-bold text-green-700">{{ Math.round(stats?.average_score || stats?.avg_score || 0) }}</p>
                   </div>
                   <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                     <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -475,7 +475,7 @@
                     <div class="w-3 h-3 bg-red-500 rounded-full mr-3"></div>
                     <span class="text-sm font-medium text-red-700">Hot Leads (80+)</span>
                   </div>
-                  <span class="text-lg font-bold text-red-600">{{ stats?.high_score_contacts || 0 }}</span>
+                  <span class="text-lg font-bold text-red-600">{{ stats?.high_score_contacts || stats?.high_score || 0 }}</span>
                 </div>
 
                 <!-- Medium Score -->
@@ -484,7 +484,7 @@
                     <div class="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
                     <span class="text-sm font-medium text-yellow-700">Warm Leads (40-79)</span>
                   </div>
-                  <span class="text-lg font-bold text-yellow-600">{{ stats?.medium_score_contacts || 0 }}</span>
+                  <span class="text-lg font-bold text-yellow-600">{{ stats?.medium_score_contacts || stats?.medium_score || 0 }}</span>
                 </div>
 
                 <!-- Low Score -->
@@ -493,7 +493,7 @@
                     <div class="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
                     <span class="text-sm font-medium text-blue-700">Cold Leads (0-39)</span>
                   </div>
-                  <span class="text-lg font-bold text-blue-600">{{ stats?.low_score_contacts || 0 }}</span>
+                  <span class="text-lg font-bold text-blue-600">{{ stats?.low_score_contacts || stats?.low_score || 0 }}</span>
                 </div>
               </div>
 
@@ -1665,17 +1665,48 @@ const refreshAll = async () => {
 
 const loadStats = async () => {
   try {
-    const response = await leadScoringService.getScoringStats()
-    stats.value = response.data
+    console.log('Loading lead scoring stats...')
+    const response = await fetch('/api/lead-scoring/stats', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}`
+      }
+    })
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+    
+    const data = await response.json()
+    console.log('Stats API response:', data)
+    stats.value = data.data
   } catch (err) {
     console.error('Failed to load stats:', err)
+    stats.value = null
   }
 }
 
 const loadTopContacts = async () => {
   try {
-    const response = await leadScoringService.getTopContacts(10)
-    topContacts.value = response.data || []
+    console.log('Loading top contacts...')
+    const response = await fetch('/api/lead-scoring/top-contacts?limit=10', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}`
+      }
+    })
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+    
+    const data = await response.json()
+    console.log('Top contacts API response:', data)
+    topContacts.value = data.data || []
   } catch (err) {
     console.error('Failed to load top contacts:', err)
     topContacts.value = [] // Ensure it's always an array
@@ -1684,8 +1715,23 @@ const loadTopContacts = async () => {
 
 const loadLeadScoringAnalytics = async () => {
   try {
-    const response = await leadScoringService.getLeadScoringAnalytics()
-    leadScoringAnalytics.value = response.data
+    console.log('Loading lead scoring analytics...')
+    const response = await fetch('/api/analytics/lead-scoring', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}`
+      }
+    })
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+    
+    const data = await response.json()
+    console.log('Analytics API response:', data)
+    leadScoringAnalytics.value = data.data
   } catch (err) {
     console.error('Failed to load lead scoring analytics:', err)
     leadScoringAnalytics.value = null // Ensure it's always null on error
@@ -1816,7 +1862,8 @@ const loadSmartSuggestions = async () => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}`
       }
     })
     
@@ -2092,7 +2139,8 @@ const activateTemplate = async (templateKey) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}`
       }
     })
     
@@ -2137,7 +2185,8 @@ const applySuggestions = async (selectedSuggestions) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}`
       },
       body: JSON.stringify({ suggestions: selectedSuggestions })
     })
