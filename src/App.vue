@@ -404,6 +404,18 @@
             CMS Hub
           </router-link>
 
+          <!-- Copilot / AI Assistant Link -->
+          <router-link
+            to="/copilot"
+            class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+            :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/copilot'), 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/copilot') }"
+          >
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+            Copilot AI
+          </router-link>
+
           <!-- Users menu (Admin access OR Feature-based access) - Only for verified users -->
           <router-link
             v-if="(hasFeature('manage_users') || currentUserRole === 'admin') && isEmailVerified"
@@ -1023,6 +1035,86 @@
         </div>
       </div>
 
+      <!-- Copilot Sub-menu (shows when on copilot routes) -->
+      <div v-if="$route.path.startsWith('/copilot')" class="fixed left-0 top-0 h-full w-64 bg-sidebar-bg z-40 transform transition-transform duration-300 ease-in-out">
+        <div class="flex flex-col h-full">
+          <!-- Copilot Header -->
+          <div class="px-6 py-4 border-b border-gray-200 flex-shrink-0">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-gray-800">Copilot AI</h2>
+              <button
+                @click="$router.push('/dashboard')"
+                class="text-gray-500 hover:text-primary-purple transition-colors"
+                title="Back to main menu"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </button>
+            </div>
+          </div>
+ 
+          <!-- Copilot Navigation -->
+          <nav class="flex-1 py-4 overflow-y-auto">
+            <router-link
+              to="/copilot/dashboard"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/copilot/dashboard', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/copilot/dashboard' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H10a2 2 0 01-2-2V5z" />
+              </svg>
+              Dashboard
+            </router-link>
+ 
+            <router-link
+              to="/copilot/help"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/copilot/help', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/copilot/help' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Help Center
+            </router-link>
+ 
+            <router-link
+              to="/copilot/features"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/copilot/features', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/copilot/features' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              Features
+            </router-link>
+ 
+            <router-link
+              to="/copilot/history"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/copilot/history', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/copilot/history' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              History
+            </router-link>
+ 
+            <router-link
+              to="/copilot/analytics"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/copilot/analytics', 'text-gray-600 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/copilot/analytics' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              Analytics
+            </router-link>
+          </nav>
+        </div>
+      </div>
+
       <!-- Main content area -->
         <div class="flex-1 flex flex-col" :class="isAuthenticated ? 'overflow-auto' : ($route.path === '/' ? 'overflow-auto' : 'h-full overflow-hidden')">
         <!-- Top navigation (for unauthenticated users, excluding login page) -->
@@ -1066,6 +1158,9 @@
 
     <!-- Notification toasts -->
     <NotificationToast />
+    
+    <!-- Copilot Chat (floating) -->
+    <CopilotChat v-if="isAuthenticated" />
     </template>
   </div>
 </template>
@@ -1084,6 +1179,7 @@ import { languages, changeLanguage } from '@/i18n.js'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import NotificationToast from '@/components/ui/NotificationToast.vue'
 import HeaderPill from '@/components/ui/HeaderPill.vue'
+import CopilotChat from '@/components/copilot/CopilotChat.vue'
 
 const router = useRouter()
 const { locale } = useI18n()

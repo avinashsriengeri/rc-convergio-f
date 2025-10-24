@@ -816,6 +816,46 @@ const routes = [
     ]
   },
 
+  // Copilot Module routes
+  {
+    path: '/copilot',
+    name: 'Copilot',
+    redirect: '/copilot/dashboard',
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: 'dashboard',
+        name: 'CopilotDashboard',
+        component: () => import('./views/copilot/CopilotDashboard.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'help',
+        name: 'CopilotHelp',
+        component: () => import('./views/copilot/CopilotHelp.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'features',
+        name: 'CopilotFeatures',
+        component: () => import('./views/copilot/CopilotFeatures.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'history',
+        name: 'CopilotHistory',
+        component: () => import('./views/copilot/CopilotHistory.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'analytics',
+        name: 'CopilotAnalytics',
+        component: () => import('./views/copilot/CopilotAnalytics.vue'),
+        meta: { requiresAuth: true }
+      }
+    ]
+  },
+
   // Help Center Public Routes (standalone, no authentication required)
   {
     path: '/help',

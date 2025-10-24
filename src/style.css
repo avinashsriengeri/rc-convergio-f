@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import 'sweetalert2/dist/sweetalert2.css';
+@import './assets/css/copilot.css';
 
 @tailwind base;
 @tailwind components;
