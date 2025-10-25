@@ -63,5 +63,13 @@ export const rcProducts = [
     chipBg: { start: "#F5F3FF", end: "#EDE9FE" },
     ring: "#DDD6FE",
     iconColor: "#7C3AED"
+  },
+  {
+    name: "RC Console",
+    url: "https://console.reliancecodemass.com/",
+    icon: "console",
+    chipBg: { start: "#F0FDF4", end: "#DCFCE7" },
+    ring: "#BBF7D0",
+    iconColor: "#16A34A"
   }
 ] as const;
