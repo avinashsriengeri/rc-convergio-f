@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { debounce } from 'lodash-es'
 import { contactsAPI, companiesAPI } from '../services/api'
 import { useAuthStore } from './auth'
+import { fetchUsersForDropdown } from '../helpers/fetchUsersForDropdown'
 import type { User, Contact, Company, LoadingState } from '../types'
 
 interface RefsState extends LoadingState {
@@ -56,18 +57,8 @@ export const useRefsStore = defineStore('refs', () => {
     state.value.usersError = null
 
     try {
-      const endpoint = authStore.getUsersEndpoint()
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, {
-        headers: authStore.authHeaders.value,
-        method: 'GET'
-      })
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const data = await response.json()
-      state.value.users = data.data || []
+      // Use team-aware helper to fetch users filtered by tenant/team
+      state.value.users = await fetchUsersForDropdown()
     } catch (err: any) {
       state.value.usersError = err.message || 'Failed to fetch users'
       console.error('Error fetching users:', err)

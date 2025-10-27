@@ -20,6 +20,7 @@
           </div>
           <div class="flex items-center space-x-3">
             <BaseButton
+              v-if="canEdit(contact)"
               variant="outline"
               size="sm"
               @click="editContact"
@@ -27,6 +28,7 @@
               {{ $t('contacts.contact_details.edit_contact') }}
             </BaseButton>
             <BaseButton
+              v-if="canDelete(contact)"
               variant="danger"
               size="sm"
               icon="trash"
@@ -61,12 +63,17 @@
               <div>
                 <h2 class="text-2xl font-bold text-gray-900">{{ getFullName(contact) }}</h2>
                 <p class="text-gray-600">{{ contact.email }}</p>
-                <span
-                  class="inline-block px-3 py-1 text-sm rounded-full mt-2"
-                  :class="getStatusClass(contact.lifecycle_stage)"
-                >
-                  {{ contact.lifecycle_stage || $t('contacts.contact_details.no_stage') }}
-                </span>
+                <div class="flex items-center space-x-2 mt-2">
+                  <span
+                    class="inline-block px-3 py-1 text-sm rounded-full"
+                    :class="getStatusClass(contact.lifecycle_stage)"
+                  >
+                    {{ contact.lifecycle_stage || $t('contacts.contact_details.no_stage') }}
+                  </span>
+                  <span v-if="contact.team" class="team-badge">
+                    {{ contact.team.name }}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -103,7 +110,15 @@
                     <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd" />
                     </svg>
-                    <span class="text-gray-700">{{ $t('contacts.contact_details.owner_id') }}: {{ contact.owner_id }}</span>
+                    <span class="text-gray-700">
+                      <strong>Owner:</strong> {{ contact.owner?.name || `User ID: ${contact.owner_id}` }}
+                    </span>
+                  </div>
+                  <div v-if="contact.team" class="flex items-center space-x-3">
+                    <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="text-gray-700"><strong>Team:</strong> {{ contact.team.name || '—' }}</span>
                   </div>
                 </div>
               </div>
@@ -324,6 +339,16 @@
               </div>
             </div>
           </div>
+
+          <!-- Documents -->
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <DocumentsTab 
+              relatedType="contact" 
+              :relatedId="contact.id"
+              :initialDocuments="contactDocuments"
+              @document-linked="handleDocumentLinked"
+            />
+          </div>
         </div>
       </div>
 
@@ -351,18 +376,24 @@
 import { ref, onMounted, computed, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useNotifications } from '@/composables/useNotifications'
-import { contactsAPI } from '@/services/api'
+import { useContext } from '@/composables/useContext'
+import { usePermission } from '@/composables/usePermission'
+import api, { contactsAPI, usersAPI } from '@/services/api'
 import BaseButton from '@/components/ui/BaseButton.vue'
+import DocumentsTab from '@/components/documents/DocumentsTab.vue'
 
 const route = useRoute()
 const router = useRouter()
 const { success, error } = useNotifications()
+const { tenantId, teamId, isAdmin } = useContext()
+const { canEdit, canDelete, canView } = usePermission()
 
 const loading = ref(true)
 const contact = ref(null)
 const contactCompany = ref(null)
 const deals = ref([])
 const activities = ref([])
+const contactDocuments = ref([])
 const dealsLoading = ref(false)
 const activitiesLoading = ref(false)
 
@@ -394,11 +425,18 @@ const loadContactData = async () => {
     const contactResponse = await contactsAPI.getContact(route.params.id)
     contact.value = contactResponse.data.data.contact
     
+    // Extract documents from the API response
+    contactDocuments.value = contactResponse.data.data.documents || []
+    console.log(`ContactDetail: Loaded ${contactDocuments.value.length} documents for contact ${contact.value.id}`)
+    console.log('ContactDetail: Documents data:', contactDocuments.value)
+    
     // Load related data
     await Promise.all([
       loadContactCompany(),
       loadContactDeals(),
-      loadContactActivities()
+      loadContactActivities(),
+      loadOwnerInfo(),
+      loadTeamInfo()
     ])
   } catch (err) {
     error('Failed to load contact')
@@ -407,6 +445,20 @@ const loadContactData = async () => {
     loading.value = false
   }
 }
+
+const handleDocumentLinked = (document) => {
+  console.log('ContactDetail: Document linked, adding to contactDocuments:', document)
+  // Add the linked document to the contactDocuments array
+  const existingIndex = contactDocuments.value.findIndex(doc => doc.id === document.id)
+  if (existingIndex === -1) {
+    contactDocuments.value.push(document)
+    console.log('ContactDetail: Added document to contactDocuments array')
+  } else {
+    contactDocuments.value[existingIndex] = document
+    console.log('ContactDetail: Updated existing document in contactDocuments array')
+  }
+}
+
 
 const loadContactCompany = async () => {
   try {
@@ -441,6 +493,33 @@ const loadContactActivities = async () => {
     activities.value = []
   } finally {
     activitiesLoading.value = false
+  }
+}
+
+const loadOwnerInfo = async () => {
+  try {
+    if (contact.value?.owner_id) {
+      const response = await usersAPI.getUser(contact.value.owner_id)
+      if (response.data.data) {
+        contact.value.owner = response.data.data
+      }
+    }
+  } catch (err) {
+    console.error('Failed to load owner info:', err)
+  }
+}
+
+const loadTeamInfo = async () => {
+  try {
+    if (contact.value?.team_id) {
+      // Since there's no teamsAPI yet, we'll use a direct API call
+      const response = await api.get(`/teams/${contact.value.team_id}`)
+      if (response.data.data) {
+        contact.value.team = response.data.data
+      }
+    }
+  } catch (err) {
+    console.error('Failed to load team info:', err)
   }
 }
 
@@ -527,7 +606,7 @@ const createCompany = () => {
 
 const createDeal = () => {
   // Navigate to deal creation with contact pre-filled
-  router.push(`/deals/create?contact_id=${contact.value.id}`)
+  router.push(`/deals/new?contact_id=${contact.value.id}`)
 }
 
 const logActivity = () => {

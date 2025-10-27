@@ -58,6 +58,20 @@ const routes = [
     meta: { requiresAuth: false }
   },
   
+  // Public Contact Form Routes
+  {
+    path: '/contact',
+    name: 'ContactForm',
+    component: () => import('./views/public/ContactForm.vue'),
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/contact/success/:ticketId?',
+    name: 'ContactSuccess',
+    component: () => import('./views/public/ContactSuccess.vue'),
+    meta: { requiresAuth: false }
+  },
+  
   // OAuth callback routes (NEW - for Facebook Ads)
   {
     path: '/oauth/facebook/callback',
@@ -369,76 +383,127 @@ const routes = [
     meta: { requiresAuth: true }
   },
 
-  // Marketing Module routes (Parent/Child structure)
+  // Team Access Demo route
   {
-    path: '/marketing',
-    name: 'Marketing',
-    redirect: '/marketing/overview',
-    meta: { requiresAuth: true },
-    children: [
-      {
-        path: 'overview',
-        name: 'MarketingOverview',
-        component: () => import('./views/marketing/Overview.vue'),
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'email',
-        name: 'MarketingEmail',
-        component: () => import('./views/marketing/Email.vue'),
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'ads',
-        name: 'MarketingAds',
-        component: () => import('./views/marketing/Ads.vue'),
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'events',
-        name: 'MarketingEvents',
-        component: () => import('./views/marketing/Events.vue'),
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'buyer-intent',
-        name: 'MarketingBuyerIntent',
-        component: () => import('./views/marketing/BuyerIntent.vue'),
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'lead-scoring',
-        name: 'MarketingLeadScoring',
-        component: () => import('./views/marketing/LeadScoring.vue'),
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'journeys',
-        name: 'MarketingJourneys',
-        component: () => import('./views/marketing/Journeys.vue'),
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'forecasting',
-        name: 'MarketingForecasting',
-        component: () => import('./views/marketing/Forecasting.vue'),
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'meetings',
-        name: 'MarketingMeetings',
-        component: () => import('./views/marketing/Meetings.vue'),
-        meta: { requiresAuth: true }
-      },
-      {
-        path: 'analytics',
-        name: 'MarketingAnalytics',
-        component: () => import('./views/marketing/Analytics.vue'),
-        meta: { requiresAuth: true }
-      }
-    ]
+    path: '/team-access-demo',
+    name: 'TeamAccessDemo',
+    component: () => import('./examples/TeamAccessOverview.vue'),
+    meta: { requiresAuth: true }
   },
 
+  // Marketing Module routes (Parent/Child structure)
+ // Marketing Module routes (Parent/Child structure)
+{
+  path: '/marketing',
+  name: 'Marketing',
+  redirect: '/marketing/overview',
+  meta: { requiresAuth: true },
+  children: [
+    {
+      path: 'overview',
+      name: 'MarketingOverview',
+      component: () => import('./views/marketing/Overview.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: 'email',
+      name: 'MarketingEmail',
+      component: () => import('./views/marketing/Email.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: 'ads',
+      name: 'MarketingAds',
+      component: () => import('./views/marketing/Ads.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: 'events',
+      name: 'MarketingEvents',
+      component: () => import('./views/marketing/Events.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: 'buyer-intent',
+      name: 'MarketingBuyerIntent',
+      component: () => import('./views/marketing/BuyerIntent.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: 'lead-scoring',
+      name: 'MarketingLeadScoring',
+      component: () => import('./views/marketing/LeadScoring.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: 'journeys',
+      name: 'MarketingJourneys',
+      component: () => import('./views/marketing/Journeys.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: 'meetings',
+      name: 'MarketingMeetings',
+      component: () => import('./views/marketing/Meetings.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: 'analytics',
+      name: 'MarketingAnalytics',
+      component: () => import('./views/marketing/Analytics.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: 'social-media',
+      name: 'MarketingSocialMedia',
+      component: () => import('./views/marketing/SocialMedia.vue'),
+      meta: { requiresAuth: true }
+    }
+  ]
+},
+{
+  path: '/marketing/seo',
+  component: () => import('./views/marketing/seo/SeoLayout.vue'),
+  meta: { requiresAuth: true },
+  children: [
+    {
+      path: '',
+      name: 'SeoDashboard',
+      component: () => import('./views/marketing/seo/DashboardView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: 'pages',
+      name: 'SeoPages',
+      component: () => import('./views/marketing/seo/PagesView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: 'pages/:id',
+      name: 'SeoPageDetail',
+      component: () => import('./views/marketing/seo/PageDetailView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: 'recommendations',
+      name: 'SeoRecommendations',
+      component: () => import('./views/marketing/seo/RecommendationsView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: 'settings',
+      name: 'SeoSettings',
+      component: () => import('./views/marketing/seo/SettingsView.vue'),
+      meta: { requiresAuth: true }
+    }
+  ]
+},
+// Legacy route redirect for backwards compatibility
+{
+  path: '/marketing/seo-tools',
+  redirect: '/marketing/seo'
+},
+  
   // Sales Platform Module routes (Parent/Child structure)
   {
     path: '/sales',
@@ -487,9 +552,338 @@ const routes = [
         name: 'SalesQuoteTemplates',
         component: () => import('./views/sales/quote-templates/TemplatesList.vue'),
         meta: { requiresAuth: true }
+      },
+      {
+        path: 'sequences',
+        name: 'SalesSequences',
+        component: () => import('./views/sales/sequences/SequencesList.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'sequences/create',
+        name: 'SalesSequenceCreate',
+        component: () => import('./views/sales/sequences/SequenceForm.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'sequences/:id/edit',
+        name: 'SalesSequenceEdit',
+        component: () => import('./views/sales/sequences/SequenceForm.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'sequences/:id/view',
+        name: 'SalesSequenceView',
+        component: () => import('./views/sales/sequences/SequenceView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'forecasting',
+        name: 'SalesForecasting',
+        component: () => import('./views/sales/Forecasting.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'lead-assignment',
+        name: 'SalesLeadAssignment',
+        component: () => import('./views/sales/LeadAssignment.vue'),
+        meta: { requiresAuth: true }
       }
     ]
-  }
+  },
+
+  // Public Commerce Checkout Route (must be outside commerce parent)
+  {
+    path: '/commerce/checkout/:id',
+    name: 'CommerceCheckout',
+    component: () => import('./views/commerce/CommerceCheckout.vue'),
+    meta: { requiresAuth: false, public: true }
+  },
+
+  // Commerce Platform Module routes (Parent/Child structure)
+  {
+    path: '/commerce',
+    name: 'Commerce',
+    redirect: '/commerce/overview',
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: 'overview',
+        name: 'CommerceOverview',
+        component: () => import('./views/commerce/CommerceOverview.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'orders',
+        name: 'CommerceOrders',
+        component: () => import('./views/commerce/CommerceOrders.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'payment-links',
+        name: 'CommercePaymentLinks',
+        component: () => import('./views/commerce/CommercePaymentLinks.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'settings',
+        name: 'CommerceSettings',
+        component: () => import('./views/commerce/CommerceSettings.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'subscription-plans',
+        name: 'SubscriptionPlans',
+        component: () => import('./views/commerce/SubscriptionPlans.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'subscriptions',
+        name: 'SubscriptionsDashboard',
+        component: () => import('./views/commerce/SubscriptionsDashboard.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'branding',
+        name: 'CommerceBranding',
+        component: () => import('./views/commerce/CommerceBranding.vue'),
+        meta: { requiresAuth: true }
+      }
+    ]
+  },
+
+  // Public Subscription Checkout Route
+  {
+    path: '/commerce/subscription-checkout/:sessionId',
+    name: 'SubscriptionCheckout',
+    component: () => import('./views/commerce/PublicCheckout.vue'),
+    meta: { requiresAuth: false, public: true }
+  },
+
+  // Documents Module routes (moved to Sales Platform)
+  {
+    path: '/sales/documents',
+    name: 'SalesDocuments',
+    component: () => import('./views/documents/DocumentsPage.vue'),
+    meta: { requiresAuth: true }
+  },
+
+  // Service Platform Module routes (Parent/Child structure)
+  {
+    path: '/service',
+    name: 'ServicePlatform',
+    component: () => import('./modules/service/pages/ServicePlatform.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'TicketsView',
+        component: () => import('./modules/service/pages/TicketsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: ':id',
+        name: 'TicketDetailView',
+        component: () => import('./modules/service/pages/TicketDetailView.vue'),
+        props: true,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'closed',
+        name: 'ClosedTicketsView',
+        component: () => import('./modules/service/pages/TicketsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'open',
+        name: 'OpenTicketsView',
+        component: () => import('./modules/service/pages/TicketsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'in-progress',
+        name: 'InProgressTicketsView',
+        component: () => import('./modules/service/pages/TicketsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'resolved',
+        name: 'ResolvedTicketsView',
+        component: () => import('./modules/service/pages/TicketsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'feedback-analytics',
+        name: 'FeedbackAnalytics',
+        component: () => import('./modules/service/pages/FeedbackAnalytics.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'email-integration',
+        name: 'EmailIntegration',
+        component: () => import('./modules/service/pages/EmailIntegration.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'live-chat',
+        name: 'LiveChat',
+        component: () => import('./modules/service/pages/LiveChat.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'integration',
+        name: 'IntegrationWidget',
+        component: () => import('./views/Service/IntegrationWidget.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'help',
+        name: 'ServiceHelpCenter',
+        component: () => import('./modules/service/pages/help/PublicHelpCenter.vue'),
+        meta: { requiresAuth: false }
+      },
+      {
+        path: 'help/article/:slug',
+        name: 'ServiceArticleDetail',
+        component: () => import('./modules/service/pages/help/ArticleDetail.vue'),
+        meta: { requiresAuth: false }
+      },
+      {
+        path: 'help/admin',
+        name: 'ServiceHelpAdmin',
+        component: () => import('./modules/service/pages/help/AdminKnowledgeBase.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'help/admin/analytics',
+        name: 'ServiceHelpAnalytics',
+        component: () => import('./modules/service/pages/help/AnalyticsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'help/admin/articles/:id',
+        name: 'ServiceHelpArticleDetail',
+        component: () => import('./modules/service/pages/help/admin/ArticleDetail.vue'),
+        meta: { requiresAuth: true }
+      }
+    ]
+  },
+
+   // CMS / Content Platform Module routes
+   {
+    path: '/cms',
+    name: 'CMS',
+    component: () => import('./views/cms/CmsLayout.vue'),
+    redirect: '/cms/pages',
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: 'pages',
+        name: 'CmsPages',
+        component: () => import('./views/cms/PagesView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'editor/:id',
+        name: 'CmsPageEditor',
+        component: () => import('./views/cms/PageEditor.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'templates',
+        name: 'CmsTemplates',
+        component: () => import('./views/cms/TemplatesView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'personalization',
+        name: 'CmsPersonalization',
+        component: () => import('./views/cms/PersonalizationView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'ab-testing',
+        name: 'CmsAbTesting',
+        component: () => import('./views/cms/AbTestingView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'memberships',
+        name: 'CmsMemberships',
+        component: () => import('./views/cms/MembershipsView.vue'),
+        meta: { requiresAuth: true }
+      }
+    ]
+  },
+
+  // Copilot Module routes
+  {
+    path: '/copilot',
+    name: 'Copilot',
+    redirect: '/copilot/dashboard',
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: 'dashboard',
+        name: 'CopilotDashboard',
+        component: () => import('./views/copilot/CopilotDashboard.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'help',
+        name: 'CopilotHelp',
+        component: () => import('./views/copilot/CopilotHelp.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'features',
+        name: 'CopilotFeatures',
+        component: () => import('./views/copilot/CopilotFeatures.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'history',
+        name: 'CopilotHistory',
+        component: () => import('./views/copilot/CopilotHistory.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'analytics',
+        name: 'CopilotAnalytics',
+        component: () => import('./views/copilot/CopilotAnalytics.vue'),
+        meta: { requiresAuth: true }
+      }
+    ]
+  },
+
+  // Help Center Public Routes (standalone, no authentication required)
+  {
+    path: '/help',
+    name: 'PublicHelpCenter',
+    component: () => import('./modules/service/pages/help/PublicHelpCenter.vue'),
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/help/advanced',
+    name: 'HelpCenterAdvanced',
+    component: () => import('./modules/service/pages/help/HelpCenter.vue'),
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/help/article/:slug',
+    name: 'PublicArticleDetail',
+    component: () => import('./modules/service/pages/help/ArticleDetail.vue'),
+    meta: { requiresAuth: false }
+  },
+
+  // Widget routes (public)
+  {
+    path: '/widget',
+    name: 'WidgetView',
+    component: () => import('./views/EnhancedWidgetView.vue'),
+    meta: { requiresAuth: false }
+  },
+
 ]
 
 const router = createRouter({
@@ -503,7 +897,9 @@ router.beforeEach((to, from, next) => {
   console.log('Router guard:', { 
     to: to.path, 
     from: from.path, 
-    isAuthenticated: !!isAuthenticated 
+    isAuthenticated: !!isAuthenticated,
+    toMeta: to.meta,
+    toName: to.name
   })
   
   // Get user role from stored user data (handle both nested roles array and flat role)
@@ -534,8 +930,17 @@ router.beforeEach((to, from, next) => {
   
   // Navigation guard logic (console logs removed for production)
   
-  const requiresAuth = to.meta?.requiresAuth ?? true
+  const requiresAuth = to.meta?.public ? false : (to.meta?.requiresAuth ?? true)
   const requiresAdmin = to.meta?.requiresAdmin ?? false
+  
+  console.log('Router guard decision:', {
+    path: to.path,
+    isPublic: to.meta?.public,
+    requiresAuth,
+    requiresAdmin,
+    isAuthenticated: !!isAuthenticated,
+    requiresEmailVerification
+  })
   
   if (requiresAuth && !isAuthenticated) {
     console.log('Router: Redirecting to login - not authenticated')

@@ -289,7 +289,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { publicQuotesAPI } from '@/services/publicQuotesAPI'
-import { success, error } from '@/utils/notifications'
+import { success, error as showError } from '@/utils/notifications'
 
 const route = useRoute()
 
@@ -344,7 +344,7 @@ const confirmAccept = async () => {
     quote.value.status = 'accepted'
   } catch (err) {
     console.error('Error accepting quote:', err)
-    error('Failed to accept quote.')
+    showError('Failed to accept quote.')
   } finally {
     actionLoading.value = false
   }
@@ -360,7 +360,7 @@ const confirmReject = async () => {
     quote.value.status = 'rejected'
   } catch (err) {
     console.error('Error rejecting quote:', err)
-    error('Failed to reject quote.')
+    showError('Failed to reject quote.')
   } finally {
     actionLoading.value = false
   }
@@ -403,4 +403,8 @@ onMounted(() => {
 <style scoped>
 /* Additional custom styles if needed */
 </style>
+
+
+
+
 

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RC Convergio Enhanced Widget Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #1f2937;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #6b7280;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        .demo-section h3 {
+            color: #1f2937;
+            margin-top: 0;
+        }
+        .code-block {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .feature-list li:before {
+            content: "✅ ";
+            margin-right: 8px;
+        }
+        .note {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .note strong {
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 RC Convergio Enhanced Widget</h1>
+        <p class="subtitle">Dual-tab Support Widget with Knowledge Base + Ticket System</p>
+        
+        <div class="demo-section">
+            <h3>🎯 Features</h3>
+            <ul class="feature-list">
+                <li>Dynamic module loading based on configuration</li>
+                <li>Help Center tab with search and categories</li>
+                <li>Contact Us tab for ticket submission</li>
+                <li>Article feedback system (Helpful/Not Helpful)</li>
+                <li>Automatic tab switching when article is not helpful</li>
+                <li>Responsive design with smooth animations</li>
+                <li>Demo data fallback when APIs are unavailable</li>
+                <li>Environment-based API configuration</li>
+            </ul>
+        </div>
+
+        <div class="demo-section">
+            <h3>⚙️ Configuration</h3>
+            <p>The widget is configured using <code>window.RCWidgetConfig</code>:</p>
+            <div class="code-block">
+&lt;script&gt;
+window.RCWidgetConfig = {
+    tenant: 42,                    // Required: Your tenant ID
+    modules: ['ticket', 'faq'],    // Optional: Which modules to load
+    theme: 'light',                // Optional: Widget theme
+    position: 'bottom-right',      // Optional: Widget position
+    buttonText: '💬 Help & Support', // Optional: Button text
+    frontendUrl: 'http://localhost:5174', // Optional: Frontend URL
+    apiBase: 'http://localhost:8000',     // Optional: API base URL
+    debug: false                   // Optional: Enable debug logging
+};
+&lt;/script&gt;
+&lt;script src="http://localhost:5174/embed/rc-widget.js" async&gt;&lt;/script&gt;
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>🔧 API Endpoints</h3>
+            <p>The widget makes calls to these endpoints:</p>
+            <div class="code-block">
+GET /api/help/categories?tenant={tenant}
+GET /api/help/articles?tenant={tenant}&query={search}
+GET /api/help/articles/{slug}?tenant={tenant}
+POST /api/help/articles/{id}/feedback?tenant={tenant}
+POST /public/tickets
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>📱 Module Configuration</h3>
+            <p>Control which features are available:</p>
+            <div class="code-block">
+// Both Help Center and Contact Us
+modules: ['ticket', 'faq']
+
+// Only Help Center
+modules: ['faq']
+
+// Only Contact Us
+modules: ['ticket']
+            </div>
+        </div>
+
+        <div class="note">
+            <strong>Note:</strong> The widget is currently loaded on this page. Look for the floating "Help & Support" button in the bottom-right corner. Click it to see the enhanced dual-tab interface in action!
+        </div>
+
+        <div class="demo-section">
+            <h3>🎨 Design Features</h3>
+            <ul class="feature-list">
+                <li>Consistent RC Convergio branding and colors</li>
+                <li>Smooth tab transitions and animations</li>
+                <li>Responsive layout that adapts to screen size</li>
+                <li>Loading states and error handling</li>
+                <li>Accessible keyboard navigation</li>
+                <li>Mobile-optimized interface</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- RC Widget Configuration -->
+    <script>
+    window.RCWidgetConfig = {
+        tenant: 42,
+        modules: ['ticket', 'faq'],
+        theme: 'light',
+        position: 'bottom-right',
+        buttonText: '💬 Help & Support',
+        frontendUrl: 'http://localhost:5174',
+        apiBase: 'http://localhost:8000',
+        debug: true
+    };
+    </script>
+    <script src="http://localhost:5174/embed/rc-widget.js" async></script>
+</body>
+</html>

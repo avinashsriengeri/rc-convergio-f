@@ -78,7 +78,21 @@ export const useQuotesStore = defineStore('quotes', () => {
     
     try {
       const response = await quotesAPI.getQuote(id)
-      state.value.selected = response.data.data || response.data
+      console.log('Full quote API response:', response)
+      
+      // Extract quote data and documents from the response
+      const quote = response.data.data || response.data
+      const documents = response.data.documents || []
+      
+      // Add documents to the quote object if they exist
+      if (documents.length > 0) {
+        quote.documents = documents
+        console.log(`Quote store: Added ${documents.length} documents to quote ${quote.id}`)
+        console.log('Quote store: Documents data:', documents)
+      }
+      
+      state.value.selected = quote
+      console.log('Quote fetched from API with documents:', quote)
       return state.value.selected
     } catch (err) {
       state.value.error = 'Failed to fetch quote'

@@ -93,11 +93,11 @@ const performHealthCheck = async () => {
     healthStatus.value.api = healthResponse.status === 200
     
     // Check database connectivity through a simple query
-    const dbResponse = await api.get('/api/tracking/actions')
+    const dbResponse = await api.get('/tracking/actions')
     healthStatus.value.database = dbResponse.status === 200
     
     // Check tracking endpoint
-    const trackingResponse = await api.get('/api/tracking/intent?per_page=1')
+    const trackingResponse = await api.get('/tracking/intent?per_page=1')
     healthStatus.value.tracking = trackingResponse.status === 200
     
     healthStatus.value.lastCheck = new Date().toISOString()

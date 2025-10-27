@@ -26,7 +26,7 @@ export function useFeatures() {
 
     try {
       console.log('Fetching feature statuses...')
-      const response = await api.get('/api/features/status')
+      const response = await api.get('/features/status')
       
       // Handle both response formats
       const featuresData = response.data.data || response.data

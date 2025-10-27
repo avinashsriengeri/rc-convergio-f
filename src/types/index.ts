@@ -72,6 +72,7 @@ export interface Deal extends BaseEntity {
   closed_at?: string
   won_at?: string
   lost_at?: string
+  documents?: any[] // Documents attached to the deal
 }
 
 export type DealStatus = 'open' | 'won' | 'lost' | 'closed'
