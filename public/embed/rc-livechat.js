@@ -10,7 +10,7 @@
   // Configuration
   let config = window.RCLiveChatConfig || {};
   let tenantId = config.tenant || null;
-  let baseUrl = config.baseUrl || '';
+  let baseUrl = config.baseUrl || (window.location.protocol + '//' + window.location.hostname + ':5173');
   let isOpen = false;
   let conversationId = null;
   let sessionId = null;
@@ -19,7 +19,7 @@
   let messagePollingInterval = null;
   let lastMessageId = null;
   let seenMessageIds = new Set(); // Track all seen message IDs
-  let isDevelopment = true; // Set to false in production
+  let isDevelopment = false; // Enable polling for testing
 
   // Widget Elements
   let widgetContainer = null;

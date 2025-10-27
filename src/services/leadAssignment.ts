@@ -515,7 +515,7 @@ export const leadAssignmentService = {
       created_at_formatted: new Date(log.created_at).toLocaleString(),
       assignment_type_badge: log.assignment_type === 'automatic' ? 'Automatic' : 'Manual',
       assignment_type_color: log.assignment_type === 'automatic' ? 'blue' : 'purple',
-      assigned_to_name: log.assigned_to ? log.assigned_to.name : 'Unassigned',
+      assigned_to_name: log.assigned_user ? log.assigned_user.name : 'Unassigned',
       rule_name: log.rule ? log.rule.name : 'Default Assignment'
     }
   }

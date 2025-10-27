@@ -391,16 +391,25 @@
             </form>
 
             <!-- Success Message -->
-            <div v-if="success" class="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
-              <div class="flex items-center">
-                <svg class="w-5 h-5 text-green-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div v-if="success" class="mt-3 bg-green-50 border border-green-200 rounded-lg p-4">
+              <div class="flex items-start">
+                <svg class="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
-                <div>
-                  <h3 class="text-sm font-medium text-green-800">Ticket Submitted Successfully!</h3>
-                  <p class="text-sm text-green-700 mt-1">
+                <div class="flex-1">
+                  <h3 class="text-sm font-medium text-green-800 mb-1">Ticket Submitted Successfully!</h3>
+                  <p class="text-sm text-green-700 mb-2">
                     Your ticket #{{ ticketId }} has been created. We'll get back to you soon.
                   </p>
+                  <p class="text-xs text-green-600 mb-3">
+                    You can submit another ticket below or browse our help center.
+                  </p>
+                  <button
+                    @click="success = false"
+                    class="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-md hover:bg-green-200 transition-colors"
+                  >
+                    Submit Another Ticket
+                  </button>
                 </div>
               </div>
             </div>
@@ -793,12 +802,15 @@ const submitTicket = async () => {
 
     console.log('Submitting ticket:', ticketData)
     const response = await api.post('/public/tickets', ticketData)
+    console.log('Ticket response:', response)
 
-    if (response.data.data) {
-      ticketId.value = response.data.data.id
+    // Handle different response structures
+    if (response.data && (response.data.data || response.data.ticket)) {
+      const ticket = response.data.data || response.data.ticket
+      ticketId.value = ticket.id
       success.value = true
       
-      // Reset form
+      // Reset form immediately after success
       form.value = {
         name: '',
         email: '',
@@ -807,11 +819,44 @@ const submitTicket = async () => {
         priority: 'medium'
       }
 
-      // Switch to FAQ tab after success
+      console.log('Ticket created successfully:', ticketId.value)
+
+      // Keep success message visible longer and don't auto-switch tabs
       setTimeout(() => {
-        activeTab.value = 'faq'
         success.value = false
-      }, 3000)
+        // Only switch to FAQ if user doesn't interact with the form
+        if (modules.value.includes('faq')) {
+          activeTab.value = 'faq'
+        }
+      }, 5000) // Increased from 3 seconds to 5 seconds
+    } else if (response.status === 201 || response.status === 200) {
+      // Fallback: if we get a successful status but unexpected structure
+      console.log('Success response with unexpected structure, treating as success')
+      ticketId.value = response.data.id || 'Unknown'
+      success.value = true
+      
+      // Reset form immediately after success
+      form.value = {
+        name: '',
+        email: '',
+        subject: '',
+        message: '',
+        priority: 'medium'
+      }
+
+      console.log('Ticket created successfully (fallback):', ticketId.value)
+
+      // Keep success message visible longer and don't auto-switch tabs
+      setTimeout(() => {
+        success.value = false
+        // Only switch to FAQ if user doesn't interact with the form
+        if (modules.value.includes('faq')) {
+          activeTab.value = 'faq'
+        }
+      }, 5000)
+    } else {
+      console.error('Unexpected response structure:', response.data)
+      throw new Error('Invalid response format')
     }
   } catch (err) {
     console.error('Error submitting ticket:', err)

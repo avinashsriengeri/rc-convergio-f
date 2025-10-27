@@ -175,8 +175,8 @@
               <div class="text-sm text-gray-900">
                 {{ log.assigned_to_name }}
               </div>
-              <div v-if="log.assigned_to" class="text-sm text-gray-500">
-                {{ log.assigned_to.email }}
+              <div v-if="log.assigned_user" class="text-sm text-gray-500">
+                {{ log.assigned_user.email }}
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
