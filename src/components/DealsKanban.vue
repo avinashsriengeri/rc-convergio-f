@@ -174,6 +174,13 @@
     <DealModal
       v-if="showModal"
       :deal="selectedDeal"
+      :pipelines="pipelines"
+      :stages="stages"
+      :contacts="[]"
+      :companies="[]"
+      :owners="owners"
+      :dealStatuses="['Open', 'Won', 'Lost', 'Closed']"
+      :currencies="['USD', 'EUR', 'GBP']"
       @close="closeModal"
       @saved="onDealSaved"
     />
@@ -182,7 +189,7 @@
 
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
-import { dealsAPI, pipelinesAPI, stagesAPI } from '@/services/api'
+import { dealsAPI, pipelinesAPI, stagesAPI, metadataAPI } from '@/services/api'
 import { success, error } from '@/utils/notifications'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import DealModal from '@/components/modals/DealModal.vue'
@@ -203,6 +210,7 @@ const loading = ref(false)
 const deals = ref([])
 const pipelines = ref([])
 const stages = ref([])
+const owners = ref([])
 const selectedPipeline = ref(props.pipelineId || '')
 const showModal = ref(false)
 const selectedDeal = ref(null)
@@ -221,6 +229,17 @@ const loadPipelines = async () => {
     }
   } catch (err) {
     console.error('Load pipelines error:', err)
+  }
+}
+
+// Load owners
+const loadOwners = async () => {
+  try {
+    const response = await metadataAPI.getOwners()
+    owners.value = response.data.data || []
+  } catch (err) {
+    console.error('Error loading owners:', err)
+    owners.value = []
   }
 }
 
@@ -360,5 +379,6 @@ const formatDate = (date) => {
 // Initialize
 onMounted(() => {
   loadPipelines()
+  loadOwners()
 })
 </script>

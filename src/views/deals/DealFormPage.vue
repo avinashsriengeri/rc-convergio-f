@@ -238,12 +238,14 @@
                 <select
                   v-model="form.owner_id"
                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  :disabled="isEditing"
+                  :disabled="isEditing || usersLoading"
                   :required="!isEditing"
                 >
-                  <option value="">Select Owner</option>
+                  <option value="">
+                    {{ usersLoading ? 'Loading users...' : 'Select Owner' }}
+                  </option>
                   <option
-                    v-for="user in currentUserAsArray"
+                    v-for="user in availableUsers"
                     :key="user.id"
                     :value="user.id"
                   >
@@ -560,6 +562,7 @@ import { useAuth } from '../../composables/useAuth'
 import { success, error } from '../../utils/notifications'
 import { CURRENCIES, DEAL_STATUSES } from '../../utils/constants'
 import { dealFormSchema } from '../../utils/validation'
+import { fetchUsersForDropdown } from '../../helpers/fetchUsersForDropdown'
 import type { DealFormData, PipelineFormData, StageFormData, Contact } from '../../types'
 import BaseButton from '../../components/ui/BaseButton.vue'
 import BaseInput from '../../components/ui/BaseInput.vue'
@@ -585,6 +588,10 @@ const showStageModal = ref(false)
 const editingPipeline = ref(false)
 const editingStage = ref(false)
 const errors = reactive<Record<string, string>>({})
+
+// Users data
+const users = ref<Array<{id: number, name: string, email: string, role: string}>>([])
+const usersLoading = ref(false)
 
 // Form data
 const form = reactive<DealFormData>({
@@ -653,17 +660,9 @@ const stagesForPipeline = computed(() => {
   return stagesStore.stages.filter(stage => stage.pipeline_id === selectedPipelineId.value)
 })
 
-// Get current user as array for dropdown compatibility
-const currentUserAsArray = computed(() => {
-  if (currentUser.value && currentUser.value.id) {
-    return [{
-      id: currentUser.value.id,
-      name: currentUser.value.name || 'Current User',
-      email: currentUser.value.email || '',
-      role: currentUser.value.role || 'user'
-    }]
-  }
-  return []
+// Get users for dropdown
+const availableUsers = computed(() => {
+  return users.value
 })
 
 const isFormValid = computed(() => {
@@ -685,6 +684,27 @@ watch(() => refsStore.contacts, (newContacts) => {
 }, { immediate: true, deep: true })
 
 // Methods
+const fetchUsers = async () => {
+  usersLoading.value = true
+  try {
+    const fetchedUsers = await fetchUsersForDropdown()
+    users.value = fetchedUsers
+  } catch (err: any) {
+    console.error('Failed to fetch users:', err)
+    // Fallback to current user if API fails
+    if (currentUser.value && currentUser.value.id) {
+      users.value = [{
+        id: currentUser.value.id,
+        name: currentUser.value.name || 'Current User',
+        email: currentUser.value.email || '',
+        role: currentUser.value.role || 'user'
+      }]
+    }
+  } finally {
+    usersLoading.value = false
+  }
+}
+
 const validateForm = async () => {
   try {
     await dealFormSchema.validate(form, { abortEarly: false })
@@ -899,7 +919,8 @@ onMounted(async () => {
   // Initialize data
   await Promise.all([
     pipelinesStore.fetchPipelines(),
-    refsStore.initializeData()
+    refsStore.initializeData(),
+    fetchUsers()
   ])
   
   // Force a reactivity update
@@ -910,7 +931,11 @@ onMounted(async () => {
 
   // Auto-select current user as owner for new deals
   if (!isEditing.value && currentUser.value && currentUser.value.id) {
-    form.owner_id = currentUser.value.id
+    // Check if current user is in the available users list
+    const currentUserInList = users.value.find((user: any) => user.id === currentUser.value.id)
+    if (currentUserInList) {
+      form.owner_id = currentUser.value.id
+    }
   }
 
   // Check for company pre-fill from query parameters

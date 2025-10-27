@@ -237,7 +237,8 @@
     <!-- Main Layout -->
         <div class="flex flex-1" :class="isAuthenticated ? 'overflow-auto' : ($route.path === '/' ? 'overflow-auto' : 'overflow-hidden')">
       <!-- Sidebar (for authenticated users) -->
-      <div v-if="isAuthenticated" class="w-64 bg-sidebar-bg text-gray-700 shadow-lg border-r border-gray-200 hidden md:block overflow-hidden">
+      <!-- <div v-if="isAuthenticated" class="w-64 bg-sidebar-bg text-gray-700 shadow-lg border-r border-gray-200 hidden md:block overflow-hidden"> -->
+        <div v-if="isAuthenticated && $route.path !== '/widget'" class="w-64 bg-sidebar-bg text-gray-700 shadow-lg border-r border-gray-200 hidden md:block overflow-hidden">
         <!-- Navigation (no duplicate branding) -->
         <nav class="pt-2">
           <router-link
@@ -1115,7 +1116,8 @@
       <!-- Main content area -->
         <div class="flex-1 flex flex-col" :class="isAuthenticated ? 'overflow-auto' : ($route.path === '/' ? 'overflow-auto' : 'h-full overflow-hidden')">
         <!-- Top navigation (for unauthenticated users, excluding login page) -->
-        <nav v-if="!isAuthenticated && !['/', '/login', '/register', '/forgot-password'].includes($route.path)" class="bg-white shadow-sm border-b border-gray-200">
+        <!-- <nav v-if="!isAuthenticated && !['/', '/login', '/register', '/forgot-password'].includes($route.path)" class="bg-white shadow-sm border-b border-gray-200"> -->
+          <nav v-if="!isAuthenticated && !['/', '/login', '/register', '/forgot-password', '/widget'].includes($route.path)" class="bg-white shadow-sm border-b border-gray-200">  
           <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
               <div class="flex items-center">

@@ -245,103 +245,6 @@
           </div>
         </div>
 
-        <!-- Meetings Analytics -->
-        <div v-if="meetingsAnalytics" class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
-          <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900">{{ $t('marketing.meetings.analytics.title') }}</h3>
-          </div>
-          <div class="p-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <!-- Left Column: Provider Breakdown -->
-              <div>
-                <h4 class="text-sm font-medium text-gray-900 mb-4">{{ $t('marketing.meetings.analytics.provider_breakdown') }}</h4>
-                <div class="space-y-4">
-                  <div v-for="provider in meetingsAnalytics.provider_breakdown" :key="provider.provider" class="border border-gray-200 rounded-lg p-4">
-                    <div class="flex justify-between items-start mb-2">
-                      <h5 class="text-sm font-medium text-gray-900 capitalize">{{ provider.provider }}</h5>
-                      <span class="text-sm font-medium text-blue-600">{{ provider.percentage }}%</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 text-xs text-gray-600">
-                      <div>
-                        <span class="font-medium">{{ $t('marketing.meetings.analytics.count') }}:</span>
-                        {{ formatNumber(provider.count) }}
-                      </div>
-                      <div>
-                        <span class="font-medium">{{ $t('marketing.meetings.analytics.avg_duration') }}:</span>
-                        {{ formatDuration(provider.avg_duration) }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Right Column: Status Breakdown -->
-              <div>
-                <h4 class="text-sm font-medium text-gray-900 mb-4">{{ $t('marketing.meetings.analytics.status_breakdown') }}</h4>
-                <div class="space-y-4">
-                  <div v-for="status in meetingsAnalytics.status_breakdown" :key="status.status" class="border border-gray-200 rounded-lg p-4">
-                    <div class="flex justify-between items-start mb-2">
-                      <h5 class="text-sm font-medium text-gray-900 capitalize">{{ status.status.replace('_', ' ') }}</h5>
-                      <span class="text-sm font-medium text-green-600">{{ status.percentage }}%</span>
-                    </div>
-                    <div class="text-xs text-gray-600">
-                      <span class="font-medium">{{ $t('marketing.meetings.analytics.count') }}:</span>
-                      {{ formatNumber(status.count) }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Top Contacts -->
-            <div class="mt-8">
-              <h4 class="text-sm font-medium text-gray-900 mb-4">{{ $t('marketing.meetings.analytics.top_contacts') }}</h4>
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div v-for="contact in meetingsAnalytics.top_contacts?.slice(0, 6)" :key="contact.contact_name" class="border border-gray-200 rounded-lg p-4">
-                  <h5 class="text-sm font-medium text-gray-900 mb-2">{{ contact.contact_name }}</h5>
-                  <div class="space-y-2 text-xs text-gray-600">
-                    <div class="flex justify-between">
-                      <span>{{ $t('marketing.meetings.analytics.meetings_count') }}:</span>
-                      <span class="font-medium">{{ contact.meetings_count }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                      <span>{{ $t('marketing.meetings.analytics.completion_rate') }}:</span>
-                      <span class="font-medium text-green-600">{{ contact.completion_rate }}%</span>
-                    </div>
-                    <div class="flex justify-between">
-                      <span>{{ $t('marketing.meetings.analytics.avg_duration') }}:</span>
-                      <span class="font-medium">{{ formatDuration(contact.avg_duration) }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Summary Stats -->
-            <div class="mt-8 pt-6 border-t border-gray-200">
-              <h4 class="text-sm font-medium text-gray-900 mb-4">{{ $t('marketing.meetings.analytics.summary_stats') }}</h4>
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="text-center p-3 bg-blue-50 rounded-lg">
-                  <div class="text-lg font-semibold text-blue-600">{{ meetingsAnalytics.summary.completion_rate }}%</div>
-                  <div class="text-sm text-blue-600">{{ $t('marketing.meetings.analytics.completion_rate') }}</div>
-                </div>
-                <div class="text-center p-3 bg-yellow-50 rounded-lg">
-                  <div class="text-lg font-semibold text-yellow-600">{{ meetingsAnalytics.summary.no_show_rate }}%</div>
-                  <div class="text-sm text-yellow-600">{{ $t('marketing.meetings.analytics.no_show_rate') }}</div>
-                </div>
-                <div class="text-center p-3 bg-red-50 rounded-lg">
-                  <div class="text-lg font-semibold text-red-600">{{ meetingsAnalytics.summary.cancellation_rate }}%</div>
-                  <div class="text-sm text-red-600">{{ $t('marketing.meetings.analytics.cancellation_rate') }}</div>
-                </div>
-                <div class="text-center p-3 bg-green-50 rounded-lg">
-                  <div class="text-lg font-semibold text-green-600">{{ formatDuration(meetingsAnalytics.summary.avg_duration_minutes) }}</div>
-                  <div class="text-sm text-green-600">{{ $t('marketing.meetings.analytics.avg_duration') }}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <!-- Meetings Table -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
           <!-- Table Header -->
@@ -860,7 +763,6 @@ const meetingProviders = ref([])
 const contacts = ref([])
 const contactsLoading = ref(false)
 const contactSearchQuery = ref('')
-const meetingsAnalytics = ref(null)
 
 // Computed property for filtered contacts
 const filteredContacts = computed(() => {
@@ -1013,15 +915,6 @@ const loadMeetings = async () => {
   }
 }
 
-const loadMeetingsAnalytics = async () => {
-  try {
-    const response = await meetingsService.getMeetingsAnalytics()
-    meetingsAnalytics.value = response.data
-  } catch (err) {
-    console.error('Failed to load meetings analytics:', err)
-    // Don't show error for analytics, it's optional
-  }
-}
 
 const loadContacts = async (searchQuery = '') => {
   contactsLoading.value = true
@@ -1296,9 +1189,6 @@ const getRelativeTime = (dateString) => meetingsHelpers.getRelativeTime(dateStri
 
 // Lifecycle
 onMounted(async () => {
-  await Promise.all([
-    loadMeetings(),
-    loadMeetingsAnalytics()
-  ])
+  await loadMeetings()
 })
 </script>

@@ -2309,7 +2309,14 @@ const bulkArchiveCampaigns = async () => {
 // Import/Export
 const exportCampaigns = async () => {
   try {
-    const blob = await campaignsStore.exportCampaigns(filters)
+    // Clean up filters before export (same logic as fetchCampaigns)
+    const params = { ...filters }
+    if (params.status === 'all') delete params.status
+    if (params.type === 'all') delete params.type
+    if (!params.owner_id) delete params.owner_id
+    if (params.date_range === 'all') delete params.date_range
+    
+    const blob = await campaignsStore.exportCampaigns(params)
     const url = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url

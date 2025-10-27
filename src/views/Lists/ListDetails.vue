@@ -186,11 +186,13 @@
           </div>
         </div>
 
-        <!-- Contacts Table (Static Lists Only) -->
-        <div v-if="list.type === 'static'" class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <!-- Contacts Table (Both Static and Dynamic Lists) -->
+        <div v-if="list.contacts && list.contacts.length > 0" class="bg-white rounded-lg shadow-sm border border-gray-200">
           <div class="px-6 py-4 border-b border-gray-200">
             <div class="flex items-center justify-between">
-              <h3 class="text-lg font-medium text-gray-900">List Members</h3>
+              <h3 class="text-lg font-medium text-gray-900">
+                {{ list.type === 'dynamic' ? 'Segment Members' : 'List Members' }}
+              </h3>
               <div class="flex items-center space-x-3">
                 <BaseInput
                   v-model="searchQuery"
@@ -236,8 +238,8 @@
                       <div class="text-sm font-medium text-gray-900">{{ getContactFullName(contact) }}</div>
                       <div class="text-sm text-gray-500">{{ contact.email }}</div>
                     </div>
-                    <div v-if="contact.company" class="text-sm text-gray-500">
-                      {{ contact.company }}
+                    <div v-if="contact.company?.name" class="text-sm text-gray-500">
+                      {{ contact.company.name }}
                     </div>
                   </div>
                   <div class="flex items-center space-x-2">
@@ -253,7 +255,9 @@
                       </svg>
                       View
                     </BaseButton>
+                    <!-- Only show remove button for static lists -->
                     <button
+                      v-if="list.type === 'static'"
                       @click="removeFromList(contact)"
                       class="text-gray-400 hover:text-red-600 p-1 rounded"
                       title="Remove from list"
@@ -275,7 +279,7 @@
     <ConfirmationModal
       v-if="showRemoveModal"
       title="Remove Contact"
-      :message="`Are you sure you want to remove '${contactToRemove?.name || 'this contact'}' from the list?`"
+      :message="`Are you sure you want to remove '${contactToRemove ? getContactFullName(contactToRemove) : 'this contact'}' from the list?`"
       confirm-text="Remove"
       confirm-variant="danger"
       @confirm="confirmRemove"
@@ -295,9 +299,20 @@ import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
 
 interface Contact {
   id: number
-  name: string
+  first_name: string
+  last_name: string
   email: string
-  company?: string
+  phone?: string
+  company?: {
+    id: number
+    name: string
+    size: number
+  }
+  owner?: {
+    id: number
+    name: string
+  }
+  created_at: string
 }
 
 interface ListRule {
@@ -346,11 +361,13 @@ const filteredContacts = computed(() => {
   }
   
   const query = searchQuery.value.toLowerCase()
-  return list.value.contacts.filter(contact => 
-    contact.name.toLowerCase().includes(query) ||
-    contact.email.toLowerCase().includes(query) ||
-    contact.company?.toLowerCase().includes(query)
-  )
+  return list.value.contacts.filter(contact => {
+    const fullName = getContactFullName(contact).toLowerCase()
+    const companyName = contact.company?.name?.toLowerCase() || ''
+    return fullName.includes(query) ||
+           contact.email.toLowerCase().includes(query) ||
+           companyName.includes(query)
+  })
 })
 
 // Methods
@@ -417,7 +434,7 @@ const exportList = async () => {
     // Mock CSV download
     const csvContent = "data:text/csv;charset=utf-8,Name,Email,Company\n" +
       (list.value?.contacts || []).map(contact => 
-        `${contact.name},${contact.email},${contact.company || ''}`
+        `${getContactFullName(contact)},${contact.email},${contact.company?.name || ''}`
       ).join('\n')
     
     const encodedUri = encodeURI(csvContent)
@@ -495,12 +512,15 @@ const formatDate = (dateString: string) => {
 
 // Helper functions for contact display
 const getContactInitials = (contact: Contact) => {
-  if (!contact.name) return 'N/A'
-  return contact.name.charAt(0).toUpperCase()
+  if (!contact.first_name && !contact.last_name) return 'N/A'
+  const firstInitial = contact.first_name ? contact.first_name.charAt(0).toUpperCase() : ''
+  const lastInitial = contact.last_name ? contact.last_name.charAt(0).toUpperCase() : ''
+  return firstInitial + lastInitial
 }
 
 const getContactFullName = (contact: Contact) => {
-  return contact.name || 'Unnamed Contact'
+  if (!contact.first_name && !contact.last_name) return 'Unnamed Contact'
+  return `${contact.first_name || ''} ${contact.last_name || ''}`.trim()
 }
 
 // Lifecycle

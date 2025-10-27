@@ -102,7 +102,7 @@ export const meetingsService = {
   // Get meetings analytics
   async getMeetingsAnalytics(params = {}) {
     try {
-      const response = await api.get('/analytics/meetings', { params })
+      const response = await api.get('/meetings/analytics', { params })
       return response.data
     } catch (error) {
       console.error('Error fetching meetings analytics:', error)
