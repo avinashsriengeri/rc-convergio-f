@@ -266,13 +266,12 @@
             </div>
 
             <!-- Render Components -->
-            <draggable
-              v-model="pageComponents"
-              item-key="id"
-              class="space-y-4"
-              handle=".component-handle"
-            >
-              <template #item="{ element, index }">
+            <div class="space-y-4">
+              <div
+                v-for="(element, index) in pageComponents"
+                :key="element.id"
+                class="component-handle"
+              >
                 <component
                   :is="getComponentType(element.type)"
                   :data="element.data"
@@ -281,8 +280,8 @@
                   @delete="deleteComponent(index)"
                   @edit="editComponent(index)"
                 />
-              </template>
-            </draggable>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -308,6 +307,19 @@
               :component="pageComponents[selectedComponent]"
               @update="updateComponentProperties"
             />
+            
+            <!-- Save Properties Button -->
+            <div class="mt-4 pt-4 border-t border-gray-200">
+              <button
+                @click="saveComponentProperties"
+                class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center space-x-2"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Save Properties</span>
+              </button>
+            </div>
           </div>
 
           <div v-else class="text-center py-12">
@@ -333,7 +345,6 @@
 import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useCmsStore } from '@/stores/cms';
-import draggable from 'vuedraggable';
 
 // Component imports
 import HeroComponent from '@/components/cms/builder/HeroComponent.vue';
@@ -534,6 +545,47 @@ const updateComponentProperties = (updatedData) => {
   }
 };
 
+const saveComponentProperties = () => {
+  if (selectedComponent.value !== null) {
+    // Force a deep copy to ensure Vue reactivity is triggered
+    const currentComponent = pageComponents.value[selectedComponent.value];
+    const updatedComponent = {
+      id: currentComponent.id,
+      type: currentComponent.type,
+      data: { ...currentComponent.data }
+    };
+    
+    // Replace the component with the updated copy
+    pageComponents.value[selectedComponent.value] = updatedComponent;
+    
+    // Force Vue to recognize the change
+    pageComponents.value = [...pageComponents.value];
+    
+    console.log('Component properties saved:', pageComponents.value[selectedComponent.value]);
+    
+    // Show success feedback
+    const button = document.querySelector('.bg-blue-600');
+    if (button) {
+      const originalText = button.innerHTML;
+      button.innerHTML = `
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <span>Saved!</span>
+      `;
+      button.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+      button.classList.add('bg-green-600', 'hover:bg-green-700');
+      
+      // Reset after 2 seconds
+      setTimeout(() => {
+        button.innerHTML = originalText;
+        button.classList.remove('bg-green-600', 'hover:bg-green-700');
+        button.classList.add('bg-blue-600', 'hover:bg-blue-700');
+      }, 2000);
+    }
+  }
+};
+
 // Helper function for category icons
 const getCategoryIcon = (category) => {
   const icons = {
@@ -597,7 +649,7 @@ const saveDraft = async () => {
         name: templateName.value || pageData.title,
         title: templateName.value || pageData.title,
         description: templateDescription.value || `Professional ${templateCategory.value} template`,
-        content: contentToSave,
+        json_structure: contentToSave,
         category: templateCategory.value,
         type: 'page',
         template_type: 'page',
@@ -691,7 +743,7 @@ const publish = async () => {
         name: templateName.value || pageData.title,
         title: templateName.value || pageData.title,
         description: templateDescription.value || `Professional ${templateCategory.value} template`,
-        content: contentToSave,
+        json_structure: contentToSave,
         category: templateCategory.value,
         type: 'page',
         template_type: 'page',
@@ -827,9 +879,9 @@ onMounted(async () => {
         pageData.slug = template.slug || template.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-') || '';
         pageTitle.value = template.name || template.title || '';
         
-        // Load template components
-        pageComponents.value = Array.isArray(template.content) 
-          ? template.content.map((comp, index) => ({
+        // Load template components from json_structure
+        pageComponents.value = Array.isArray(template.json_structure) 
+          ? template.json_structure.map((comp, index) => ({
               id: comp.id || `comp-${Date.now()}-${index}`,
               type: comp.type,
               data: comp.data || comp.props || comp
@@ -870,6 +922,45 @@ onMounted(async () => {
       }
     }
     
+  }
+  
+  // Handle using template for new page creation
+  else if (route.query.useTemplate && route.query.templateData) {
+    try {
+      console.log('[PageEditor] Loading template for new page creation');
+      console.log('[PageEditor] Route query:', route.query);
+      
+      // Set page title from template
+      const templateName = route.query.templateName || 'New Page';
+      pageData.title = `New Page from ${templateName}`;
+      pageData.slug = `new-page-${Date.now()}`;
+      pageTitle.value = pageData.title;
+      
+      // Load template components
+      const templateData = JSON.parse(route.query.templateData);
+      console.log('[PageEditor] Parsed template data:', templateData);
+      
+      if (Array.isArray(templateData) && templateData.length > 0) {
+        pageComponents.value = templateData.map((comp, index) => ({
+          id: comp.id || `comp-${Date.now()}-${index}`,
+          type: comp.type,
+          data: comp.data || comp.props || comp
+        }));
+        
+        console.log('[PageEditor] Template loaded for new page:', {
+          templateName: templateName,
+          components: pageComponents.value.length,
+          pageComponents: pageComponents.value
+        });
+      } else {
+        console.log('[PageEditor] Template has no components, starting with empty page');
+        console.log('[PageEditor] Template data was:', templateData);
+      }
+    } catch (error) {
+      console.error('[PageEditor] Failed to load template data:', error);
+      console.error('[PageEditor] Error details:', error);
+      alert('Failed to load template data. Starting with empty page.');
+    }
   }
   
   if (pageId.value) {

@@ -169,24 +169,24 @@
               </div>
             </div>
 
-            <!-- Last Campaign -->
+            <!-- Campaign Metrics -->
             <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
               <h3 class="text-lg font-semibold text-gray-900 mb-4 font-inter">{{ $t('dashboard.last_campaign') }}</h3>
               <div class="grid grid-cols-2 gap-4">
-                <div class="text-center">
-                  <p class="text-2xl font-bold text-gray-900">{{ campaignMetrics?.sent || 0 }}</p>
+                <div class="text-center p-3 bg-blue-50 rounded-lg">
+                  <p class="text-2xl font-bold text-blue-600">{{ campaignMetrics?.sent || 0 }}</p>
                   <p class="text-sm text-gray-600">{{ $t('dashboard.sent') }}</p>
                 </div>
-                <div class="text-center">
-                  <p class="text-2xl font-bold text-gray-900">{{ campaignMetrics?.opens || 0 }}</p>
+                <div class="text-center p-3 bg-green-50 rounded-lg">
+                  <p class="text-2xl font-bold text-green-600">{{ campaignMetrics?.opens || 0 }}</p>
                   <p class="text-sm text-gray-600">{{ $t('dashboard.opens') }}</p>
                 </div>
-                <div class="text-center">
-                  <p class="text-2xl font-bold text-gray-900">{{ campaignMetrics?.clicks || 0 }}</p>
+                <div class="text-center p-3 bg-purple-50 rounded-lg">
+                  <p class="text-2xl font-bold text-purple-600">{{ campaignMetrics?.clicks || 0 }}</p>
                   <p class="text-sm text-gray-600">{{ $t('dashboard.clicks') }}</p>
                 </div>
-                <div class="text-center">
-                  <p class="text-2xl font-bold text-gray-900">{{ campaignMetrics?.bounces || 0 }}</p>
+                <div class="text-center p-3 bg-red-50 rounded-lg">
+                  <p class="text-2xl font-bold text-red-600">{{ campaignMetrics?.bounces || 0 }}</p>
                   <p class="text-sm text-gray-600">{{ $t('dashboard.bounces') }}</p>
                 </div>
               </div>
@@ -295,9 +295,35 @@ const fetchDashboardData = async () => {
     
     // The backend returns: { success: true, data: { pipeline: {...}, tasks: {...}, contacts: {...}, campaigns: {...} } }
     dashboardData.value = dashboardRes.data.data.pipeline || {}
-    todayTasks.value = dashboardRes.data.data.tasks || []
+    
+    // Map tasks data properly - API returns {today: 0, overdue: 2, can_quick_complete: true}
+    const tasksData = dashboardRes.data.data.tasks || {}
+    todayTasks.value = [
+      ...Array(tasksData.today || 0).fill().map((_, i) => ({
+        id: `today-${i}`,
+        title: 'Task',
+        status: 'today',
+        due_date: 'Today'
+      })),
+      ...Array(tasksData.overdue || 0).fill().map((_, i) => ({
+        id: `overdue-${i}`,
+        title: 'Overdue Task',
+        status: 'due',
+        due_date: 'Overdue'
+      }))
+    ]
+    
+    // Map contacts data properly
     recentContacts.value = dashboardRes.data.data.contacts || []
-    campaignMetrics.value = dashboardRes.data.data.campaigns || {}
+    
+    // Map campaign data properly - API returns {delivered: "1", opens: 0, clicks: 0, bounces: 0}
+    const campaignsData = dashboardRes.data.data.campaigns || {}
+    campaignMetrics.value = {
+      sent: parseInt(campaignsData.delivered) || 0,
+      opens: campaignsData.opens || 0,
+      clicks: campaignsData.clicks || 0,
+      bounces: campaignsData.bounces || 0
+    }
     
   } catch (err) {
     console.error('Failed to fetch dashboard data:', err)

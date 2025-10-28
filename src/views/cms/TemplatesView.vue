@@ -373,21 +373,33 @@ const createTemplateWithCategory = () => {
 const useTemplate = async (template) => {
   if (confirm(`Create a new page using "${template.name}" template?`)) {
     try {
-      const newPage = {
-        title: `New Page from ${template.name}`,
-        slug: `new-page-${Date.now()}`,
-        content: template.content,
-        template_id: template.id,
-        status: 'draft',
-        access_level: 'public',
-        language: 'en'
-      };
-      const result = await cmsStore.createPage(newPage);
-      router.push(`/cms/editor/${result.page?.id || result.id}`);
+      console.log('[Templates] Using template:', template);
+      
+      // Fetch the full template data from the API to ensure we have json_structure
+      await cmsStore.fetchTemplate(template.id);
+      const fullTemplate = cmsStore.currentTemplate || template;
+      
+      console.log('[Templates] Full template:', fullTemplate);
+      
+      // Ensure we have the template data
+      const templateData = fullTemplate.json_structure || fullTemplate.content || [];
+      console.log('[Templates] Template data:', templateData);
+      console.log('[Templates] Template data length:', templateData.length);
+      
+      // Redirect directly to page editor with template data
+      router.push({
+        name: 'CmsPageEditor',
+        params: { id: 'new' },
+        query: {
+          useTemplate: true,
+          templateId: template.id,
+          templateName: template.name,
+          templateData: JSON.stringify(templateData)
+        }
+      });
     } catch (error) {
-      console.error('Failed to create page from template:', error);
-      const errorMessage = error?.response?.data?.message || error?.message || 'Failed to create page from template';
-      alert(errorMessage);
+      console.error('Failed to redirect to page editor:', error);
+      alert('Failed to open page editor with template');
     }
   }
 };
