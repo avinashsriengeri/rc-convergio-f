@@ -4,8 +4,8 @@
     <div class="mb-8">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-3xl font-bold text-gray-900 mb-2">Quotes</h1>
-          <p class="text-gray-600">Manage your quotes and track their status</p>
+          <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $t('sales.quotes.title') }}</h1>
+          <p class="text-gray-600">{{ $t('sales.quotes.subtitle') }}</p>
         </div>
         <div class="flex items-center space-x-3">
           <BaseButton
@@ -17,7 +17,7 @@
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
-            Export
+            {{ $t('common.export') }}
           </BaseButton>
           <BaseButton
             variant="primary"
@@ -26,7 +26,7 @@
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
             </svg>
-            Create Quote
+            {{ $t('sales.quotes.create_quote') }}
           </BaseButton>
         </div>
       </div>
@@ -47,7 +47,7 @@
             <input
               v-model="searchQuery"
               type="text"
-              placeholder="Search quotes, deals, or clients..."
+              placeholder="{{ $t('sales.quotes.search_placeholder') }}"
               class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
               @input="debouncedSearch"
             />
@@ -62,7 +62,7 @@
             @change="applyFilters"
             class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
           >
-            <option value="">All Status</option>
+            <option value="">{{ $t('sales.quotes.status_filter') }}</option>
             <option value="draft">Draft</option>
             <option value="sent">Sent</option>
             <option value="accepted">Accepted</option>
@@ -73,7 +73,7 @@
 
         <!-- Date From -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('sales.quotes.from_date') }}</label>
           <input
             v-model="dateFrom"
             type="date"
@@ -84,7 +84,7 @@
 
         <!-- Date To -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ $t('sales.quotes.to_date') }}</label>
           <input
             v-model="dateTo"
             type="date"
@@ -97,7 +97,7 @@
       <!-- Clear Filters -->
       <div class="mt-4 flex items-center justify-between">
         <div class="flex items-center space-x-2">
-          <span class="text-sm text-gray-500">Showing {{ pagination.from }}-{{ pagination.to }} of {{ pagination.total }} quotes</span>
+          <span class="text-sm text-gray-500">{{ $t('sales.quotes.showing_results', { start: pagination.from, end: pagination.to, total: pagination.total }) }}</span>
         </div>
         <button
           v-if="hasActiveFilters"
@@ -356,7 +356,7 @@
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
             </svg>
-            Create Quote
+            {{ $t('sales.quotes.create_quote') }}
           </BaseButton>
         </div>
       </div>

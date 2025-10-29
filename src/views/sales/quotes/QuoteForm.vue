@@ -6,10 +6,10 @@
         <div class="flex items-center justify-between">
           <div>
             <h1 class="text-3xl font-bold text-gray-900 mb-2">
-              {{ isEdit ? 'Edit Quote' : 'Create Quote' }}
+              {{ isEdit ? $t('sales.quotes.edit_quote') : $t('sales.quotes.create_quote') }}
             </h1>
             <p class="text-gray-600">
-              {{ isEdit ? 'Update quote details and line items' : 'Create a new quote for your client' }}
+              {{ isEdit ? $t('sales.quotes.edit_description') : $t('sales.quotes.create_description') }}
             </p>
           </div>
           <div class="flex items-center space-x-3">
@@ -18,7 +18,7 @@
               @click="cancel"
               class="px-4 py-2"
             >
-              Cancel
+              {{ $t('common.cancel') }}
             </BaseButton>
             <BaseButton
               variant="secondary"
@@ -26,7 +26,7 @@
               :loading="saving"
               class="px-4 py-2"
             >
-              Save Draft
+              {{ $t('sales.quotes.save_draft') }}
             </BaseButton>
             <BaseButton
               variant="primary"
@@ -34,7 +34,7 @@
               :loading="saving"
               class="px-4 py-2"
             >
-              Save & Send
+              {{ $t('sales.quotes.save_and_send') }}
             </BaseButton>
           </div>
         </div>
@@ -43,7 +43,7 @@
       <!-- Loading State -->
       <div v-if="loading" class="flex items-center justify-center py-12">
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span class="ml-3 text-gray-600">Loading quote...</span>
+        <span class="ml-3 text-gray-600">{{ $t('sales.quotes.loading') }}</span>
       </div>
 
       <!-- Form -->

@@ -1,0 +1,115 @@
+{
+  "copilot": "Copilot AI",
+  "overview": {
+    "title": "AI Assistant",
+    "subtitle": "Intelligent automation and assistance",
+    "description": "Leverage AI to automate tasks, generate content, and provide intelligent assistance across your platform.",
+    "welcome": "Welcome to Copilot AI",
+    "getting_started": "Getting Started",
+    "features": "Features",
+    "automation": "Automation",
+    "content_generation": "Content Generation",
+    "data_analysis": "Data Analysis",
+    "customer_support": "Customer Support"
+  },
+  "chat": {
+    "title": "AI Chat",
+    "subtitle": "Chat with your AI assistant",
+    "description": "Ask questions, get help, and interact with your AI assistant.",
+    "placeholder": "Ask me anything...",
+    "send": "Send",
+    "new_chat": "New Chat",
+    "chat_history": "Chat History",
+    "loading": "AI is thinking...",
+    "error": "Error communicating with AI",
+    "no_chats": "No chat history",
+    "start_conversation": "Start a new conversation"
+  },
+  "automation": {
+    "title": "Automation",
+    "subtitle": "AI-powered workflow automation",
+    "description": "Create intelligent workflows that automatically handle routine tasks and processes.",
+    "create_workflow": "Create Workflow",
+    "search_placeholder": "Search workflows...",
+    "status_filter": "Status",
+    "all_status": "All Status",
+    "showing_results": "Showing {start}-{end} of {total} workflows",
+    "no_workflows": "No automation workflows found",
+    "loading": "Loading workflows...",
+    "error": "Error loading workflows",
+    "workflow_name": "Workflow Name",
+    "trigger": "Trigger",
+    "status": "Status",
+    "last_run": "Last Run",
+    "actions": "Actions"
+  },
+  "content_generation": {
+    "title": "Content Generation",
+    "subtitle": "AI-powered content creation",
+    "description": "Generate emails, documents, and other content using AI assistance.",
+    "generate_email": "Generate Email",
+    "generate_document": "Generate Document",
+    "generate_proposal": "Generate Proposal",
+    "generate_report": "Generate Report",
+    "content_type": "Content Type",
+    "tone": "Tone",
+    "length": "Length",
+    "target_audience": "Target Audience",
+    "generate": "Generate",
+    "regenerate": "Regenerate",
+    "copy": "Copy",
+    "save": "Save",
+    "loading": "Generating content...",
+    "error": "Error generating content"
+  },
+  "data_analysis": {
+    "title": "Data Analysis",
+    "subtitle": "AI-powered insights and analytics",
+    "description": "Get intelligent insights from your data with AI-powered analysis.",
+    "analyze_data": "Analyze Data",
+    "generate_insights": "Generate Insights",
+    "data_source": "Data Source",
+    "analysis_type": "Analysis Type",
+    "time_period": "Time Period",
+    "run_analysis": "Run Analysis",
+    "insights": "Insights",
+    "recommendations": "Recommendations",
+    "trends": "Trends",
+    "anomalies": "Anomalies",
+    "loading": "Analyzing data...",
+    "error": "Error analyzing data"
+  },
+  "settings": {
+    "title": "AI Settings",
+    "subtitle": "Configure AI preferences and behavior",
+    "description": "Customize AI behavior, language preferences, and automation settings.",
+    "ai_model": "AI Model",
+    "language": "Language",
+    "response_style": "Response Style",
+    "automation_level": "Automation Level",
+    "notifications": "Notifications",
+    "save_settings": "Save Settings",
+    "reset_settings": "Reset Settings",
+    "loading": "Loading settings...",
+    "error": "Error loading settings"
+  },
+  "common": {
+    "breadcrumbs": {
+      "copilot": "Copilot AI"
+    },
+    "empty_state": {
+      "title": "Ready to experience AI assistance?",
+      "description": "Start a conversation with your AI assistant or explore automation features.",
+      "get_started": "Get Started"
+    },
+    "ai_responses": {
+      "thinking": "AI is thinking...",
+      "generating": "Generating response...",
+      "analyzing": "Analyzing data...",
+      "processing": "Processing request...",
+      "error": "Sorry, I encountered an error. Please try again.",
+      "no_data": "No data available for analysis.",
+      "success": "Task completed successfully!"
+    }
+  }
+}

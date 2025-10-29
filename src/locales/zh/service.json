@@ -1,0 +1,92 @@
+{
+  "service": "服务平台",
+  "overview": {
+    "title": "概览",
+    "subtitle": "服务平台性能和工单管理",
+    "description": "监控支持工单，跟踪响应时间，管理客户服务运营。",
+    "widget": "小部件",
+    "copy_link": "复制链接",
+    "create_ticket": "创建工单",
+    "last_updated": "最后更新：{time}",
+    "total": "总计",
+    "open": "开放",
+    "in_progress": "进行中",
+    "closed": "已关闭",
+    "sla_breached": "SLA 违规",
+    "avg_response": "平均响应",
+    "avg_resolution": "平均解决",
+    "resolved": "已解决"
+  },
+  "tickets": {
+    "title": "服务工单",
+    "subtitle": "管理和跟踪所有支持请求",
+    "total_tickets": "{count} 个工单",
+    "search_placeholder": "搜索工单...",
+    "status_filter": "所有状态",
+    "priority_filter": "所有优先级",
+    "loading": "正在加载工单...",
+    "error": "加载工单时出错",
+    "no_tickets": "未找到工单",
+    "create_ticket": "创建工单",
+    "view_ticket": "查看工单",
+    "edit_ticket": "编辑工单",
+    "close_ticket": "关闭工单",
+    "reopen_ticket": "重新打开工单"
+  },
+  "feedback": {
+    "title": "反馈分析",
+    "subtitle": "客户满意度和反馈洞察",
+    "description": "分析客户反馈、满意度评分和服务质量指标。",
+    "satisfaction_score": "满意度评分",
+    "response_rate": "响应率",
+    "feedback_count": "反馈数量",
+    "avg_rating": "平均评分",
+    "loading": "正在加载反馈数据...",
+    "error": "加载反馈数据时出错"
+  },
+  "email_integration": {
+    "title": "邮件集成",
+    "subtitle": "邮件支持和集成",
+    "description": "配置邮件支持渠道并管理基于邮件的工单。",
+    "configure_email": "配置邮件",
+    "email_channels": "邮件渠道",
+    "loading": "正在加载邮件配置...",
+    "error": "加载邮件配置时出错"
+  },
+  "live_chat": {
+    "title": "在线聊天",
+    "subtitle": "实时客户支持",
+    "description": "管理在线聊天对话并提供即时客户支持。",
+    "active_chats": "活跃聊天",
+    "avg_response_time": "平均响应时间",
+    "satisfaction_rate": "满意度",
+    "start_chat": "开始聊天",
+    "loading": "正在加载聊天数据...",
+    "error": "加载聊天数据时出错"
+  },
+  "knowledge_base": {
+    "title": "知识库",
+    "subtitle": "帮助中心和文档",
+    "description": "为客户创建和管理帮助文章、常见问题和文档。",
+    "help_center": "帮助中心",
+    "manage_articles": "管理文章",
+    "create_article": "创建文章",
+    "search_articles": "搜索文章...",
+    "categories": "类别",
+    "all_categories": "所有类别",
+    "showing_results": "显示第 {start}-{end} 条，共 {total} 篇文章",
+    "no_articles": "未找到文章",
+    "loading": "正在加载文章...",
+    "error": "加载文章时出错"
+  },
+  "common": {
+    "breadcrumbs": {
+      "service": "服务平台"
+    },
+    "empty_state": {
+      "title": "准备提供优质服务？",
+      "description": "创建您的第一个工单或配置您的支持渠道以开始。",
+      "create_first": "创建第一个工单"
+    }
+  }
+}

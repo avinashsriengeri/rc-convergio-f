@@ -363,7 +363,7 @@
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
               <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
             </svg>
-            Sales Platform
+            {{ $t('sales') }}
           </router-link>
 
           <!-- Commerce Platform Link -->
@@ -375,7 +375,7 @@
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
             </svg>
-            Commerce Platform
+            {{ $t('commerce') }}
           </router-link>
 
             <!-- Service Platform Link -->
@@ -387,7 +387,7 @@
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 1c-4.97 0-9 4.03-9 9v7c0 1.66 1.34 3 3 3h3v-8H5v-2c0-3.87 3.13-7 7-7s7 3.13 7 7v2h-4v8h3c1.66 0 3-1.34 3-3v-7c0-4.97-4.03-9-9-9z" />
             </svg>
-            Service Platform
+            {{ $t('service') }}
           </router-link>
 
            <!-- CMS / Content Platform Link -->
@@ -399,7 +399,7 @@
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
               <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
             </svg>
-            CMS Hub
+            {{ $t('cms') }}
           </router-link>
 
           <!-- Copilot / AI Assistant Link -->
@@ -411,7 +411,7 @@
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
               <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z" />
             </svg>
-            Copilot AI
+            {{ $t('copilot') }}
           </router-link>
 
           <!-- Users menu (Admin access OR Feature-based access) - Only for verified users -->
@@ -606,7 +606,7 @@
           <!-- Sales Platform Header -->
           <div class="px-6 py-4 border-b border-gray-200">
             <div class="flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-gray-800">Sales Platform</h2>
+              <h2 class="text-lg font-semibold text-gray-800">{{ $t('sales.overview.title') }}</h2>
               <button
                 @click="$router.push('/dashboard')"
                 class="text-gray-500 hover:text-primary-purple transition-colors"
@@ -629,7 +629,7 @@
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
-              Overview
+              {{ $t('sales.overview.title') }}
             </router-link>
 
             <router-link
@@ -640,7 +640,7 @@
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              Quotes
+              {{ $t('sales.quotes.title') }}
             </router-link>
 
             <router-link
@@ -651,7 +651,7 @@
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
               </svg>
-              Products
+              {{ $t('sales.products.title') }}
             </router-link>
 
             <router-link
@@ -662,7 +662,7 @@
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
               </svg>
-              Templates
+              {{ $t('sales.templates_nav') }}
             </router-link>
 
             <router-link
@@ -673,7 +673,7 @@
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
               </svg>
-              Sequences
+              {{ $t('sales.sequences.title') }}
             </router-link>
 
             <router-link
@@ -684,7 +684,7 @@
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
-              Forecasting
+              {{ $t('sales.forecasting.title') }}
             </router-link>
 
             <router-link
@@ -695,7 +695,7 @@
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
-              Lead Assignment
+              {{ $t('sales.lead_assignment.title') }}
             </router-link>
 
             <router-link
@@ -706,7 +706,7 @@
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
               </svg>
-              Documents
+              {{ $t('sales.documents.title') }}
             </router-link>
           </nav>
         </div>
@@ -718,7 +718,7 @@
           <!-- Commerce Platform Header -->
           <div class="px-6 py-4 border-b border-gray-200">
             <div class="flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-gray-800">Commerce Platform</h2>
+              <h2 class="text-lg font-semibold text-gray-800">{{ $t('commerce.overview.title') }}</h2>
               <button
                 @click="$router.push('/dashboard')"
                 class="text-gray-500 hover:text-primary-purple transition-colors"
@@ -741,7 +741,7 @@
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
-              Overview
+              {{ $t('sales.overview.title') }}
             </router-link>
 
             <router-link
@@ -820,7 +820,7 @@
           <!-- Service Platform Header -->
           <div class="px-6 py-4 border-b border-gray-200">
             <div class="flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-gray-800">Service Platform</h2>
+              <h2 class="text-lg font-semibold text-gray-800">{{ $t('service.overview.title') }}</h2>
               <button
                 @click="$router.push('/dashboard')"
                 class="text-gray-500 hover:text-primary-purple transition-colors"
@@ -960,7 +960,7 @@
           <!-- CMS Header -->
           <div class="px-6 py-4 border-b border-gray-200 flex-shrink-0">
             <div class="flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-gray-800">CMS Hub</h2>
+              <h2 class="text-lg font-semibold text-gray-800">{{ $t('cms.pages.title') }}</h2>
               <button
                 @click="$router.push('/dashboard')"
                 class="text-gray-500 hover:text-primary-purple transition-colors"
@@ -994,7 +994,7 @@
               <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
               </svg>
-              Templates
+              {{ $t('cms.templates.title') }}
             </router-link>
  
             <router-link
@@ -1039,7 +1039,7 @@
           <!-- Copilot Header -->
           <div class="px-6 py-4 border-b border-gray-200 flex-shrink-0">
             <div class="flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-gray-800">Copilot AI</h2>
+              <h2 class="text-lg font-semibold text-gray-800">{{ $t('copilot.overview.title') }}</h2>
               <button
                 @click="$router.push('/dashboard')"
                 class="text-gray-500 hover:text-primary-purple transition-colors"

@@ -127,7 +127,23 @@ export const useCommerceAnalyticsStore = defineStore('commerceAnalytics', {
       this.error = null
       try {
         const response = await commerceAPI.getRevenueChart({ period })
-        this.revenueData = response.data.data
+        console.log('Revenue API response:', response.data)
+        
+        // Transform the API response to match expected format
+        const apiData = response.data.data
+        if (apiData.monthly_breakdown && Array.isArray(apiData.monthly_breakdown)) {
+          // Transform monthly_breakdown to the expected format
+          this.revenueData = apiData.monthly_breakdown.map(item => ({
+            date: item.month,
+            amount: item.revenue,
+            orders: 0 // Default value since not provided in API
+          }))
+        } else {
+          // Fallback to original data structure if available
+          this.revenueData = apiData.revenue || []
+        }
+        
+        console.log('Transformed revenue data:', this.revenueData)
       } catch (error) {
         console.warn('Revenue API not available, using mock data:', error)
         // Generate mock data for the last 30 days
@@ -215,7 +231,8 @@ export const useCommerceAnalyticsStore = defineStore('commerceAnalytics', {
       this.error = null
       try {
         const response = await commerceAPI.getCommerceAnalytics({ type: 'recent-transactions', limit })
-        this.recentTransactions = response.data.data
+        console.log('Recent transactions API response:', response.data)
+        this.recentTransactions = response.data.data || []
       } catch (error) {
         console.warn('Recent transactions API not available, using mock data:', error)
         // Mock data for development
@@ -248,6 +265,7 @@ export const useCommerceAnalyticsStore = defineStore('commerceAnalytics', {
             created_at: '2025-10-15T08:45:00Z'
           }
         ]
+        console.log('Using mock recent transactions:', this.recentTransactions)
       } finally {
         this.loading = false
       }

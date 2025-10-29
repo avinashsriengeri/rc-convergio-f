@@ -50,7 +50,7 @@
                 variant="primary"
                 size="sm"
               >
-                Back to Sales Platform
+                {{ $t('sales.overview.title') }}
               </BaseButton>
             </div>
           </div>

@@ -1,0 +1,115 @@
+{
+  "copilot": "Copilot AI",
+  "overview": {
+    "title": "AI助手",
+    "subtitle": "智能自动化和协助",
+    "description": "利用AI自动化任务、生成内容并在整个平台提供智能协助。",
+    "welcome": "欢迎使用Copilot AI",
+    "getting_started": "开始使用",
+    "features": "功能",
+    "automation": "自动化",
+    "content_generation": "内容生成",
+    "data_analysis": "数据分析",
+    "customer_support": "客户支持"
+  },
+  "chat": {
+    "title": "AI聊天",
+    "subtitle": "与您的AI助手聊天",
+    "description": "提问、获得帮助并与您的AI助手互动。",
+    "placeholder": "问我任何问题...",
+    "send": "发送",
+    "new_chat": "新聊天",
+    "chat_history": "聊天历史",
+    "loading": "AI正在思考...",
+    "error": "与AI通信时出错",
+    "no_chats": "无聊天历史",
+    "start_conversation": "开始新对话"
+  },
+  "automation": {
+    "title": "自动化",
+    "subtitle": "AI驱动的工作流自动化",
+    "description": "创建智能工作流，自动处理常规任务和流程。",
+    "create_workflow": "创建工作流",
+    "search_placeholder": "搜索工作流...",
+    "status_filter": "状态",
+    "all_status": "所有状态",
+    "showing_results": "显示第 {start}-{end} 条，共 {total} 个工作流",
+    "no_workflows": "未找到自动化工作流",
+    "loading": "正在加载工作流...",
+    "error": "加载工作流时出错",
+    "workflow_name": "工作流名称",
+    "trigger": "触发器",
+    "status": "状态",
+    "last_run": "最后运行",
+    "actions": "操作"
+  },
+  "content_generation": {
+    "title": "内容生成",
+    "subtitle": "AI驱动的内容创建",
+    "description": "使用AI协助生成邮件、文档和其他内容。",
+    "generate_email": "生成邮件",
+    "generate_document": "生成文档",
+    "generate_proposal": "生成提案",
+    "generate_report": "生成报告",
+    "content_type": "内容类型",
+    "tone": "语调",
+    "length": "长度",
+    "target_audience": "目标受众",
+    "generate": "生成",
+    "regenerate": "重新生成",
+    "copy": "复制",
+    "save": "保存",
+    "loading": "正在生成内容...",
+    "error": "生成内容时出错"
+  },
+  "data_analysis": {
+    "title": "数据分析",
+    "subtitle": "AI驱动的洞察和分析",
+    "description": "通过AI驱动的分析从您的数据中获得智能洞察。",
+    "analyze_data": "分析数据",
+    "generate_insights": "生成洞察",
+    "data_source": "数据源",
+    "analysis_type": "分析类型",
+    "time_period": "时间段",
+    "run_analysis": "运行分析",
+    "insights": "洞察",
+    "recommendations": "建议",
+    "trends": "趋势",
+    "anomalies": "异常",
+    "loading": "正在分析数据...",
+    "error": "分析数据时出错"
+  },
+  "settings": {
+    "title": "AI设置",
+    "subtitle": "配置AI偏好和行为",
+    "description": "自定义AI行为、语言偏好和自动化设置。",
+    "ai_model": "AI模型",
+    "language": "语言",
+    "response_style": "响应风格",
+    "automation_level": "自动化级别",
+    "notifications": "通知",
+    "save_settings": "保存设置",
+    "reset_settings": "重置设置",
+    "loading": "正在加载设置...",
+    "error": "加载设置时出错"
+  },
+  "common": {
+    "breadcrumbs": {
+      "copilot": "Copilot AI"
+    },
+    "empty_state": {
+      "title": "准备体验AI协助？",
+      "description": "开始与您的AI助手对话或探索自动化功能。",
+      "get_started": "开始使用"
+    },
+    "ai_responses": {
+      "thinking": "AI正在思考...",
+      "generating": "正在生成响应...",
+      "analyzing": "正在分析数据...",
+      "processing": "正在处理请求...",
+      "error": "抱歉，我遇到了错误。请重试。",
+      "no_data": "没有可用于分析的数据。",
+      "success": "任务成功完成！"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "commerce": "منصة التجارة",
+  "overview": {
+    "title": "نظرة عامة على التجارة",
+    "subtitle": "راقب أداء منصة التجارة والمقاييس الرئيسية",
+    "description": "تتبع المبيعات والإيرادات وأنشطة العملاء عبر منصة التجارة الخاصة بك.",
+    "export": "تصدير",
+    "refresh": "تحديث",
+    "total_orders": "إجمالي الطلبات",
+    "view_all_orders": "عرض جميع الطلبات",
+    "total_revenue": "إجمالي الإيرادات",
+    "conversion_rate": "معدل التحويل",
+    "view_analytics": "عرض التحليلات",
+    "avg_order_value": "متوسط قيمة الطلب",
+    "active_subscriptions": "الاشتراكات النشطة",
+    "view_subscriptions": "عرض الاشتراكات",
+    "monthly_recurring_revenue": "الإيرادات المتكررة الشهرية",
+    "churn_rate": "معدل التوقف",
+    "revenue_this_month": "الإيرادات هذا الشهر",
+    "revenue_trend": "اتجاه الإيرادات",
+    "last_30_days": "آخر 30 يوم",
+    "recent_transactions": "المعاملات الأخيرة",
+    "view_all": "عرض الكل",
+    "loading": "جاري تحميل بيانات التجارة...",
+    "error": "خطأ في تحميل بيانات التجارة"
+  },
+  "common": {
+    "breadcrumbs": {
+      "commerce": "منصة التجارة"
+    },
+    "empty_state": {
+      "title": "مستعد للبدء في البيع؟",
+      "description": "أنشئ منتجك الأول أو رابط الدفع للبدء في التجارة.",
+      "create_first": "إنشاء المنتج الأول"
+    }
+  }
+}

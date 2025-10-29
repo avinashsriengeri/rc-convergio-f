@@ -96,26 +96,6 @@
             </button>
             
             <button
-              @click="openSuggestionsModal"
-              class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center"
-            >
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-              Smart Suggestions
-            </button>
-            
-            <button
-              @click="openAutoDetectModal"
-              class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center"
-            >
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              Auto-Detection
-            </button>
-            
-            <button
               @click="openExportModal"
               class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center"
             >
@@ -581,11 +561,11 @@
                     
                     <!-- Score Change -->
                     <div class="flex flex-col items-center">
-                      <span :class="getScoreChangeColor(contact.score_change)" class="text-sm font-medium">
-                        {{ contact.score_change }}
+                      <span :class="getScoreChangeColor(contact.score_change || '')" class="text-sm font-medium">
+                        {{ contact.score_change || '0' }}
                       </span>
-                      <div :class="getScoreCategory(contact.score).color" class="text-xs">
-                        {{ getScoreCategory(contact.score).label }}
+                      <div :class="getScoreCategory(contact.score || 0).color" class="text-xs">
+                        {{ getScoreCategory(contact.score || 0).label }}
                       </div>
                     </div>
                   </div>
@@ -1246,238 +1226,7 @@
       </div>
     </div>
 
-    <!-- Smart Suggestions Modal -->
-    <div
-      v-if="showSuggestionsModal"
-      class="fixed inset-0 z-50 overflow-hidden"
-      @click="closeSuggestionsModal"
-    >
-      <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-      <div class="absolute inset-0 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-hidden" @click.stop>
-          <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-orange-50 to-yellow-50">
-            <h3 class="text-xl font-bold text-gray-900 flex items-center">
-              <svg class="w-6 h-6 mr-3 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-              Smart Suggestions
-            </h3>
-            <p class="text-sm text-gray-600 mt-1">AI-powered recommendations based on your data</p>
-          </div>
-          
-          <div class="p-6 overflow-y-auto max-h-[70vh]">
-            <!-- Loading State -->
-            <div v-if="loadingSuggestions" class="text-center py-12">
-              <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
-              <p class="mt-4 text-gray-600">Analyzing your data...</p>
-            </div>
-            
-            <!-- Suggestions List -->
-            <div v-else class="space-y-4">
-              <div
-                v-for="suggestion in smartSuggestions"
-                :key="suggestion.id"
-                class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200 cursor-pointer"
-                :class="{ 'ring-2 ring-orange-500 bg-orange-50': isSuggestionSelected(suggestion) }"
-                @click="toggleSuggestionSelection(suggestion)"
-              >
-                <div class="flex items-start justify-between">
-                  <div class="flex-1">
-                    <div class="flex items-center mb-3">
-                      <div class="w-10 h-10 bg-gradient-to-br from-orange-100 to-yellow-100 rounded-lg flex items-center justify-center mr-3">
-                        <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <h4 class="text-lg font-semibold text-gray-900">{{ suggestion.title }}</h4>
-                        <p class="text-sm text-gray-500">{{ suggestion.category }}</p>
-                      </div>
-                    </div>
-                    
-                    <p class="text-gray-600 text-sm mb-4">{{ suggestion.description }}</p>
-                    
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                      <div class="flex items-center justify-between text-sm">
-                        <span class="text-gray-500">Priority:</span>
-                        <span class="font-medium" :class="{
-                          'text-red-600': suggestion.priority === 'High',
-                          'text-yellow-600': suggestion.priority === 'Medium',
-                          'text-green-600': suggestion.priority === 'Low'
-                        }">{{ suggestion.priority }}</span>
-                      </div>
-                      <div class="flex items-center justify-between text-sm">
-                        <span class="text-gray-500">Confidence:</span>
-                        <span class="font-medium text-orange-600">{{ Math.round(suggestion.confidence * 100) }}%</span>
-                      </div>
-                      <div class="flex items-center justify-between text-sm">
-                        <span class="text-gray-500">Impact:</span>
-                        <span class="font-medium text-green-600">{{ suggestion.estimated_impact }}</span>
-                      </div>
-                      <div class="flex items-center justify-between text-sm">
-                        <span class="text-gray-500">Rules:</span>
-                        <span class="font-medium">{{ suggestion.rules?.length || 0 }}</span>
-                      </div>
-                    </div>
-                    
-                    <!-- Rules Preview -->
-                    <div v-if="suggestion.rules && suggestion.rules.length > 0" class="mt-3">
-                      <p class="text-xs text-gray-500 mb-2">Rules to be created:</p>
-                      <div class="space-y-1">
-                        <div v-for="rule in suggestion.rules" :key="rule.name" class="flex items-center justify-between text-xs bg-gray-50 px-2 py-1 rounded">
-                          <span class="text-gray-600">{{ rule.name }}</span>
-                          <span class="font-medium text-orange-600">{{ rule.points }} pts</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="flex items-center ml-4">
-                    <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center"
-                         :class="isSuggestionSelected(suggestion) ? 'bg-orange-600 border-orange-600' : 'border-gray-300'">
-                      <svg v-if="isSuggestionSelected(suggestion)" class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Empty State -->
-              <div v-if="smartSuggestions.length === 0" class="text-center py-12">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
-                <h3 class="mt-2 text-sm font-medium text-gray-900">No suggestions available</h3>
-                <p class="mt-1 text-sm text-gray-500">We couldn't find any smart suggestions for your data.</p>
-              </div>
-            </div>
-          </div>
-          
-          <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
-            <div class="flex justify-between">
-              <button
-                @click="closeSuggestionsModal"
-                class="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                @click="applySelectedSuggestions"
-                class="bg-gradient-to-r from-orange-600 to-yellow-600 hover:from-orange-700 hover:to-yellow-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200"
-                :disabled="selectedSuggestions.length === 0"
-                :class="{ 'opacity-50 cursor-not-allowed': selectedSuggestions.length === 0 }"
-              >
-                Apply Selected Suggestions ({{ selectedSuggestions.length }})
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Auto-Detection Modal -->
-    <div
-      v-if="showAutoDetectModal"
-      class="fixed inset-0 z-50 overflow-hidden"
-      @click="closeAutoDetectModal"
-    >
-      <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-      <div class="absolute inset-0 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full" @click.stop>
-          <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-blue-50">
-            <h3 class="text-xl font-bold text-gray-900 flex items-center">
-              <svg class="w-6 h-6 mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              Auto-Detection Setup
-            </h3>
-            <p class="text-sm text-gray-600 mt-1">Configure automatic event detection for lead scoring</p>
-          </div>
-          
-          <div class="p-6">
-            <div class="space-y-6">
-              <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div class="flex items-center">
-                  <svg class="w-8 h-8 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <div>
-                    <h4 class="font-semibold text-gray-900">Email Events</h4>
-                    <p class="text-sm text-gray-600">Track email opens, clicks, and bounces</p>
-                  </div>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input
-                    v-model="autoDetectSettings.email_events"
-                    type="checkbox"
-                    class="sr-only peer"
-                  />
-                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
-              
-              <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div class="flex items-center">
-                  <svg class="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
-                  </svg>
-                  <div>
-                    <h4 class="font-semibold text-gray-900">Website Events</h4>
-                    <p class="text-sm text-gray-600">Track page visits and downloads</p>
-                  </div>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input
-                    v-model="autoDetectSettings.website_events"
-                    type="checkbox"
-                    class="sr-only peer"
-                  />
-                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
-              
-              <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div class="flex items-center">
-                  <svg class="w-8 h-8 text-purple-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  <div>
-                    <h4 class="font-semibold text-gray-900">Form Events</h4>
-                    <p class="text-sm text-gray-600">Track form submissions and completions</p>
-                  </div>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input
-                    v-model="autoDetectSettings.form_events"
-                    type="checkbox"
-                    class="sr-only peer"
-                  />
-                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
-            </div>
-          </div>
-          
-          <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
-            <div class="flex justify-between">
-              <button
-                @click="closeAutoDetectModal"
-                class="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                @click="updateAutoDetectSettings"
-                class="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200"
-              >
-                Save Settings
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -1515,17 +1264,7 @@ const loadingContacts = ref(false)
 // Templates and Smart Features
 const templates = ref([])
 const templateCategories = ref([])
-const smartSuggestions = ref([])
-const selectedSuggestions = ref([])
-const autoDetectSettings = ref({
-  email_events: true,
-  website_events: true,
-  form_events: true,
-  deal_events: true,
-  meeting_events: true
-})
 const loadingTemplates = ref(false)
-const loadingSuggestions = ref(false)
 
 // Modal states
 const showRuleModal = ref(false)
@@ -1534,8 +1273,6 @@ const showBulkRecalculateModal = ref(false)
 const showExportModal = ref(false)
 const showConfirmModal = ref(false)
 const showTemplatesModal = ref(false)
-const showSuggestionsModal = ref(false)
-const showAutoDetectModal = ref(false)
 const savingRule = ref(false)
 const recalculating = ref(false)
 const bulkRecalculating = ref(false)
@@ -1851,192 +1588,6 @@ const loadTemplateCategories = async () => {
   }
 }
 
-const loadSmartSuggestions = async () => {
-  loadingSuggestions.value = true
-  try {
-    console.log('Loading smart suggestions...')
-    console.log('Making API call to: /api/lead-scoring/suggestions')
-    
-    // Direct API call instead of using service
-    const response = await fetch('/api/lead-scoring/suggestions', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}`
-      }
-    })
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-    }
-    
-    const data = await response.json()
-    console.log('Smart suggestions API response:', data)
-    smartSuggestions.value = data.data || data || []
-    
-    // If no suggestions returned, provide mock data for development
-    if (smartSuggestions.value.length === 0) {
-      console.log('No suggestions from API, using mock data for development')
-      smartSuggestions.value = [
-        {
-          id: 'suggestion_1',
-          title: 'Email Engagement Scoring',
-          description: 'Add scoring for email opens and clicks to identify engaged prospects',
-          category: 'Email Marketing',
-          priority: 'High',
-          estimated_impact: '25% increase in lead quality',
-          rules: [
-            {
-              name: 'Email Open',
-              points: 5,
-              condition: 'email_opened'
-            },
-            {
-              name: 'Email Click',
-              points: 10,
-              condition: 'email_clicked'
-            }
-          ],
-          confidence: 0.85
-        },
-        {
-          id: 'suggestion_2',
-          title: 'Website Behavior Tracking',
-          description: 'Track page visits and downloads to score website engagement',
-          category: 'Website Analytics',
-          priority: 'Medium',
-          estimated_impact: '15% increase in conversion rate',
-          rules: [
-            {
-              name: 'Pricing Page Visit',
-              points: 8,
-              condition: 'page_visited: pricing'
-            },
-            {
-              name: 'Resource Download',
-              points: 12,
-              condition: 'file_downloaded'
-            }
-          ],
-          confidence: 0.78
-        },
-        {
-          id: 'suggestion_3',
-          title: 'Form Interaction Scoring',
-          description: 'Score based on form submissions and field completion',
-          category: 'Lead Generation',
-          priority: 'High',
-          estimated_impact: '30% better lead qualification',
-          rules: [
-            {
-              name: 'Contact Form Submission',
-              points: 15,
-              condition: 'form_submitted: contact'
-            },
-            {
-              name: 'Newsletter Signup',
-              points: 3,
-              condition: 'form_submitted: newsletter'
-            }
-          ],
-          confidence: 0.92
-        },
-        {
-          id: 'suggestion_4',
-          title: 'Social Media Engagement',
-          description: 'Track social media interactions and shares',
-          category: 'Social Media',
-          priority: 'Low',
-          estimated_impact: '10% increase in brand awareness',
-          rules: [
-            {
-              name: 'Social Share',
-              points: 5,
-              condition: 'content_shared'
-            },
-            {
-              name: 'Social Comment',
-              points: 8,
-              condition: 'content_commented'
-            }
-          ],
-          confidence: 0.65
-        },
-        {
-          id: 'suggestion_5',
-          title: 'Deal Progression Tracking',
-          description: 'Score based on deal stage changes and value updates',
-          category: 'Sales',
-          priority: 'High',
-          estimated_impact: '20% increase in deal velocity',
-          rules: [
-            {
-              name: 'Deal Stage Change',
-              points: 10,
-              condition: 'deal_stage_changed'
-            },
-            {
-              name: 'Deal Value Increase',
-              points: 15,
-              condition: 'deal_value_increased'
-            }
-          ],
-          confidence: 0.88
-        }
-      ]
-    }
-  } catch (err) {
-    console.error('Failed to load smart suggestions:', err)
-    // Provide mock data on error for development
-    smartSuggestions.value = [
-      {
-        id: 'suggestion_1',
-        title: 'Email Engagement Scoring',
-        description: 'Add scoring for email opens and clicks to identify engaged prospects',
-        category: 'Email Marketing',
-        priority: 'High',
-        estimated_impact: '25% increase in lead quality',
-        rules: [
-          {
-            name: 'Email Open',
-            points: 5,
-            condition: 'email_opened'
-          },
-          {
-            name: 'Email Click',
-            points: 10,
-            condition: 'email_clicked'
-          }
-        ],
-        confidence: 0.85
-      },
-      {
-        id: 'suggestion_2',
-        title: 'Website Behavior Tracking',
-        description: 'Track page visits and downloads to score website engagement',
-        category: 'Website Analytics',
-        priority: 'Medium',
-        estimated_impact: '15% increase in conversion rate',
-        rules: [
-          {
-            name: 'Pricing Page Visit',
-            points: 8,
-            condition: 'page_visited: pricing'
-          },
-          {
-            name: 'Resource Download',
-            points: 12,
-            condition: 'file_downloaded'
-          }
-        ],
-        confidence: 0.78
-      }
-    ]
-  } finally {
-    loadingSuggestions.value = false
-  }
-}
 
 // Enhanced Modal Methods
 const openCreateRuleModal = () => {
@@ -2084,49 +1635,6 @@ const openTemplatesModal = () => {
   loadTemplateCategories()
 }
 
-const openSuggestionsModal = () => {
-  showSuggestionsModal.value = true
-  loadSmartSuggestions()
-}
-
-const openAutoDetectModal = () => {
-  showAutoDetectModal.value = true
-}
-
-const closeTemplatesModal = () => {
-  showTemplatesModal.value = false
-}
-
-const closeSuggestionsModal = () => {
-  showSuggestionsModal.value = false
-  selectedSuggestions.value = []
-}
-
-// Suggestion selection handlers
-const toggleSuggestionSelection = (suggestion) => {
-  const index = selectedSuggestions.value.findIndex(s => s.id === suggestion.id)
-  if (index > -1) {
-    selectedSuggestions.value.splice(index, 1)
-  } else {
-    selectedSuggestions.value.push(suggestion)
-  }
-}
-
-const isSuggestionSelected = (suggestion) => {
-  return selectedSuggestions.value.some(s => s.id === suggestion.id)
-}
-
-const applySelectedSuggestions = () => {
-  if (selectedSuggestions.value.length === 0) {
-    showError('Please select at least one suggestion')
-    return
-  }
-  applySuggestions(selectedSuggestions.value)
-}
-
-const closeAutoDetectModal = () => {
-  showAutoDetectModal.value = false
-}
 
 // Template and Smart Feature Actions
 const activateTemplate = async (templateKey) => {
@@ -2175,97 +1683,8 @@ const activateTemplate = async (templateKey) => {
   }
 }
 
-const applySuggestions = async (selectedSuggestions) => {
-  try {
-    console.log('Applying suggestions:', selectedSuggestions)
-    console.log('Making API call to: /api/lead-scoring/suggestions/create')
-    
-    // Direct API call instead of using service
-    const response = await fetch('/api/lead-scoring/suggestions/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}`
-      },
-      body: JSON.stringify({ suggestions: selectedSuggestions })
-    })
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-    }
-    
-    const data = await response.json()
-    console.log('Apply suggestions response:', data)
-    
-    showSuccess('Smart suggestions applied successfully!')
-    closeSuggestionsModal()
-    loadRules()
-    loadStats()
-  } catch (err) {
-    console.error('Failed to apply suggestions:', err)
-    console.error('Error details:', err.message)
-    
-    // Check if it's a 404 (endpoint doesn't exist) or other error
-    if (err.message.includes('404') || err.message.includes('Not Found')) {
-      console.log('API endpoint not found, creating rules manually...')
-      await createSuggestionsRulesManually(selectedSuggestions)
-      showSuccess('Smart suggestions applied successfully! (Rules created manually)')
-    } else {
-      showError(`Failed to apply suggestions: ${err.message || 'Unknown error'}`)
-      return // Don't close modal on error
-    }
-    
-    closeSuggestionsModal()
-    loadRules()
-    loadStats()
-  }
-}
 
-const updateAutoDetectSettings = async () => {
-  try {
-    // Save auto-detect settings
-    showSuccess('Auto-detection settings updated!')
-    closeAutoDetectModal()
-  } catch (err) {
-    showError(err.message || 'Failed to update auto-detection settings')
-  }
-}
 
-// Manual suggestions rule creation when API endpoint is not available
-const createSuggestionsRulesManually = async (selectedSuggestions) => {
-  console.log('Creating rules manually for suggestions:', selectedSuggestions)
-  
-  if (!selectedSuggestions || selectedSuggestions.length === 0) {
-    console.log('No suggestions selected')
-    return
-  }
-  
-  console.log(`Creating rules for ${selectedSuggestions.length} suggestions`)
-  
-  // Create rules for each selected suggestion
-  for (const suggestion of selectedSuggestions) {
-    if (suggestion.rules && suggestion.rules.length > 0) {
-      for (const rule of suggestion.rules) {
-        try {
-          const ruleData = {
-            name: rule.name,
-            description: `${suggestion.title} - ${rule.name}`,
-            points: rule.points,
-            priority: suggestion.priority === 'High' ? 1 : suggestion.priority === 'Medium' ? 2 : 3,
-            is_active: true,
-            condition: { event: rule.condition }
-          }
-          
-          await leadScoringService.createScoringRule(ruleData)
-          console.log('Created rule:', rule.name)
-        } catch (err) {
-          console.error('Failed to create rule:', rule.name, err)
-        }
-      }
-    }
-  }
-}
 
 // Manual template rule creation when API endpoint is not available
 const createTemplateRulesManually = async (templateKey) => {
@@ -2644,6 +2063,7 @@ const getPriorityColor = (priority) => leadScoringHelpers.getPriorityColor(prior
 const getStatusColor = (isActive) => leadScoringHelpers.getStatusColor(isActive)
 const getScoreColor = (score) => leadScoringHelpers.getScoreColor(score)
 const getScoreChangeColor = (change) => leadScoringHelpers.getScoreChangeColor(change)
+const getScoreCategory = (score) => leadScoringHelpers.getScoreCategory(score)
 const formatDate = (dateString) => leadScoringHelpers.formatDate(dateString)
 const formatNumber = (num) => leadScoringHelpers.formatNumber(num)
 

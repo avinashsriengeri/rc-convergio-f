@@ -79,6 +79,11 @@ import enForms from './locales/en/forms.json'
 import enUsers from './locales/en/users.json'
 import enLists from './locales/en/lists.json'
 import enMarketing from './locales/en/marketing.json'
+import enSales from './locales/en/sales.json'
+import enService from './locales/en/service.json'
+import enCommerce from './locales/en/commerce.json'
+import enCms from './locales/en/cms.json'
+import enCopilot from './locales/en/copilot.json'
 
 // Import modular translation files for Chinese
 import zhCommon from './locales/zh/common.json'
@@ -95,6 +100,11 @@ import zhForms from './locales/zh/forms.json'
 import zhUsers from './locales/zh/users.json'
 import zhLists from './locales/zh/lists.json'
 import zhMarketing from './locales/zh/marketing.json'
+import zhSales from './locales/zh/sales.json'
+import zhService from './locales/zh/service.json'
+import zhCommerce from './locales/zh/commerce.json'
+import zhCms from './locales/zh/cms.json'
+import zhCopilot from './locales/zh/copilot.json'
 
 // Import modular translation files for Arabic
 import arCommon from './locales/ar/common.json'
@@ -111,6 +121,11 @@ import arForms from './locales/ar/forms.json'
 import arUsers from './locales/ar/users.json'
 import arLists from './locales/ar/lists.json'
 import arMarketing from './locales/ar/marketing.json'
+import arSales from './locales/ar/sales.json'
+import arService from './locales/ar/service.json'
+import arCommerce from './locales/ar/commerce.json'
+import arCms from './locales/ar/cms.json'
+import arCopilot from './locales/ar/copilot.json'
 
 // Import modular translation files for Portuguese
 import ptCommon from './locales/pt/common.json'
@@ -230,7 +245,12 @@ const i18n = createI18n({
       { forms: enForms },
       { users: enUsers },
       { lists: enLists },
-      { marketing: enMarketing }
+      { marketing: enMarketing },
+      { sales: enSales },
+      { service: enService },
+      { commerce: enCommerce },
+      { cms: enCms },
+      { copilot: enCopilot }
     ),
     zh: Object.assign({}, 
       { common: zhCommon },
@@ -246,7 +266,12 @@ const i18n = createI18n({
       { forms: zhForms },
       { users: zhUsers },
       { lists: zhLists },
-      { marketing: zhMarketing }
+      { marketing: zhMarketing },
+      { sales: zhSales },
+      { service: zhService },
+      { commerce: zhCommerce },
+      { cms: zhCms },
+      { copilot: zhCopilot }
     ),
     ar: Object.assign({}, 
       { common: arCommon },
@@ -262,7 +287,12 @@ const i18n = createI18n({
       { forms: arForms },
       { users: arUsers },
       { lists: arLists },
-      { marketing: arMarketing }
+      { marketing: arMarketing },
+      { sales: arSales },
+      { service: arService },
+      { commerce: arCommerce },
+      { cms: arCms },
+      { copilot: arCopilot }
     ),
     pt: Object.assign({}, 
       { common: ptCommon },

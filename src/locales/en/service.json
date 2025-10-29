@@ -1,0 +1,92 @@
+{
+  "service": "Service Platform",
+  "overview": {
+    "title": "Overview",
+    "subtitle": "Service platform performance and ticket management",
+    "description": "Monitor support tickets, track response times, and manage customer service operations.",
+    "widget": "Widget",
+    "copy_link": "Copy Link",
+    "create_ticket": "Create Ticket",
+    "last_updated": "Last updated: {time}",
+    "total": "Total",
+    "open": "Open",
+    "in_progress": "In Progress",
+    "closed": "Closed",
+    "sla_breached": "SLA Breached",
+    "avg_response": "Avg Response",
+    "avg_resolution": "Avg Resolution",
+    "resolved": "Resolved"
+  },
+  "tickets": {
+    "title": "Service Tickets",
+    "subtitle": "Manage and track all support requests",
+    "total_tickets": "{count} total tickets",
+    "search_placeholder": "Search tickets...",
+    "status_filter": "All Status",
+    "priority_filter": "All Priorities",
+    "loading": "Loading tickets...",
+    "error": "Error loading tickets",
+    "no_tickets": "No tickets found",
+    "create_ticket": "Create Ticket",
+    "view_ticket": "View Ticket",
+    "edit_ticket": "Edit Ticket",
+    "close_ticket": "Close Ticket",
+    "reopen_ticket": "Reopen Ticket"
+  },
+  "feedback": {
+    "title": "Feedback Analytics",
+    "subtitle": "Customer satisfaction and feedback insights",
+    "description": "Analyze customer feedback, satisfaction scores, and service quality metrics.",
+    "satisfaction_score": "Satisfaction Score",
+    "response_rate": "Response Rate",
+    "feedback_count": "Feedback Count",
+    "avg_rating": "Average Rating",
+    "loading": "Loading feedback data...",
+    "error": "Error loading feedback data"
+  },
+  "email_integration": {
+    "title": "Email Integration",
+    "subtitle": "Email support and integration",
+    "description": "Configure email support channels and manage email-based tickets.",
+    "configure_email": "Configure Email",
+    "email_channels": "Email Channels",
+    "loading": "Loading email configuration...",
+    "error": "Error loading email configuration"
+  },
+  "live_chat": {
+    "title": "Live Chat",
+    "subtitle": "Real-time customer support",
+    "description": "Manage live chat conversations and provide instant customer support.",
+    "active_chats": "Active Chats",
+    "avg_response_time": "Avg Response Time",
+    "satisfaction_rate": "Satisfaction Rate",
+    "start_chat": "Start Chat",
+    "loading": "Loading chat data...",
+    "error": "Error loading chat data"
+  },
+  "knowledge_base": {
+    "title": "Knowledge Base",
+    "subtitle": "Help center and documentation",
+    "description": "Create and manage help articles, FAQs, and documentation for customers.",
+    "help_center": "Help Center",
+    "manage_articles": "Manage Articles",
+    "create_article": "Create Article",
+    "search_articles": "Search articles...",
+    "categories": "Categories",
+    "all_categories": "All Categories",
+    "showing_results": "Showing {start}-{end} of {total} articles",
+    "no_articles": "No articles found",
+    "loading": "Loading articles...",
+    "error": "Error loading articles"
+  },
+  "common": {
+    "breadcrumbs": {
+      "service": "Service Platform"
+    },
+    "empty_state": {
+      "title": "Ready to provide great service?",
+      "description": "Create your first ticket or configure your support channels to get started.",
+      "create_first": "Create First Ticket"
+    }
+  }
+}

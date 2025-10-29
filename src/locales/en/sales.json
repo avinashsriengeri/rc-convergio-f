@@ -1,0 +1,125 @@
+{
+  "sales": "Sales Platform",
+  "overview": {
+    "title": "Overview",
+    "subtitle": "Sales performance and pipeline insights",
+    "description": "Monitor your sales activities, track deals, and manage your pipeline effectively.",
+    "quick_actions": "Quick Actions",
+    "manage_quotes": "Manage Quotes",
+    "manage_quotes_desc": "View and manage all your quotes",
+    "create_quote": "Create New Quote",
+    "create_quote_desc": "Generate a new quote for your client",
+    "view_deals": "View Deals",
+    "view_deals_desc": "Manage your sales pipeline"
+  },
+  "quotes": {
+    "title": "Quotes",
+    "subtitle": "Manage your quotes and track their status",
+    "create_quote": "Create Quote",
+    "edit_quote": "Edit Quote",
+    "edit_description": "Update quote details and line items",
+    "create_description": "Create a new quote for your client",
+    "save_draft": "Save Draft",
+    "save_and_send": "Save & Send",
+    "search_placeholder": "Search quotes, deals, or clients...",
+    "status_filter": "All Status",
+    "all_status": "All Status",
+    "from_date": "From Date",
+    "to_date": "To Date",
+    "showing_results": "Showing {start}-{end} of {total} quotes",
+    "no_quotes": "No quotes found",
+    "loading": "Loading quote...",
+    "error": "Error loading quotes"
+  },
+  "products": {
+    "title": "Product Library",
+    "subtitle": "Manage your reusable products for quotes",
+    "description": "Create and manage your product offerings, pricing, and inventory.",
+    "create_product": "Add Product",
+    "search_placeholder": "Search products...",
+    "category_filter": "Category",
+    "all_categories": "All Categories",
+    "price_range": "Price Range",
+    "showing_results": "Showing {start}-{end} of {total} products",
+    "no_products": "No products found",
+    "loading": "Loading products...",
+    "error": "Error loading products"
+  },
+  "templates": {
+    "title": "Quote Templates",
+    "subtitle": "Manage PDF layout templates for quotes",
+    "description": "Create and manage templates for quotes, proposals, and contracts.",
+    "create_template": "Add Template",
+    "search_placeholder": "Search templates...",
+    "type_filter": "Type",
+    "all_types": "All Types",
+    "showing_results": "Showing {start}-{end} of {total} templates",
+    "no_templates": "No templates found",
+    "loading": "Loading templates...",
+    "error": "Error loading templates"
+  },
+  "templates_nav": "Templates",
+  "sequences": {
+    "title": "Sequences",
+    "subtitle": "Automated sales sequences",
+    "description": "Create automated email sequences to nurture leads and follow up with prospects.",
+    "create_sequence": "Create Sequence",
+    "search_placeholder": "Search sequences...",
+    "status_filter": "Status",
+    "all_status": "All Status",
+    "showing_results": "Showing {start}-{end} of {total} sequences",
+    "no_sequences": "No sequences found",
+    "loading": "Loading sequences...",
+    "error": "Error loading sequences"
+  },
+  "forecasting": {
+    "title": "Forecasting",
+    "subtitle": "Sales forecasting and predictions",
+    "description": "Predict future sales performance and track forecast accuracy.",
+    "timeframe": "Timeframe",
+    "report_type": "Report Type",
+    "summary_report": "Summary Report",
+    "detailed_report": "Detailed Report",
+    "accuracy_report": "Accuracy Report",
+    "trends_report": "Trends Report",
+    "export_summary": "Export Summary",
+    "loading": "Loading forecast data...",
+    "error": "Error loading forecast data"
+  },
+  "lead_assignment": {
+    "title": "Lead Assignment",
+    "subtitle": "Automated lead assignment rules",
+    "description": "Configure rules to automatically assign leads to the right sales representatives.",
+    "create_rule": "Create Rule",
+    "search_placeholder": "Search rules...",
+    "status_filter": "Status",
+    "all_status": "All Status",
+    "showing_results": "Showing {start}-{end} of {total} rules",
+    "no_rules": "No assignment rules found",
+    "loading": "Loading assignment rules...",
+    "error": "Error loading assignment rules"
+  },
+  "documents": {
+    "title": "Documents",
+    "subtitle": "Sales documents and files",
+    "description": "Manage sales documents, contracts, and related files.",
+    "upload_document": "Upload Document",
+    "search_placeholder": "Search documents...",
+    "type_filter": "Type",
+    "all_types": "All Types",
+    "showing_results": "Showing {start}-{end} of {total} documents",
+    "no_documents": "No documents found",
+    "loading": "Loading documents...",
+    "error": "Error loading documents"
+  },
+  "common": {
+    "breadcrumbs": {
+      "sales": "Sales Platform"
+    },
+    "empty_state": {
+      "title": "Ready to start selling?",
+      "description": "Create your first quote or deal to get started with the sales platform.",
+      "create_first": "Create First Item"
+    }
+  }
+}

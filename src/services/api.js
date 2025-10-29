@@ -533,7 +533,7 @@ export const commerceAPI = {
   
   // Analytics endpoints
   getCommerceAnalytics: (params = {}) => api.get('/commerce/analytics', { params }),
-  getRevenueChart: (params = {}) => api.get('/commerce/revenue-chart', { params }),
+  getRevenueChart: (params = {}) => api.get('/commerce/analytics/revenue', { params }),
   
   // Subscription Plans API endpoints
   getSubscriptionPlans: (params = {}) => api.get('/commerce/subscription-plans', { params }),

@@ -1,0 +1,46 @@
+{
+  "service": "منصة الخدمة",
+  "overview": {
+    "title": "نظرة عامة",
+    "subtitle": "أداء منصة الخدمة وإدارة التذاكر",
+    "description": "راقب تذاكر الدعم، وتتبع أوقات الاستجابة، وأدر عمليات خدمة العملاء.",
+    "widget": "الأداة",
+    "copy_link": "نسخ الرابط",
+    "create_ticket": "إنشاء تذكرة",
+    "last_updated": "آخر تحديث: {time}",
+    "total": "المجموع",
+    "open": "مفتوح",
+    "in_progress": "قيد التقدم",
+    "closed": "مغلق",
+    "sla_breached": "انتهاك اتفاقية مستوى الخدمة",
+    "avg_response": "متوسط الاستجابة",
+    "avg_resolution": "متوسط الحل",
+    "resolved": "تم الحل"
+  },
+  "tickets": {
+    "title": "تذاكر الخدمة",
+    "subtitle": "إدارة وتتبع جميع طلبات الدعم",
+    "total_tickets": "{count} تذكرة",
+    "search_placeholder": "البحث في التذاكر...",
+    "status_filter": "جميع الحالات",
+    "priority_filter": "جميع الأولويات",
+    "loading": "جاري تحميل التذاكر...",
+    "error": "خطأ في تحميل التذاكر",
+    "no_tickets": "لم يتم العثور على تذاكر",
+    "create_ticket": "إنشاء تذكرة",
+    "view_ticket": "عرض التذكرة",
+    "edit_ticket": "تحرير التذكرة",
+    "close_ticket": "إغلاق التذكرة",
+    "reopen_ticket": "إعادة فتح التذكرة"
+  },
+  "common": {
+    "breadcrumbs": {
+      "service": "منصة الخدمة"
+    },
+    "empty_state": {
+      "title": "مستعد لتقديم خدمة رائعة؟",
+      "description": "أنشئ تذكرتك الأولى أو قم بتكوين قنوات الدعم الخاصة بك للبدء.",
+      "create_first": "إنشاء التذكرة الأولى"
+    }
+  }
+}
