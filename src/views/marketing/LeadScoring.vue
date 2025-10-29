@@ -1877,6 +1877,10 @@ const closeBulkRecalculateModal = () => {
   bulkRecalculating.value = false
 }
 
+const closeTemplatesModal = () => {
+  showTemplatesModal.value = false
+}
+
 const closeExportModal = () => {
   showExportModal.value = false
 }

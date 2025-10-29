@@ -102,24 +102,24 @@ const router = useRouter()
 
 const addContact = () => {
   emit('close')
-  router.push('/contacts?action=create')
+  // Redirect to contacts page and trigger create modal
+  router.push('/contacts?create=true')
 }
 
 const addCompany = () => {
   emit('close')
-  router.push('/companies?action=create')
+  router.push('/companies/create')
 }
 
 const addTask = () => {
   emit('close')
-  // You can implement a task creation modal or redirect to tasks page
-  emit('created', { type: 'task' })
+  // Redirect to tasks page and trigger create modal
+  router.push('/tasks?create=true')
 }
 
 const addDeal = () => {
   emit('close')
-  // You can implement a deal creation modal or redirect to deals page
-  emit('created', { type: 'deal' })
+  router.push('/deals/new')
 }
 </script>
 

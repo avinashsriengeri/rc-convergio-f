@@ -9,7 +9,7 @@
     <!-- Authenticated layout for all other routes -->
     <template v-else>
     <!-- Unified Header Bar (for authenticated users) -->
-    <header v-if="isAuthenticated" class="flex w-full z-40 shadow-lg h-15 flex-shrink-0">
+    <header v-if="isAuthenticated && $route.path !== '/widget'" class="flex w-full z-40 shadow-lg h-15 flex-shrink-0"><!-- <header v-if="isAuthenticated" class="flex w-full z-40 shadow-lg h-15 flex-shrink-0"> -->
       <!-- Left Section (logo + company name) - aligns with sidebar -->
       <div class="w-64 flex items-center px-4 bg-sidebar-bg border-r border-gray-200">
         <!-- Mobile menu button -->
@@ -240,7 +240,7 @@
       <!-- <div v-if="isAuthenticated" class="w-64 bg-sidebar-bg text-gray-700 shadow-lg border-r border-gray-200 hidden md:block overflow-hidden"> -->
         <div v-if="isAuthenticated && $route.path !== '/widget'" class="w-64 bg-sidebar-bg text-gray-700 shadow-lg border-r border-gray-200 hidden md:block overflow-hidden">
         <!-- Navigation (no duplicate branding) -->
-        <nav class="pt-2">
+        <nav class="pt-2 overflow-y-auto max-h-screen sidebar-scrollbar">
           <router-link
             to="/dashboard"
             class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
@@ -1328,7 +1328,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Custom scrollbar - thin with standard colors */
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -1337,10 +1337,28 @@ h1, h2, h3, h4, h5, h6 {
 
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Sidebar specific scrollbar styling */
+.sidebar-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
 

@@ -1469,6 +1469,15 @@ onMounted(async () => {
     await refsStore.fetchUsers()
     // Then fetch tasks
     await fetchTasks()
+    
+    // Check if we should open create modal from URL parameter
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get('create') === 'true') {
+      showCreateModal.value = true
+      // Clean up URL parameter
+      const newUrl = window.location.pathname
+      window.history.replaceState({}, document.title, newUrl)
+    }
   } catch (err: any) {
     console.error('Error in onMounted:', err)
     showError('Failed to initialize tasks page')

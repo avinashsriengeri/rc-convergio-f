@@ -461,6 +461,15 @@ const handleContactsListUpdate = async (event) => {
 onMounted(async () => {
   await fetchContacts(1)
   
+  // Check if we should open create modal from URL parameter
+  const urlParams = new URLSearchParams(window.location.search)
+  if (urlParams.get('create') === 'true') {
+    showCreateModal.value = true
+    // Clean up URL parameter
+    const newUrl = window.location.pathname
+    window.history.replaceState({}, document.title, newUrl)
+  }
+  
   // Listen for real-time contact creation events from both channels
   window.addEventListener('contacts-list-update', handleContactsListUpdate)
   window.addEventListener('contact-created', handleContactsListUpdate)

@@ -261,6 +261,7 @@ export const leadScoringHelpers = {
   },
 
   getScoreChangeColor: (change: string) => {
+    if (!change || typeof change !== 'string') return 'text-gray-600'
     if (change.startsWith('+')) return 'text-green-600'
     if (change.startsWith('-')) return 'text-red-600'
     return 'text-gray-600'
