@@ -166,6 +166,26 @@
               </div>
             </div>
 
+            <!-- License Agreement -->
+            <div class="flex items-start">
+              <div class="flex items-center h-5">
+                <input
+                  id="license"
+                  v-model="form.license"
+                  type="checkbox"
+                  class="h-4 w-4 text-[#d4418e] focus:ring-[#d4418e] border-gray-300 rounded"
+                  required
+                />
+              </div>
+              <div class="ml-3 text-sm">
+                <label for="license" class="text-gray-700 text-sm">
+                  I acknowledge and accept the
+                  <a href="#" class="text-[#d4418e] hover:text-[#c23a7f] transition-colors hover:underline">Software License Agreement</a>
+                </label>
+                <p v-if="errors.license" class="text-red-500 text-xs mt-1">{{ errors.license }}</p>
+              </div>
+            </div>
+
             <!-- Submit button -->
             <button
               type="submit"
@@ -210,16 +230,20 @@
     <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-[#f8fafc] via-white to-[#e2e8f0]">
       <!-- Background Image with Bold Visibility -->
       <div class="absolute inset-0 flex items-center justify-center">
-        <div class="relative w-full h-5/6">
+        <div class="relative responsive-image-container">
+
           <img 
             src="@/assets/save6.png" 
             alt="RC Convergio Business Suite" 
-            class="w-full h-full object-contain animate-spin-slow"
+            class="responsive-rotating-image object-contain animate-spin-slow"
+
           />
           <!-- RC Logo Overlay in Center -->
           <div class="absolute inset-0 flex items-center justify-center">
-            <div class="w-36 h-36 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-2xl border-4 border-white">
-              <img src="/src/assets/logo.png" alt="RC Logo" class="w-28 h-28 object-contain" />
+            <div class="responsive-logo-overlay bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-1xl border-4 border-white">
+             <img src="/src/assets/logo.png" alt="RC Logo" class="responsive-logo-image object-contain" />
+
+
             </div>
           </div>
         </div>
@@ -292,7 +316,8 @@ const form = reactive({
   email: '',
   password: '',
   password_confirmation: '',
-  terms: false
+  terms: false,
+  license: false
 })
 
 const showPassword = ref(false)
@@ -305,7 +330,8 @@ const errors = reactive({
   email: '',
   password: '',
   password_confirmation: '',
-  terms: ''
+  terms: '',
+  license: ''
 })
 
 const validateForm = () => {
@@ -355,6 +381,11 @@ const validateForm = () => {
   
   if (!form.terms) {
     errors.terms = 'Please accept the terms and conditions'
+    isValid = false
+  }
+  
+  if (!form.license) {
+    errors.license = 'Please accept the software license agreement'
     isValid = false
   }
   
@@ -414,5 +445,32 @@ const handleRegister = async () => {
 .bg-gradient-radial {
   background: radial-gradient(circle at center, transparent 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.2) 100%);
 }
+
+.responsive-image-container {
+  width: clamp(300px, 60vmin, 600px);
+  height: clamp(300px, 60vmin, 600px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.responsive-rotating-image {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Responsive logo overlay that scales with the image */
+.responsive-logo-overlay {
+  width: clamp(80px, 15vmin, 140px);
+  height: clamp(80px, 15vmin, 140px);
+}
+
+.responsive-logo-image {
+  width: clamp(55px, 11vmin, 95px);
+  height: clamp(55px, 11vmin, 95px);
+}	
+
 </style>
 

@@ -1,33 +1,27 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Header -->
-    <div class="bg-white shadow-sm border-b border-gray-200">
+    <div class="bg-white border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="py-6">
+        <div class="py-4">
           <div class="flex items-center justify-between">
             <div>
-              <h1 class="text-2xl font-bold text-gray-900">Commerce Settings</h1>
-              <p class="mt-1 text-sm text-gray-500">Configure your Stripe payment settings and preferences</p>
+              <h1 class="text-xl font-bold text-gray-900">Commerce Settings</h1>
+              <p class="text-sm text-gray-600">Configure your Stripe payment settings and preferences</p>
             </div>
             <div class="flex items-center space-x-3">
               <button
                 @click="sendTestEmail"
                 :disabled="loading"
-                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-purple disabled:opacity-50"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
                 Send Test Email
               </button>
               <button
                 @click="testConnection"
                 :disabled="loading || !isConfigured"
-                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-purple disabled:opacity-50"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
                 Test Connection
               </button>
             </div>
@@ -144,7 +138,7 @@
                     v-model="formData.mode"
                     type="radio"
                     value="test"
-                    class="focus:ring-primary-purple h-4 w-4 text-primary-purple border-gray-300"
+                    class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
                   />
                   <label for="test-mode" class="ml-3 block text-sm font-medium text-gray-700">
                     Test Mode
@@ -157,7 +151,7 @@
                     v-model="formData.mode"
                     type="radio"
                     value="live"
-                    class="focus:ring-primary-purple h-4 w-4 text-primary-purple border-gray-300"
+                    class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
                   />
                   <label for="live-mode" class="ml-3 block text-sm font-medium text-gray-700">
                     Live Mode
@@ -180,7 +174,7 @@
                     v-model="formData.stripe_public_key"
                     type="text"
                     placeholder="pk_test_..."
-                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-purple focus:border-primary-purple sm:text-sm"
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     :class="{ 'border-red-300': !isValidPublicKey && formData.stripe_public_key }"
                   />
                   <div v-if="!isValidPublicKey && formData.stripe_public_key" class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -211,7 +205,7 @@
                     v-model="formData.stripe_secret_key"
                     :type="showSecretKey ? 'text' : 'password'"
                     placeholder="sk_test_..."
-                    class="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-purple focus:border-primary-purple sm:text-sm"
+                    class="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     :class="{ 'border-red-300': !isValidSecretKey && formData.stripe_secret_key }"
                   />
                   <button
@@ -250,7 +244,7 @@
                     v-model="formData.stripe_webhook_secret"
                     :type="showWebhookSecret ? 'text' : 'password'"
                     placeholder="whsec_..."
-                    class="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-purple focus:border-primary-purple sm:text-sm"
+                    class="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   />
                   <button
                     type="button"
@@ -280,7 +274,7 @@
               <select
                 id="currency"
                 v-model="formData.currency"
-                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-purple focus:border-primary-purple sm:text-sm"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
                 <option value="usd">USD - US Dollar</option>
                 <option value="eur">EUR - Euro</option>
@@ -302,7 +296,7 @@
                     v-model="formData.payment_methods"
                     type="checkbox"
                     value="card"
-                    class="focus:ring-primary-purple h-4 w-4 text-primary-purple border-gray-300 rounded"
+                    class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                   />
                   <label for="card" class="ml-3 block text-sm font-medium text-gray-700">
                     Credit/Debit Cards
@@ -314,7 +308,7 @@
                     v-model="formData.payment_methods"
                     type="checkbox"
                     value="bank_transfer"
-                    class="focus:ring-primary-purple h-4 w-4 text-primary-purple border-gray-300 rounded"
+                    class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                   />
                   <label for="bank_transfer" class="ml-3 block text-sm font-medium text-gray-700">
                     Bank Transfer
@@ -326,7 +320,7 @@
                     v-model="formData.payment_methods"
                     type="checkbox"
                     value="paypal"
-                    class="focus:ring-primary-purple h-4 w-4 text-primary-purple border-gray-300 rounded"
+                    class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                   />
                   <label for="paypal" class="ml-3 block text-sm font-medium text-gray-700">
                     PayPal
@@ -344,7 +338,7 @@
                   id="auto_fulfill"
                   v-model="formData.auto_fulfill_orders"
                   type="checkbox"
-                  class="focus:ring-primary-purple h-4 w-4 text-primary-purple border-gray-300 rounded"
+                  class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                 />
                 <label for="auto_fulfill" class="ml-3 block text-sm font-medium text-gray-700">
                   Auto-fulfill orders when payment is received
@@ -356,7 +350,7 @@
                   id="send_confirmations"
                   v-model="formData.send_order_confirmations"
                   type="checkbox"
-                  class="focus:ring-primary-purple h-4 w-4 text-primary-purple border-gray-300 rounded"
+                  class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                 />
                 <label for="send_confirmations" class="ml-3 block text-sm font-medium text-gray-700">
                   Send order confirmation emails
@@ -368,7 +362,7 @@
                   id="send_receipts"
                   v-model="formData.send_payment_receipts"
                   type="checkbox"
-                  class="focus:ring-primary-purple h-4 w-4 text-primary-purple border-gray-300 rounded"
+                  class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                 />
                 <label for="send_receipts" class="ml-3 block text-sm font-medium text-gray-700">
                   Send payment receipt emails
@@ -389,14 +383,14 @@
                 v-if="isDirty"
                 type="button"
                 @click="resetForm"
-                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-purple"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 Reset
               </button>
               <button
                 type="submit"
                 :disabled="loading || !isFormValid"
-                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-purple hover:bg-primary-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-purple disabled:opacity-50"
+                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
               >
                 <svg v-if="loading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

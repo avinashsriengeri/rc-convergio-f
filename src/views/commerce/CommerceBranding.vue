@@ -1,12 +1,12 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Header -->
-    <div class="bg-white shadow">
-      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div class="bg-white border-b border-gray-200">
+      <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-2xl font-bold text-gray-900">Branding Management</h1>
-            <p class="mt-1 text-sm text-gray-500">Customize your company branding for invoices and communications</p>
+            <h1 class="text-xl font-bold text-gray-900">Branding Management</h1>
+            <p class="text-sm text-gray-600">Customize your company branding for invoices and communications</p>
           </div>
           <div class="flex items-center space-x-3">
             <button

@@ -72,16 +72,18 @@
     <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-[#f8fafc] via-white to-[#e2e8f0]">
       <!-- Background Image with Bold Visibility -->
       <div class="absolute inset-0 flex items-center justify-center">
-        <div class="relative w-full h-5/6">
+        <div class="relative responsive-image-container">
           <img 
             src="@/assets/save6.png" 
             alt="RC Convergio Business Suite" 
-            class="w-full h-full object-contain animate-spin-slow"
+            class="responsive-rotating-image object-contain animate-spin-slow"
+
           />
           <!-- RC Logo Overlay in Center -->
           <div class="absolute inset-0 flex items-center justify-center">
-            <div class="w-36 h-36 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-2xl border-4 border-white">
-              <img src="/src/assets/logo.png" alt="RC Logo" class="w-28 h-28 object-contain" />
+            <div class="responsive-logo-overlay bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-2xl border-4 border-white">
+           <img src="/src/assets/logo.png" alt="RC Logo" class="responsive-logo-image object-contain" />
+
             </div>
           </div>
         </div>
@@ -204,5 +206,33 @@ const handleForgotPassword = async () => {
 .bg-gradient-radial {
   background: radial-gradient(circle at center, transparent 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.2) 100%);
 }
+
+.responsive-image-container {
+  width: clamp(300px, 60vmin, 600px);
+  height: clamp(300px, 60vmin, 600px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.responsive-rotating-image {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Responsive logo overlay that scales with the image */
+.responsive-logo-overlay {
+  width: clamp(80px, 15vmin, 140px);
+  height: clamp(80px, 15vmin, 140px);
+}
+
+.responsive-logo-image {
+  width: clamp(55px, 11vmin, 95px);
+  height: clamp(55px, 11vmin, 95px);
+}   
+
+
 </style>
 

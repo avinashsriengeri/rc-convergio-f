@@ -1,7 +1,7 @@
 {
   "service": "Service Platform",
   "overview": {
-    "title": "Overview",
+    "title": "Service",
     "subtitle": "Service platform performance and ticket management",
     "description": "Monitor support tickets, track response times, and manage customer service operations.",
     "widget": "Widget",

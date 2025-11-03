@@ -1,46 +1,37 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Header -->
-    <div class="bg-white shadow-sm border-b border-gray-200">
+    <div class="bg-white border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="py-6">
+        <div class="py-4">
           <div class="flex items-center justify-between">
             <div>
-              <h1 class="text-2xl font-bold text-gray-900">Payment Links</h1>
-              <p class="mt-1 text-sm text-gray-500">Create and manage payment links for your quotes</p>
+              <h1 class="text-xl font-bold text-gray-900">Payment Links</h1>
+              <p class="text-sm text-gray-600">Create and manage payment links for your quotes</p>
             </div>
             <div class="flex items-center space-x-3">
               <button
                 @click="showBulkEmailModal = true"
                 :disabled="loading || selectedLinks.length === 0"
-                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-purple disabled:opacity-50"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
                 Send Bulk Email
-                <span v-if="selectedLinks.length > 0" class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-purple text-white">
+                <span v-if="selectedLinks.length > 0" class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                   {{ selectedLinks.length }}
                 </span>
               </button>
               <button
                 @click="showCreateModal = true"
-                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-purple hover:bg-primary-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-purple"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
               >
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
                 Create Payment Link
               </button>
               <button
                 @click="refreshLinks"
                 :disabled="loading"
-                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-purple disabled:opacity-50"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                Refresh
+                Refresh Data
               </button>
             </div>
           </div>
@@ -49,74 +40,74 @@
     </div>
 
     <!-- Analytics Cards -->
-    <div class="bg-white border-b border-gray-200">
+    <div class="bg-gray-50 border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
           <!-- Total Views -->
-          <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-4">
+          <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center">
               <div class="flex-shrink-0">
-                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                   </svg>
                 </div>
               </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-blue-600">Total Views</p>
-                <p class="text-2xl font-bold text-blue-900">{{ analyticsData.totalViews || 0 }}</p>
+              <div class="ml-3">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Views</p>
+                <p class="text-xl font-bold text-gray-900">{{ analyticsData.totalViews || 0 }}</p>
               </div>
             </div>
           </div>
 
           <!-- Total Clicks -->
-          <div class="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-4">
+          <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center">
               <div class="flex-shrink-0">
-                <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
                   </svg>
                 </div>
               </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-green-600">Total Clicks</p>
-                <p class="text-2xl font-bold text-green-900">{{ analyticsData.totalClicks || 0 }}</p>
+              <div class="ml-3">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Clicks</p>
+                <p class="text-xl font-bold text-gray-900">{{ analyticsData.totalClicks || 0 }}</p>
               </div>
             </div>
           </div>
 
           <!-- Conversions -->
-          <div class="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-4">
+          <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center">
               <div class="flex-shrink-0">
-                <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
-                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
               </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-purple-600">Conversions</p>
-                <p class="text-2xl font-bold text-purple-900">{{ analyticsData.totalConversions || 0 }}</p>
+              <div class="ml-3">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Conversions</p>
+                <p class="text-xl font-bold text-gray-900">{{ analyticsData.totalConversions || 0 }}</p>
               </div>
             </div>
           </div>
 
           <!-- Conversion Rate -->
-          <div class="bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg p-4">
+          <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center">
               <div class="flex-shrink-0">
-                <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                   </svg>
                 </div>
               </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-orange-600">Conversion Rate</p>
-                <p class="text-2xl font-bold text-orange-900">{{ analyticsData.conversionRate || 0 }}%</p>
+              <div class="ml-3">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Conversion Rate</p>
+                <p class="text-xl font-bold text-gray-900">{{ analyticsData.conversionRate || 0 }}%</p>
               </div>
             </div>
           </div>
@@ -140,7 +131,7 @@
                 v-model="searchQuery"
                 type="text"
                 placeholder="Search payment links..."
-                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-purple focus:border-primary-purple sm:text-sm"
+                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
           </div>
@@ -149,7 +140,7 @@
           <div class="sm:w-48">
             <select
               v-model="statusFilter"
-              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-purple focus:border-primary-purple sm:text-sm"
+              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             >
               <option value="">All Statuses</option>
               <option value="active">Active</option>
@@ -180,15 +171,16 @@
         <h3 class="mt-2 text-sm font-medium text-gray-900">No payment links found</h3>
         <p class="mt-1 text-sm text-gray-500">Get started by creating your first payment link.</p>
         <div class="mt-6">
-          <button
+          <BaseButton
+            variant="primary"
+            size="md"
             @click="showCreateModal = true"
-            class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-purple hover:bg-primary-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-purple"
           >
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
             Create Payment Link
-          </button>
+          </BaseButton>
         </div>
       </div>
 
@@ -253,7 +245,7 @@
                   @click="goToPage(page)"
                   :class="[
                     page === currentPage
-                      ? 'z-10 bg-primary-purple border-primary-purple text-white'
+                      ? 'z-10 bg-blue-600 border-blue-600 text-white'
                       : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50',
                     'relative inline-flex items-center px-4 py-2 border text-sm font-medium'
                   ]"
@@ -311,7 +303,7 @@
               v-model="bulkEmailSubject"
               type="text"
               placeholder="Payment link for your quote"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-purple"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -321,31 +313,28 @@
               v-model="bulkEmailMessage"
               rows="4"
               placeholder="Please find your payment link below..."
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-purple"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             ></textarea>
           </div>
 
           <div class="flex justify-end space-x-3">
-            <button
+            <BaseButton
+              variant="secondary"
+              size="md"
               @click="showBulkEmailModal = false"
-              class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
             >
               Cancel
-            </button>
-            <button
+            </BaseButton>
+            <BaseButton
+              variant="primary"
+              size="md"
               @click="sendBulkEmail"
               :disabled="bulkEmailLoading"
-              class="px-4 py-2 text-sm font-medium text-white bg-primary-purple rounded-md hover:bg-primary-purple-600 focus:outline-none focus:ring-2 focus:ring-primary-purple disabled:opacity-50"
+              :loading="bulkEmailLoading"
+              loadingText="Sending..."
             >
-              <span v-if="bulkEmailLoading" class="flex items-center">
-                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Sending...
-              </span>
-              <span v-else>Send Emails</span>
-            </button>
+              Send Emails
+            </BaseButton>
           </div>
         </div>
       </div>
@@ -358,6 +347,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useCommerceLinksStore } from '@/stores/useCommerceLinksStore'
 import CreatePaymentLinkModal from '@/components/commerce/CreatePaymentLinkModal.vue'
 import PaymentLinkCard from '@/components/commerce/PaymentLinkCard.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
 
 const linksStore = useCommerceLinksStore()
 

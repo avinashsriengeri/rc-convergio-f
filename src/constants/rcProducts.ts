@@ -3,7 +3,7 @@ export const rcProducts = [
   { 
     name: "RC Books", 
     url: "https://reliancecorporation.co.za/rc-books", 
-    icon: "journal-bookmark", 
+    icon: "book", 
     chipBg: { start: "#FFF6E6", end: "#FFE8C7" },
     ring: "#FFD6A6",
     iconColor: "#F59E0B"
@@ -51,7 +51,7 @@ export const rcProducts = [
   { 
     name: "RC Junior Minds", 
     url: "https://reliancecorporation.co.za/Junior", 
-    icon: "mortarboard", 
+    icon: "baby", 
     chipBg: { start: "#ECFDF5", end: "#D1FAE5" },
     ring: "#A7F3D0",
     iconColor: "#059669"

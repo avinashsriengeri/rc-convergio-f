@@ -1,34 +1,28 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Header -->
-    <div class="bg-white shadow-sm border-b border-gray-200">
+    <div class="bg-white border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="py-6">
+        <div class="py-4">
           <div class="flex items-center justify-between">
             <div>
-              <h1 class="text-2xl font-bold text-gray-900">Orders</h1>
-              <p class="mt-1 text-sm text-gray-500">Manage and track all customer orders</p>
+              <h1 class="text-xl font-bold text-gray-900">Orders</h1>
+              <p class="text-sm text-gray-600">Manage and track all customer orders</p>
             </div>
             <div class="flex items-center space-x-3">
               <button
                 @click="exportOrders"
                 :disabled="loading"
-                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-purple disabled:opacity-50"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Export
+                Export Orders
               </button>
               <button
                 @click="refreshOrders"
                 :disabled="loading"
-                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-purple disabled:opacity-50"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                Refresh
+                Refresh Data
               </button>
             </div>
           </div>
@@ -37,73 +31,73 @@
     </div>
 
     <!-- Transaction Analytics Cards -->
-    <div class="bg-white border-b border-gray-200">
+    <div class="bg-gray-50 border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
           <!-- Total Paid -->
-          <div class="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-4">
+          <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center">
               <div class="flex-shrink-0">
-                <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
               </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-green-600">Total Paid</p>
-                <p class="text-2xl font-bold text-green-900">${{ formatCurrency(transactionStats.totalPaid) }}</p>
+              <div class="ml-3">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Paid</p>
+                <p class="text-xl font-bold text-gray-900">${{ formatCurrency(transactionStats.totalPaid) }}</p>
               </div>
             </div>
           </div>
 
           <!-- Failed Transactions -->
-          <div class="bg-gradient-to-r from-red-50 to-red-100 rounded-lg p-4">
+          <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center">
               <div class="flex-shrink-0">
-                <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
-                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </div>
               </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-red-600">Failed</p>
-                <p class="text-2xl font-bold text-red-900">{{ transactionStats.failedCount }}</p>
+              <div class="ml-3">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Failed</p>
+                <p class="text-xl font-bold text-gray-900">{{ transactionStats.failedCount }}</p>
               </div>
             </div>
           </div>
 
           <!-- Refunded -->
-          <div class="bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg p-4">
+          <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center">
               <div class="flex-shrink-0">
-                <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                   </svg>
                 </div>
               </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-orange-600">Refunded</p>
-                <p class="text-2xl font-bold text-orange-900">${{ formatCurrency(transactionStats.totalRefunded) }}</p>
+              <div class="ml-3">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Refunded</p>
+                <p class="text-xl font-bold text-gray-900">${{ formatCurrency(transactionStats.totalRefunded) }}</p>
               </div>
             </div>
           </div>
 
           <!-- Success Rate -->
-          <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-4">
+          <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center">
               <div class="flex-shrink-0">
-                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                   </svg>
                 </div>
               </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-blue-600">Success Rate</p>
-                <p class="text-2xl font-bold text-blue-900">{{ transactionStats.successRate }}%</p>
+              <div class="ml-3">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Success Rate</p>
+                <p class="text-xl font-bold text-gray-900">{{ transactionStats.successRate }}%</p>
               </div>
             </div>
           </div>
@@ -127,7 +121,7 @@
                 v-model="searchQuery"
                 type="text"
                 placeholder="Search orders..."
-                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-purple focus:border-primary-purple sm:text-sm"
+                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
           </div>
@@ -136,7 +130,7 @@
           <div class="sm:w-48">
             <select
               v-model="statusFilter"
-              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-purple focus:border-primary-purple sm:text-sm"
+              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             >
               <option value="">All Statuses</option>
               <option value="pending">Pending</option>
@@ -151,7 +145,7 @@
           <div class="sm:w-48">
             <select
               v-model="dateFilter"
-              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-purple focus:border-primary-purple sm:text-sm"
+              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             >
               <option value="">All Time</option>
               <option value="today">Today</option>
@@ -186,14 +180,13 @@
           <h3 class="mt-2 text-sm font-medium text-gray-900">No orders found</h3>
           <p class="mt-1 text-sm text-gray-500">Get started by creating your first payment link.</p>
           <div class="mt-6">
-            <router-link
-              to="/commerce/payment-links"
-              class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-purple hover:bg-primary-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-purple"
-            >
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              Create Payment Link
+            <router-link to="/commerce/payment-links">
+              <BaseButton variant="primary" size="md">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Create Payment Link
+              </BaseButton>
             </router-link>
           </div>
         </div>
@@ -276,7 +269,7 @@
                   <div class="flex items-center justify-end space-x-2">
                     <button
                       @click="viewOrderDetails(order)"
-                      class="text-primary-purple hover:text-primary-purple-600"
+                      class="text-blue-600 hover:text-blue-700"
                     >
                       View Details
                     </button>
@@ -346,7 +339,7 @@
                   @click="goToPage(page)"
                   :class="[
                     page === currentPage
-                      ? 'z-10 bg-primary-purple border-primary-purple text-white'
+                      ? 'z-10 bg-blue-600 border-blue-600 text-white'
                       : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50',
                     'relative inline-flex items-center px-4 py-2 border text-sm font-medium'
                   ]"
@@ -391,6 +384,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useCommerceOrdersStore } from '@/stores/useCommerceOrdersStore'
 import OrderDetailModal from '@/components/commerce/OrderDetailModal.vue'
 import OrderEditModal from '@/components/commerce/OrderEditModal.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
 
 const ordersStore = useCommerceOrdersStore()
 
