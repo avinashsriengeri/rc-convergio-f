@@ -146,7 +146,7 @@
         <div class="relative responsive-image-container">
 
           <img 
-            src="@/assets/new.png" 
+            src="@/assets/rot-1.png" 
             alt="RC Convergio Business Suite" 
             class="responsive-rotating-image object-contain animate-spin-slow"
 
@@ -154,7 +154,7 @@
           <!-- RC Logo Overlay in Center -->
           <div class="absolute inset-0 flex items-center justify-center">
             <div class="responsive-logo-overlay flex items-center justify-center">
-             <img src="/src/assets/logo.png" alt="RC Logo" class="responsive-logo-image object-contain transform translate-x-5 translate-y-9" />
+             <img src="/src/assets/logo.png" alt="RC Logo" class="responsive-logo-image object-contain" />
             </div>
           </div>
         </div>
@@ -372,11 +372,11 @@ const handleLogin = async () => {
 }
 
 .responsive-logo-image {
-  width: clamp(100px, 16vmin, 165px);
-  height: clamp(100px, 16vmin, 165px);
+  width: clamp(120px, 18vmin, 190px);
+  height: clamp(120px, 18vmin, 190px);
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 51%;
+  left: 48%;
   transform: translate(-50%, -50%);
 }
 
