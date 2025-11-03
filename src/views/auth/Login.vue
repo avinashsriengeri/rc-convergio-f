@@ -146,16 +146,15 @@
         <div class="relative responsive-image-container">
 
           <img 
-            src="@/assets/save6.png" 
+            src="@/assets/new.png" 
             alt="RC Convergio Business Suite" 
             class="responsive-rotating-image object-contain animate-spin-slow"
 
           />
           <!-- RC Logo Overlay in Center -->
           <div class="absolute inset-0 flex items-center justify-center">
-            <div class="responsive-logo-overlay bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-2xl border-4 border-white">
-             <img src="/src/assets/logo.png" alt="RC Logo" class="responsive-logo-image object-contain" />
-
+            <div class="responsive-logo-overlay flex items-center justify-center">
+             <img src="/src/assets/logo.png" alt="RC Logo" class="responsive-logo-image object-contain transform translate-x-5 translate-y-9" />
             </div>
           </div>
         </div>
@@ -347,9 +346,9 @@ const handleLogin = async () => {
   background: radial-gradient(circle at center, transparent 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.2) 100%);
 }
 
-.responsive-image-container {
-  width: clamp(300px, 60vmin, 600px);
-  height: clamp(300px, 60vmin, 600px);
+ .responsive-image-container {
+  width: clamp(500px, 80vmin, 850px);
+  height: clamp(500px, 80vmin, 850px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -364,13 +363,21 @@ const handleLogin = async () => {
 
 /* Responsive logo overlay that scales with the image */
 .responsive-logo-overlay {
-  width: clamp(80px, 15vmin, 140px);
-  height: clamp(80px, 15vmin, 140px);
+  width: clamp(140px, 22vmin, 230px);
+  height: clamp(140px, 22vmin, 230px);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .responsive-logo-image {
-  width: clamp(55px, 11vmin, 95px);
-  height: clamp(55px, 11vmin, 95px);
+  width: clamp(100px, 16vmin, 165px);
+  height: clamp(100px, 16vmin, 165px);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 </style>
