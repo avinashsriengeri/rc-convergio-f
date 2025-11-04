@@ -132,6 +132,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useCommerceSubscriptionsStore } from '@/stores/useCommerceSubscriptionsStore'
+import Swal from 'sweetalert2'
 
 // defineProps and defineEmits are compiler macros, no need to import
 
@@ -161,8 +162,7 @@ const createCheckoutLink = async () => {
     console.log('Creating checkout link for plan:', props.plan.name)
     
     // Show customer info modal
-    if (window.Swal) {
-      const { value: formValues } = await window.Swal.fire({
+    const { value: formValues } = await Swal.fire({
         title: 'Customer Information',
         html: `
           <div class="text-left space-y-4">
@@ -190,17 +190,17 @@ const createCheckoutLink = async () => {
           const customerEmail = document.getElementById('customerEmail').value
           
           if (!customerName.trim()) {
-            window.Swal.showValidationMessage('Customer name is required')
+            Swal.showValidationMessage('Customer name is required')
             return false
           }
           
           if (!customerEmail.trim()) {
-            window.Swal.showValidationMessage('Customer email is required')
+            Swal.showValidationMessage('Customer email is required')
             return false
           }
           
           if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
-            window.Swal.showValidationMessage('Please enter a valid email address')
+            Swal.showValidationMessage('Please enter a valid email address')
             return false
           }
           
@@ -209,25 +209,24 @@ const createCheckoutLink = async () => {
       })
 
       if (formValues) {
-        // Create checkout session
-        const response = await subscriptionsStore.createCheckoutSession({
-          price_id: props.plan.stripe_price_id || props.plan.id,
-          customer_name: formValues.customerName,
-          customer_email: formValues.customerEmail,
-          success_url: `${window.location.origin}/commerce/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-          cancel_url: `${window.location.origin}/commerce/checkout/cancel`
-        })
+        // Create checkout session - pass separate parameters as expected by store
+        const response = await subscriptionsStore.createCheckoutSession(
+          props.plan.id,  // planId
+          formValues.customerEmail,  // customerEmail
+          formValues.customerName  // customerName
+        )
 
-        if (response.data && response.data.checkout_url) {
+        // Store returns result directly, not wrapped in response.data
+        if (response && response.checkout_url) {
           // Emit event with checkout data
           emit('checkout-created', {
             plan: props.plan,
-            checkoutUrl: response.data.checkout_url,
+            checkoutUrl: response.checkout_url,
             customer: formValues
           })
 
           // Show success message and redirect
-          window.Swal.fire({
+          Swal.fire({
             icon: 'success',
             title: 'Checkout Created!',
             text: 'Redirecting to Stripe checkout...',
@@ -239,35 +238,31 @@ const createCheckoutLink = async () => {
 
           // Redirect to checkout
           setTimeout(() => {
-            window.open(response.data.checkout_url, '_blank')
+            window.open(response.checkout_url, '_blank')
           }, 1000)
         } else {
           throw new Error('Invalid checkout response')
         }
       }
-    }
   } catch (error) {
     console.error('Error creating checkout link:', error)
     
-    if (window.Swal) {
-      window.Swal.fire({
-        icon: 'error',
-        title: 'Checkout Failed',
-        text: error.response?.data?.message || 'Failed to create checkout link',
-        timer: 3000,
-        showConfirmButton: false,
-        toast: true,
-        position: 'top-end'
-      })
-    }
+    Swal.fire({
+      icon: 'error',
+      title: 'Checkout Failed',
+      text: error.response?.data?.message || 'Failed to create checkout link',
+      timer: 3000,
+      showConfirmButton: false,
+      toast: true,
+      position: 'top-end'
+    })
   } finally {
     isCreatingCheckout.value = false
   }
 }
 
 const deletePlan = async () => {
-  if (window.Swal) {
-    const result = await window.Swal.fire({
+  const result = await Swal.fire({
       title: 'Delete Plan?',
       text: `Are you sure you want to delete "${props.plan.name}"? This action cannot be undone.`,
       icon: 'warning',
@@ -281,13 +276,8 @@ const deletePlan = async () => {
       }
     })
 
-    if (result.isConfirmed) {
-      emit('delete', props.plan.id)
-    }
-  } else {
-    if (confirm(`Are you sure you want to delete "${props.plan.name}"?`)) {
-      emit('delete', props.plan.id)
-    }
+  if (result.isConfirmed) {
+    emit('delete', props.plan.id)
   }
 }
 </script>
