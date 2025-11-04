@@ -66,7 +66,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -74,6 +74,8 @@ import {
   PointElement,
   LineElement,
   BarElement,
+  LineController,
+  BarController,
   Title,
   Tooltip,
   Legend,
@@ -87,6 +89,8 @@ ChartJS.register(
   PointElement,
   LineElement,
   BarElement,
+  LineController,
+  BarController,
   Title,
   Tooltip,
   Legend,
@@ -186,9 +190,24 @@ const createChart = () => {
   
   const ctx = chartCanvas.value.getContext('2d')
   
-  // Destroy existing chart
+  // Destroy existing chart instance
   if (chartInstance.value) {
-    chartInstance.value.destroy()
+    try {
+      chartInstance.value.destroy()
+      chartInstance.value = null
+    } catch (err) {
+      console.warn('Error destroying chart instance:', err)
+    }
+  }
+  
+  // Check if canvas already has a chart and destroy it
+  const existingChart = ChartJS.getChart(ctx)
+  if (existingChart) {
+    try {
+      existingChart.destroy()
+    } catch (err) {
+      console.warn('Error destroying existing chart:', err)
+    }
   }
   
   const config = {
@@ -298,11 +317,43 @@ watch(() => props.data, (newData) => {
   })
 }, { deep: true, immediate: true })
 
+// Watch for type changes
+watch(() => props.type, () => {
+  nextTick(() => {
+    createChart()
+  })
+})
+
 onMounted(() => {
   chartData.value = processChartData(props.data)
   nextTick(() => {
     createChart()
   })
+})
+
+// Cleanup on unmount
+onUnmounted(() => {
+  if (chartInstance.value) {
+    try {
+      chartInstance.value.destroy()
+      chartInstance.value = null
+    } catch (err) {
+      console.warn('Error destroying chart on unmount:', err)
+    }
+  }
+  
+  // Also check canvas for any existing chart
+  if (chartCanvas.value) {
+    const ctx = chartCanvas.value.getContext('2d')
+    const existingChart = ChartJS.getChart(ctx)
+    if (existingChart) {
+      try {
+        existingChart.destroy()
+      } catch (err) {
+        console.warn('Error destroying existing chart on unmount:', err)
+      }
+    }
+  }
 })
 </script>
 
