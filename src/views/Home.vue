@@ -5,9 +5,8 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-3 items-center h-14">
           <!-- Left: Brand -->
-          <div class="flex items-center gap-3">
-            <img :src="logo" alt="RC Convergio" class="h-10 w-10 object-contain" />
-            <h1 class="text-xl font-bold text-gray-900">RC Convergio</h1>
+          <div class="flex items-center gap-2">
+            
           </div>
 
           <!-- Center: Navigation Links (desktop) -->
@@ -94,72 +93,109 @@
     </nav>
 
     <!-- Hero Section -->
-    <section id="hero" class="relative pt-14 min-h-[70vh] bg-gradient-to-br from-[#f8fafc] via-white to-[#e2e8f0] overflow-hidden">
+    <section id="hero" class="relative pt-14 min-h-[75vh] bg-gradient-to-br from-[#f8fafc] via-white to-[#e2e8f0] overflow-hidden">
+      <!-- Subtle Background -->
+      <div class="absolute inset-0">
+        <!-- Animated gradient mesh -->
+        <div class="mesh-bg absolute inset-0 opacity-60 pointer-events-none"></div>
 
+        <!-- Soft dotted grid panning subtly -->
+        <div class="animated-grid absolute inset-0 opacity-20 pointer-events-none"></div>
 
-      <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center min-h-[calc(70vh-3.5rem)]">
-        <div class="grid grid-cols-1 gap-6 items-center w-full">
-          <div class="space-y-4 animate-fade-in-up text-center md:text-left">
-            <!-- Company Branding -->
-            <div class="mb-4">
-              <div class="flex items-center space-x-3 mb-3">
-                <img :src="logo" alt="RC Convergio" class="w-12 h-12 object-contain">
-                <div>
-                  <h2 class="text-xl font-bold text-gray-900">RC Convergio</h2>
-                  <p class="text-gray-600 text-xs">Business Transformation Suite</p>
-                </div>
-              </div>
-            </div>
+        <!-- Blurred gradient blobs for depth -->
+        <div class="absolute inset-0 pointer-events-none">
+          <div class="gradient-blob blob-1"></div>
+          <div class="gradient-blob blob-2"></div>
+          <div class="gradient-blob blob-3"></div>
+        </div>
 
-            <h1 class="text-xl lg:text-3xl font-bold text-gray-900 leading-tight">
-              "Designed to delight.
-              <span class="bg-gradient-to-r from-[#d4418e] via-[#0652c5] via-[#2596be] to-[#973894] bg-clip-text text-transparent animate-gradient-x">
-                Built to deliver value."
-              </span>
-            </h1>
-            
-            <p class="text-sm text-gray-700 leading-relaxed max-w-xl">
-              Access all Reliance Corporation's powerful software solutions from one unified platform. 
-              From customer conversions to enterprise management - everything you need to scale your business.
-            </p>
+        <!-- Animated wave patterns -->
+        <div class="absolute inset-0 pointer-events-none">
+          <svg class="wave-svg wave-1" viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path fill="rgba(212, 65, 142, 0.08)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+          </svg>
+          <svg class="wave-svg wave-2" viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path fill="rgba(6, 82, 197, 0.06)" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,213.3C672,224,768,224,864,208C960,192,1056,160,1152,149.3C1248,139,1344,149,1392,154.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+          </svg>
+          <svg class="wave-svg wave-3" viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path fill="rgba(37, 150, 190, 0.05)" d="M0,160L48,170.7C96,181,192,203,288,197.3C384,192,480,160,576,154.7C672,149,768,171,864,186.7C960,203,1056,213,1152,197.3C1248,181,1344,139,1392,117.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+          </svg>
+        </div>
 
-            <!-- Key Features Pills -->
-            <div class="flex flex-wrap gap-1.5 mb-4">
-              <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded-full text-xs border border-blue-200">
-                Unified Dashboard
-              </span>
-              <span class="px-2 py-1 bg-purple-50 text-purple-600 rounded-full text-xs border border-purple-200">
-                Single Sign-On
-              </span>
-              <span class="px-2 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs border border-indigo-200">
-                Integrated Analytics
-              </span>
-            </div>
-            
-            
-
-            <!-- Trust Metrics -->
-            <div class="grid grid-cols-3 gap-3 pt-4 border-t border-gray-300">
-              <div class="text-center">
-                <div class="text-lg font-bold text-gray-900 mb-0.5">500+</div>
-                <div class="text-gray-600 text-xs">Enterprise Clients</div>
-              </div>
-              <div class="text-center">
-                <div class="text-lg font-bold text-gray-900 mb-0.5">15+</div>
-                <div class="text-gray-600 text-xs">Software Solutions</div>
-              </div>
-              <div class="text-center">
-                <div class="text-lg font-bold text-gray-900 mb-0.5">99.9%</div>
-                <div class="text-gray-600 text-xs">Uptime SLA</div>
-              </div>
-            </div>
-          </div>
-          
-          
+        <!-- Floating geometric shapes -->
+        <div class="absolute inset-0 pointer-events-none">
+          <div class="floating-shape shape-circle-1"></div>
+          <div class="floating-shape shape-square-1"></div>
+          <div class="floating-shape shape-triangle-1"></div>
+          <div class="floating-shape shape-circle-2"></div>
+          <div class="floating-shape shape-square-2"></div>
         </div>
       </div>
 
-      
+      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-[calc(85vh-3.5rem)]">
+        <div class="w-full text-center space-y-8">
+          <!-- Company Branding -->
+          <div class="mb-8">
+            <div class="flex items-center justify-center space-x-5 mb-6">
+              <img :src="logo" alt="RC Convergio" class="w-20 h-20 object-contain">
+              <div>
+                <h2 class="text-3xl font-bold text-gray-900">RC Convergio</h2>
+                <p class="text-lg text-gray-600">Business Transformation Suite</p>
+              </div>
+            </div>
+          </div>
+
+          <h1 class="text-3xl lg:text-5xl font-bold text-gray-900 leading-tight max-w-4xl mx-auto">
+            "Designed to delight.
+            <span class="bg-gradient-to-r from-[#d4418e] via-[#0652c5] via-[#2596be] to-[#973894] bg-clip-text text-transparent animate-gradient-x">
+              Built to deliver value."
+            </span>
+          </h1>
+          
+          <p class="text-base text-gray-700 leading-relaxed max-w-3xl mx-auto">
+            Access all Reliance Corporation's powerful software solutions from one unified platform. 
+            From customer conversions to enterprise management - everything you need to scale your business.
+          </p>
+
+          <!-- CTA Buttons -->
+          <div class="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+            <router-link
+              to="/login"
+              class="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-[#d4418e] to-[#0652c5] text-white text-base font-semibold rounded-lg hover:from-[#c23a7f] hover:to-[#0548a8] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 group"
+            >
+              <span>Get Started</span>
+              <svg class="ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5-5 5M6 12h12"></path>
+              </svg>
+            </router-link>
+            <button 
+              @click="scrollToContact"
+              class="inline-flex items-center justify-center px-8 py-3 border-2 border-gray-300 text-gray-700 text-base font-semibold rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-300"
+            >
+              <svg class="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+              </svg>
+              <span>Talk to Expert</span>
+            </button>
+          </div>
+
+          <!-- Trust Metrics -->
+          <div class="grid grid-cols-3 gap-6 max-w-2xl mx-auto pt-6 border-t border-gray-300">
+            <div class="text-center">
+              <div class="text-2xl font-bold text-gray-900 mb-1">500+</div>
+              <div class="text-sm text-gray-600">Enterprise Clients</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-gray-900 mb-1">15+</div>
+              <div class="text-sm text-gray-600">Software Solutions</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-gray-900 mb-1">99.9%</div>
+              <div class="text-sm text-gray-600">Uptime SLA</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Our Product Section - Enhanced Professional Version -->
@@ -170,11 +206,11 @@
           <div class="relative inline-block">
             <!-- Background gradient for header -->
             <div class="absolute inset-0 bg-gradient-to-r from-blue-100/50 via-purple-100/50 to-indigo-100/50 rounded-2xl blur-xl"></div>
-            <div class="relative bg-gradient-to-r from-white/80 via-gray-50/80 to-white/80 backdrop-blur-sm rounded-2xl px-8 py-4 border border-gray-200">
-              <h2 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-2 tracking-tight">
+            <div class="relative bg-gradient-to-r from-white/80 via-gray-50/80 to-white/80 backdrop-blur-sm rounded-2xl px-6 py-3 border border-gray-200">
+              <h2 class="text-xl lg:text-2xl font-bold text-gray-900 mb-1 tracking-tight">
                 Our <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#d4418e] to-[#0652c5]">Products</span>
               </h2>
-              <p class="text-sm text-gray-600 font-light max-w-2xl mx-auto leading-relaxed">
+              <p class="text-xs text-gray-600 font-light max-w-2xl mx-auto leading-relaxed">
                 Discover our innovative solutions designed to transform your business and drive success
               </p>
             </div>
@@ -214,38 +250,38 @@
                   </div>
 
                   <!-- Card Content -->
-                  <div class="p-6 space-y-4">
-                    <div class="space-y-2">
-                      <h3 class="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300 line-clamp-1">
+                  <div class="p-5 space-y-3">
+                    <div class="space-y-1">
+                      <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300 line-clamp-1">
                         {{ product.title }}
                       </h3>
-                      <p class="text-gray-600 text-sm leading-relaxed line-clamp-2 group-hover:text-gray-700 transition-colors duration-300">
+                      <p class="text-gray-600 text-xs leading-relaxed line-clamp-2 group-hover:text-gray-700 transition-colors duration-300">
                         {{ product.description }}
                       </p>
                     </div>
 
                     <!-- Features -->
-                    <div class="flex flex-wrap gap-2">
+                    <div class="flex flex-wrap gap-1.5">
                       <span 
                         v-for="feature in product.features" 
                         :key="feature"
-                        class="inline-flex items-center px-2 py-1 rounded-md bg-blue-50 text-xs text-blue-700 border border-blue-200"
+                        class="inline-flex items-center px-2 py-0.5 rounded-md bg-blue-50 text-xs text-blue-700 border border-blue-200"
                       >
                         {{ feature }}
                       </span>
                     </div>
 
                     <!-- Action Button -->
-                    <div class="pt-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                    <div class="pt-1 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                       <a 
                         :href="product.link || '#'" 
                         target="_blank" 
                         rel="noopener" 
-                        class="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 border border-blue-200 rounded-lg px-4 py-2 text-sm text-blue-700 hover:text-blue-800 transition-all duration-300"
+                        class="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 border border-blue-200 rounded-lg px-3 py-1.5 text-xs text-blue-700 hover:text-blue-800 transition-all duration-300"
                         role="button"
                       >
                         <span>Learn More</span>
-                        <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-3 h-3 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                         </svg>
                       </a>
@@ -273,36 +309,36 @@
                     </div>
                   </div>
 
-                  <div class="p-6 space-y-4">
-                    <div class="space-y-2">
-                      <h3 class="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300 line-clamp-1">
+                  <div class="p-5 space-y-3">
+                    <div class="space-y-1">
+                      <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300 line-clamp-1">
                         {{ product.title }}
                       </h3>
-                      <p class="text-gray-600 text-sm leading-relaxed line-clamp-2 group-hover:text-gray-700 transition-colors duration-300">
+                      <p class="text-gray-600 text-xs leading-relaxed line-clamp-2 group-hover:text-gray-700 transition-colors duration-300">
                         {{ product.description }}
                       </p>
                     </div>
 
-                    <div class="flex flex-wrap gap-2">
+                    <div class="flex flex-wrap gap-1.5">
                       <span 
                         v-for="feature in product.features" 
                         :key="feature"
-                        class="inline-flex items-center px-2 py-1 rounded-md bg-blue-50 text-xs text-blue-700 border border-blue-200"
+                        class="inline-flex items-center px-2 py-0.5 rounded-md bg-blue-50 text-xs text-blue-700 border border-blue-200"
                       >
                         {{ feature }}
                       </span>
                     </div>
 
-                    <div class="pt-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                    <div class="pt-1 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                       <a 
                         :href="product.link || '#'" 
                         target="_blank" 
                         rel="noopener" 
-                        class="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 border border-blue-200 rounded-lg px-4 py-2 text-sm text-blue-700 hover:text-blue-800 transition-all duration-300"
+                        class="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 border border-blue-200 rounded-lg px-3 py-1.5 text-xs text-blue-700 hover:text-blue-800 transition-all duration-300"
                         role="button"
                       >
                         <span>Learn More</span>
-                        <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-3 h-3 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                         </svg>
                       </a>
@@ -326,11 +362,11 @@
       <div class="relative inline-block">
         <!-- Background gradient for header -->
         <div class="absolute inset-0 bg-gradient-to-r from-blue-100/50 via-purple-100/50 to-indigo-100/50 rounded-2xl blur-xl"></div>
-        <div class="relative bg-gradient-to-r from-white/80 via-gray-50/80 to-white/80 backdrop-blur-sm rounded-2xl px-8 py-4 border border-gray-200">
-          <h2 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-2 tracking-tight">
+        <div class="relative bg-gradient-to-r from-white/80 via-gray-50/80 to-white/80 backdrop-blur-sm rounded-2xl px-6 py-3 border border-gray-200">
+          <h2 class="text-xl lg:text-2xl font-bold text-gray-900 mb-1 tracking-tight">
                         One Platform, <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#d4418e] to-[#0652c5]">Endless Possibilities</span>
           </h2>
-          <p class="text-sm text-gray-600 font-light max-w-2xl mx-auto leading-relaxed">
+          <p class="text-xs text-gray-600 font-light max-w-2xl mx-auto leading-relaxed">
             Access all Reliance Corporation software solutions through a single, unified portal. 
             Streamline your workflow with seamless integration and centralized management.
           </p>
@@ -342,15 +378,15 @@
     <div class="grid md:grid-cols-4 gap-4 mb-12">
       <div class="group relative">
         <div class="absolute inset-0 bg-gradient-to-r from-blue-100/50 to-purple-100/50 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        <div class="relative text-center p-4 rounded-xl bg-gradient-to-br from-white/80 to-gray-50/80 border border-gray-200 backdrop-blur-sm hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow-md">
-          <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <div class="relative text-center p-3 rounded-xl bg-gradient-to-br from-white/80 to-gray-50/80 border border-gray-200 backdrop-blur-sm hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow-md">
+          <div class="w-10 h-10 mx-auto mb-3 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center shadow-lg border border-blue-200">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path d="M9 12l2 2 4-4"/>
               <path d="M21 12c-1-3.5-4-7-9-7s-8 3.5-9 7c1 3.5 4 7 9 7s8-3.5 9-7"/>
             </svg>
           </div>
-          <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-300">Single Sign-On</h3>
-          <p class="text-sm text-gray-600 font-light leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
+          <h3 class="text-base font-bold text-gray-900 mb-1.5 group-hover:text-blue-600 transition-colors duration-300">Single Sign-On</h3>
+          <p class="text-xs text-gray-600 font-light leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
             Access all your enterprise applications with one secure login. Enhanced security with enterprise-grade authentication.
           </p>
         </div>
@@ -358,17 +394,17 @@
       
       <div class="group relative">
         <div class="absolute inset-0 bg-gradient-to-r from-purple-100/50 to-indigo-100/50 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        <div class="relative text-center p-4 rounded-xl bg-gradient-to-br from-white/80 to-gray-50/80 border border-gray-200 backdrop-blur-sm hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow-md">
-          <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <div class="relative text-center p-3 rounded-xl bg-gradient-to-br from-white/80 to-gray-50/80 border border-gray-200 backdrop-blur-sm hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow-md">
+          <div class="w-10 h-10 mx-auto mb-3 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center shadow-lg border border-purple-200">
+            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <rect width="7" height="9" x="3" y="3" rx="1"/>
               <rect width="7" height="5" x="14" y="3" rx="1"/>
               <rect width="7" height="9" x="14" y="12" rx="1"/>
               <rect width="7" height="5" x="3" y="16" rx="1"/>
             </svg>
           </div>
-          <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors duration-300">Unified Dashboard</h3>
-          <p class="text-sm text-gray-600 font-light leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
+          <h3 class="text-base font-bold text-gray-900 mb-1.5 group-hover:text-purple-600 transition-colors duration-300">Unified Dashboard</h3>
+          <p class="text-xs text-gray-600 font-light leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
             Centralized control panel with real-time insights across all connected applications and business metrics.
           </p>
         </div>
@@ -376,15 +412,15 @@
       
       <div class="group relative">
         <div class="absolute inset-0 bg-gradient-to-r from-indigo-100/50 to-teal-100/50 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        <div class="relative text-center p-4 rounded-xl bg-gradient-to-br from-white/80 to-gray-50/80 border border-gray-200 backdrop-blur-sm hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow-md">
-          <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <div class="relative text-center p-3 rounded-xl bg-gradient-to-br from-white/80 to-gray-50/80 border border-gray-200 backdrop-blur-sm hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow-md">
+          <div class="w-10 h-10 mx-auto mb-3 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-lg flex items-center justify-center shadow-lg border border-indigo-200">
+            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path d="m8 6 4 4-4 4"/>
               <path d="m12 6 4 4-4 4"/>
             </svg>
           </div>
-          <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors duration-300">Smart Integration</h3>
-          <p class="text-sm text-gray-600 font-light leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
+          <h3 class="text-base font-bold text-gray-900 mb-1.5 group-hover:text-indigo-600 transition-colors duration-300">Smart Integration</h3>
+          <p class="text-xs text-gray-600 font-light leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
             Seamless data flow between applications. Real-time synchronization and automated workflow orchestration.
           </p>
         </div>
@@ -392,15 +428,15 @@
       
       <div class="group relative">
         <div class="absolute inset-0 bg-gradient-to-r from-teal-100/50 to-emerald-100/50 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        <div class="relative text-center p-4 rounded-xl bg-gradient-to-br from-white/80 to-gray-50/80 border border-gray-200 backdrop-blur-sm hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow-md">
-          <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <div class="relative text-center p-3 rounded-xl bg-gradient-to-br from-white/80 to-gray-50/80 border border-gray-200 backdrop-blur-sm hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow-md">
+          <div class="w-10 h-10 mx-auto mb-3 bg-gradient-to-br from-teal-100 to-teal-200 rounded-lg flex items-center justify-center shadow-lg border border-teal-200">
+            <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path d="M3 3v18h18"/>
               <path d="m19 9-5 5-4-4-3 3"/>
             </svg>
           </div>
-          <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-teal-600 transition-colors duration-300">Advanced Analytics</h3>
-          <p class="text-sm text-gray-600 font-light leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
+          <h3 class="text-base font-bold text-gray-900 mb-1.5 group-hover:text-teal-600 transition-colors duration-300">Advanced Analytics</h3>
+          <p class="text-xs text-gray-600 font-light leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
             Cross-platform reporting and business intelligence. Data-driven insights with predictive analytics capabilities.
           </p>
         </div>
@@ -414,8 +450,8 @@
           <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700 border border-blue-200 mb-4">
             Enterprise Ready
           </div>
-          <h3 class="text-3xl font-bold text-gray-900 mb-4">Built for Enterprise Scale</h3>
-          <p class="text-gray-700 font-light text-lg leading-relaxed">
+          <h3 class="text-2xl font-bold text-gray-900 mb-3">Built for Enterprise Scale</h3>
+          <p class="text-gray-700 font-light text-sm leading-relaxed">
             Enterprise-grade platform designed to handle complex organizational needs with 
             military-grade security, compliance, and scalability built from the ground up.
           </p>
@@ -423,56 +459,56 @@
 
         <div class="grid gap-6">
           <div class="flex items-start space-x-4 p-4 rounded-xl bg-white/80 border border-gray-200 hover:border-gray-300 transition-colors duration-300 shadow-sm hover:shadow-md">
-            <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center border border-blue-200">
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
               </svg>
             </div>
             <div>
-              <h4 class="font-bold text-gray-900 mb-1">Role-Based Access Control</h4>
-              <p class="text-gray-600 text-sm leading-relaxed">
+              <h4 class="font-semibold text-gray-900 mb-1 text-sm">Role-Based Access Control</h4>
+              <p class="text-gray-600 text-xs leading-relaxed">
                 Granular permission management with department-level access controls and audit trails
               </p>
             </div>
           </div>
           
           <div class="flex items-start space-x-4 p-4 rounded-xl bg-white/80 border border-gray-200 hover:border-gray-300 transition-colors duration-300 shadow-sm hover:shadow-md">
-            <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center border border-purple-200">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
               </svg>
             </div>
             <div>
-              <h4 class="font-bold text-gray-900 mb-1">API-First Architecture</h4>
-              <p class="text-gray-600 text-sm leading-relaxed">
+              <h4 class="font-semibold text-gray-900 mb-1 text-sm">API-First Architecture</h4>
+              <p class="text-gray-600 text-xs leading-relaxed">
                 RESTful APIs and webhooks for seamless third-party integrations and custom development
               </p>
             </div>
           </div>
           
           <div class="flex items-start space-x-4 p-4 rounded-xl bg-white/80 border border-gray-200 hover:border-gray-300 transition-colors duration-300 shadow-sm hover:shadow-md">
-            <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-lg flex items-center justify-center border border-indigo-200">
+              <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
               </svg>
             </div>
             <div>
-              <h4 class="font-bold text-gray-900 mb-1">Real-Time Performance</h4>
-              <p class="text-gray-600 text-sm leading-relaxed">
+              <h4 class="font-semibold text-gray-900 mb-1 text-sm">Real-Time Performance</h4>
+              <p class="text-gray-600 text-xs leading-relaxed">
                 Lightning-fast response times with 99.9% uptime SLA and global CDN distribution
               </p>
             </div>
           </div>
           
           <div class="flex items-start space-x-4 p-4 rounded-xl bg-white/80 border border-gray-200 hover:border-gray-300 transition-colors duration-300 shadow-sm hover:shadow-md">
-            <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-teal-100 to-teal-200 rounded-lg flex items-center justify-center border border-teal-200">
+              <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
             <div>
-              <h4 class="font-bold text-gray-900 mb-1">Compliance & Security</h4>
-              <p class="text-gray-600 text-sm leading-relaxed">
+              <h4 class="font-semibold text-gray-900 mb-1 text-sm">Compliance & Security</h4>
+              <p class="text-gray-600 text-xs leading-relaxed">
                 SOC 2, GDPR, HIPAA compliant with end-to-end encryption and data sovereignty
               </p>
             </div>
@@ -629,11 +665,11 @@
       <div class="relative inline-block">
         <!-- Background gradient for header -->
         <div class="absolute inset-0 bg-gradient-to-r from-teal-100/50 via-emerald-100/50 to-green-100/50 rounded-2xl blur-xl"></div>
-        <div class="relative bg-gradient-to-r from-white/80 via-gray-50/80 to-white/80 backdrop-blur-sm rounded-2xl px-8 py-4 border border-gray-200">
-          <h2 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-2 tracking-tight">
+        <div class="relative bg-gradient-to-r from-white/80 via-gray-50/80 to-white/80 backdrop-blur-sm rounded-2xl px-6 py-3 border border-gray-200">
+          <h2 class="text-xl lg:text-2xl font-bold text-gray-900 mb-1 tracking-tight">
                       About <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#d4418e] to-[#0652c5]">RC Convergio</span>
           </h2>
-          <p class="text-sm text-gray-600 font-light max-w-2xl mx-auto">
+          <p class="text-xs text-gray-600 font-light max-w-2xl mx-auto">
             Pioneering the future of enterprise software integration
           </p>
         </div>
@@ -657,8 +693,8 @@
         <!-- Core Values -->
         <div class="space-y-4">
           <div class="flex items-start space-x-4">
-            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-8 h-8 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-1 border border-blue-200">
+              <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
               </svg>
             </div>
@@ -669,8 +705,8 @@
           </div>
           
           <div class="flex items-start space-x-4">
-            <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-8 h-8 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-1 border border-purple-200">
+              <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
               </svg>
             </div>
@@ -681,8 +717,8 @@
           </div>
           
           <div class="flex items-start space-x-4">
-            <div class="w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-8 h-8 bg-gradient-to-br from-teal-100 to-teal-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-1 border border-teal-200">
+              <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
               </svg>
             </div>
@@ -750,12 +786,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5-5 5M6 12h12"></path>
               </svg>
             </button>
-            <button class="inline-flex items-center justify-center px-8 py-3 border-2 border-gray-300 text-gray-700 text-lg font-semibold rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 backdrop-blur-sm">
-              <svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-              </svg>
-              <span>Talk to Expert</span>
-            </button>
+            
           </div>
           
           <!-- Trust Indicator -->
@@ -782,11 +813,11 @@
       <div class="relative inline-block">
         <!-- Background gradient for header -->
         <div class="absolute inset-0 bg-gradient-to-r from-rose-100/50 via-pink-100/50 to-purple-100/50 rounded-2xl blur-xl"></div>
-        <div class="relative bg-gradient-to-r from-white/80 via-gray-50/80 to-white/80 backdrop-blur-sm rounded-2xl px-8 py-4 border border-gray-200">
-          <h2 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-2 tracking-tight">
+        <div class="relative bg-gradient-to-r from-white/80 via-gray-50/80 to-white/80 backdrop-blur-sm rounded-2xl px-6 py-3 border border-gray-200">
+          <h2 class="text-xl lg:text-2xl font-bold text-gray-900 mb-1 tracking-tight">
                       Contact <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#d4418e] to-[#0652c5]">Us</span>
           </h2>
-          <p class="text-sm text-gray-600 font-light max-w-xl mx-auto">
+          <p class="text-xs text-gray-600 font-light max-w-xl mx-auto">
             Ready to transform your enterprise? Our experts are here to help you get started with RC Convergio.
           </p>
         </div>
@@ -798,9 +829,9 @@
       <div class="relative">
         <div class="absolute inset-0 bg-gradient-to-r from-blue-100/50 to-purple-100/50 rounded-3xl blur-2xl opacity-50"></div>
         <div class="relative bg-gradient-to-br from-white/90 to-gray-50/90 backdrop-blur-xl p-6 rounded-2xl border border-gray-200 shadow-xl">
-          <div class="mb-6">
-            <h3 class="text-lg font-bold text-gray-900 mb-2">Get Started Today</h3>
-            <p class="text-sm text-gray-600 font-light">Tell us about your needs and we'll create a tailored solution for your enterprise.</p>
+          <div class="mb-5">
+            <h3 class="text-base font-bold text-gray-900 mb-1.5">Get Started Today</h3>
+            <p class="text-xs text-gray-600 font-light">Tell us about your needs and we'll create a tailored solution for your enterprise.</p>
           </div>
 
           <form class="space-y-4">
@@ -870,16 +901,16 @@
           <div class="relative group">
             <div class="absolute inset-0 bg-gradient-to-r from-blue-100/50 to-purple-100/50 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div class="relative flex items-start space-x-4 p-6 bg-gradient-to-br from-white/80 to-gray-50/80 border border-gray-200 rounded-2xl backdrop-blur-sm hover:border-gray-300 transition-all duration-300 shadow-lg hover:shadow-xl">
-              <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center shadow-lg border border-blue-200">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                   <rect width="20" height="16" x="2" y="4" rx="2"/>
                   <path d="m22 7-10 5L2 7"/>
                 </svg>
               </div>
               <div>
-                <h3 class="font-bold text-gray-900 text-lg mb-1 group-hover:text-blue-600 transition-colors duration-300">Email Support</h3>
-                <p class="text-gray-700 font-light mb-2">Get in touch with our enterprise team</p>
-                <a href="mailto:info@reliancecorporation.co.za" class="text-[#d4418e] hover:text-[#c23a7f] transition-colors duration-300 font-medium">
+                <h3 class="font-semibold text-gray-900 text-base mb-1 group-hover:text-blue-600 transition-colors duration-300">Email Support</h3>
+                <p class="text-gray-700 font-light mb-1.5 text-xs">Get in touch with our enterprise team</p>
+                <a href="mailto:info@reliancecorporation.co.za" class="text-[#d4418e] hover:text-[#c23a7f] transition-colors duration-300 font-medium text-xs">
                   info@reliancecorporation.co.za
                 </a>
               </div>
@@ -889,18 +920,18 @@
           <div class="relative group">
             <div class="absolute inset-0 bg-gradient-to-r from-purple-100/50 to-indigo-100/50 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div class="relative flex items-start space-x-4 p-6 bg-gradient-to-br from-white/80 to-gray-50/80 border border-gray-200 rounded-2xl backdrop-blur-sm hover:border-gray-300 transition-all duration-300 shadow-lg hover:shadow-xl">
-              <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center shadow-lg border border-purple-200">
+                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
                 </svg>
               </div>
               <div>
-                <h3 class="font-bold text-gray-900 text-lg mb-1 group-hover:text-purple-600 transition-colors duration-300">Phone Support</h3>
-                <p class="text-gray-700 font-light mb-2">Speak directly with our experts</p>
-                <a href="tel:+27104471845" class="text-[#0652c5] hover:text-[#0548a8] transition-colors duration-300 font-medium">
+                <h3 class="font-semibold text-gray-900 text-base mb-1 group-hover:text-purple-600 transition-colors duration-300">Phone Support</h3>
+                <p class="text-gray-700 font-light mb-1.5 text-xs">Speak directly with our experts</p>
+                <a href="tel:+27104471845" class="text-[#0652c5] hover:text-[#0548a8] transition-colors duration-300 font-medium text-xs">
                   (+27) 10 447 1845
                 </a>
-                <p class="text-gray-600 text-sm mt-1">Mon-Fri: 8:00 AM - 6:00 PM SAST</p>
+                <p class="text-gray-600 text-xs mt-1">Mon-Fri: 8:00 AM - 6:00 PM SAST</p>
               </div>
             </div>
           </div>
@@ -908,21 +939,19 @@
           <div class="relative group">
             <div class="absolute inset-0 bg-gradient-to-r from-indigo-100/50 to-teal-100/50 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div class="relative flex items-start space-x-4 p-6 bg-gradient-to-br from-white/80 to-gray-50/80 border border-gray-200 rounded-2xl backdrop-blur-sm hover:border-gray-300 transition-all duration-300 shadow-lg hover:shadow-xl">
-              <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-indigo-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-indigo-100 to-teal-200 rounded-xl flex items-center justify-center shadow-lg border border-teal-200">
+                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                   <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
                   <circle cx="12" cy="10" r="3"/>
                 </svg>
               </div>
               <div>
-                <h3 class="font-bold text-gray-900 text-lg mb-1 group-hover:text-indigo-600 transition-colors duration-300">Headquarters</h3>
-                <p class="text-gray-700 font-light mb-2">Visit us for in-person consultations</p>
-                <address class="text-gray-600 not-italic text-sm leading-relaxed">
-                  Glenvista Shopping Centre 2nd Floor,<br>
-                  Above Checkers Liquor<br>
-                  188 Biggarsberg Road & Kirby Beller Rd,<br>
-                  Glenvista, Johannesburg South, 2091,<br>
-                  South Africa
+                <h3 class="font-semibold text-gray-900 text-base mb-1 group-hover:text-indigo-600 transition-colors duration-300">Office Address</h3>
+                <p class="text-gray-700 font-light mb-1.5 text-xs">Visit us for in-person consultations</p>
+                <address class="text-gray-600 not-italic text-xs leading-relaxed">
+                  Fish Eagle Office Park,<br>
+                  Unit 7 & 8 Kingfisher Crescent, <br>
+                  Meyersdal Alberton, Johannesburg 1448
                 </address>
               </div>
             </div>
@@ -1241,6 +1270,7 @@ onUnmounted(() => {
 /* Smooth scrolling for all elements */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* Offset for fixed header */
 }
 
 /* --- Hero animations and utilities --- */
@@ -1382,6 +1412,7 @@ html {
 .line-clamp-1 {
   display: -webkit-box;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1389,6 +1420,7 @@ html {
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1424,5 +1456,212 @@ html {
   .product-image-container {
     height: 160px;
   }
+}
+
+/* --- Professional animated background for hero --- */
+.mesh-bg {
+  background:
+    radial-gradient(600px circle at 10% 20%, rgba(212, 65, 142, 0.15), transparent 60%),
+    radial-gradient(420px circle at 85% 25%, rgba(6, 82, 197, 0.12), transparent 60%),
+    radial-gradient(520px circle at 30% 85%, rgba(37, 150, 190, 0.12), transparent 60%),
+    radial-gradient(360px circle at 75% 80%, rgba(151, 56, 148, 0.10), transparent 60%);
+  animation: mesh-shift 22s ease-in-out infinite alternate;
+}
+
+@keyframes mesh-shift {
+  0% {
+    background-position: 10% 20%, 85% 25%, 30% 85%, 75% 80%;
+  }
+  100% {
+    background-position: 18% 28%, 78% 22%, 26% 78%, 82% 72%;
+  }
+}
+
+.animated-grid {
+  background-image: radial-gradient(circle at 1px 1px, rgba(2, 6, 23, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+  animation: grid-pan 60s linear infinite;
+}
+
+@keyframes grid-pan {
+  from { background-position: 0 0; }
+  to { background-position: 240px 0; }
+}
+
+.gradient-blob {
+  position: absolute;
+  filter: blur(40px);
+  opacity: 0.25;
+  mix-blend-mode: multiply;
+}
+
+.blob-1 {
+  top: -10%;
+  left: -5%;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(212, 65, 142, 0.45), transparent 60%);
+  animation: blob-move-1 30s ease-in-out infinite;
+}
+
+.blob-2 {
+  bottom: -8%;
+  right: -6%;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(6, 82, 197, 0.4), transparent 60%);
+  animation: blob-move-2 28s ease-in-out infinite;
+}
+
+.blob-3 {
+  top: 18%;
+  right: 15%;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(37, 150, 190, 0.38), transparent 60%);
+  animation: blob-move-3 32s ease-in-out infinite;
+}
+
+@keyframes blob-move-1 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, 20px) scale(1.08); }
+  100% { transform: translate(-20px, -10px) scale(1.04); }
+}
+
+@keyframes blob-move-2 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-30px, -20px) scale(1.06); }
+  100% { transform: translate(15px, 10px) scale(1.03); }
+}
+
+@keyframes blob-move-3 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(20px, -25px) scale(1.07); }
+  100% { transform: translate(-10px, 15px) scale(1.02); }
+}
+
+/* --- Animated wave patterns --- */
+.wave-svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.7;
+}
+
+.wave-1 {
+  animation: wave-animate-1 18s ease-in-out infinite;
+}
+
+.wave-2 {
+  animation: wave-animate-2 22s ease-in-out infinite;
+}
+
+.wave-3 {
+  animation: wave-animate-3 26s ease-in-out infinite;
+}
+
+@keyframes wave-animate-1 {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  50% { transform: translateX(-3%) translateY(-2%); }
+}
+
+@keyframes wave-animate-2 {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  50% { transform: translateX(4%) translateY(2%); }
+}
+
+@keyframes wave-animate-3 {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  50% { transform: translateX(-2%) translateY(-3%); }
+}
+
+/* --- Floating geometric shapes --- */
+.floating-shape {
+  position: absolute;
+  opacity: 0.12;
+  filter: blur(2px);
+}
+
+.shape-circle-1 {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(212, 65, 142, 0.3), rgba(151, 56, 148, 0.2));
+  top: 15%;
+  left: 8%;
+  animation: float-shape-1 20s ease-in-out infinite;
+}
+
+.shape-square-1 {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, rgba(6, 82, 197, 0.3), rgba(37, 150, 190, 0.2));
+  border-radius: 12px;
+  top: 60%;
+  right: 12%;
+  animation: float-shape-2 24s ease-in-out infinite;
+  transform: rotate(45deg);
+}
+
+.shape-triangle-1 {
+  width: 0;
+  height: 0;
+  border-left: 60px solid transparent;
+  border-right: 60px solid transparent;
+  border-bottom: 100px solid rgba(37, 150, 190, 0.25);
+  top: 75%;
+  left: 20%;
+  animation: float-shape-3 28s ease-in-out infinite;
+}
+
+.shape-circle-2 {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(151, 56, 148, 0.25), rgba(212, 65, 142, 0.2));
+  top: 35%;
+  right: 25%;
+  animation: float-shape-4 22s ease-in-out infinite;
+}
+
+.shape-square-2 {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, rgba(37, 150, 190, 0.25), rgba(6, 82, 197, 0.2));
+  border-radius: 8px;
+  top: 20%;
+  right: 35%;
+  animation: float-shape-5 26s ease-in-out infinite;
+  transform: rotate(25deg);
+}
+
+@keyframes float-shape-1 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(30px, -20px) rotate(120deg); }
+  66% { transform: translate(-20px, 30px) rotate(240deg); }
+}
+
+@keyframes float-shape-2 {
+  0%, 100% { transform: rotate(45deg) translate(0, 0); }
+  33% { transform: rotate(165deg) translate(20px, -30px); }
+  66% { transform: rotate(285deg) translate(-30px, 20px); }
+}
+
+@keyframes float-shape-3 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(-40px, -30px) rotate(180deg); }
+}
+
+@keyframes float-shape-4 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-25px, 30px) scale(1.15); }
+  66% { transform: translate(35px, -25px) scale(0.9); }
+}
+
+@keyframes float-shape-5 {
+  0%, 100% { transform: rotate(25deg) translate(0, 0); }
+  50% { transform: rotate(205deg) translate(25px, 35px); }
 }
 </style>
