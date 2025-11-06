@@ -1,22 +1,42 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-    <!-- Header -->
+    <!-- Header with Breadcrumbs and Actions -->
     <div class="bg-white shadow-sm border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <div class="flex items-center">
-                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                  <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 2.25a9.75 9.75 0 100 19.5 9.75 9.75 0 000-19.5z" />
-                  </svg>
+          <!-- Breadcrumb Navigation -->
+          <nav class="flex" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-4">
+              <li>
+                <div class="flex items-center">
+                  <router-link to="/dashboard" class="text-gray-400 hover:text-gray-500">
+                    <svg class="flex-shrink-0 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                    </svg>
+                    <span class="sr-only">Home</span>
+                  </router-link>
                 </div>
-                <h1 class="text-xl font-semibold text-gray-900">{{ $t('service.overview.title') }}</h1>
-              </div>
-            </div>
-          </div>
+              </li>
+              <li>
+                <div class="flex items-center">
+                  <svg class="flex-shrink-0 h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                  </svg>
+                  <router-link to="/service" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700">Service</router-link>
+                </div>
+              </li>
+              <li v-if="currentPageName">
+                <div class="flex items-center">
+                  <svg class="flex-shrink-0 h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                  </svg>
+                  <span class="ml-4 text-sm font-medium text-gray-900">{{ currentPageName }}</span>
+                </div>
+              </li>
+            </ol>
+          </nav>
           
+          <!-- Action Buttons -->
           <div class="flex items-center space-x-4">
             <!-- Integration Widget Button -->
             <router-link
@@ -63,39 +83,6 @@
               </svg>
               Create Ticket
             </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick Stats Bar -->
-    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-6">
-            <div class="flex items-center space-x-2">
-              <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
-              <span class="text-sm font-medium text-gray-700">Total: {{ ticketsStore.stats?.total || 0 }}</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <div class="w-3 h-3 bg-amber-500 rounded-full"></div>
-              <span class="text-sm font-medium text-gray-700">Open: {{ ticketsStore.stats?.by_status?.open || 0 }}</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <div class="w-3 h-3 bg-orange-500 rounded-full"></div>
-              <span class="text-sm font-medium text-gray-700">In Progress: {{ ticketsStore.stats?.by_status?.in_progress || 0 }}</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
-              <span class="text-sm font-medium text-gray-700">Resolved: {{ ticketsStore.stats?.by_status?.resolved || 0 }}</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-              <span class="text-sm font-medium text-gray-700">Closed: {{ ticketsStore.stats?.by_status?.closed || 0 }}</span>
-            </div>
-          </div>
-          <div class="text-sm text-gray-500">
-            Last updated: {{ new Date().toLocaleTimeString() }}
           </div>
         </div>
       </div>
@@ -211,8 +198,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useServiceTicketsStore } from '../store/serviceTickets'
 import { useContext } from '@/composables/useContext'
 import { useAuth } from '@/composables/useAuth'
@@ -220,6 +207,42 @@ import api from '@/services/api'
 
 // Router
 const router = useRouter()
+const route = useRoute()
+
+// Computed - Current page name for breadcrumb
+const currentPageName = computed(() => {
+  const path = route.path
+  
+  // Check for specific paths first (more specific to less specific)
+  if (path.match(/\/service\/tickets\/\d+/)) {
+    // Ticket detail page - show ticket ID or "Ticket Details"
+    const ticketId = route.params.id || path.split('/').pop()
+    return `Ticket #${ticketId}`
+  }
+  if (path === '/service/tickets' || path === '/service/tickets/') {
+    return 'Tickets'
+  }
+  if (path === '/service/integration' || path === '/service/integration/') {
+    return 'Integration'
+  }
+  if (path === '/service/settings' || path === '/service/settings/') {
+    return 'Settings'
+  }
+  if (path === '/service' || path === '/service/') {
+    return 'Overview'
+  }
+  
+  // Fallback for any other service sub-paths
+  if (path.startsWith('/service/')) {
+    const parts = path.split('/').filter(Boolean)
+    if (parts.length > 1) {
+      const pageName = parts[parts.length - 1]
+      return pageName.charAt(0).toUpperCase() + pageName.slice(1)
+    }
+  }
+  
+  return null
+})
 
 // Store
 const ticketsStore = useServiceTicketsStore()

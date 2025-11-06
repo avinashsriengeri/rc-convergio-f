@@ -71,5 +71,13 @@ export const rcProducts = [
     chipBg: { start: "#F0FDF4", end: "#DCFCE7" },
     ring: "#BBF7D0",
     iconColor: "#16A34A"
+  },
+  {
+    name: "RC Clear pay",
+    url: "https://reliancecorporation.co.za/",
+    icon: "credit-card",
+    chipBg: { start: "#EFF6FF", end: "#DBEAFE" },
+    ring: "#BFDBFE",
+    iconColor: "#2563EB"
   }
 ] as const;

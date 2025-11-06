@@ -37,8 +37,7 @@
             </svg>
           </div>
           <div>
-            <h3 class="font-semibold text-sm">Convergio Copilot</h3>
-            <p class="text-xs text-blue-100">AI Assistant</p>
+            <h3 class="font-semibold text-sm">Chat To Maxi</h3>
           </div>
         </div>
         <button

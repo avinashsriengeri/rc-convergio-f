@@ -223,7 +223,7 @@ export const documentsHelpers = {
     }
     
     const colors = {
-      pdf: 'bg-red-100 text-red-800',
+      pdf: 'bg-purple-100 text-purple-800',
       doc: 'bg-blue-100 text-blue-800',
       docx: 'bg-blue-100 text-blue-800',
       xls: 'bg-green-100 text-green-800',
@@ -249,7 +249,7 @@ export const documentsHelpers = {
   // Get visibility level color
   getVisibilityColor(visibility) {
     const colors = {
-      private: 'bg-red-100 text-red-800',
+      private: 'bg-amber-100 text-amber-800',
       team: 'bg-blue-100 text-blue-800',
       tenant: 'bg-green-100 text-green-800',
       public: 'bg-purple-100 text-purple-800'

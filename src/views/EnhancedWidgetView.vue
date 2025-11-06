@@ -46,7 +46,7 @@
           ]"
         >
           <span class="text-base mr-2">🤖</span>
-          AI Assistant
+          Maxi
         </button>
       </div>
     </div>

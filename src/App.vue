@@ -431,7 +431,7 @@
             {{ $t('cms') }}
           </router-link>
 
-          <!-- Copilot / AI Assistant Link -->
+          <!-- RC Maxi / AI Assistant Link -->
           <router-link
             to="/copilot"
             class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
@@ -441,7 +441,7 @@
               <path d="M12 3l1.912 5.813L20 10.721l-5.813 1.912L12 21l-1.912-5.813L4 13.279l5.813-1.912z"/>
               <circle cx="12" cy="12" r="1" fill="currentColor"/>
             </svg>
-            {{ $t('copilot') }}
+            RC Maxi
           </router-link>
 
           <!-- Users menu (Admin access OR Feature-based access) - Only for verified users -->
@@ -1097,13 +1097,13 @@
         </div>
       </div>
 
-      <!-- Copilot Sub-menu (shows when on copilot routes) -->
+      <!-- RC Maxi Sub-menu (shows when on copilot routes) -->
       <div v-if="$route.path.startsWith('/copilot')" class="fixed left-0 top-0 h-full w-56 bg-sidebar-bg z-40 transform transition-transform duration-300 ease-in-out">
         <div class="flex flex-col h-full">
-          <!-- Copilot Header -->
+          <!-- RC Maxi Header -->
           <div class="px-6 py-4 border-b border-gray-200 flex-shrink-0">
             <div class="flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-gray-800">{{ $t('copilot.overview.title') }}</h2>
+              <h2 class="text-lg font-semibold text-gray-800">RC Maxi</h2>
               <button
                 @click="$router.push('/dashboard')"
                 class="text-gray-700 hover:text-primary-purple transition-colors"
@@ -1116,7 +1116,7 @@
             </div>
           </div>
  
-          <!-- Copilot Navigation -->
+          <!-- RC Maxi Navigation -->
           <nav class="flex-1 py-4 overflow-y-auto sidebar-scrollbar">
             <router-link
               to="/copilot/dashboard"
@@ -1221,7 +1221,7 @@
     <!-- Notification toasts -->
     <NotificationToast />
     
-    <!-- Copilot Chat (floating) -->
+    <!-- RC Maxi Chat (floating) -->
     <CopilotChat v-if="isAuthenticated" />
     </template>
   </div>

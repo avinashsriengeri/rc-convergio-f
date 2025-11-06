@@ -130,7 +130,8 @@ const getIconStyle = (iconKey) => {
     'cloud': 'background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);',
     'mortarboard': 'background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%); box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);',
     'headset': 'background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); box-shadow: 0 4px 12px rgba(20, 184, 166, 0.25);',
-    'console': 'background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);'
+    'console': 'background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);',
+    'credit-card': 'background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.30);'
   }
   return styles[iconKey] || styles['shop']
 }
@@ -146,7 +147,8 @@ const getGlowStyle = (iconKey) => {
     'cloud': 'background: radial-gradient(circle, #a8edea, transparent);',
     'mortarboard': 'background: radial-gradient(circle, #d299c2, transparent);',
     'headset': 'background: radial-gradient(circle, #89f7fe, transparent);',
-    'console': 'background: radial-gradient(circle, #a8e6cf, transparent);'
+    'console': 'background: radial-gradient(circle, #a8e6cf, transparent);',
+    'credit-card': 'background: radial-gradient(circle, #60a5fa, transparent);'
   }
   return glows[iconKey] || glows['shop']
 }
@@ -235,6 +237,17 @@ const get3DIcon = (iconKey) => {
       <svg class="w-8 h-8 text-white drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24">
         <rect x="2" y="4" width="20" height="16" rx="2" fill="rgba(255,255,255,0.3)"/>
         <path d="M6 10l3 2-3 2M10 14h4" stroke="rgba(255,255,255,0.95)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    `,
+    'credit-card': `
+      <svg class="w-8 h-8 text-white drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24">
+        <rect x="2" y="5" width="20" height="14" rx="2" fill="rgba(255,255,255,0.95)"/>
+        <rect x="2" y="5" width="20" height="4" rx="2" fill="rgba(255,255,255,0.95)"/>
+        <rect x="2" y="9" width="20" height="3" fill="rgba(0,0,0,0.15)"/>
+        <rect x="4" y="14" width="4" height="2" rx="0.5" fill="rgba(0,0,0,0.2)"/>
+        <rect x="9" y="14" width="3" height="2" rx="0.5" fill="rgba(0,0,0,0.2)"/>
+        <circle cx="18" cy="15" r="1.5" fill="rgba(255,200,0,0.9)"/>
+        <circle cx="16" cy="15" r="1.5" fill="rgba(255,100,0,0.8)" opacity="0.7"/>
       </svg>
     `
   }

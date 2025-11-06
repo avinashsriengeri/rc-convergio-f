@@ -161,7 +161,7 @@
             <div class="p-6">
               <!-- Company header -->
               <div class="flex items-center space-x-3 mb-4">
-                <div class="w-12 h-12 bg-gradient-to-r from-[#655997] to-[#cc3266] rounded-lg flex items-center justify-center">
+                <div class="w-12 h-12 bg-gradient-to-r from-[#2596be] to-[#973894] rounded-full flex items-center justify-center flex-shrink-0">
                   <span class="text-white font-medium text-lg">
                     {{ company.name.charAt(0).toUpperCase() }}
                   </span>
