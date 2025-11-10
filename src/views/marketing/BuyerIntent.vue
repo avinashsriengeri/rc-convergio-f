@@ -69,7 +69,7 @@
           </button>
           <button
             @click="exportData"
-            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
+            class="bg-blue-900 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
           >
             {{ $t('marketing.buyer_intent.actions.export_data') }}
           </button>
