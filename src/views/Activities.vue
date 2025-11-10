@@ -751,7 +751,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { debounce } from 'lodash-es'
 import { useActivitiesStore } from '@/stores/activities'
 import { useRefsStore } from '@/stores/refs'
@@ -767,6 +767,7 @@ import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
 
 // Router
 const router = useRouter()
+const route = useRoute()
 
 // Stores
 const activitiesStore = useActivitiesStore()
@@ -1230,6 +1231,10 @@ const closeModal = () => {
   showCreateModal.value = false
   showEditModal.value = false
   activityToDelete.value = null
+  // If we're on the create route, navigate back to activities list
+  if (route.path === '/activities/create') {
+    router.push('/activities')
+  }
   Object.assign(activityForm, {
     title: '',
     description: '',
@@ -1271,6 +1276,11 @@ onMounted(async () => {
     await refsStore.fetchUsers()
     // Then fetch activities
     await fetchActivities()
+    
+    // Check if we're on the create route - open modal automatically
+    if (route.path === '/activities/create') {
+      showCreateModal.value = true
+    }
   } catch (err: any) {
     console.error('Error in onMounted:', err)
     showError('Failed to initialize activities page')

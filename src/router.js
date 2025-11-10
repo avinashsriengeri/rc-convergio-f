@@ -225,6 +225,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/activities/create',
+    name: 'ActivitiesCreate',
+    component: () => import('./views/Activities.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/activities/:id',
     name: 'activities.show',
     component: () => import('./views/ActivitiesDetail.vue'),
