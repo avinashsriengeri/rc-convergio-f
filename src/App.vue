@@ -387,7 +387,7 @@
               <line x1="12" y1="1" x2="12" y2="23"/>
               <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
             </svg>
-            {{ $t('sales') }}
+            {{ $t('common.sales') }}
           </router-link>
 
           <!-- Commerce Platform Link -->
@@ -401,7 +401,7 @@
               <circle cx="20" cy="21" r="1"/>
               <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
             </svg>
-            {{ $t('commerce') }}
+            {{ $t('common.commerce') }}
           </router-link>
 
             <!-- Service Platform Link -->
@@ -414,7 +414,7 @@
               <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
               <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
             </svg>
-            {{ $t('service') }}
+            {{ $t('common.service') }}
           </router-link>
 
            <!-- CMS / Content Platform Link -->
@@ -428,7 +428,7 @@
               <line x1="2" y1="12" x2="22" y2="12"/>
               <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
             </svg>
-            {{ $t('cms') }}
+            {{ $t('common.cms') }}
           </router-link>
 
           <!-- RC Maxi / AI Assistant Link -->
@@ -441,7 +441,7 @@
               <path d="M12 3l1.912 5.813L20 10.721l-5.813 1.912L12 21l-1.912-5.813L4 13.279l5.813-1.912z"/>
               <circle cx="12" cy="12" r="1" fill="currentColor"/>
             </svg>
-            RC Maxi
+            {{ $t('common.rc_maxi') }}
           </router-link>
 
           <!-- Users menu (Admin access OR Feature-based access) - Only for verified users -->
