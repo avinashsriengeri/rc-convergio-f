@@ -169,7 +169,7 @@
             <h3 class="text-lg font-semibold text-gray-900">{{ $t('marketing.ads.create_campaign.title') }}</h3>
             <button
               @click="openCreateCampaignModal"
-              class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
             >
               {{ $t('marketing.ads.create_campaign.create_campaign') }}
             </button>
@@ -924,7 +924,7 @@
                 <button
                   type="submit"
                   :disabled="creatingCampaign"
-                  class="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 disabled:bg-gray-400 rounded-md transition-colors"
+                  class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 rounded-md transition-colors"
                 >
                   {{ creatingCampaign ? $t('marketing.ads.create_campaign.creating') : $t('marketing.ads.create_campaign.create') }}
                 </button>

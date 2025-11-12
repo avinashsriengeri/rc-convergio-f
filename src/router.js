@@ -381,6 +381,14 @@ const routes = [
     meta: { requiresAuth: true }
   },
 
+  // Help & Support Page
+  {
+    path: '/support',
+    name: 'Support',
+    component: () => import('./views/HelpSupport.vue'),
+    meta: { requiresAuth: true }
+  },
+
   // Features Demo route
   {
     path: '/features-demo',

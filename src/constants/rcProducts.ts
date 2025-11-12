@@ -41,14 +41,6 @@ export const rcProducts = [
     iconColor: "#A16207"
   },
   { 
-    name: "RC POS Lite – Cloud", 
-    url: "https://reliancecorporation.co.za/pos-solutions", 
-    icon: "cloud", 
-    chipBg: { start: "#F8FAFC", end: "#F1F5F9" },
-    ring: "#E2E8F0",
-    iconColor: "#475569"
-  },
-  { 
     name: "RC Junior Minds", 
     url: "https://reliancecorporation.co.za/Junior", 
     icon: "baby", 

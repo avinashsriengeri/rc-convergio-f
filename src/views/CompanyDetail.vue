@@ -55,7 +55,7 @@
         <div class="lg:col-span-2">
           <div class="bg-white rounded-xl shadow-sm p-6">
             <div class="flex items-center space-x-4 mb-6">
-              <div class="w-16 h-16 bg-gradient-to-r from-[#655997] to-[#cc3266] rounded-lg flex items-center justify-center">
+              <div class="w-16 h-16 bg-gradient-to-r from-[#2596be] to-[#973894] rounded-full flex items-center justify-center">
                 <span class="text-white font-bold text-2xl">
                   {{ company.name.charAt(0).toUpperCase() }}
                 </span>

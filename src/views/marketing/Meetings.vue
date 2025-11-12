@@ -63,7 +63,7 @@
           <!-- Create Meeting Button -->
           <button
             @click="openCreateModal"
-            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
+            class="bg-blue-900 hover:bg-blue-900 text-white px-4 py-2 rounded-md font-medium transition-colors"
           >
             {{ $t('marketing.meetings.create_modal.title') }}
           </button>

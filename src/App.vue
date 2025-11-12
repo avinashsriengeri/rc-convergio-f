@@ -1223,6 +1223,50 @@
     
     <!-- RC Maxi Chat (floating) -->
     <CopilotChat v-if="isAuthenticated" />
+
+    <!-- Coming Soon Modal -->
+    <div
+      v-if="showComingSoonModal"
+      class="fixed inset-0 z-50 overflow-y-auto"
+      @click="closeComingSoonModal"
+    >
+      <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+        
+        <div class="relative bg-white rounded-lg shadow-xl max-w-md w-full p-8 text-center" @click.stop>
+          <!-- Close button -->
+          <button
+            @click="closeComingSoonModal"
+            class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          <!-- Icon -->
+          <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-r from-[#2596be] to-[#973894] mb-4">
+            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+
+          <!-- Content -->
+          <h3 class="text-2xl font-bold text-gray-900 mb-3">Coming Soon!</h3>
+          <p class="text-gray-600 mb-6">
+            This feature is currently under development and will be available soon. Stay tuned!
+          </p>
+
+          <!-- Button -->
+          <button
+            @click="closeComingSoonModal"
+            class="w-full bg-gradient-to-r from-[#2596be] to-[#973894] hover:from-[#1d7a9f] hover:to-[#7d2d7a] text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+          >
+            Got it!
+          </button>
+        </div>
+      </div>
+    </div>
     </template>
   </div>
 </template>
@@ -1312,6 +1356,9 @@ const showDialerDropdown = ref(false)
 const showNotificationsDropdown = ref(false)
 const unreadNotifications = ref(3) // Mock unread count
 
+// Modal states
+const showComingSoonModal = ref(false)
+
 // Marketing navigation is now handled by router-based sub-menu
 
 const currentLanguage = computed(() => {
@@ -1374,14 +1421,16 @@ const goToProfile = () => {
 
 const goToAccountDetails = () => {
   showProfileDropdown.value = false
-  // TODO: Navigate to account details page when created
-  // router.push('/account')
+  showComingSoonModal.value = true
 }
 
 const goToHelp = () => {
   showProfileDropdown.value = false
-  // TODO: Navigate to help/support page when created
-  // router.push('/help')
+  router.push('/support')
+}
+
+const closeComingSoonModal = () => {
+  showComingSoonModal.value = false
 }
 
 const handleLogout = async () => {

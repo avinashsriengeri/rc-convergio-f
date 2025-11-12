@@ -127,7 +127,6 @@ const getIconStyle = (iconKey) => {
     'shop': 'background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); box-shadow: 0 4px 12px rgba(236, 72, 153, 0.25);',
     'bag-check': 'background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); box-shadow: 0 4px 12px rgba(6, 182, 212, 0.25);',
     'phone': 'background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);',
-    'cloud': 'background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);',
     'mortarboard': 'background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%); box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);',
     'headset': 'background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); box-shadow: 0 4px 12px rgba(20, 184, 166, 0.25);',
     'console': 'background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);',
@@ -144,7 +143,6 @@ const getGlowStyle = (iconKey) => {
     'shop': 'background: radial-gradient(circle, #f5576c, transparent);',
     'bag-check': 'background: radial-gradient(circle, #4facfe, transparent);',
     'phone': 'background: radial-gradient(circle, #fa709a, transparent);',
-    'cloud': 'background: radial-gradient(circle, #a8edea, transparent);',
     'mortarboard': 'background: radial-gradient(circle, #d299c2, transparent);',
     'headset': 'background: radial-gradient(circle, #89f7fe, transparent);',
     'console': 'background: radial-gradient(circle, #a8e6cf, transparent);',
@@ -214,12 +212,6 @@ const get3DIcon = (iconKey) => {
         <rect x="5" y="2" width="14" height="20" rx="2" fill="rgba(255,255,255,0.3)"/>
         <rect x="7" y="4" width="10" height="14" rx="1" fill="rgba(255,255,255,0.95)"/>
         <circle cx="12" cy="19.5" r="1" fill="rgba(255,255,255,0.95)"/>
-      </svg>
-    `,
-    'cloud': `
-      <svg class="w-8 h-8 text-white drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z" fill="rgba(255,255,255,0.95)"/>
-        <path d="M12 11v5M10 14l2-2 2 2" stroke="rgba(0,0,0,0.25)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     `,
     'mortarboard': `

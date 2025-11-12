@@ -912,26 +912,25 @@
       @click="closeEventDetails"
     >
       <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-      <div class="absolute right-0 top-0 h-full w-96 bg-white shadow-xl" @click.stop>
-        <div class="flex flex-col h-full overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: #d1d5db #f3f4f6;">
-          <!-- Drawer Header -->
-          <div class="px-6 py-4 border-b border-gray-200">
-            <div class="flex items-center justify-between">
-              <h3 class="text-lg font-semibold text-gray-900">{{ selectedEvent.name }}</h3>
-              <button
-                @click="closeEventDetails"
-                class="text-gray-400 hover:text-gray-600"
-              >
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
+      <div class="absolute right-0 top-0 bottom-0 w-96 max-w-full bg-white shadow-xl overflow-y-auto" @click.stop style="scrollbar-width: thin; scrollbar-color: #d1d5db #f3f4f6;">
+        <!-- Drawer Header (Sticky) -->
+        <div class="sticky top-0 z-10 bg-white px-6 py-4 border-b border-gray-200 shadow-sm">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-900">{{ selectedEvent.name }}</h3>
+            <button
+              @click="closeEventDetails"
+              class="text-gray-400 hover:text-gray-600"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
+        </div>
 
-          <!-- Event Info -->
-          <div class="px-6 py-4 border-b border-gray-200">
-            <div class="space-y-3 max-h-64 overflow-y-auto event-info-scroll-container" style="scrollbar-width: thin; scrollbar-color: #d1d5db #f3f4f6;">
+        <!-- Event Info -->
+        <div class="px-6 py-4 border-b border-gray-200">
+          <div class="space-y-3">
               <div>
                 <span class="text-sm font-medium text-gray-500">Type:</span>
                 <span :class="getEventTypeColor(selectedEvent.type)" class="ml-2 inline-flex px-2 py-1 text-xs font-semibold rounded-full">
@@ -1137,88 +1136,87 @@
             </div>
           </div>
 
-          <!-- Attendees Section -->
-          <div class="flex-1 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200">
-              <div class="flex justify-between items-center">
-              <h4 class="text-sm font-medium text-gray-900">{{ $t('marketing.events.details_drawer.attendees') }}</h4>
+        <!-- Attendees Section -->
+        <div class="px-6 py-4 border-b border-gray-200">
+          <div class="flex justify-between items-center mb-4">
+            <h4 class="text-sm font-medium text-gray-900">{{ $t('marketing.events.details_drawer.attendees') }}</h4>
+            <button
+              @click="openRegistrationModal(selectedEvent)"
+              class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors"
+            >
+              Register Attendee
+            </button>
+          </div>
+          
+          <!-- RSVP Filter -->
+          <div class="mb-4">
+            <select
+              v-model="attendeeFilter"
+              @change="loadEventAttendees"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">{{ $t('marketing.events.details_drawer.all_rsvp') }}</option>
+              <option value="going">{{ $t('marketing.events.details_drawer.going') }}</option>
+              <option value="interested">{{ $t('marketing.events.details_drawer.interested') }}</option>
+              <option value="declined">{{ $t('marketing.events.details_drawer.declined') }}</option>
+            </select>
+          </div>
+
+          <!-- Loading State -->
+          <div v-if="attendeesLoading" class="text-center py-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p class="mt-4 text-sm text-gray-600">Loading attendees...</p>
+          </div>
+
+          <!-- Attendees List -->
+          <div v-else-if="eventAttendees.length > 0" class="space-y-3">
+            <div
+              v-for="attendee in eventAttendees"
+              :key="attendee.id"
+              class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg hover:shadow-sm transition-shadow"
+            >
+              <div class="flex-1 min-w-0">
+                <div class="text-sm font-semibold text-gray-900 truncate">{{ attendee.name }}</div>
+                <div class="text-sm text-gray-600 truncate">{{ attendee.email }}</div>
+                <div class="text-xs text-gray-500 truncate">{{ attendee.company }}</div>
+                <div v-if="attendee.rsvp_at" class="text-xs text-gray-400 mt-1">
+                  Registered: {{ formatDateTime(attendee.rsvp_at) }}
+                </div>
+              </div>
+              <div class="flex items-center space-x-2 ml-3">
+                <span :class="getRsvpStatusColor(attendee.rsvp_status)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap">
+                  {{ attendee.rsvp_status }}
+                </span>
                 <button
-                  @click="openRegistrationModal(selectedEvent)"
-                  class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors"
+                  v-if="!attendee.attended && attendee.rsvp_status === 'going'"
+                  @click="markAttended(attendee)"
+                  class="text-green-600 hover:text-green-800 text-xs font-medium px-2 py-1 rounded hover:bg-green-50 transition-colors"
                 >
-                  Register Attendee
+                  Mark Attended
                 </button>
-              </div>
-            </div>
-            <div class="px-6 py-4">
-              <!-- RSVP Filter -->
-              <div class="mb-4">
-                <select
-                  v-model="attendeeFilter"
-                  @change="loadEventAttendees"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">{{ $t('marketing.events.details_drawer.all_rsvp') }}</option>
-                  <option value="going">{{ $t('marketing.events.details_drawer.going') }}</option>
-                  <option value="interested">{{ $t('marketing.events.details_drawer.interested') }}</option>
-                  <option value="declined">{{ $t('marketing.events.details_drawer.declined') }}</option>
-                </select>
-              </div>
-
-              <!-- Loading State -->
-              <div v-if="attendeesLoading" class="text-center py-8">
-                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <p class="mt-4 text-sm text-gray-600">Loading attendees...</p>
-              </div>
-
-              <!-- Attendees List -->
-              <div v-else-if="eventAttendees.length > 0" class="space-y-3 max-h-96 overflow-y-auto pr-2 attendees-scroll-container" style="scrollbar-width: thin; scrollbar-color: #d1d5db #f3f4f6;">
-                <div
-                  v-for="attendee in eventAttendees"
-                  :key="attendee.id"
-                  class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg hover:shadow-sm transition-shadow"
-                >
-                  <div class="flex-1 min-w-0">
-                    <div class="text-sm font-semibold text-gray-900 truncate">{{ attendee.name }}</div>
-                    <div class="text-sm text-gray-600 truncate">{{ attendee.email }}</div>
-                    <div class="text-xs text-gray-500 truncate">{{ attendee.company }}</div>
-                    <div v-if="attendee.rsvp_at" class="text-xs text-gray-400 mt-1">
-                      Registered: {{ formatDateTime(attendee.rsvp_at) }}
-                  </div>
-                  </div>
-                  <div class="flex items-center space-x-2 ml-3">
-                    <span :class="getRsvpStatusColor(attendee.rsvp_status)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap">
-                      {{ attendee.rsvp_status }}
-                    </span>
-                    <button
-                      v-if="!attendee.attended && attendee.rsvp_status === 'going'"
-                      @click="markAttended(attendee)"
-                      class="text-green-600 hover:text-green-800 text-xs font-medium px-2 py-1 rounded hover:bg-green-50 transition-colors"
-                    >
-                      Mark Attended
-                    </button>
-                    <span v-else-if="attendee.attended" class="text-green-600 text-xs font-medium px-2 py-1 bg-green-50 rounded">
-                      ✓ Attended
-                    </span>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- No Attendees State -->
-              <div v-else class="text-center py-8">
-                <div class="text-gray-400 mb-2">
-                  <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </div>
-                <p class="text-sm text-gray-500">No attendees found</p>
-                <p class="text-xs text-gray-400 mt-1">
-                  {{ attendeeFilter ? `No ${attendeeFilter} RSVPs` : 'No one has registered yet' }}
-                </p>
+                <span v-else-if="attendee.attended" class="text-green-600 text-xs font-medium px-2 py-1 bg-green-50 rounded">
+                  ✓ Attended
+                </span>
               </div>
             </div>
           </div>
+          
+          <!-- No Attendees State -->
+          <div v-else class="text-center py-8">
+            <div class="text-gray-400 mb-2">
+              <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+            <p class="text-sm text-gray-500">No attendees found</p>
+            <p class="text-xs text-gray-400 mt-1">
+              {{ attendeeFilter ? `No ${attendeeFilter} RSVPs` : 'No one has registered yet' }}
+            </p>
+          </div>
         </div>
+
+        <!-- Bottom Padding -->
+        <div class="pb-6"></div>
       </div>
     </div>
 
@@ -2962,75 +2960,8 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Custom scrollbar styles for attendees list */
-.attendees-scroll-container::-webkit-scrollbar {
-  width: 8px;
-}
-
-.attendees-scroll-container::-webkit-scrollbar-track {
-  background: #f3f4f6;
-  border-radius: 4px;
-}
-
-.attendees-scroll-container::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 4px;
-}
-
-.attendees-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-/* Ensure scrollbar is always visible */
-.attendees-scroll-container {
-  scrollbar-gutter: stable;
-}
-
-/* Custom scrollbar styles for event details drawer */
-.flex.flex-col.h-full.overflow-y-auto::-webkit-scrollbar {
-  width: 8px;
-}
-
-.flex.flex-col.h-full.overflow-y-auto::-webkit-scrollbar-track {
-  background: #f3f4f6;
-  border-radius: 4px;
-}
-
-.flex.flex-col.h-full.overflow-y-auto::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 4px;
-}
-
-.flex.flex-col.h-full.overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-/* Ensure scrollbar is always visible for event drawer */
-.flex.flex-col.h-full.overflow-y-auto {
-  scrollbar-gutter: stable;
-}
-
-/* Custom scrollbar styles for event info card */
-.event-info-scroll-container::-webkit-scrollbar {
-  width: 6px;
-}
-
-.event-info-scroll-container::-webkit-scrollbar-track {
-  background: #f3f4f6;
-  border-radius: 3px;
-}
-
-.event-info-scroll-container::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 3px;
-}
-
-.event-info-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-/* Ensure scrollbar is always visible for event info */
-.event-info-scroll-container {
-  scrollbar-gutter: stable;
+/* Smooth scrolling for all elements */
+* {
+  scroll-behavior: smooth;
 }
 </style>

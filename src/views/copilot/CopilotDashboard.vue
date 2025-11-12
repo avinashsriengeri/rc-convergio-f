@@ -4,7 +4,7 @@
     <div class="bg-white border-b border-gray-200 px-6 py-4">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">Convergio Copilot</h1>
+          <h1 class="text-2xl font-bold text-gray-900">Maxi Copilot</h1>
           <p class="text-gray-600 mt-1">Your AI assistant for RC Convergio</p>
         </div>
         <div class="flex items-center space-x-4">

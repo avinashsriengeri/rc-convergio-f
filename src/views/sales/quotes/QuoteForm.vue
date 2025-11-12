@@ -100,6 +100,7 @@
                   <option value="GBP">GBP</option>
                   <option value="CAD">CAD</option>
                   <option value="AUD">AUD</option>
+                  <option value="ZAR">ZAR</option>
                 </select>
               </div>
 
