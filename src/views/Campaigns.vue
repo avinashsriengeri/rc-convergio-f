@@ -689,6 +689,10 @@
                         <input type="radio" class="text-blue-600" value="segment" v-model="campaignForm.recipient_mode" />
                         <span class="text-sm text-gray-700">Dynamic List (Segment)</span>
                       </label>
+                      <label class="inline-flex items-center space-x-2">
+                        <input type="radio" class="text-blue-600" value="csv" v-model="campaignForm.recipient_mode" />
+                        <span class="text-sm text-gray-700">CSV Upload</span>
+                      </label>
                     </div>
 
                     <div v-if="campaignForm.recipient_mode === 'segment'">
@@ -718,6 +722,39 @@
                           <span class="text-sm text-gray-700">{{ opt.label }}</span>
                         </div>
                         <div v-if="filteredContactOptions.length === 0" class="text-xs text-gray-500 p-2">No contacts found.</div>
+                      </div>
+                    </div>
+
+                    <div v-if="campaignForm.recipient_mode === 'csv'">
+                      <label class="block text-sm font-medium text-gray-700 mb-1">CSV File</label>
+                      <div class="space-y-2">
+                        <div class="flex items-center space-x-2 mb-2">
+                          <a
+                            href="#"
+                            @click.prevent="downloadCSVTemplate"
+                            class="text-sm text-blue-600 hover:text-blue-800 underline flex items-center"
+                          >
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Download Template
+                          </a>
+                        </div>
+                        <input
+                          type="file"
+                          accept=".csv,.txt"
+                          @change="handleCSVFileSelect"
+                          class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                        />
+                        <p v-if="csvFileName" class="text-sm text-gray-600 mt-1">
+                          Selected: {{ csvFileName }}
+                        </p>
+                        <p v-if="csvFileError" class="text-sm text-red-600 mt-1">
+                          {{ csvFileError }}
+                        </p>
+                        <p class="text-xs text-gray-500 mt-1">
+                          Accepted formats: .csv, .txt (Max size: 10MB)
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -1450,8 +1487,8 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseCheckbox from '@/components/ui/BaseCheckbox.vue'
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
-// @ts-expect-error - listsAPI is exported from api.js
-import { listsAPI } from '@/services/api'
+// @ts-expect-error - listsAPI and campaignsAPI are exported from api.js
+import { listsAPI, campaignsAPI } from '@/services/api'
 
 // Props
 const props = defineProps<{
@@ -1516,6 +1553,11 @@ const loadingAuditLogs = ref(false)
 const auditLogsError = ref('')
 const expandedMetadata = ref<Record<number, boolean>>({})
 const deletingMap = reactive<Record<number, boolean>>({})
+
+// CSV file handling
+const csvFile = ref<File | null>(null)
+const csvFileName = ref('')
+const csvFileError = ref('')
 
 // Options for pickers
 const contactSearch = ref('')
@@ -1635,13 +1677,112 @@ const debouncedSearch = debounce(() => {
   applyFilters()
 }, 300)
 
+// CSV file handling functions
+const handleCSVFileSelect = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  
+  csvFileError.value = ''
+  csvFileName.value = ''
+  csvFile.value = null
+  
+  if (!file) {
+    return
+  }
+  
+  // Validate file type
+  const fileName = file.name.toLowerCase()
+  const isValidType = fileName.endsWith('.csv') || fileName.endsWith('.txt')
+  
+  if (!isValidType) {
+    csvFileError.value = 'Please select a .csv or .txt file'
+    target.value = ''
+    return
+  }
+  
+  // Validate file size (10MB = 10 * 1024 * 1024 bytes)
+  const maxSize = 10 * 1024 * 1024
+  if (file.size > maxSize) {
+    csvFileError.value = 'File size must be less than 10MB'
+    target.value = ''
+    return
+  }
+  
+  csvFile.value = file
+  csvFileName.value = file.name
+}
+
+const downloadCSVTemplate = () => {
+  const csvContent = 'email\nuser1@example.com\nuser2@example.com\nuser3@example.com'
+  const blob = new Blob([csvContent], { type: 'text/csv' })
+  const url = window.URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'campaign_recipients_template.csv'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  window.URL.revokeObjectURL(url)
+}
+
 const saveCampaign = async () => {
   if (!isFormValid.value) {
     showError('Please fill in all required fields')
     return
   }
 
-  // Build payload with recipients at ROOT level per backend contract
+  // Validate CSV file if CSV mode is selected
+  if (campaignForm.recipient_mode === 'csv') {
+    if (!csvFile.value) {
+      showError('Please select a CSV file')
+      csvFileError.value = 'CSV file is required'
+      return
+    }
+  }
+
+  // Handle CSV mode with FormData
+  if (campaignForm.recipient_mode === 'csv' && csvFile.value) {
+    const formData = new FormData()
+    formData.append('name', campaignForm.name?.trim() || '')
+    formData.append('description', campaignForm.description || '')
+    formData.append('type', campaignForm.type)
+    if (campaignForm.owner_id !== undefined) {
+      formData.append('owner_id', String(campaignForm.owner_id))
+    }
+    formData.append('subject', campaignForm.subject?.trim() || '')
+    formData.append('content', campaignForm.content?.trim() || '')
+    formData.append('recipient_mode', 'csv')
+    formData.append('csv_file', csvFile.value)
+
+    // scheduled_at: convert back to ISO UTC if user set a value
+    if (campaignForm.scheduled_at) {
+      const iso = toIsoUtcFromLocalInput(campaignForm.scheduled_at)
+      if (iso) formData.append('scheduled_at', iso)
+    }
+
+    saving.value = true
+    try {
+      if (showEditModal.value && campaignToDelete.value) {
+        // For updates, we still use JSON (CSV upload is only for creation)
+        showError('CSV upload is only available for new campaigns')
+        return
+      } else {
+        // Use direct API call with FormData for CSV mode
+        await campaignsAPI.createCampaign(formData)
+        success('Campaign created successfully')
+      }
+
+      closeModal()
+      fetchCampaigns()
+    } catch (err: any) {
+      showError(err.response?.data?.message || 'Failed to save campaign')
+    } finally {
+      saving.value = false
+    }
+    return
+  }
+
+  // Existing JSON payload flow for manual and segment modes (unchanged)
   const payload: any = {
     name: campaignForm.name?.trim(),
     description: campaignForm.description || '',
@@ -1977,6 +2118,10 @@ const closeModal = () => {
     recipient_contact_ids: [],
     segment_id: ''
   })
+  // Reset CSV file
+  csvFile.value = null
+  csvFileName.value = ''
+  csvFileError.value = ''
 }
 
 // Use template function - Simple approach (like before)
@@ -1999,6 +2144,10 @@ const useTemplate = async (template: any) => {
     campaignForm.recipient_mode = ''
     campaignForm.recipient_contact_ids = []
     campaignForm.segment_id = ''
+    // Reset CSV file
+    csvFile.value = null
+    csvFileName.value = ''
+    csvFileError.value = ''
     
     // Close templates modal and open create modal
     showTemplatesModal.value = false

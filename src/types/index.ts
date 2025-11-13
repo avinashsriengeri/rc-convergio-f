@@ -353,7 +353,7 @@ export interface CampaignFormData {
   scheduled_at?: string
   // New optional fields for templates and recipients
   is_template?: boolean
-  recipient_mode?: 'contacts' | 'segment' | ''
+  recipient_mode?: 'contacts' | 'segment' | 'csv' | ''
   recipient_contact_ids?: number[]
   segment_id?: number | string
 }

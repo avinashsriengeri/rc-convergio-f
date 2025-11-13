@@ -26,6 +26,11 @@ api.interceptors.request.use(
       })
     }
     
+    // Handle FormData - let axios set Content-Type automatically for multipart/form-data
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type']
+    }
+    
     // Skip authentication for public form endpoints, auth endpoints, and public event endpoints
 
     const isPublicFormRequest = config.url?.includes('/public/forms/')
