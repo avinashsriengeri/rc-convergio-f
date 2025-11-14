@@ -265,6 +265,18 @@
       @confirm="confirmDelete"
       @cancel="showDeleteModal = false"
     />
+
+    <!-- Move Stage Modal (for drag-drop) -->
+    <MoveStageModal
+      v-if="showMoveModal && pendingMove.deal"
+      :deal-id="pendingMove.deal.id"
+      :current-stage-id="pendingMove.fromStageId || 0"
+      :pipeline-id="selectedPipelineId as number"
+      :target-stage-id="pendingMove.toStageId || undefined"
+      :show-current-stage="true"
+      @confirm="onMoveConfirmed"
+      @cancel="onMoveCancelled"
+    />
   </div>
 </template>
 
@@ -280,6 +292,7 @@ import { STATUS_BADGE_COLORS } from '../../utils/constants'
 import type { Deal } from '../../types'
 import BaseButton from '../../components/ui/BaseButton.vue'
 import ConfirmationModal from '../../components/modals/ConfirmationModal.vue'
+import MoveStageModal from '../../components/modals/MoveStageModal.vue'
 
 const router = useRouter()
 
@@ -295,6 +308,16 @@ const showDeleteModal = ref(false)
 const dealToDelete = ref<Deal | null>(null)
 const selectedPipelineId = ref<number | string>('')
 const draggedDeal = ref<Deal | null>(null)
+const showMoveModal = ref(false)
+const pendingMove = ref<{
+  deal: Deal | null
+  fromStageId: number | null
+  toStageId: number | null
+}>({
+  deal: null,
+  fromStageId: null,
+  toStageId: null
+})
 
 // Methods
 const loadKanbanData = async () => {
@@ -337,18 +360,49 @@ const onDrop = async (event: DragEvent, stageId: number) => {
     return
   }
 
+  // Store pending move info and show modal instead of calling API immediately
+  pendingMove.value = {
+    deal: draggedDeal.value,
+    fromStageId: draggedDeal.value.stage_id,
+    toStageId: stageId
+  }
+  showMoveModal.value = true
+  draggedDeal.value = null
+}
+
+const onMoveConfirmed = async (stageId: number, reason: string) => {
+  if (!pendingMove.value.deal) return
+
   try {
-    await dealsAPI.moveDeal(draggedDeal.value.id, stageId)
-    success('Deal moved successfully')
+    await dealsAPI.moveDeal(pendingMove.value.deal.id, stageId, reason)
     
-    // Refresh only the affected columns
+    // Get stage names for success message
+    const fromStage = kanbanData.value.find(s => s.id === pendingMove.value.fromStageId)
+    const toStage = kanbanData.value.find(s => s.id === stageId)
+    const fromName = fromStage?.name || 'Unknown'
+    const toName = toStage?.name || 'Unknown'
+    
+    success(`Deal moved from "${fromName}" to "${toName}"`)
+    
+    // Close modal and refresh kanban
+    showMoveModal.value = false
+    pendingMove.value = { deal: null, fromStageId: null, toStageId: null }
     await loadKanbanData()
   } catch (err: any) {
     console.error('Error moving deal:', err)
+    // Error handling is done in modal, but we still need to refresh on error
+    showMoveModal.value = false
+    pendingMove.value = { deal: null, fromStageId: null, toStageId: null }
     showError(err.response?.data?.message || 'Failed to move deal')
-  } finally {
-    draggedDeal.value = null
+    await loadKanbanData() // Refresh to revert visual state
   }
+}
+
+const onMoveCancelled = () => {
+  showMoveModal.value = false
+  pendingMove.value = { deal: null, fromStageId: null, toStageId: null }
+  // Refresh kanban to ensure card is back in original position
+  loadKanbanData()
 }
 
 const viewDeal = (deal: Deal) => {

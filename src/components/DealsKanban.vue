@@ -184,6 +184,18 @@
       @close="closeModal"
       @saved="onDealSaved"
     />
+
+    <!-- Move Stage Modal (for drag-drop) -->
+    <MoveStageModal
+      v-if="showMoveModal && pendingMove.deal"
+      :deal-id="pendingMove.deal.id"
+      :current-stage-id="pendingMove.fromStageId || 0"
+      :pipeline-id="selectedPipeline || 0"
+      :target-stage-id="pendingMove.toStageId || undefined"
+      :show-current-stage="true"
+      @confirm="onMoveConfirmed"
+      @cancel="onMoveCancelled"
+    />
   </div>
 </template>
 
@@ -193,6 +205,7 @@ import { dealsAPI, pipelinesAPI, stagesAPI, metadataAPI } from '@/services/api'
 import { success, error } from '@/utils/notifications'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import DealModal from '@/components/modals/DealModal.vue'
+import MoveStageModal from '@/components/modals/MoveStageModal.vue'
 
 // Props
 const props = defineProps({
@@ -215,6 +228,12 @@ const selectedPipeline = ref(props.pipelineId || '')
 const showModal = ref(false)
 const selectedDeal = ref(null)
 const draggedDeal = ref(null)
+const showMoveModal = ref(false)
+const pendingMove = ref({
+  deal: null,
+  fromStageId: null,
+  toStageId: null
+})
 
 // Load pipelines
 const loadPipelines = async () => {
@@ -300,23 +319,57 @@ const onDrop = async (event, stageId) => {
     return
   }
 
+  // Store pending move info and show modal instead of calling API immediately
+  pendingMove.value = {
+    deal: draggedDeal.value,
+    fromStageId: draggedDeal.value.stage_id,
+    toStageId: stageId
+  }
+  showMoveModal.value = true
+  draggedDeal.value = null
+}
+
+const onMoveConfirmed = async (stageId, reason) => {
+  if (!pendingMove.value.deal) return
+
+  const movedDeal = pendingMove.value.deal // Store reference before clearing
+
   try {
-    await dealsAPI.moveDeal(draggedDeal.value.id, stageId)
+    await dealsAPI.moveDeal(movedDeal.id, stageId, reason)
     
     // Update local state
-    const dealIndex = deals.value.findIndex(d => d.id === draggedDeal.value.id)
+    const dealIndex = deals.value.findIndex(d => d.id === movedDeal.id)
     if (dealIndex !== -1) {
       deals.value[dealIndex].stage_id = stageId
     }
     
-    success('Deal moved successfully')
-    emit('deal-moved', { deal: draggedDeal.value, newStageId: stageId })
+    // Get stage names for success message
+    const fromStage = stages.value.find(s => s.id === pendingMove.value.fromStageId)
+    const toStage = stages.value.find(s => s.id === stageId)
+    const fromName = fromStage?.name || 'Unknown'
+    const toName = toStage?.name || 'Unknown'
+    
+    success(`Deal moved from "${fromName}" to "${toName}"`)
+    
+    // Close modal and emit event
+    showMoveModal.value = false
+    pendingMove.value = { deal: null, fromStageId: null, toStageId: null }
+    emit('deal-moved', { deal: movedDeal, newStageId: stageId })
   } catch (err) {
-    error('Failed to move deal')
     console.error('Move deal error:', err)
-  } finally {
-    draggedDeal.value = null
+    error(err.response?.data?.message || 'Failed to move deal')
+    // Refresh to revert visual state
+    showMoveModal.value = false
+    pendingMove.value = { deal: null, fromStageId: null, toStageId: null }
+    await loadDeals()
   }
+}
+
+const onMoveCancelled = () => {
+  showMoveModal.value = false
+  pendingMove.value = { deal: null, fromStageId: null, toStageId: null }
+  // Refresh to ensure card is back in original position
+  loadDeals()
 }
 
 // Modal handlers

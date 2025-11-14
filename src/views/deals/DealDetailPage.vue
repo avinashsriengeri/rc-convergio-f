@@ -153,6 +153,59 @@
                 </div>
               </div>
             </div>
+            
+            <!-- View Stage History Button - Professional placement below stage info -->
+            <div v-if="deal?.id" class="mt-6 pt-6 border-t border-gray-200">
+              <BaseButton
+                variant="outline"
+                size="sm"
+                @click="openStageHistoryModal"
+                class="w-full"
+              >
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                {{ stageHistory.length > 0 ? 'View Full Stage History' : 'View Stage History' }}
+              </BaseButton>
+            </div>
+          </div>
+
+          <!-- Recent Stage Movement -->
+          <div v-if="latestMovement" class="bg-white shadow-sm rounded-lg p-6">
+            <h2 class="text-lg font-medium text-gray-900 mb-4">Recent Stage Movement</h2>
+            <div class="space-y-3">
+              <div class="flex items-start">
+                <div class="flex-shrink-0">
+                  <svg class="w-5 h-5 text-blue-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                </div>
+                <div class="ml-3 flex-1">
+                  <p class="text-sm text-gray-900">
+                    Moved from 
+                    <span 
+                      class="font-medium"
+                      :style="{ color: latestMovement.from_stage?.color || '#6B7280' }"
+                    >
+                      "{{ latestMovement.from_stage?.name }}"
+                    </span>
+                    to 
+                    <span 
+                      class="font-medium"
+                      :style="{ color: latestMovement.to_stage?.color || '#6B7280' }"
+                    >
+                      "{{ latestMovement.to_stage?.name }}"
+                    </span>
+                  </p>
+                  <p class="text-sm text-gray-600 mt-1">
+                    <strong>Reason:</strong> {{ latestMovement.reason }}
+                  </p>
+                  <p class="text-xs text-gray-500 mt-1">
+                    By {{ latestMovement.moved_by?.name || 'Unknown' }} • {{ formatRelativeTime(latestMovement.moved_at) }}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- People & Company -->
@@ -285,6 +338,44 @@
           <div class="bg-white shadow-sm rounded-lg p-6">
             <h2 class="text-lg font-medium text-gray-900 mb-4">Timeline</h2>
             <div class="space-y-4">
+              <!-- Recent Stage Movements (show only last 3-5) -->
+              <div v-if="stageHistory.length > 0">
+                <div 
+                  v-for="movement in stageHistory" 
+                  :key="movement.id"
+                  class="flex items-start"
+                >
+                  <div class="flex-shrink-0">
+                    <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                  </div>
+                  <div class="ml-3 flex-1">
+                    <p class="text-sm text-gray-900">
+                      <span class="font-medium">Stage Movement:</span>
+                      <span 
+                        class="font-medium"
+                        :style="{ color: movement.from_stage?.color || '#6B7280' }"
+                      >
+                        {{ movement.from_stage?.name }}
+                      </span>
+                      <span class="text-gray-400 mx-1">→</span>
+                      <span 
+                        class="font-medium"
+                        :style="{ color: movement.to_stage?.color || '#6B7280' }"
+                      >
+                        {{ movement.to_stage?.name }}
+                      </span>
+                    </p>
+                    <p class="text-sm text-gray-600 mt-1">
+                      <strong>Reason:</strong> {{ movement.reason }}
+                    </p>
+                    <p class="text-xs text-gray-500 mt-1">
+                      By {{ movement.moved_by?.name || 'Unknown' }} • {{ formatRelativeTime(movement.moved_at) }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Deal Events -->
               <div class="flex items-start">
                 <div class="flex-shrink-0">
                   <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
@@ -372,6 +463,13 @@
       @confirm="onTaskAdded"
       @cancel="showAddTaskModal = false"
     />
+
+    <!-- Stage History Modal -->
+    <StageHistoryModal
+      v-if="showStageHistoryModal && deal?.id"
+      :deal-id="deal.id"
+      @close="showStageHistoryModal = false"
+    />
   </div>
 </template>
 
@@ -388,6 +486,7 @@ import type { Deal } from '../../types'
 import BaseButton from '../../components/ui/BaseButton.vue'
 import ConfirmationModal from '../../components/modals/ConfirmationModal.vue'
 import MoveStageModal from '../../components/modals/MoveStageModal.vue'
+import StageHistoryModal from '../../components/modals/StageHistoryModal.vue'
 import AddActivityModal from '../../components/activities/AddActivityModal.vue'
 import AddTaskModal from '../../components/tasks/AddTaskModal.vue'
 import DocumentsTab from '../../components/documents/DocumentsTab.vue'
@@ -408,6 +507,11 @@ const showDeleteModal = ref(false)
 const showMoveStageModal = ref(false)
 const showAddActivityModal = ref(false)
 const showAddTaskModal = ref(false)
+const stageHistory = ref<any[]>([])
+const loadingHistory = ref(false)
+const latestMovement = ref<any>(null)
+const showStageHistoryModal = ref(false)
+const totalMovementsCount = ref(0)
 
 // Methods
 const loadDeal = async () => {
@@ -436,6 +540,36 @@ const loadDeal = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const loadStageHistory = async () => {
+  if (!deal.value?.id) return
+  
+  loadingHistory.value = true
+  try {
+    // Load only recent 5 movements for timeline (lightweight)
+    const history = await dealsStore.fetchDealStageHistory(deal.value.id, { per_page: 5 })
+    console.log('Stage history loaded:', history)
+    stageHistory.value = history || []
+    latestMovement.value = stageHistory.value.length > 0 ? stageHistory.value[0] : null
+    console.log('Latest movement:', latestMovement.value)
+    console.log('Stage history count:', stageHistory.value.length)
+    
+    // Get total count for button display (if available from API)
+    // This is optional - if API doesn't return total, we'll show button anyway
+    totalMovementsCount.value = history.length >= 5 ? 6 : history.length // Estimate if > 5
+  } catch (err: any) {
+    console.error('Error loading stage history:', err)
+    stageHistory.value = []
+    latestMovement.value = null
+    totalMovementsCount.value = 0
+  } finally {
+    loadingHistory.value = false
+  }
+}
+
+const openStageHistoryModal = () => {
+  showStageHistoryModal.value = true
 }
 
 const editDeal = () => {
@@ -473,10 +607,12 @@ const addTask = () => {
   showAddTaskModal.value = true
 }
 
-const onStageMoved = async (stageId: number) => {
+const onStageMoved = async (stageId: number, reason: string) => {
   showMoveStageModal.value = false
   // Reload the deal to get updated stage information
   await loadDeal()
+  // Reload stage history to show the new movement
+  await loadStageHistory()
 }
 
 const onActivityAdded = () => {
@@ -515,7 +651,10 @@ const handleDocumentUpdated = (updatedDocument: any) => {
 }
 
 // Lifecycle
-onMounted(() => {
-  loadDeal()
+onMounted(async () => {
+  await loadDeal()
+  if (deal.value?.id) {
+    await loadStageHistory()
+  }
 })
 </script>

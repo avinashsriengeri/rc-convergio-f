@@ -328,10 +328,15 @@ export const useDealsStore = defineStore('deals', () => {
     }
   }
 
-  const moveDeal = async (id: number, stageId: number): Promise<Deal> => {
+  const moveDeal = async (id: number, stageId: number, reason: string): Promise<Deal> => {
     try {
-      const response = await dealsAPI.moveDeal(id, stageId)
+      const response = await dealsAPI.moveDeal(id, stageId, reason)
       const updatedDeal = response.data.data
+      
+      // Store stage_movement if provided in response (for immediate UI updates)
+      if (response.data.stage_movement) {
+        // Can be used by components to show movement info immediately
+      }
       
       // Update in list
       const index = state.value.deals.findIndex(d => d.id === id)
@@ -348,6 +353,16 @@ export const useDealsStore = defineStore('deals', () => {
     } catch (err: unknown) {
       console.error('Error moving deal:', err)
       throw err
+    }
+  }
+
+  const fetchDealStageHistory = async (id: number, params = {}): Promise<any[]> => {
+    try {
+      const response = await dealsAPI.getDealStageHistory(id, params)
+      return response.data.data || []
+    } catch (err: unknown) {
+      console.error('Error fetching stage history:', err)
+      return []
     }
   }
 
