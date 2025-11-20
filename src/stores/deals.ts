@@ -124,13 +124,16 @@ export const useDealsStore = defineStore('deals', () => {
       state.value.filters = { ...state.value.filters, ...newFilters }
     }
 
-    // Clean filters - remove undefined, null, empty values
+    // Clean filters - remove undefined, null, empty values, and 'all'
     const cleanFilters = { ...state.value.filters }
     Object.keys(cleanFilters).forEach(key => {
-      if (cleanFilters[key as keyof DealFilters] === undefined || 
-          cleanFilters[key as keyof DealFilters] === null || 
-          cleanFilters[key as keyof DealFilters] === '' || 
-          cleanFilters[key as keyof DealFilters] === 'all') {
+      const value = cleanFilters[key as keyof DealFilters]
+      // Remove if undefined, null, empty string, 'all', or NaN
+      if (value === undefined || 
+          value === null || 
+          value === '' || 
+          value === 'all' ||
+          (typeof value === 'number' && isNaN(value))) {
         delete cleanFilters[key as keyof DealFilters]
       }
     })

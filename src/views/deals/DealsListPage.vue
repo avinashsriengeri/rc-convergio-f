@@ -116,7 +116,7 @@
                 @change="onPipelineChange"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="">All Pipelines</option>
+                <option :value="undefined">All Pipelines</option>
                 <option
                   v-for="pipeline in pipelinesStore.pipelines"
                   :key="pipeline.id"
@@ -132,10 +132,11 @@
               <label class="block text-sm font-medium text-gray-700 mb-1">Stage</label>
               <select
                 v-model="filters.stage_id"
+                @change="applyFilters"
                 :disabled="!filters.pipeline_id"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               >
-                <option value="">
+                <option :value="undefined">
                   {{ filters.pipeline_id ? 'All Stages' : 'Select pipeline first' }}
                 </option>
                 <option
@@ -153,9 +154,10 @@
               <label class="block text-sm font-medium text-gray-700 mb-1">Owner</label>
               <select
                 v-model="filters.owner_id"
+                @change="applyFilters"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="">All Owners</option>
+                <option :value="undefined">All Owners</option>
                 <option
                   v-for="user in refsStore.users"
                   :key="user.id"
@@ -194,6 +196,7 @@
                 type="number"
                 placeholder="0"
                 min="0"
+                @input="applyFilters"
                 class="w-full"
               />
             </div>
@@ -204,6 +207,7 @@
                 type="number"
                 placeholder="1000000"
                 min="0"
+                @input="applyFilters"
                 class="w-full"
               />
             </div>
@@ -212,6 +216,7 @@
               <BaseInput
                 v-model="filters.date_from"
                 type="date"
+                @change="applyFilters"
                 class="w-full"
               />
             </div>
@@ -220,6 +225,7 @@
               <BaseInput
                 v-model="filters.date_to"
                 type="date"
+                @change="applyFilters"
                 class="w-full"
               />
             </div>
@@ -667,16 +673,37 @@ const syncFiltersWithURL = () => {
   
   if (query.search) filters.search = query.search as string
   if (query.status) filters.status = query.status as any
-  if (query.pipeline_id) filters.pipeline_id = parseInt(query.pipeline_id as string)
-  if (query.stage_id) filters.stage_id = parseInt(query.stage_id as string)
-  if (query.owner_id) filters.owner_id = parseInt(query.owner_id as string)
-  if (query.value_min) filters.value_min = parseFloat(query.value_min as string)
-  if (query.value_max) filters.value_max = parseFloat(query.value_max as string)
+  if (query.pipeline_id) {
+    const pipelineId = parseInt(query.pipeline_id as string)
+    filters.pipeline_id = isNaN(pipelineId) ? undefined : pipelineId
+  }
+  if (query.stage_id) {
+    const stageId = parseInt(query.stage_id as string)
+    filters.stage_id = isNaN(stageId) ? undefined : stageId
+  }
+  if (query.owner_id) {
+    const ownerId = parseInt(query.owner_id as string)
+    filters.owner_id = isNaN(ownerId) ? undefined : ownerId
+  }
+  if (query.value_min) {
+    const valueMin = parseFloat(query.value_min as string)
+    filters.value_min = isNaN(valueMin) ? undefined : valueMin
+  }
+  if (query.value_max) {
+    const valueMax = parseFloat(query.value_max as string)
+    filters.value_max = isNaN(valueMax) ? undefined : valueMax
+  }
   if (query.date_from) filters.date_from = query.date_from as string
   if (query.date_to) filters.date_to = query.date_to as string
   if (query.sort) filters.sort = query.sort as string
-  if (query.page) filters.page = parseInt(query.page as string)
-  if (query.per_page) filters.per_page = parseInt(query.per_page as string)
+  if (query.page) {
+    const page = parseInt(query.page as string)
+    filters.page = isNaN(page) ? 1 : page
+  }
+  if (query.per_page) {
+    const perPage = parseInt(query.per_page as string)
+    filters.per_page = isNaN(perPage) ? 15 : perPage
+  }
 }
 
 const updateURL = () => {

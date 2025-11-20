@@ -269,9 +269,16 @@ const hasActiveFilters = computed(() => {
 // Methods
 const loadSequences = async () => {
   const params = {
-    q: searchQuery.value,
-    status: statusFilter.value === 'all' ? '' : statusFilter.value
+    q: searchQuery.value
   }
+  
+  // Add is_active filter based on status selection
+  if (statusFilter.value === 'active') {
+    params.is_active = 1
+  } else if (statusFilter.value === 'inactive') {
+    params.is_active = 0
+  }
+  // If 'all', don't add is_active param
   
   try {
     await sequencesStore.fetchSequences(params)
@@ -285,10 +292,19 @@ const debouncedSearch = debounce(() => {
 }, 300)
 
 const applyFilters = () => {
-  sequencesStore.setFilters({
-    search: searchQuery.value,
-    status: statusFilter.value === 'all' ? '' : statusFilter.value
-  })
+  const filters = {
+    search: searchQuery.value
+  }
+  
+  // Add is_active filter based on status selection
+  if (statusFilter.value === 'active') {
+    filters.is_active = 1
+  } else if (statusFilter.value === 'inactive') {
+    filters.is_active = 0
+  }
+  // If 'all', don't add is_active filter
+  
+  sequencesStore.setFilters(filters)
   loadSequences()
 }
 

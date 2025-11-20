@@ -23,7 +23,7 @@ export const useSequencesStore = defineStore('sequences', () => {
     },
     filters: {
       search: '',
-      status: 'all'
+      is_active: ''
     }
   })
 
@@ -364,7 +364,7 @@ export const useSequencesStore = defineStore('sequences', () => {
   const clearFilters = () => {
     state.value.filters = {
       search: '',
-      status: 'all'
+      is_active: ''
     }
   }
 

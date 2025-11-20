@@ -57,7 +57,7 @@
               @change="onPipelineChange"
               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="">Select Pipeline</option>
+              <option :value="undefined">Select Pipeline</option>
               <option
                 v-for="pipeline in pipelinesStore.pipelines"
                 :key="pipeline.id"
@@ -306,7 +306,7 @@ const error = ref<string | null>(null)
 const kanbanData = ref<any[]>([])
 const showDeleteModal = ref(false)
 const dealToDelete = ref<Deal | null>(null)
-const selectedPipelineId = ref<number | string>('')
+const selectedPipelineId = ref<number | undefined>(undefined)
 const draggedDeal = ref<Deal | null>(null)
 const showMoveModal = ref(false)
 const pendingMove = ref<{
