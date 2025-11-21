@@ -282,6 +282,8 @@ export const tasksAPI = {
   bulkUpdate: (taskIds, data) => api.patch('/tasks/bulk-update', { ids: taskIds, ...data }),
   bulkComplete: (taskIds) => api.post('/tasks/bulk-complete', { task_ids: taskIds }),
   exportTasks: (params) => api.get('/tasks/export', { params, responseType: 'blob' }),
+  getDealsByContact: (contactId) => api.get(`/tasks/deals`, { params: { contact_id: contactId } }),
+  getQuotesByContact: (contactId) => api.get(`/tasks/quotes`, { params: { contact_id: contactId } }),
 }
 
 // Campaigns API endpoints

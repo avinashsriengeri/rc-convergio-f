@@ -134,14 +134,15 @@
                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                >
                  <option value="">{{ $t('tasks.any_assignee') }}</option>
-                 <option
-                   v-for="user in refsStore.users"
-                   :key="user.id"
-                   :value="user.id"
-                   v-if="refsStore.users && refsStore.users.length > 0"
-                 >
-                   {{ user.name }}
-                 </option>
+                 <template v-if="refsStore.users && refsStore.users.length > 0">
+                   <option
+                     v-for="user in refsStore.users"
+                     :key="user.id"
+                     :value="user.id"
+                   >
+                     {{ user.name }}
+                   </option>
+                 </template>
                </select>
             </div>
 
@@ -569,22 +570,116 @@
               <!-- Assignee -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">
-                  Assignee
+                  Assignee <span class="text-red-500">*</span>
                 </label>
                 <select
                   v-model="taskForm.assignee_id"
                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
                 >
                   <option value="">Select Assignee</option>
+                  <template v-if="refsStore.users && refsStore.users.length > 0">
+                    <option
+                      v-for="user in refsStore.users"
+                      :key="user.id"
+                      :value="user.id"
+                    >
+                      {{ user.name }}
+                    </option>
+                  </template>
+                </select>
+              </div>
+
+              <!-- Customer (Contact) -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Customer <span class="text-red-500">*</span>
+                </label>
+                <select
+                  v-model="taskForm.contact_id"
+                  @change="onContactChange"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  :class="{ 'border-red-300': !taskForm.contact_id && formSubmitted }"
+                  required
+                >
+                  <option value="">Select Customer</option>
+                  <template v-if="refsStore.contacts && refsStore.contacts.length > 0">
+                    <option
+                      v-for="contact in refsStore.contacts"
+                      :key="contact.id"
+                      :value="contact.id"
+                    >
+                      {{ contact.name || contact.email }}
+                    </option>
+                  </template>
+                </select>
+                <p v-if="loadingDealsOrQuotes" class="mt-1 text-xs text-gray-500">Loading deals and quotes...</p>
+              </div>
+
+              <!-- Related Type -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Related Type
+                </label>
+                <select
+                  v-model="taskForm.related_entity_type"
+                  @change="onRelatedTypeChange"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Other</option>
+                  <option value="deal">Deal</option>
+                  <option value="quote">Quote</option>
+                </select>
+              </div>
+
+              <!-- Related Entity (Deal) -->
+              <div v-if="taskForm.related_entity_type === 'deal'">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Deal <span class="text-red-500">*</span>
+                </label>
+                <select
+                  v-model="taskForm.related_entity_id"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  :class="{ 'border-red-300': taskForm.related_entity_type === 'deal' && !taskForm.related_entity_id && formSubmitted }"
+                  :required="taskForm.related_entity_type === 'deal'"
+                >
+                  <option value="">Select Deal</option>
                   <option
-                    v-for="user in refsStore.users"
-                    :key="user.id"
-                    :value="user.id"
-                    v-if="refsStore.users && refsStore.users.length > 0"
+                    v-for="deal in availableDeals"
+                    :key="deal.id"
+                    :value="deal.id"
                   >
-                    {{ user.name }}
+                    {{ deal.title || deal.name || `Deal #${deal.id}` }}
                   </option>
                 </select>
+                <p v-if="availableDeals.length === 0 && taskForm.contact_id && !loadingDealsOrQuotes" class="mt-1 text-xs text-gray-500">
+                  No deals found for this customer
+                </p>
+              </div>
+
+              <!-- Related Entity (Quote) -->
+              <div v-if="taskForm.related_entity_type === 'quote'">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Quote <span class="text-red-500">*</span>
+                </label>
+                <select
+                  v-model="taskForm.related_entity_id"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  :class="{ 'border-red-300': taskForm.related_entity_type === 'quote' && !taskForm.related_entity_id && formSubmitted }"
+                  :required="taskForm.related_entity_type === 'quote'"
+                >
+                  <option value="">Select Quote</option>
+                  <option
+                    v-for="quote in availableQuotes"
+                    :key="quote.id"
+                    :value="quote.id"
+                  >
+                    {{ quote.title || quote.name || `Quote #${quote.id}` }}
+                  </option>
+                </select>
+                <p v-if="availableQuotes.length === 0 && taskForm.contact_id && !loadingDealsOrQuotes" class="mt-1 text-xs text-gray-500">
+                  No quotes found for this customer
+                </p>
               </div>
 
               <!-- Due Date -->
@@ -798,14 +893,15 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Keep current assignee</option>
-                <option
-                  v-for="user in refsStore.users"
-                  :key="user.id"
-                  :value="user.id"
-                  v-if="refsStore.users && refsStore.users.length > 0"
-                >
-                  {{ user.name }}
-                </option>
+                <template v-if="refsStore.users && refsStore.users.length > 0">
+                  <option
+                    v-for="user in refsStore.users"
+                    :key="user.id"
+                    :value="user.id"
+                  >
+                    {{ user.name }}
+                  </option>
+                </template>
               </select>
             </div>
 
@@ -871,6 +967,7 @@ import type { Task, TaskFormData, PaginationMeta, TaskFilters, TaskStatus } from
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
+import { tasksAPI } from '@/services/api'
 
 // Stores
 const tasksStore = useTasksStore()
@@ -896,6 +993,12 @@ const bulkLoading = ref(false)
 const selectedTasks = ref<number[]>([])
 const selectAll = ref(false)
 const activeTab = ref('all')
+const formSubmitted = ref(false)
+
+// Deals and Quotes state
+const availableDeals = ref<any[]>([])
+const availableQuotes = ref<any[]>([])
+const loadingDealsOrQuotes = ref(false)
 
 // Modal states
 const showCreateModal = ref(false)
@@ -925,6 +1028,7 @@ const taskForm = reactive<TaskFormData>({
   description: '',
   priority: 'medium',
   assignee_id: undefined,
+  contact_id: undefined,
   due_date: '',
   status: 'pending',
   notes: '',
@@ -943,9 +1047,23 @@ const bulkUpdateForm = reactive({
 
 // Computed
 const isFormValid = computed(() => {
-  return taskForm.title && 
-         taskForm.priority && 
-         taskForm.due_date
+  const basicValid = taskForm.title && 
+                     taskForm.priority && 
+                     taskForm.due_date &&
+                     taskForm.assignee_id &&
+                     taskForm.contact_id
+  
+  // If related_entity_type is 'deal' or 'quote', related_entity_id is required
+  if (taskForm.related_entity_type === 'deal' || taskForm.related_entity_type === 'quote') {
+    return basicValid && taskForm.related_entity_id !== undefined && taskForm.related_entity_id !== null
+  }
+  
+  // If related_entity_type is 'other' or empty, related_entity_id should be null/undefined
+  if (taskForm.related_entity_type === '' || !taskForm.related_entity_type) {
+    return basicValid && (taskForm.related_entity_id === undefined || taskForm.related_entity_id === null)
+  }
+  
+  return basicValid
 })
 
 // Methods
@@ -1147,6 +1265,52 @@ const debouncedSearch = debounce(() => {
   applyFilters()
 }, 300)
 
+// Fetch deals and quotes for selected contact
+const fetchDealsAndQuotes = async (contactId: number) => {
+  if (!contactId) {
+    availableDeals.value = []
+    availableQuotes.value = []
+    return
+  }
+
+  loadingDealsOrQuotes.value = true
+  try {
+    // Fetch deals and quotes in parallel
+    const [dealsResponse, quotesResponse] = await Promise.all([
+      tasksAPI.getDealsByContact(contactId).catch(() => ({ data: { data: [] } })),
+      tasksAPI.getQuotesByContact(contactId).catch(() => ({ data: { data: [] } }))
+    ])
+
+    availableDeals.value = dealsResponse.data?.data || []
+    availableQuotes.value = quotesResponse.data?.data || []
+  } catch (err) {
+    console.error('Error fetching deals/quotes:', err)
+    availableDeals.value = []
+    availableQuotes.value = []
+  } finally {
+    loadingDealsOrQuotes.value = false
+  }
+}
+
+// Handle contact change
+const onContactChange = async () => {
+  // Reset related entity when contact changes
+  taskForm.related_entity_type = ''
+  taskForm.related_entity_id = undefined
+  availableDeals.value = []
+  availableQuotes.value = []
+
+  if (taskForm.contact_id) {
+    await fetchDealsAndQuotes(taskForm.contact_id)
+  }
+}
+
+// Handle related type change
+const onRelatedTypeChange = () => {
+  // Reset related_entity_id when type changes
+  taskForm.related_entity_id = undefined
+}
+
 // Tab handling
 const handleTabChange = async (tab: string) => {
   activeTab.value = tab
@@ -1196,6 +1360,8 @@ const fetchUpcomingTasks = async () => {
 }
 
 const saveTask = async () => {
+  formSubmitted.value = true
+  
   if (!isFormValid.value) {
     showError('Please fill in all required fields')
     return
@@ -1203,11 +1369,33 @@ const saveTask = async () => {
 
   saving.value = true
   try {
+    // Prepare task data according to backend requirements
+    const taskData: any = {
+      title: taskForm.title.trim(),
+      description: taskForm.description?.trim() || '',
+      priority: taskForm.priority,
+      assignee_id: taskForm.assignee_id,
+      contact_id: taskForm.contact_id,
+      due_date: taskForm.due_date,
+      status: taskForm.status,
+      notes: taskForm.notes?.trim() || ''
+    }
+
+    // Handle related entity
+    if (taskForm.related_entity_type === 'deal' || taskForm.related_entity_type === 'quote') {
+      taskData.related_entity_type = taskForm.related_entity_type
+      taskData.related_entity_id = taskForm.related_entity_id
+    } else {
+      // For 'other' or empty, set related_entity_id to null
+      taskData.related_entity_type = taskForm.related_entity_type || null
+      taskData.related_entity_id = null
+    }
+
     if (showEditModal.value && taskToDelete.value) {
-      await tasksStore.updateTask(taskToDelete.value.id, taskForm)
+      await tasksStore.updateTask(taskToDelete.value.id, taskData)
       success('Task updated successfully')
     } else {
-      await tasksStore.createTask(taskForm)
+      await tasksStore.createTask(taskData)
       success('Task created successfully')
     }
 
@@ -1216,7 +1404,8 @@ const saveTask = async () => {
     await fetchTasks()
   } catch (err: any) {
     console.error('Error saving task:', err)
-    showError(err.response?.data?.message || 'Failed to save task')
+    const errorMessage = err.response?.data?.message || err.response?.data?.error || 'Failed to save task'
+    showError(errorMessage)
   } finally {
     saving.value = false
   }
@@ -1244,19 +1433,26 @@ const viewTask = (task: Task) => {
   showDetailModal.value = true
 }
 
-const editTask = (task: Task) => {
+const editTask = async (task: Task) => {
   taskToDelete.value = task
   Object.assign(taskForm, {
     title: task.title,
     description: task.description || '',
     priority: task.priority,
     assignee_id: task.assignee_id,
+    contact_id: (task as any).contact_id || undefined,
     due_date: task.due_date,
     status: task.status,
     notes: task.notes || '',
-    related_entity_type: task.related_entity_type,
+    related_entity_type: task.related_entity_type || '',
     related_entity_id: task.related_entity_id
   })
+  
+  // Fetch deals and quotes if contact_id exists
+  if (taskForm.contact_id) {
+    await fetchDealsAndQuotes(taskForm.contact_id)
+  }
+  
   showEditModal.value = true
   showDetailModal.value = false
 }
@@ -1288,17 +1484,22 @@ const closeModal = () => {
   showDetailModal.value = false
   taskToDelete.value = null
   selectedTask.value = null
+  formSubmitted.value = false
   Object.assign(taskForm, {
     title: '',
     description: '',
-    priority: '',
+    priority: 'medium',
     assignee_id: undefined,
+    contact_id: undefined,
     due_date: '',
     status: 'pending',
     notes: '',
     related_entity_type: undefined,
     related_entity_id: undefined
   })
+  // Reset deals and quotes
+  availableDeals.value = []
+  availableQuotes.value = []
 }
 
 const closeBulkUpdateModal = () => {
@@ -1465,8 +1666,11 @@ const exportTasks = async () => {
 // Lifecycle
 onMounted(async () => {
   try {
-    // Fetch users first to populate assignee dropdown
-    await refsStore.fetchUsers()
+    // Fetch users and contacts first to populate dropdowns
+    await Promise.all([
+      refsStore.fetchUsers(),
+      refsStore.fetchContacts({ per_page: 1000 }) // Fetch all contacts for dropdown
+    ])
     // Then fetch tasks
     await fetchTasks()
     

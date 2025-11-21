@@ -218,6 +218,8 @@ export interface Task extends BaseEntity {
   status: TaskStatus
   assignee_id?: number
   assignee?: User
+  contact_id?: number
+  contact?: Contact
   due_date: string
   notes?: string
   related_entity_type?: string
@@ -336,6 +338,7 @@ export interface TaskFormData {
   description?: string
   priority: TaskPriority
   assignee_id?: number
+  contact_id?: number
   due_date: string
   status: TaskStatus
   notes?: string
