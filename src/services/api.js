@@ -411,6 +411,8 @@ export const quotesAPI = {
   acceptQuote: (id, data = {}) => api.post(`/quotes/${id}/accept`, data),
   rejectQuote: (id, data = {}) => api.post(`/quotes/${id}/reject`, data),
   downloadPdf: (id) => api.get(`/quotes/${id}/pdf`, { responseType: 'blob' }),
+  // Preview prices with currency conversion
+  previewPrices: (data) => api.post('/quotes/preview-prices', data),
   // Products
   getProducts: (params = {}) => api.get('/products', { params }),
   getProduct: (id) => api.get(`/products/${id}`),
@@ -424,6 +426,17 @@ export const quotesAPI = {
   updateTemplate: (id, data) => api.put(`/quote-templates/${id}`, data),
   deleteTemplate: (id) => api.delete(`/quote-templates/${id}`),
   previewTemplate: (id) => api.get(`/quote-templates/${id}/preview`, { responseType: 'blob' }),
+}
+
+// Exchange Rates API endpoints
+export const exchangeRatesAPI = {
+  getRate: (fromCurrency, toCurrency) => api.get('/exchange-rates/rate', {
+    params: { from_currency: fromCurrency, to_currency: toCurrency }
+  }),
+  refreshRate: (fromCurrency, toCurrency) => api.post('/exchange-rates/refresh', {
+    from_currency: fromCurrency,
+    to_currency: toCurrency
+  }),
 }
 
 // Users API endpoints
