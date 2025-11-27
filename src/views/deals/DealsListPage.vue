@@ -196,7 +196,7 @@
                 type="number"
                 placeholder="0"
                 min="0"
-                @input="applyFilters"
+                @input="debouncedFilter"
                 class="w-full"
               />
             </div>
@@ -207,7 +207,7 @@
                 type="number"
                 placeholder="1000000"
                 min="0"
-                @input="applyFilters"
+                @input="debouncedFilter"
                 class="w-full"
               />
             </div>
@@ -581,6 +581,12 @@ const debouncedSearch = debounce(() => {
   applyFilters()
 }, 300)
 
+// Debounced filter for value and date inputs
+const debouncedFilter = debounce(() => {
+  filters.page = 1
+  applyFilters()
+}, 500)
+
 // Methods
 const refreshDeals = () => {
   dealsStore.fetchDeals(filters)
@@ -614,8 +620,21 @@ const setStatusFilter = (status: string) => {
   applyFilters()
 }
 
-const onPipelineChange = () => {
+const onPipelineChange = async () => {
   filters.stage_id = undefined
+  
+  // Fetch stages for the selected pipeline
+  if (filters.pipeline_id) {
+    try {
+      await stagesStore.fetchStagesByPipeline(filters.pipeline_id)
+    } catch (err) {
+      console.error('Failed to load stages:', err)
+    }
+  } else {
+    // Clear stages when no pipeline is selected
+    stagesStore.reset()
+  }
+  
   applyFilters()
 }
 
@@ -741,13 +760,15 @@ onMounted(async () => {
     await Promise.all([
       dealsStore.fetchDeals(filters),
       pipelinesStore.fetchPipelines(),
-      refsStore.initializeData()
+      refsStore.initializeData(),
+      // Load all stages so they're available for filtering
+      stagesStore.fetchStages()
     ])
     
     console.log('After fetching deals - dealsStore.deals:', dealsStore.deals)
     console.log('After fetching deals - dealsStore.deals.length:', dealsStore.deals.length)
     
-    // Load stages if pipeline is selected
+    // Load stages if pipeline is selected from URL
     if (filters.pipeline_id) {
       await stagesStore.fetchStagesByPipeline(filters.pipeline_id)
     }

@@ -354,8 +354,8 @@
             </div>
 
             <!-- Campaign Actions -->
-            <div class="mt-6 flex items-center justify-between">
-              <div class="flex items-center space-x-2">
+            <div class="mt-6">
+              <div class="flex flex-wrap items-center gap-2">
                 <BaseButton
                   variant="outline"
                   size="sm"
@@ -450,8 +450,7 @@
                 >
                   Duplicate
                 </BaseButton>
-              </div>
-              <div class="flex items-center space-x-2">
+                <div class="flex-grow"></div>
                 <button
                   @click="viewMetrics(campaign)"
                   class="text-gray-500 hover:text-blue-600 p-2 rounded-md hover:bg-gray-100 transition-colors"
@@ -1577,7 +1576,10 @@ const filteredContactOptions = computed(() => {
 })
 
 const segmentOptions = computed(() =>
-  (segments.value || []).map((s: any) => ({ value: s.id, label: s.name }))
+  (segments.value || []).map((s: any) => {
+    const typeLabel = s.type === 'static' ? ' (Static)' : s.type === 'dynamic' ? ' (Dynamic)' : ''
+    return { value: s.id, label: `${s.name}${typeLabel}` }
+  })
 )
 
 const loadSegments = async () => {

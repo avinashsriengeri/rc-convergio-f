@@ -455,11 +455,24 @@ const saveList = async () => {
   saving.value = true
   
   try {
-    // Check for duplicate name before saving
-    const duplicateCheck = await listsAPI.checkDuplicateName(form.value.name.trim(), isEditing.value ? route.params.id as string : null)
+    // Frontend duplicate check - Check for duplicate name with same type before saving
+    // This requires fetching existing lists first
+    const existingListsResponse = await listsAPI.getLists()
+    const existingLists = existingListsResponse.data.data || existingListsResponse.data || []
     
-    if (duplicateCheck.data.exists) {
-      showError('List with this name already exists')
+    // Check for duplicates (same name AND same type)
+    const normalizedName = form.value.name.trim().toLowerCase()
+    const duplicate = existingLists.find((list: any) => {
+      // Skip if it's the same list being edited
+      if (isEditing.value && list.id === parseInt(route.params.id as string)) {
+        return false
+      }
+      // Check if same name AND same type
+      return list.name.toLowerCase() === normalizedName && list.type === form.value.type
+    })
+    
+    if (duplicate) {
+      showError(`A ${form.value.type} list with this name already exists`)
       saving.value = false
       return false
     }

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { tasksAPI } from '@/services/api'
+import { tasksAPI, activitiesAPI } from '@/services/api'
 
 export const useTasksStore = defineStore('tasks', () => {
   // State
@@ -48,6 +48,29 @@ export const useTasksStore = defineStore('tasks', () => {
   const createTask = async (taskData: any) => {
     try {
       const response = await tasksAPI.createTask(taskData)
+      const createdTask = response.data.data || response.data
+      
+      // Log activity for task creation
+      try {
+        const activityData = {
+          subject: `Task created: ${taskData.title}`,
+          description: `Created task "${taskData.title}" with priority ${taskData.priority}`,
+          type: 'task' as const,
+          related_type: 'task',
+          related_id: createdTask.id,
+          scheduled_at: new Date().toISOString().slice(0, 19).replace('T', ' '), // MySQL datetime format
+          status: 'completed' as const
+        }
+        
+        console.log('Attempting to log activity for task creation:', activityData)
+        await activitiesAPI.createActivity(activityData)
+        console.log('Activity logged for task creation successfully')
+      } catch (activityErr: any) {
+        console.error('Failed to log activity for task creation:', activityErr)
+        console.error('Activity error details:', activityErr.response?.data)
+        // Don't throw - task was created successfully
+      }
+      
       await fetchTasks()
       return response.data
     } catch (err) {
@@ -58,6 +81,29 @@ export const useTasksStore = defineStore('tasks', () => {
   const updateTask = async (id: number, taskData: any) => {
     try {
       const response = await tasksAPI.updateTask(id, taskData)
+      const updatedTask = response.data.data || response.data
+      
+      // Log activity for task update
+      try {
+        const activityData = {
+          subject: `Task updated: ${taskData.title || updatedTask.title}`,
+          description: `Updated task "${taskData.title || updatedTask.title}"`,
+          type: 'task' as const,
+          related_type: 'task',
+          related_id: id,
+          scheduled_at: new Date().toISOString().slice(0, 19).replace('T', ' '), // MySQL datetime format
+          status: 'completed' as const
+        }
+        
+        console.log('Attempting to log activity for task update:', activityData)
+        await activitiesAPI.createActivity(activityData)
+        console.log('Activity logged for task update successfully')
+      } catch (activityErr: any) {
+        console.error('Failed to log activity for task update:', activityErr)
+        console.error('Activity error details:', activityErr.response?.data)
+        // Don't throw - task was updated successfully
+      }
+      
       await fetchTasks()
       return response.data
     } catch (err) {
@@ -67,7 +113,31 @@ export const useTasksStore = defineStore('tasks', () => {
 
   const deleteTask = async (id: number) => {
     try {
+      // Get task info before deleting for activity log
+      const taskToDelete = state.value.tasks.find(t => t.id === id)
+      
       await tasksAPI.deleteTask(id)
+      
+      // Log activity for task deletion
+      if (taskToDelete) {
+        try {
+          const activityData = {
+            subject: `Task deleted: ${taskToDelete.title}`,
+            description: `Deleted task "${taskToDelete.title}"`,
+            type: 'task' as const,
+            scheduled_at: new Date().toISOString().slice(0, 19).replace('T', ' '), // MySQL datetime format
+            status: 'completed' as const
+          }
+          
+          console.log('Attempting to log activity for task deletion:', activityData)
+          await activitiesAPI.createActivity(activityData)
+          console.log('Activity logged for task deletion successfully')
+        } catch (activityErr: any) {
+          console.error('Failed to log activity for task deletion:', activityErr)
+          console.error('Activity error details:', activityErr.response?.data)
+        }
+      }
+      
       await fetchTasks()
     } catch (err) {
       throw err
@@ -77,7 +147,61 @@ export const useTasksStore = defineStore('tasks', () => {
   const bulkComplete = async (ids: number[]) => {
     try {
       await tasksAPI.bulkComplete(ids)
+      
+      // Log activity for bulk task completion
+      try {
+        const activityData = {
+          subject: `Completed ${ids.length} task${ids.length > 1 ? 's' : ''}`,
+          description: `Bulk completed ${ids.length} task(s)`,
+          type: 'task' as const,
+          scheduled_at: new Date().toISOString().slice(0, 19).replace('T', ' '), // MySQL datetime format
+          status: 'completed' as const
+        }
+        
+        console.log('Attempting to log activity for bulk completion:', activityData)
+        await activitiesAPI.createActivity(activityData)
+        console.log('Activity logged for bulk task completion successfully')
+      } catch (activityErr: any) {
+        console.error('Failed to log activity for bulk completion:', activityErr)
+        console.error('Activity error details:', activityErr.response?.data)
+      }
+      
       await fetchTasks()
+    } catch (err) {
+      throw err
+    }
+  }
+
+  // Complete a single task
+  const completeTask = async (id: number) => {
+    try {
+      const taskToComplete = state.value.tasks.find(t => t.id === id)
+      const response = await tasksAPI.completeTask(id)
+      
+      // Log activity for task completion
+      if (taskToComplete) {
+        try {
+          const activityData = {
+            subject: `Task completed: ${taskToComplete.title}`,
+            description: `Completed task "${taskToComplete.title}"`,
+            type: 'task' as const,
+            related_type: 'task',
+            related_id: id,
+            scheduled_at: new Date().toISOString().slice(0, 19).replace('T', ' '), // MySQL datetime format
+            status: 'completed' as const
+          }
+          
+          console.log('Attempting to log activity for task completion:', activityData)
+          await activitiesAPI.createActivity(activityData)
+          console.log('Activity logged for task completion successfully')
+        } catch (activityErr: any) {
+          console.error('Failed to log activity for task completion:', activityErr)
+          console.error('Activity error details:', activityErr.response?.data)
+        }
+      }
+      
+      await fetchTasks()
+      return response
     } catch (err) {
       throw err
     }
@@ -182,6 +306,7 @@ export const useTasksStore = defineStore('tasks', () => {
     createTask,
     updateTask,
     deleteTask,
+    completeTask,
     bulkComplete,
     bulkUpdate,
     exportTasks,

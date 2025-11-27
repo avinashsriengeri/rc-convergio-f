@@ -1210,12 +1210,23 @@ const buildParams = (filters: any) => {
 
 const fetchTasks = async () => {
   try {
-    const params = buildParams(filters)
+    // When in "All Tasks" tab, ignore filters unless explicitly applied
+    let params;
+    if (activeTab.value === 'all' && !filters.search && filters.status === 'all' && 
+        filters.priority === 'all' && !filters.assignee_id && 
+        !filters.due_date_from && !filters.due_date_to) {
+      // No filters applied, show all tasks
+      params = { page: filters.page, per_page: filters.per_page, sort: filters.sort || '-due_date' }
+    } else {
+      // Filters applied or other tab, use normal filtering
+      params = buildParams(filters)
+    }
+    
     await tasksStore.fetchTasks(params)
 
     // Safety fallback: if params are non-empty and result is empty, try unfiltered
-    if (Object.keys(params).length > 0 && tasks.value.length === 0) {
-      await tasksStore.fetchTasks({})
+    if (Object.keys(params).length > 2 && tasks.value.length === 0) {
+      await tasksStore.fetchTasks({ page: 1, per_page: filters.per_page })
     }
   } catch (err: any) {
     console.error('Error fetching tasks:', err)
@@ -1316,7 +1327,19 @@ const handleTabChange = async (tab: string) => {
   activeTab.value = tab
   filters.page = 1
   
+  // Clear filters when switching tabs
+  filters.search = ''
+  filters.status = 'all'
+  filters.priority = 'all'
+  filters.assignee_id = undefined
+  filters.due_date_from = undefined
+  filters.due_date_to = undefined
+  
   switch (tab) {
+    case 'all':
+      // For "All Tasks", just fetch with cleared filters
+      await fetchTasks()
+      break
     case 'overdue':
       await fetchOverdueTasks()
       break
@@ -1324,13 +1347,19 @@ const handleTabChange = async (tab: string) => {
       await fetchUpcomingTasks()
       break
     case 'assignee':
-      // For now, fetch all tasks with assignee filter
-      // This could be enhanced to show current user's assigned tasks
+      // Show tasks assigned to current user
+      if (assigneeId.value) {
+        filters.assignee_id = assigneeId.value
+      }
       await fetchTasks()
       break
     case 'owner':
-      // For now, fetch all tasks with owner filter
-      // This could be enhanced to show current user's owned tasks
+      // Show tasks created by current user
+      // Note: This would need backend support for owner_id filter
+      if (ownerId.value) {
+        // If backend supports owner filter, add it here
+        filters.assignee_id = undefined
+      }
       await fetchTasks()
       break
     default:
@@ -1671,7 +1700,7 @@ onMounted(async () => {
       refsStore.fetchUsers(),
       refsStore.fetchContacts({ per_page: 1000 }) // Fetch all contacts for dropdown
     ])
-    // Then fetch tasks
+    // Then fetch tasks - default to "All Tasks" tab
     await fetchTasks()
     
     // Check if we should open create modal from URL parameter

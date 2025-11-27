@@ -57,12 +57,40 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">
                   Form Name <span class="text-red-500">*</span>
                 </label>
-                <BaseInput
-                  v-model="form.name"
-                  placeholder="Enter form name"
-                  :error="errors.name"
-                />
+                <div class="relative">
+                  <BaseInput
+                    v-model="form.name"
+                    placeholder="Enter form name"
+                    :error="errors.name || duplicateNameError"
+                    @input="onFormNameChange"
+                  />
+                  <!-- Checking indicator -->
+                  <div
+                    v-if="checkingDuplicate"
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2"
+                  >
+                    <svg class="animate-spin h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </div>
+                  <!-- Success indicator -->
+                  <div
+                    v-if="!checkingDuplicate && form.name.trim() && !duplicateNameError && !errors.name"
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2"
+                  >
+                    <svg class="h-4 w-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </div>
+                </div>
                 <p v-if="errors.name" class="mt-1 text-sm text-red-600">{{ errors.name }}</p>
+                <p v-if="duplicateNameError" class="mt-1 text-sm text-red-600 flex items-center">
+                  <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                  </svg>
+                  {{ duplicateNameError }}
+                </p>
               </div>
 
               <!-- Status -->
@@ -389,6 +417,9 @@ const { success, error: showError } = useNotifications()
 // Reactive data
 const saving = ref(false)
 const errors = ref<Record<string, string>>({})
+const checkingDuplicate = ref(false)
+const duplicateNameError = ref<string | null>(null)
+let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
 // Form data
 const form = ref<Form>({
@@ -404,6 +435,11 @@ const isEditing = computed(() => route.path.includes('/edit'))
 const isFormValid = computed(() => {
   // Check if form name exists and is not empty
   if (!form.value.name || !form.value.name.trim()) {
+    return false
+  }
+  
+  // Check if there's a duplicate name error
+  if (duplicateNameError.value) {
     return false
   }
   
@@ -432,6 +468,51 @@ const isFormValid = computed(() => {
 
 // Methods
 const generateFieldId = () => `field_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+
+// Check for duplicate form name with debouncing
+const checkDuplicateName = async (name: string) => {
+  if (!name || !name.trim()) {
+    duplicateNameError.value = null
+    return
+  }
+  
+  checkingDuplicate.value = true
+  duplicateNameError.value = null
+  
+  try {
+    const excludeId = isEditing.value ? route.params.id : null
+    const response = await formsAPI.checkDuplicateName(name.trim(), excludeId)
+    
+    if (response.data.exists) {
+      duplicateNameError.value = 'Form name already in use. Please use a different form name.'
+    } else {
+      duplicateNameError.value = null
+    }
+  } catch (err: any) {
+    console.error('Failed to check duplicate name:', err)
+    // Don't show error to user, just log it
+    duplicateNameError.value = null
+  } finally {
+    checkingDuplicate.value = false
+  }
+}
+
+// Handle form name change with debouncing
+const onFormNameChange = () => {
+  // Clear any existing timer
+  if (debounceTimer) {
+    clearTimeout(debounceTimer)
+  }
+  
+  // Clear previous error
+  errors.value.name = ''
+  duplicateNameError.value = null
+  
+  // Set new timer for debouncing (wait 500ms after user stops typing)
+  debounceTimer = setTimeout(() => {
+    checkDuplicateName(form.value.name)
+  }, 500)
+}
 
 const addField = () => {
   const newField: FormField = {
@@ -515,13 +596,20 @@ const saveForm = async () => {
     return
   }
   
-  // Check for duplicate form name
+  // Check for duplicate form name one final time before saving
+  if (duplicateNameError.value) {
+    showError('Form name already in use. Please use a different form name.')
+    return
+  }
+  
+  // Do a final check to be absolutely sure
   try {
     const excludeId = isEditing.value ? route.params.id : null
     const response = await formsAPI.checkDuplicateName(form.value.name, excludeId)
     
     if (response.data.exists) {
-      showError('Form with this name already exists')
+      duplicateNameError.value = 'Form name already in use. Please use a different form name.'
+      showError('Form name already in use. Please use a different form name.')
       return
     }
   } catch (err: any) {

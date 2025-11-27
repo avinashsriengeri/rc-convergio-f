@@ -42,9 +42,19 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <!-- Title -->
               <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                  Title <span class="text-red-500">*</span>
-                </label>
+                <div class="flex items-center space-x-2 mb-1">
+                  <label class="block text-sm font-medium text-gray-700">
+                    Title <span class="text-red-500">*</span>
+                  </label>
+                  <div class="flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-yellow-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
+                    </svg>
+                    <p class="text-xs text-gray-600">
+                      Each pipeline should have its own unique deal name.
+                    </p>
+                  </div>
+                </div>
                 <BaseInput
                   v-model="form.title"
                   placeholder="Enter deal title"
@@ -705,6 +715,22 @@ const fetchUsers = async () => {
   }
 }
 
+const checkDuplicateDealName = (name: string, pipelineId: number, excludeId?: number): { isDuplicate: boolean, duplicates: any[] } => {
+  const normalizedName = name.trim().toLowerCase()
+  const duplicates = dealsStore.deals.filter(deal => {
+    // Skip if it's the same deal being edited
+    if (excludeId && deal.id === excludeId) return false
+    // Only check within the same pipeline
+    if (deal.pipeline_id !== pipelineId) return false
+    return deal.title.toLowerCase() === normalizedName
+  })
+  
+  return {
+    isDuplicate: duplicates.length > 0,
+    duplicates
+  }
+}
+
 const validateForm = async () => {
   try {
     await dealFormSchema.validate(form, { abortEarly: false })
@@ -741,6 +767,16 @@ const saveDeal = async () => {
   const isValid = await validateForm()
   if (!isValid) {
     error('Please fix the validation errors')
+    return
+  }
+
+  // Check for duplicates before saving (within same pipeline only)
+  const dealIdToExclude = isEditing.value ? parseInt(route.params.id as string) : undefined
+  const pipelineIdToCheck = form.pipeline_id as number
+  const duplicateCheck = checkDuplicateDealName(form.title, pipelineIdToCheck, dealIdToExclude)
+  
+  if (duplicateCheck.isDuplicate) {
+    errors.title = 'A deal with this name already exists in this pipeline'
     return
   }
 

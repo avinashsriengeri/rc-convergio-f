@@ -291,6 +291,7 @@
 import { ref, reactive, computed, watch } from 'vue'
 import { dealsAPI, stagesAPI } from '@/services/api'
 import { useAuth } from '@/composables/useAuth'
+import { useDealsStore } from '@/stores/deals'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 
@@ -333,6 +334,9 @@ const emit = defineEmits(['close', 'saved'])
 
 // Auth composable
 const { user: currentUser } = useAuth()
+
+// Deals store
+const dealsStore = useDealsStore()
 
 // Reactive data
 const loading = ref(false)
@@ -442,6 +446,22 @@ const onPipelineChange = () => {
   }
 }
 
+const checkDuplicateDealName = (name, pipelineId, excludeId) => {
+  const normalizedName = name.trim().toLowerCase()
+  const duplicates = dealsStore.deals.filter(deal => {
+    // Skip if it's the same deal being edited
+    if (excludeId && deal.id === excludeId) return false
+    // Only check within the same pipeline
+    if (deal.pipeline_id !== parseInt(pipelineId)) return false
+    return deal.title.toLowerCase() === normalizedName
+  })
+  
+  return {
+    isDuplicate: duplicates.length > 0,
+    duplicates
+  }
+}
+
 const validateForm = () => {
   const newErrors = {}
   
@@ -489,6 +509,15 @@ const handleSubmit = async () => {
   const validationErrors = validateForm()
   if (Object.keys(validationErrors).length > 0) {
     Object.assign(errors, validationErrors)
+    return
+  }
+  
+  // Check for duplicates (within same pipeline only)
+  const dealIdToExclude = isEditing.value ? props.deal?.id : undefined
+  const duplicateCheck = checkDuplicateDealName(form.title, form.pipeline_id, dealIdToExclude)
+  
+  if (duplicateCheck.isDuplicate) {
+    errors.title = 'A deal with this name already exists in this pipeline'
     return
   }
   

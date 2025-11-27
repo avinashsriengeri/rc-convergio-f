@@ -394,8 +394,8 @@ export const listsAPI = {
   getListMembers: (id, params = {}) => api.get(`/lists/${id}/members`, { params }),
   addListMember: (id, data) => api.post(`/lists/${id}/members`, data),
   removeListMember: (id, contactId) => api.delete(`/lists/${id}/members/${contactId}`),
-  checkDuplicateName: (name, excludeId = null) => {
-    const params = { name, exclude_id: excludeId }
+  checkDuplicateName: (name, type, excludeId = null) => {
+    const params = { name, type, exclude_id: excludeId }
     return api.get('/lists/check-duplicate', { params })
   },
 }
