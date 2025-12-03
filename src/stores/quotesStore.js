@@ -193,13 +193,16 @@ export const useQuotesStore = defineStore('quotes', () => {
       const response = await quotesAPI.getQuote(id)
       const quote = response.data.data || response.data
       
-      // Extract contact_id from the quote's deal contact
-      const contactId = quote?.deal?.contact?.id
+      // Use contact_id directly from the quote (already set during creation)
+      const contactId = quote?.contact_id
       
       // If no contact_id is available, throw an error
       if (!contactId) {
-        throw new Error('Contact ID is required to send quote. Please ensure the quote has an associated deal with contact information.')
+        throw new Error('Contact ID is required to send quote. Please ensure the quote has an associated contact.')
       }
+      
+      // Store original deal_id to check if backend created a new deal
+      const originalDealId = quote?.deal_id
       
       // Prepare payload with required contact_id
       const sendPayload = {
@@ -212,6 +215,11 @@ export const useQuotesStore = defineStore('quotes', () => {
       
       const sendResponse = await quotesAPI.sendQuote(id, sendPayload)
       const updatedQuote = sendResponse.data.data || sendResponse.data
+      
+      // Check if backend created a deal (was null, now has value)
+      if (!originalDealId && updatedQuote.deal_id) {
+        console.log('DEBUG: Backend created new deal:', updatedQuote.deal_id)
+      }
       
       // Update in quotes list
       const index = state.value.quotes.findIndex(q => q.id === id)
