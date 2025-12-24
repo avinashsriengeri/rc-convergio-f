@@ -1122,7 +1122,7 @@ const prevSlide = () => {
 // Products data for the enhanced product section
 const products = ref([
   {
-    title: "Junior Minds Platform",
+    title: "RC Junior Minds Platform",
     description: "Educational technology solution designed to enhance learning experiences for young minds with interactive content and progress tracking.",
     image: juniorMinds,
     gradient: "bg-gradient-to-br from-blue-500/20 to-purple-500/20",

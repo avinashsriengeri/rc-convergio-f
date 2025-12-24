@@ -790,4 +790,28 @@ export const cmsAPI = {
   getWebhookLogs: (id, params = {}) => api.get(`/cms/webhooks/${id}/logs`, { params }),
 }
 
+// SSO API endpoints
+export const ssoAPI = {
+  redirect: (productId = 1) => api.get(`/sso/redirect`, { params: { product_id: productId } }),
+}
+
+// Super Admin API endpoints
+export const superAdminAPI = {
+  // Tenants Management
+  getTenants: (params = {}) => api.get('/super-admin/tenants', { params }),
+  getTenant: (id) => api.get(`/super-admin/tenants/${id}`),
+  createTenant: (data) => api.post('/super-admin/tenants', data),
+  updateTenant: (id, data) => api.put(`/super-admin/tenants/${id}`, data),
+  
+  // Cross-Tenant Users Management
+  getUsers: (params = {}) => api.get('/super-admin/users', { params }),
+  getUser: (id) => api.get(`/super-admin/users/${id}`),
+  createUser: (data) => api.post('/super-admin/users', data),
+  updateUser: (id, data) => api.put(`/super-admin/users/${id}`, data),
+  
+  // Statistics
+  getStats: () => api.get('/super-admin/stats'),
+  getTenantStats: (id) => api.get(`/super-admin/stats/tenants/${id}`),
+}
+
 export default api

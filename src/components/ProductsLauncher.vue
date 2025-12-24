@@ -65,16 +65,15 @@
             </div>
            
             <div v-else class="grid grid-cols-3 gap-3 min-h-0">
-            <a
-              v-for="product in rcProducts"
-              :key="product.name"
-              :href="product.url"
-              :data-testid="`product-tile-${slugify(product.name)}`"
-              :aria-label="`Open ${product.name}`"
-              target="_blank"
-              rel="noopener noreferrer"
-                class="group relative flex flex-col items-center p-5 rounded-lg border border-gray-200 hover:border-blue-300 transition-all duration-200 bg-white hover:bg-gradient-to-br hover:from-blue-50 hover:to-white hover:shadow-md"
-            >
+            <template v-for="product in rcProducts" :key="product.name">
+              <!-- RC Console uses SSO - button with click handler -->
+              <button
+                v-if="product.name === 'RC Console'"
+                @click="handleConsoleClick(product)"
+                :data-testid="`product-tile-${slugify(product.name)}`"
+                :aria-label="`Open ${product.name}`"
+                class="group relative flex flex-col items-center p-5 rounded-lg border border-gray-200 hover:border-blue-300 transition-all duration-200 bg-white hover:bg-gradient-to-br hover:from-blue-50 hover:to-white hover:shadow-md cursor-pointer"
+              >
                 <!-- Professional Icon Container -->
                 <div class="relative mb-3">
                   <div class="w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-200 relative overflow-hidden" :style="getIconStyle(product.icon)">
@@ -96,10 +95,47 @@
                   <div class="w-5 h-5 bg-blue-600 rounded-md flex items-center justify-center shadow-sm">
                     <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                </svg>
+                    </svg>
                   </div>
-              </div>
-            </a>
+                </div>
+              </button>
+
+              <!-- Other products use regular links -->
+              <a
+                v-else
+                :href="product.url"
+                :data-testid="`product-tile-${slugify(product.name)}`"
+                :aria-label="`Open ${product.name}`"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group relative flex flex-col items-center p-5 rounded-lg border border-gray-200 hover:border-blue-300 transition-all duration-200 bg-white hover:bg-gradient-to-br hover:from-blue-50 hover:to-white hover:shadow-md"
+              >
+                <!-- Professional Icon Container -->
+                <div class="relative mb-3">
+                  <div class="w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-200 relative overflow-hidden" :style="getIconStyle(product.icon)">
+                    <div v-html="get3DIcon(product.icon)"></div>
+                    <!-- Subtle overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/5 rounded-xl"></div>
+                  </div>
+                </div>
+               
+                <!-- Product Information -->
+                <div class="text-center w-full">
+                  <h4 class="text-sm font-semibold text-gray-800 group-hover:text-blue-700 transition-colors duration-200 line-clamp-2 leading-snug mb-1">
+                    {{ product.name }}
+                  </h4>
+                </div>
+             
+                <!-- Compact External Link Icon -->
+                <div class="absolute top-2.5 right-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <div class="w-5 h-5 bg-blue-600 rounded-md flex items-center justify-center shadow-sm">
+                    <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                    </svg>
+                  </div>
+                </div>
+              </a>
+            </template>
             </div>
           </div>
         </div>
@@ -112,7 +148,10 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { rcProducts } from '../constants/rcProducts'
 import { useClickOutside } from '../composables/useClickOutside'
- 
+import { useNotifications } from '../composables/useNotifications'
+
+const { error: showError } = useNotifications()
+
 const isOpen = ref(false)
 const dropdownRef = ref(null)
 const triggerRef = ref(null)
@@ -280,4 +319,45 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('keydown', handleEscape)
 })
+
+// Handle RC Console click with SSO
+const handleConsoleClick = async (product) => {
+  try {
+    const token = localStorage.getItem('access_token')
+    if (!token) {
+      showError('Please log in to access RC Console')
+      return
+    }
+
+    const apiUrl = import.meta.env.VITE_API_BASE_URL || '/api'
+
+    // Call SSO API (now returns JSON, not 302)
+    const response = await fetch(`${apiUrl}/sso/redirect?product_id=1`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      showError(error.error || 'Failed to redirect to RC Console. Please try again.')
+      return
+    }
+
+    const data = await response.json()
+
+    // Extract redirect_url from JSON response
+    if (data.success && data.data && data.data.redirect_url) {
+      // Open in new tab/window
+      window.open(data.data.redirect_url, '_blank')
+    } else {
+      showError('Failed to redirect to RC Console. Please try again.')
+    }
+  } catch (err) {
+    console.error('SSO redirect error:', err)
+    showError('Failed to connect to RC Console. Please try again.')
+  }
+}
 </script>

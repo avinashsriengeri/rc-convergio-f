@@ -297,6 +297,24 @@ const requiresEmailVerification = computed(() => {
   return isAuthenticated.value && !isEmailVerified.value
 })
 
+// Check if user has super_admin role
+const isSuperAdmin = computed(() => {
+  if (!user.value?.roles || !Array.isArray(user.value.roles)) {
+    return false
+  }
+  
+  // Check if roles array contains super_admin
+  return user.value.roles.some(role => {
+    if (typeof role === 'object' && role?.name) {
+      return role.name === 'super_admin'
+    }
+    if (typeof role === 'string') {
+      return role === 'super_admin'
+    }
+    return false
+  })
+})
+
 export function useAuth() {
   return {
     // State
@@ -312,6 +330,7 @@ export function useAuth() {
     userEmail,
     isEmailVerified,
     requiresEmailVerification,
+    isSuperAdmin,
     
     // Methods
     initAuth,

@@ -471,6 +471,97 @@
             {{ $t('common.settings') }}
           </router-link>
 
+          <!-- Super Admin Dropdown Menu -->
+          <div v-if="isSuperAdmin" class="mx-4 my-1 super-admin-dropdown">
+            <button
+              @click="showSuperAdminDropdown = !showSuperAdminDropdown"
+              class="w-full flex items-center justify-between px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm': $route.path.startsWith('/super-admin'), 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm': !$route.path.startsWith('/super-admin') }"
+            >
+              <div class="flex items-center">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+                <span>Super Admin</span>
+              </div>
+              <svg 
+                class="w-4 h-4 transition-transform duration-200" 
+                :class="{ 'rotate-180': showSuperAdminDropdown }"
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            
+            <!-- Dropdown Submenu -->
+            <Transition
+              enter-active-class="transition duration-200 ease-out"
+              enter-from-class="opacity-0 max-h-0"
+              enter-to-class="opacity-100 max-h-96"
+              leave-active-class="transition duration-150 ease-in"
+              leave-from-class="opacity-100 max-h-96"
+              leave-to-class="opacity-0 max-h-0"
+            >
+              <div
+                v-if="showSuperAdminDropdown"
+                class="overflow-hidden"
+              >
+                <div class="pl-4 pt-1 space-y-1">
+                  <router-link
+                    to="/super-admin"
+                    @click="showSuperAdminDropdown = false"
+                    class="flex items-center px-6 py-2.5 text-sm rounded-lg transition-all duration-200"
+                    :class="{ 'bg-sidebar-active text-primary-purple shadow-sm': $route.path === '/super-admin', 'text-gray-700 hover:text-primary-purple hover:bg-sidebar-active': $route.path !== '/super-admin' }"
+                  >
+                    <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <rect x="3" y="3" width="7" height="7"/>
+                      <rect x="14" y="3" width="7" height="7"/>
+                      <rect x="14" y="14" width="7" height="7"/>
+                      <rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    Dashboard
+                  </router-link>
+                  <router-link
+                    to="/super-admin/tenants"
+                    @click="showSuperAdminDropdown = false"
+                    class="flex items-center px-6 py-2.5 text-sm rounded-lg transition-all duration-200"
+                    :class="{ 'bg-sidebar-active text-primary-purple shadow-sm': $route.path === '/super-admin/tenants', 'text-gray-700 hover:text-primary-purple hover:bg-sidebar-active': $route.path !== '/super-admin/tenants' }"
+                  >
+                    <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/>
+                    </svg>
+                    Tenants
+                  </router-link>
+                  <router-link
+                    to="/super-admin/users"
+                    @click="showSuperAdminDropdown = false"
+                    class="flex items-center px-6 py-2.5 text-sm rounded-lg transition-all duration-200"
+                    :class="{ 'bg-sidebar-active text-primary-purple shadow-sm': $route.path === '/super-admin/users', 'text-gray-700 hover:text-primary-purple hover:bg-sidebar-active': $route.path !== '/super-admin/users' }"
+                  >
+                    <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    Users
+                  </router-link>
+                  <router-link
+                    to="/super-admin/statistics"
+                    @click="showSuperAdminDropdown = false"
+                    class="flex items-center px-6 py-2.5 text-sm rounded-lg transition-all duration-200"
+                    :class="{ 'bg-sidebar-active text-primary-purple shadow-sm': $route.path === '/super-admin/statistics', 'text-gray-700 hover:text-primary-purple hover:bg-sidebar-active': $route.path !== '/super-admin/statistics' }"
+                  >
+                    <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path d="M3 3v18h18M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+                    </svg>
+                    Statistics
+                  </router-link>
+                </div>
+              </div>
+            </Transition>
+          </div>
+
           <!-- Features Demo (for testing) -->
           <router-link
             to="/features-demo"
@@ -1339,7 +1430,7 @@ import {
 
 const router = useRouter()
 const { locale } = useI18n()
-const { isAuthenticated, user, userName, userRole, loading, logout, initAuth, isEmailVerified, currentOrgName } = useAuth()
+const { isAuthenticated, user, userName, userRole, loading, logout, initAuth, isEmailVerified, currentOrgName, isSuperAdmin } = useAuth()
 const { hasFeature, isReady: featuresReady } = useFeatures()
 const { success, error } = useNotifications()
 
@@ -1355,6 +1446,16 @@ const showDialerDropdown = ref(false)
 // Notifications dropdown state
 const showNotificationsDropdown = ref(false)
 const unreadNotifications = ref(3) // Mock unread count
+
+// Super Admin dropdown state
+const showSuperAdminDropdown = ref(false)
+
+// Auto-open Super Admin dropdown if on super-admin route
+watch(() => router.currentRoute.value.path, (newPath) => {
+  if (newPath.startsWith('/super-admin') && isSuperAdmin.value) {
+    showSuperAdminDropdown.value = true
+  }
+}, { immediate: true })
 
 // Modal states
 const showComingSoonModal = ref(false)
@@ -1457,6 +1558,12 @@ const closeDropdown = (event) => {
   }
   if (!event.target.closest('[data-testid="header-notifications"]')) {
     showNotificationsDropdown.value = false
+  }
+  if (!event.target.closest('.super-admin-dropdown')) {
+    // Only close if not navigating to a super-admin route
+    if (!router.currentRoute.value.path.startsWith('/super-admin')) {
+      showSuperAdminDropdown.value = false
+    }
   }
 }
 

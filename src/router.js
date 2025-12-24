@@ -898,6 +898,32 @@ const routes = [
     meta: { requiresAuth: false }
   },
 
+  // Super Admin routes
+  {
+    path: '/super-admin',
+    name: 'SuperAdminDashboard',
+    component: () => import('./views/super-admin/Dashboard.vue'),
+    meta: { requiresAuth: true, requiresSuperAdmin: true }
+  },
+  {
+    path: '/super-admin/tenants',
+    name: 'SuperAdminTenants',
+    component: () => import('./views/super-admin/Tenants.vue'),
+    meta: { requiresAuth: true, requiresSuperAdmin: true }
+  },
+  {
+    path: '/super-admin/users',
+    name: 'SuperAdminUsers',
+    component: () => import('./views/super-admin/Users.vue'),
+    meta: { requiresAuth: true, requiresSuperAdmin: true }
+  },
+  {
+    path: '/super-admin/statistics',
+    name: 'SuperAdminStatistics',
+    component: () => import('./views/super-admin/Statistics.vue'),
+    meta: { requiresAuth: true, requiresSuperAdmin: true }
+  },
+
 ]
 
 const router = createRouter({
@@ -946,14 +972,28 @@ router.beforeEach((to, from, next) => {
   
   const requiresAuth = to.meta?.public ? false : (to.meta?.requiresAuth ?? true)
   const requiresAdmin = to.meta?.requiresAdmin ?? false
+  const requiresSuperAdmin = to.meta?.requiresSuperAdmin ?? false
+  
+  // Check if user has super_admin role
+  const isSuperAdmin = userData?.roles && Array.isArray(userData.roles) && userData.roles.some(role => {
+    if (typeof role === 'object' && role?.name) {
+      return role.name === 'super_admin'
+    }
+    if (typeof role === 'string') {
+      return role === 'super_admin'
+    }
+    return false
+  })
   
   console.log('Router guard decision:', {
     path: to.path,
     isPublic: to.meta?.public,
     requiresAuth,
     requiresAdmin,
+    requiresSuperAdmin,
     isAuthenticated: !!isAuthenticated,
-    requiresEmailVerification
+    requiresEmailVerification,
+    isSuperAdmin
   })
   
   if (requiresAuth && !isAuthenticated) {
@@ -967,6 +1007,10 @@ router.beforeEach((to, from, next) => {
     // Redirect unverified users to verification page, but allow login page access
     console.log('Router: Redirecting to verification - email not verified')
     next('/verify-notification')
+  } else if (requiresSuperAdmin && !isSuperAdmin) {
+    // Redirect non-super-admin users trying to access super admin routes
+    console.log('Router: Redirecting to dashboard - super admin required')
+    next('/dashboard')
   } else if (requiresAdmin && userRole !== 'admin') {
     // Redirect non-admin users trying to access admin routes
     console.log('Router: Redirecting to dashboard - admin required')
