@@ -562,6 +562,12 @@ const routes = [
         meta: { requiresAuth: true }
       },
       {
+        path: 'collaterals',
+        name: 'SalesCollaterals',
+        component: () => import('./views/sales/collaterals/CollateralsList.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
         path: 'quote-templates',
         name: 'SalesQuoteTemplates',
         component: () => import('./views/sales/quote-templates/TemplatesList.vue'),

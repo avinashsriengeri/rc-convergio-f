@@ -235,6 +235,193 @@
             </div>
           </div>
 
+          <!-- Email Settings -->
+          <div v-if="activeTab === 'email'" class="bg-white shadow rounded-lg">
+            <div class="px-6 py-4 border-b border-gray-200">
+              <h3 class="text-lg font-medium text-gray-900">Email Settings</h3>
+              <p class="text-sm text-gray-600 mt-1">Configure your email sending settings for tenant emails.</p>
+            </div>
+            <div class="px-6 py-6">
+              <form @submit.prevent="saveEmailSettings" class="space-y-6">
+                <!-- Provider Selection -->
+                <div>
+                  <label for="email_setting" class="block text-sm font-medium text-gray-700 mb-2">
+                    Email Provider
+                  </label>
+                  <select
+                    id="email_setting"
+                    v-model="emailForm.email_setting"
+                    @change="onProviderChange"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    :disabled="emailLoading"
+                  >
+                    <option value="">Select a provider...</option>
+                    <option v-for="(label, key) in emailProviders" :key="key" :value="key">
+                      {{ label }}
+                    </option>
+                  </select>
+                  <p v-if="!emailForm.email_setting" class="mt-1 text-sm text-gray-500">
+                    Select an email provider to configure your SMTP settings
+                  </p>
+                </div>
+
+                <!-- Form Fields -->
+                <div v-if="emailForm.email_setting" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <!-- Left Column -->
+                  <div class="space-y-6">
+                    <div>
+                      <label for="mail_driver" class="block text-sm font-medium text-gray-700 mb-2">
+                        Mail Driver
+                      </label>
+                      <BaseInput
+                        id="mail_driver"
+                        v-model="emailForm.mail_driver"
+                        readonly
+                        :error="emailErrors.mail_driver"
+                      />
+                    </div>
+                    <div>
+                      <label for="mail_username" class="block text-sm font-medium text-gray-700 mb-2">
+                        <span v-if="emailForm.email_setting === 'gmail'">Your Gmail email address</span>
+                        <span v-else-if="emailForm.email_setting === 'outlook'">Your Outlook/Office 365 email address</span>
+                        <span v-else-if="emailForm.email_setting === 'yahoo'">Your Yahoo email address</span>
+                        <span v-else-if="emailForm.email_setting === 'zohomail'">Your Zoho Mail email address</span>
+                        <span v-else-if="emailForm.email_setting === 'sendgrid'">Your SendGrid API key</span>
+                        <span v-else-if="emailForm.email_setting === 'amazon'">Your AWS IAM username or access key ID</span>
+                        <span v-else-if="emailForm.email_setting === 'mailgun'">Your Mailgun SMTP username</span>
+                        <span v-else-if="emailForm.email_setting === 'mandrill'">Your Mandrill API key</span>
+                        <span v-else-if="emailForm.email_setting === 'sparkpost'">Your SparkPost SMTP username</span>
+                        <span v-else>Mail Username</span>
+                      </label>
+                      <BaseInput
+                        id="mail_username"
+                        v-model="emailForm.mail_username"
+                        type="email"
+                        placeholder="Enter email address or username"
+                        :readonly="emailLoading"
+                        :error="emailErrors.mail_username"
+                      />
+                    </div>
+                    <div>
+                      <label for="mail_from_address" class="block text-sm font-medium text-gray-700 mb-2">
+                        Mail From Address
+                      </label>
+                      <BaseInput
+                        id="mail_from_address"
+                        v-model="emailForm.mail_from_address"
+                        type="email"
+                        placeholder="sender@example.com"
+                        :readonly="emailLoading"
+                        :error="emailErrors.mail_from_address"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Right Column -->
+                  <div class="space-y-6">
+                    <div>
+                      <label for="mail_host" class="block text-sm font-medium text-gray-700 mb-2">
+                        Mail Host
+                      </label>
+                      <BaseInput
+                        id="mail_host"
+                        v-model="emailForm.mail_host"
+                        placeholder="smtp.example.com"
+                        :readonly="isFieldReadonly('mail_host') || emailLoading"
+                        :error="emailErrors.mail_host"
+                      />
+                    </div>
+                    <div>
+                      <label for="mail_password" class="block text-sm font-medium text-gray-700 mb-2">
+                        Mail Password
+                      </label>
+                      <div class="relative">
+                        <BaseInput
+                          id="mail_password"
+                          v-model="emailForm.mail_password"
+                          :type="showPassword ? 'text' : 'password'"
+                          placeholder="Enter password or app password"
+                          :readonly="emailLoading"
+                          :error="emailErrors.mail_password"
+                        />
+                        <button
+                          type="button"
+                          @click="showPassword = !showPassword"
+                          class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                        >
+                          <svg v-if="showPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                          </svg>
+                          <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <div>
+                      <label for="mail_port" class="block text-sm font-medium text-gray-700 mb-2">
+                        Mail Port
+                      </label>
+                      <BaseInput
+                        id="mail_port"
+                        v-model="emailForm.mail_port"
+                        placeholder="587"
+                        :readonly="isFieldReadonly('mail_port') || emailLoading"
+                        :error="emailErrors.mail_port"
+                      />
+                    </div>
+                    <div>
+                      <label for="mail_encryption" class="block text-sm font-medium text-gray-700 mb-2">
+                        Mail Encryption
+                      </label>
+                      <BaseInput
+                        id="mail_encryption"
+                        v-model="emailForm.mail_encryption"
+                        placeholder="TLS"
+                        :readonly="isFieldReadonly('mail_encryption') || emailLoading"
+                        :error="emailErrors.mail_encryption"
+                      />
+                    </div>
+                    <div>
+                      <label for="mail_from_name" class="block text-sm font-medium text-gray-700 mb-2">
+                        Mail From Name
+                      </label>
+                      <BaseInput
+                        id="mail_from_name"
+                        v-model="emailForm.mail_from_name"
+                        placeholder="Company Name"
+                        :readonly="emailLoading"
+                        :error="emailErrors.mail_from_name"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div v-if="emailForm.email_setting" class="flex items-center justify-between pt-4 border-t border-gray-200">
+                  <BaseButton
+                    type="button"
+                    variant="secondary"
+                    @click="sendTestEmail"
+                    :loading="testEmailLoading"
+                    :disabled="emailLoading || !isEmailFormValid"
+                  >
+                    Send Test Mail
+                  </BaseButton>
+                  <BaseButton
+                    type="submit"
+                    variant="primary"
+                    :loading="emailLoading"
+                    :disabled="!isEmailFormValid"
+                  >
+                    Save Changes
+                  </BaseButton>
+                </div>
+              </form>
+            </div>
+          </div>
+
           <!-- API Keys -->
           <div v-if="activeTab === 'api'" class="bg-white shadow rounded-lg">
             <div class="px-6 py-4 border-b border-gray-200">
@@ -287,10 +474,11 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { success, error } from '@/utils/notifications'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
+import { emailSettingsAPI } from '@/services/api'
 
 // Icons
 const UserIcon = {
@@ -317,11 +505,18 @@ const KeyIcon = {
   </svg>`
 }
 
+const MailIcon = {
+  template: `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+  </svg>`
+}
+
 // Tabs
 const tabs = [
   { id: 'profile', name: 'Profile', icon: UserIcon },
   { id: 'security', name: 'Security', icon: ShieldIcon },
   { id: 'preferences', name: 'Preferences', icon: CogIcon },
+  { id: 'email', name: 'Email Settings', icon: MailIcon },
   { id: 'api', name: 'API', icon: KeyIcon }
 ]
 
@@ -331,6 +526,25 @@ const profileLoading = ref(false)
 const passwordLoading = ref(false)
 const preferencesLoading = ref(false)
 const errors = reactive({})
+
+// Email Settings
+const emailProviders = ref({})
+const emailLoading = ref(false)
+const testEmailLoading = ref(false)
+const showPassword = ref(false)
+const readonlyFields = ref([])
+const emailForm = reactive({
+  email_setting: '',
+  mail_driver: 'SMTP',
+  mail_host: '',
+  mail_port: '',
+  mail_username: '',
+  mail_password: '',
+  mail_encryption: '',
+  mail_from_address: '',
+  mail_from_name: ''
+})
+const emailErrors = reactive({})
 
 // Forms
 const profileForm = reactive({
@@ -430,8 +644,272 @@ const copyToClipboard = async (text) => {
   }
 }
 
+// Email Settings Functions
+const loadEmailProviders = async () => {
+  try {
+    const response = await emailSettingsAPI.getProviders()
+    if (response.data.success) {
+      emailProviders.value = response.data.data
+    }
+  } catch (err) {
+    console.error('Error loading email providers:', err)
+  }
+}
+
+const loadEmailSettings = async () => {
+  try {
+    const response = await emailSettingsAPI.getSettings()
+    if (response.data.success && response.data.data) {
+      const data = response.data.data
+      emailForm.email_setting = data.email_setting || ''
+      emailForm.mail_driver = data.mail_driver || 'SMTP'
+      emailForm.mail_host = data.mail_host || ''
+      emailForm.mail_port = data.mail_port || ''
+      emailForm.mail_username = data.mail_username || ''
+      emailForm.mail_password = '' // Don't show saved password
+      emailForm.mail_encryption = data.mail_encryption || ''
+      emailForm.mail_from_address = data.mail_from_address || ''
+      emailForm.mail_from_name = data.mail_from_name || ''
+      
+      // Load readonly fields for current provider
+      if (emailForm.email_setting) {
+        await loadProviderFields(emailForm.email_setting)
+      }
+    }
+  } catch (err) {
+    // 404 or no settings is fine, just means no settings saved yet
+    if (err.response?.status !== 404) {
+      console.error('Error loading email settings:', err)
+    }
+  }
+}
+
+const loadProviderFields = async (provider) => {
+  if (!provider) return
+  
+  try {
+    const response = await emailSettingsAPI.getFields(provider)
+    if (response.data.success) {
+      const data = response.data.data
+      
+      // Update readonly fields
+      readonlyFields.value = data.readonly_fields || []
+      
+      // Auto-fill fields from provider config
+      if (data.fields) {
+        if (data.fields.mail_host) emailForm.mail_host = data.fields.mail_host
+        if (data.fields.mail_port) emailForm.mail_port = data.fields.mail_port
+        if (data.fields.mail_encryption) emailForm.mail_encryption = data.fields.mail_encryption
+        if (data.fields.mail_driver) emailForm.mail_driver = data.fields.mail_driver
+      }
+      
+      // Clear editable fields (user needs to fill these)
+      if (!data.readonly_fields || data.readonly_fields.length === 0) {
+        // Custom/SMTP - keep existing values if any
+      } else {
+        // Pre-configured provider - clear username/password if switching providers
+        if (emailForm.email_setting !== provider) {
+          emailForm.mail_username = ''
+          emailForm.mail_password = ''
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Error loading provider fields:', err)
+    error('Failed to load provider configuration')
+  }
+}
+
+const onProviderChange = async () => {
+  // Clear errors
+  Object.keys(emailErrors).forEach(key => delete emailErrors[key])
+  
+  if (emailForm.email_setting) {
+    await loadProviderFields(emailForm.email_setting)
+  } else {
+    readonlyFields.value = []
+    // Reset form
+    emailForm.mail_host = ''
+    emailForm.mail_port = ''
+    emailForm.mail_encryption = ''
+    emailForm.mail_username = ''
+    emailForm.mail_password = ''
+  }
+}
+
+const isFieldReadonly = (fieldName) => {
+  return readonlyFields.value.includes(fieldName)
+}
+
+const isEmailFormValid = computed(() => {
+  return emailForm.email_setting &&
+         emailForm.mail_driver &&
+         emailForm.mail_host &&
+         emailForm.mail_port &&
+         emailForm.mail_username &&
+         emailForm.mail_password &&
+         emailForm.mail_encryption &&
+         emailForm.mail_from_address &&
+         emailForm.mail_from_name
+})
+
+const sendTestEmail = async () => {
+  if (!isEmailFormValid.value) {
+    error('Please fill in all required fields before sending a test email')
+    return
+  }
+
+  // Use SweetAlert2 if available, otherwise prompt
+  if (window.Swal) {
+    const { value: formValues } = await window.Swal.fire({
+      title: 'Send Test Email',
+      html: `
+        <div class="text-left">
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Recipient Email</label>
+            <input id="test_email" class="swal2-input" type="email" placeholder="test@example.com" value="">
+          </div>
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Send Test Email',
+      cancelButtonText: 'Cancel',
+      preConfirm: () => {
+        const email = document.getElementById('test_email').value
+        
+        if (!email.trim()) {
+          window.Swal.showValidationMessage('Email address is required')
+          return false
+        }
+        
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          window.Swal.showValidationMessage('Please enter a valid email address')
+          return false
+        }
+        
+        return { email: email }
+      }
+    })
+
+    if (formValues) {
+      testEmailLoading.value = true
+      try {
+        const testData = {
+          email: formValues.email,
+          mail_driver: emailForm.mail_driver,
+          mail_host: emailForm.mail_host,
+          mail_port: emailForm.mail_port,
+          mail_username: emailForm.mail_username,
+          mail_password: emailForm.mail_password,
+          mail_encryption: emailForm.mail_encryption,
+          mail_from_address: emailForm.mail_from_address,
+          mail_from_name: emailForm.mail_from_name
+        }
+        
+        const response = await emailSettingsAPI.sendTestEmail(testData)
+        if (response.data.success) {
+          success('Test email sent successfully!')
+        }
+      } catch (err) {
+        const errorMsg = err.response?.data?.message || 'Failed to send test email'
+        error(errorMsg)
+      } finally {
+        testEmailLoading.value = false
+      }
+    }
+  } else {
+    // Fallback to simple prompt
+    const email = prompt('Enter recipient email address:', 'test@example.com')
+    if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      testEmailLoading.value = true
+      try {
+        const testData = {
+          email: email,
+          mail_driver: emailForm.mail_driver,
+          mail_host: emailForm.mail_host,
+          mail_port: emailForm.mail_port,
+          mail_username: emailForm.mail_username,
+          mail_password: emailForm.mail_password,
+          mail_encryption: emailForm.mail_encryption,
+          mail_from_address: emailForm.mail_from_address,
+          mail_from_name: emailForm.mail_from_name
+        }
+        
+        const response = await emailSettingsAPI.sendTestEmail(testData)
+        if (response.data.success) {
+          success('Test email sent successfully!')
+        }
+      } catch (err) {
+        const errorMsg = err.response?.data?.message || 'Failed to send test email'
+        error(errorMsg)
+      } finally {
+        testEmailLoading.value = false
+      }
+    }
+  }
+}
+
+const saveEmailSettings = async () => {
+  // Clear previous errors
+  Object.keys(emailErrors).forEach(key => delete emailErrors[key])
+  
+  if (!isEmailFormValid.value) {
+    error('Please fill in all required fields')
+    return
+  }
+
+  emailLoading.value = true
+  try {
+    const settingsData = {
+      email_setting: emailForm.email_setting,
+      mail_driver: emailForm.mail_driver,
+      mail_host: emailForm.mail_host,
+      mail_port: emailForm.mail_port,
+      mail_username: emailForm.mail_username,
+      mail_password: emailForm.mail_password,
+      mail_encryption: emailForm.mail_encryption,
+      mail_from_address: emailForm.mail_from_address,
+      mail_from_name: emailForm.mail_from_name
+    }
+    
+    const response = await emailSettingsAPI.saveSettings(settingsData)
+    if (response.data.success) {
+      success('Email settings saved successfully!')
+    }
+  } catch (err) {
+    if (err.response?.status === 422) {
+      // Validation errors
+      const errors = err.response.data.errors || {}
+      Object.keys(errors).forEach(key => {
+        emailErrors[key] = Array.isArray(errors[key]) ? errors[key][0] : errors[key]
+      })
+      error('Please fix the validation errors')
+    } else if (err.response?.status === 403) {
+      error('Permission denied. Only Tenant Admin or Super Admin can configure email settings.')
+    } else {
+      const errorMsg = err.response?.data?.message || 'Failed to save email settings'
+      error(errorMsg)
+    }
+  } finally {
+    emailLoading.value = false
+  }
+}
+
+// Watch for tab changes to load email settings when needed
+watch(activeTab, (newTab) => {
+  if (newTab === 'email' && Object.keys(emailProviders.value).length === 0) {
+    loadEmailProviders()
+    loadEmailSettings()
+  }
+})
+
 // Initialize
 onMounted(() => {
   loadUserData()
+  if (activeTab.value === 'email') {
+    loadEmailProviders()
+    loadEmailSettings()
+  }
 })
 </script>

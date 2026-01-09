@@ -439,6 +439,27 @@ export const exchangeRatesAPI = {
   }),
 }
 
+// Collaterals API endpoints
+export const collateralsAPI = {
+  getTypes: () => api.get('/collaterals/types'),
+  getCollaterals: (params = {}) => api.get('/collaterals', { params }),
+  getCollateral: (id) => api.get(`/collaterals/${id}`),
+  uploadCollateral: (formData) => {
+    return api.post('/collaterals', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  },
+  updateCollateral: (id, data) => api.put(`/collaterals/${id}`, data),
+  deleteCollateral: (id) => api.delete(`/collaterals/${id}`),
+  previewCollateral: (id) => api.get(`/collaterals/${id}/preview`, { responseType: 'blob' }),
+  downloadCollateral: (id) => api.get(`/collaterals/${id}/download`, { responseType: 'blob' }),
+  getCollateralsByProduct: (productId, params = {}) => api.get(`/products/${productId}/collaterals`, { params }),
+  sendCollateral: (data) => api.post('/collaterals/send', data),
+  getSentCollaterals: (contactId) => api.get(`/contacts/${contactId}/collaterals-sent`),
+}
+
 // Users API endpoints
 export const usersAPI = {
   getUsers: (params = {}) => api.get('/users', { params }),
@@ -788,6 +809,15 @@ export const cmsAPI = {
   deleteWebhook: (id) => api.delete(`/cms/webhooks/${id}`),
   testWebhook: (id) => api.post(`/cms/webhooks/${id}/test`),
   getWebhookLogs: (id, params = {}) => api.get(`/cms/webhooks/${id}/logs`, { params }),
+}
+
+// Email Settings API endpoints
+export const emailSettingsAPI = {
+  getProviders: () => api.get('/email-settings/providers'),
+  getSettings: () => api.get('/email-settings'),
+  getFields: (emailSetting) => api.post('/email-settings/getfields', { emailsetting: emailSetting }),
+  saveSettings: (data) => api.post('/email-settings', data),
+  sendTestEmail: (data) => api.post('/email-settings/test', data)
 }
 
 // SSO API endpoints
