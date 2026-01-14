@@ -73,12 +73,14 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
       
-      // Check if this is a public form request, public event request, or event types request
+      // Check if this is a public form request, public event request, event types request, or OAuth request
       const isPublicFormRequest = originalRequest.url?.includes('/public/forms/')
       const isPublicEventRequest = originalRequest.url?.includes('/public/events/')
       const isEventTypesRequest = originalRequest.url?.includes('/events/types')
+      const isOAuthRequest = originalRequest.url?.includes('/oauth/') || 
+                             originalRequest.url?.includes('/meetings/oauth/')
       
-      if (!isPublicFormRequest && !isPublicEventRequest && !isEventTypesRequest) {
+      if (!isPublicFormRequest && !isPublicEventRequest && !isEventTypesRequest && !isOAuthRequest) {
         // Clear stored auth data only for authenticated requests
         localStorage.removeItem('access_token')
         localStorage.removeItem('user')
@@ -89,7 +91,7 @@ api.interceptors.response.use(
           window.location.href = '/login'
         }
       }
-      // For public form requests, just let the component handle the 401 error
+      // For public form requests and OAuth requests, just let the component handle the 401 error
     }
 
     // Debug logging removed for production

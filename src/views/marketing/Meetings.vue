@@ -45,20 +45,92 @@
           <p class="mt-2 text-lg text-gray-600">{{ $t('marketing.meetings.subtitle') }}</p>
         </div>
         <div class="flex items-center space-x-3">
-          <!-- Sync Buttons -->
+          <!-- Google Calendar Connection Status -->
+          <div v-if="googleConnected" class="flex items-center gap-2 px-3 py-2 bg-green-50 border border-green-200 rounded-md">
+            <svg class="h-4 w-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            <span class="text-sm font-medium text-green-800">
+              Google Calendar Connected
+              <span v-if="googleConnectionInfo.email" class="text-green-600">({{ googleConnectionInfo.email }})</span>
+            </span>
+            <span v-if="googleConnectionInfo.expires_in_minutes && googleConnectionInfo.expires_in_minutes > 0" class="text-xs text-green-600">
+              • Expires in {{ googleConnectionInfo.expires_in_minutes }}m
+            </span>
+          </div>
+          
+          <!-- Google Connect/Sync Button -->
           <button
-            @click="syncGoogleCalendar"
-            :disabled="syncingGoogle"
-            class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md font-medium transition-colors"
+            v-else
+            @click="connectGoogleCalendar"
+            :disabled="connectingGoogle || checkingConnection"
+            class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2"
+            title="Click to connect Google Calendar"
           >
-            {{ syncingGoogle ? $t('marketing.meetings.sync.syncing_google') : $t('marketing.meetings.sync.sync_google') }}
+            <svg v-if="connectingGoogle" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>{{ connectingGoogle ? 'Connecting...' : 'Connect Google Calendar' }}</span>
           </button>
+          
+          <!-- Google Sync Button (when connected) -->
           <button
-            @click="syncOutlookCalendar"
-            :disabled="syncingOutlook"
-            class="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md font-medium transition-colors"
+            v-if="googleConnected"
+            @click="syncGoogleCalendar"
+            :disabled="syncingGoogle || checkingConnection"
+            class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2"
+            title="Sync Google Calendar meetings"
           >
-            {{ syncingOutlook ? $t('marketing.meetings.sync.syncing_outlook') : $t('marketing.meetings.sync.sync_outlook') }}
+            <svg v-if="syncingGoogle" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>{{ syncingGoogle ? $t('marketing.meetings.sync.syncing_google') : 'Sync Google' }}</span>
+          </button>
+
+          <!-- Outlook Calendar Connection Status -->
+          <div v-if="outlookConnected" class="flex items-center gap-2 px-3 py-2 bg-purple-50 border border-purple-200 rounded-md">
+            <svg class="h-4 w-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            <span class="text-sm font-medium text-purple-800">
+              Outlook Calendar Connected
+              <span v-if="outlookConnectionInfo.email" class="text-purple-600">({{ outlookConnectionInfo.email }})</span>
+            </span>
+            <span v-if="outlookConnectionInfo.expires_in_minutes && outlookConnectionInfo.expires_in_minutes > 0" class="text-xs text-purple-600">
+              • Expires in {{ outlookConnectionInfo.expires_in_minutes }}m
+            </span>
+          </div>
+          
+          <!-- Outlook Connect/Sync Button -->
+          <button
+            v-else
+            @click="connectOutlookCalendar"
+            :disabled="connectingOutlook || checkingConnection"
+            class="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2"
+            title="Click to connect Outlook Calendar"
+          >
+            <svg v-if="connectingOutlook" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>{{ connectingOutlook ? 'Connecting...' : 'Connect Outlook Calendar' }}</span>
+          </button>
+          
+          <!-- Outlook Sync Button (when connected) -->
+          <button
+            v-if="outlookConnected"
+            @click="syncOutlookCalendar"
+            :disabled="syncingOutlook || checkingConnection"
+            class="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2"
+            title="Sync Outlook Calendar meetings"
+          >
+            <svg v-if="syncingOutlook" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>{{ syncingOutlook ? $t('marketing.meetings.sync.syncing_outlook') : 'Sync Outlook' }}</span>
           </button>
           <!-- Create Meeting Button -->
           <button
@@ -748,11 +820,14 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
 import { meetingsService, meetingsHelpers } from '@/services/meetings'
 import { contactsAPI } from '@/services/api'
 import { error as showError, success as showSuccess } from '@/utils/notifications'
 
 const { t } = useI18n()
+const route = useRoute()
+const router = useRouter()
 
 // Reactive state
 const loading = ref(false)
@@ -794,6 +869,23 @@ const creatingMeeting = ref(false)
 const syncingGoogle = ref(false)
 const syncingOutlook = ref(false)
 const syncResults = ref({})
+const googleConnected = ref(false)
+const outlookConnected = ref(false)
+const checkingConnection = ref(false)
+const googleConnectionInfo = ref({
+  email: null,
+  expires_at: null,
+  expires_in_minutes: null,
+  is_expired: false
+})
+const outlookConnectionInfo = ref({
+  email: null,
+  expires_at: null,
+  expires_in_minutes: null,
+  is_expired: false
+})
+const connectingGoogle = ref(false)
+const connectingOutlook = ref(false)
 
 // Meeting form
 const meetingForm = ref({
@@ -993,38 +1085,84 @@ const createMeeting = async () => {
 }
 
 const syncGoogleCalendar = async () => {
+  // Only sync if already connected
+  if (!googleConnected.value) {
+    showError('Please connect Google Calendar first')
+    return
+  }
+  
   syncingGoogle.value = true
   
   try {
-    const response = await meetingsService.syncGoogleCalendar()
+    // Fetch meetings from Google Calendar (via backend)
+    let googleMeetings = []
+    try {
+      const calendarResponse = await meetingsService.fetchGoogleCalendarMeetings({
+        timeMin: new Date().toISOString(), // Get upcoming meetings
+        maxResults: 100
+      })
+      googleMeetings = calendarResponse.data?.meetings || calendarResponse.data || []
+      console.log('Fetched Google Calendar meetings:', googleMeetings.length)
+    } catch (err) {
+      console.error('Error fetching Google Calendar meetings:', err)
+      // Continue with empty array if fetch fails
+      googleMeetings = []
+    }
+
+    // Sync meetings to backend
+    const response = await meetingsService.syncGoogleCalendar(googleMeetings)
     syncResults.value = response.data
     showSyncResults.value = true
-    showSuccess('Google Calendar synced successfully')
+    showSuccess(`Google Calendar synced successfully. ${googleMeetings.length} meeting(s) processed.`)
     
     // Reload meetings to show new synced data
     await loadMeetings()
     
   } catch (err) {
-    showError(err.message || 'Failed to sync Google Calendar')
+    console.error('Sync error:', err)
+    showError(err.response?.data?.message || err.message || 'Failed to sync Google Calendar')
   } finally {
     syncingGoogle.value = false
   }
 }
 
 const syncOutlookCalendar = async () => {
+  // Only sync if already connected
+  if (!outlookConnected.value) {
+    showError('Please connect Outlook Calendar first')
+    return
+  }
+  
   syncingOutlook.value = true
   
   try {
-    const response = await meetingsService.syncOutlookCalendar()
+    // Fetch meetings from Outlook Calendar (via backend)
+    let outlookMeetings = []
+    try {
+      const calendarResponse = await meetingsService.fetchOutlookCalendarMeetings({
+        timeMin: new Date().toISOString(), // Get upcoming meetings
+        maxResults: 100
+      })
+      outlookMeetings = calendarResponse.data?.meetings || calendarResponse.data || []
+      console.log('Fetched Outlook Calendar meetings:', outlookMeetings.length)
+    } catch (err) {
+      console.error('Error fetching Outlook Calendar meetings:', err)
+      // Continue with empty array if fetch fails
+      outlookMeetings = []
+    }
+
+    // Sync meetings to backend
+    const response = await meetingsService.syncOutlookCalendar(outlookMeetings)
     syncResults.value = response.data
     showSyncResults.value = true
-    showSuccess('Outlook Calendar synced successfully')
+    showSuccess(`Outlook Calendar synced successfully. ${outlookMeetings.length} meeting(s) processed.`)
     
     // Reload meetings to show new synced data
     await loadMeetings()
     
   } catch (err) {
-    showError(err.message || 'Failed to sync Outlook Calendar')
+    console.error('Sync error:', err)
+    showError(err.response?.data?.message || err.message || 'Failed to sync Outlook Calendar')
   } finally {
     syncingOutlook.value = false
   }
@@ -1187,8 +1325,239 @@ const getStatusColor = (status) => meetingsHelpers.getStatusColor(status)
 const getProviderColor = (provider) => meetingsHelpers.getProviderColor(provider)
 const getRelativeTime = (dateString) => meetingsHelpers.getRelativeTime(dateString)
 
+// Check connection status for both providers
+const checkConnectionStatus = async () => {
+  checkingConnection.value = true
+  try {
+    // Check Google connection
+    try {
+      const googleStatus = await meetingsService.checkGoogleConnection()
+      const statusData = googleStatus.data || googleStatus
+      googleConnected.value = statusData?.connected || false
+      
+      // Store connection info
+      if (statusData?.connected) {
+        googleConnectionInfo.value = {
+          email: statusData.email || null,
+          expires_at: statusData.expires_at || null,
+          expires_in_minutes: statusData.expires_in_minutes || null,
+          is_expired: statusData.is_expired || false
+        }
+      } else {
+        googleConnectionInfo.value = {
+          email: null,
+          expires_at: null,
+          expires_in_minutes: null,
+          is_expired: false
+        }
+      }
+    } catch (err) {
+      console.warn('Could not check Google connection:', err)
+      googleConnected.value = false
+      googleConnectionInfo.value = {
+        email: null,
+        expires_at: null,
+        expires_in_minutes: null,
+        is_expired: false
+      }
+    }
+
+    // Check Outlook connection
+    try {
+      const outlookStatus = await meetingsService.checkOutlookConnection()
+      const statusData = outlookStatus.data || outlookStatus
+      outlookConnected.value = statusData?.connected || false
+      
+      // Store connection info
+      if (statusData?.connected) {
+        outlookConnectionInfo.value = {
+          email: statusData.email || null,
+          expires_at: statusData.expires_at || null,
+          expires_in_minutes: statusData.expires_in_minutes || null,
+          is_expired: statusData.is_expired || false
+        }
+      } else {
+        outlookConnectionInfo.value = {
+          email: null,
+          expires_at: null,
+          expires_in_minutes: null,
+          is_expired: false
+        }
+      }
+    } catch (err) {
+      console.warn('Could not check Outlook connection:', err)
+      outlookConnected.value = false
+      outlookConnectionInfo.value = {
+        email: null,
+        expires_at: null,
+        expires_in_minutes: null,
+        is_expired: false
+      }
+    }
+  } catch (err) {
+    console.error('Error checking connection status:', err)
+  } finally {
+    checkingConnection.value = false
+  }
+}
+
+// Connect Google Calendar (OAuth flow)
+const connectGoogleCalendar = async () => {
+  connectingGoogle.value = true
+  
+  try {
+    const oauthResponse = await meetingsService.getGoogleOAuthUrl()
+    
+    // Handle nested response structure: { data: { data: { auth_url } } }
+    const authUrl = oauthResponse.data?.data?.auth_url || oauthResponse.data?.auth_url || oauthResponse.auth_url
+    
+    if (authUrl) {
+      // Validate the URL before redirecting
+      if (authUrl.includes('google.com') || authUrl.includes('accounts.google.com')) {
+        showSuccess('Redirecting to Google to connect your account...')
+        
+        // Small delay to show message before redirect
+        setTimeout(() => {
+          window.location.href = authUrl
+        }, 300)
+        return // Don't set connectingGoogle to false since we're redirecting
+      } else {
+        throw new Error('Invalid Google OAuth URL received')
+      }
+    } else {
+      throw new Error('No redirect URL received from server')
+    }
+  } catch (err) {
+    console.error('OAuth initiation error:', err)
+    // Better error handling
+    if (err.response?.status === 401) {
+      showError('Authentication required. Please ensure you are logged in.')
+    } else {
+      showError(err.response?.data?.message || err.message || 'Failed to initiate Google connection. Please try again.')
+    }
+    connectingGoogle.value = false
+  }
+}
+
+// Connect Outlook Calendar (OAuth flow)
+const connectOutlookCalendar = async () => {
+  connectingOutlook.value = true
+  
+  try {
+    const oauthResponse = await meetingsService.getOutlookOAuthUrl()
+    
+    // Handle nested response structure
+    const authUrl = oauthResponse.data?.data?.auth_url || oauthResponse.data?.auth_url || oauthResponse.auth_url
+    
+    if (authUrl) {
+      // Validate the URL before redirecting
+      if (authUrl.includes('microsoft.com') || authUrl.includes('login.microsoftonline.com')) {
+        showSuccess('Redirecting to Microsoft to connect your account...')
+        
+        // Small delay to show message before redirect
+        setTimeout(() => {
+          window.location.href = authUrl
+        }, 300)
+        return // Don't set connectingOutlook to false since we're redirecting
+      } else {
+        throw new Error('Invalid Outlook OAuth URL received')
+      }
+    } else {
+      throw new Error('No redirect URL received from server')
+    }
+  } catch (err) {
+    console.error('OAuth initiation error:', err)
+    if (err.response?.status === 401) {
+      showError('Authentication required. Please ensure you are logged in.')
+    } else {
+      showError(err.response?.data?.message || err.message || 'Failed to initiate Outlook connection. Please try again.')
+    }
+    connectingOutlook.value = false
+  }
+}
+
+// Handle OAuth callback from URL parameters
+const handleOAuthCallback = async () => {
+  // Check for Google OAuth result using Vue Router
+  const googleOAuth = route.query.google_oauth
+  
+  if (googleOAuth === 'success') {
+    // Show success message (use query param or default)
+    const message = route.query.message || 'Google Calendar connected successfully!'
+    showSuccess(`✅ ${message}`)
+    
+    // Refresh connection status from server to get email and expiration info
+    await checkConnectionStatus()
+    
+    // Clean up URL using Vue Router
+    router.replace({ 
+      path: route.path,
+      query: {} 
+    })
+    
+  } else if (googleOAuth === 'error') {
+    // Show actual error details from backend
+    const error = route.query.error || 'Unknown error'
+    const errorDescription = route.query.error_description || route.query.message || 'Connection failed'
+    
+    showError(`❌ Google Calendar connection failed: ${errorDescription}`)
+    
+    // Log for debugging
+    console.error('Google OAuth error:', {
+      error,
+      error_description: route.query.error_description,
+      message: route.query.message
+    })
+    
+    // Clean up URL
+    router.replace({ 
+      path: route.path,
+      query: {} 
+    })
+  }
+  
+  // Check for Outlook OAuth result
+  const outlookOAuth = route.query.outlook_oauth
+  
+  if (outlookOAuth === 'success') {
+    const message = route.query.message || 'Outlook Calendar connected successfully!'
+    showSuccess(`✅ ${message}`)
+    
+    // Refresh connection status from server
+    await checkConnectionStatus()
+    
+    router.replace({ 
+      path: route.path,
+      query: {} 
+    })
+    
+  } else if (outlookOAuth === 'error') {
+    const error = route.query.error || 'Unknown error'
+    const errorDescription = route.query.error_description || route.query.message || 'Connection failed'
+    showError(`❌ Outlook Calendar connection failed: ${errorDescription}`)
+    
+    console.error('Outlook OAuth error:', {
+      error,
+      error_description: route.query.error_description,
+      message: route.query.message
+    })
+    
+    router.replace({ 
+      path: route.path,
+      query: {} 
+    })
+  }
+}
+
 // Lifecycle
 onMounted(async () => {
+  // Handle OAuth callbacks first (before checking status)
+  await handleOAuthCallback()
+  
+  // Check connection status (will refresh if OAuth was successful)
+  await checkConnectionStatus()
+  
+  // Load meetings
   await loadMeetings()
 })
 </script>

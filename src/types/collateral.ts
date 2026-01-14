@@ -38,3 +38,5 @@ export interface CollateralFilters {
   page?: number
 }
 
+
+

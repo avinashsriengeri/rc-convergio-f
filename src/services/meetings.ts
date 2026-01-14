@@ -77,10 +77,53 @@ export const meetingsService = {
     }
   },
 
-  // Sync Google Calendar
-  async syncGoogleCalendar() {
+  // Check Google OAuth connection status
+  async checkGoogleConnection() {
     try {
-      const response = await api.post('/meetings/sync/google')
+      const response = await api.get('/meetings/oauth/google/status')
+      // Backend returns: { connected: true, email: "...", ... } directly
+      // or wrapped in data: { data: { connected: true, ... } }
+      // Handle both cases
+      const statusData = response.data?.data || response.data
+      return { data: statusData }
+    } catch (error) {
+      console.error('Error checking Google connection:', error)
+      // If endpoint doesn't exist, assume not connected
+      if (error.response?.status === 404) {
+        return { data: { connected: false, message: 'Google Calendar not connected' } }
+      }
+      throw error
+    }
+  },
+
+  // Get Google OAuth URL
+  async getGoogleOAuthUrl() {
+    try {
+      const response = await api.get('/meetings/oauth/google')
+      return response.data
+    } catch (error) {
+      console.error('Error getting Google OAuth URL:', error)
+      throw error
+    }
+  },
+
+  // Fetch meetings from Google Calendar (via backend using stored tokens)
+  async fetchGoogleCalendarMeetings(params = {}) {
+    try {
+      const response = await api.get('/meetings/google/calendar', { params })
+      return response.data
+    } catch (error) {
+      console.error('Error fetching Google Calendar meetings:', error)
+      throw error
+    }
+  },
+
+  // Sync Google Calendar
+  async syncGoogleCalendar(meetings = []) {
+    try {
+      const response = await api.post('/meetings/sync/google', {
+        meetings: meetings
+      })
       return response.data
     } catch (error) {
       console.error('Error syncing Google calendar:', error)
@@ -88,10 +131,53 @@ export const meetingsService = {
     }
   },
 
-  // Sync Outlook Calendar
-  async syncOutlookCalendar() {
+  // Check Outlook OAuth connection status
+  async checkOutlookConnection() {
     try {
-      const response = await api.post('/meetings/sync/outlook')
+      const response = await api.get('/meetings/oauth/outlook/status')
+      // Backend returns: { connected: true, email: "...", ... } directly
+      // or wrapped in data: { data: { connected: true, ... } }
+      // Handle both cases
+      const statusData = response.data?.data || response.data
+      return { data: statusData }
+    } catch (error) {
+      console.error('Error checking Outlook connection:', error)
+      // If endpoint doesn't exist, assume not connected
+      if (error.response?.status === 404) {
+        return { data: { connected: false, message: 'Outlook Calendar not connected' } }
+      }
+      throw error
+    }
+  },
+
+  // Get Outlook OAuth URL
+  async getOutlookOAuthUrl() {
+    try {
+      const response = await api.get('/meetings/oauth/outlook')
+      return response.data
+    } catch (error) {
+      console.error('Error getting Outlook OAuth URL:', error)
+      throw error
+    }
+  },
+
+  // Fetch meetings from Outlook Calendar (via backend using stored tokens)
+  async fetchOutlookCalendarMeetings(params = {}) {
+    try {
+      const response = await api.get('/meetings/outlook/calendar', { params })
+      return response.data
+    } catch (error) {
+      console.error('Error fetching Outlook Calendar meetings:', error)
+      throw error
+    }
+  },
+
+  // Sync Outlook Calendar
+  async syncOutlookCalendar(meetings = []) {
+    try {
+      const response = await api.post('/meetings/sync/outlook', {
+        meetings: meetings
+      })
       return response.data
     } catch (error) {
       console.error('Error syncing Outlook calendar:', error)
