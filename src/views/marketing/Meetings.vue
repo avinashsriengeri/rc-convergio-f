@@ -59,7 +59,7 @@
             </span>
           </div>
           
-          <!-- Google Connect/Sync Button -->
+          <!-- Google Connect Button (when not connected) -->
           <button
             v-else
             @click="connectGoogleCalendar"
@@ -78,7 +78,7 @@
           <button
             v-if="googleConnected"
             @click="syncGoogleCalendar"
-            :disabled="syncingGoogle || checkingConnection"
+            :disabled="syncingGoogle || checkingConnection || disconnectingGoogle"
             class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2"
             title="Sync Google Calendar meetings"
           >
@@ -87,6 +87,24 @@
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
             <span>{{ syncingGoogle ? $t('marketing.meetings.sync.syncing_google') : 'Sync Google' }}</span>
+          </button>
+          
+          <!-- Google Disconnect Button (when connected) -->
+          <button
+            v-if="googleConnected"
+            @click="disconnectGoogleCalendar"
+            :disabled="disconnectingGoogle || checkingConnection || syncingGoogle"
+            class="bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2"
+            title="Disconnect Google Calendar"
+          >
+            <svg v-if="disconnectingGoogle" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span>{{ disconnectingGoogle ? 'Disconnecting...' : 'Disconnect' }}</span>
           </button>
 
           <!-- Outlook Calendar Connection Status -->
@@ -103,7 +121,7 @@
             </span>
           </div>
           
-          <!-- Outlook Connect/Sync Button -->
+          <!-- Outlook Connect Button (when not connected) -->
           <button
             v-else
             @click="connectOutlookCalendar"
@@ -122,7 +140,7 @@
           <button
             v-if="outlookConnected"
             @click="syncOutlookCalendar"
-            :disabled="syncingOutlook || checkingConnection"
+            :disabled="syncingOutlook || checkingConnection || disconnectingOutlook"
             class="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2"
             title="Sync Outlook Calendar meetings"
           >
@@ -131,6 +149,24 @@
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
             <span>{{ syncingOutlook ? $t('marketing.meetings.sync.syncing_outlook') : 'Sync Outlook' }}</span>
+          </button>
+          
+          <!-- Outlook Disconnect Button (when connected) -->
+          <button
+            v-if="outlookConnected"
+            @click="disconnectOutlookCalendar"
+            :disabled="disconnectingOutlook || checkingConnection || syncingOutlook"
+            class="bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2"
+            title="Disconnect Outlook Calendar"
+          >
+            <svg v-if="disconnectingOutlook" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span>{{ disconnectingOutlook ? 'Disconnecting...' : 'Disconnect' }}</span>
           </button>
           <!-- Create Meeting Button -->
           <button
@@ -886,6 +922,8 @@ const outlookConnectionInfo = ref({
 })
 const connectingGoogle = ref(false)
 const connectingOutlook = ref(false)
+const disconnectingGoogle = ref(false)
+const disconnectingOutlook = ref(false)
 
 // Meeting form
 const meetingForm = ref({
@@ -1105,11 +1143,20 @@ const syncGoogleCalendar = async () => {
       console.log('Fetched Google Calendar meetings:', googleMeetings.length)
     } catch (err) {
       console.error('Error fetching Google Calendar meetings:', err)
-      // Continue with empty array if fetch fails
-      googleMeetings = []
+      // If fetch fails, show error and return
+      showError('Failed to fetch meetings from Google Calendar. Please try again.')
+      syncingGoogle.value = false
+      return
     }
 
-    // Sync meetings to backend
+    // Check if there are meetings to sync (backend requires at least 1 meeting)
+    if (!googleMeetings || googleMeetings.length === 0) {
+      showSuccess('No new meetings found in Google Calendar to sync.')
+      syncingGoogle.value = false
+      return
+    }
+
+    // Sync meetings to backend (only if we have meetings)
     const response = await meetingsService.syncGoogleCalendar(googleMeetings)
     syncResults.value = response.data
     showSyncResults.value = true
@@ -1147,11 +1194,20 @@ const syncOutlookCalendar = async () => {
       console.log('Fetched Outlook Calendar meetings:', outlookMeetings.length)
     } catch (err) {
       console.error('Error fetching Outlook Calendar meetings:', err)
-      // Continue with empty array if fetch fails
-      outlookMeetings = []
+      // If fetch fails, show error and return
+      showError('Failed to fetch meetings from Outlook Calendar. Please try again.')
+      syncingOutlook.value = false
+      return
     }
 
-    // Sync meetings to backend
+    // Check if there are meetings to sync (backend requires at least 1 meeting)
+    if (!outlookMeetings || outlookMeetings.length === 0) {
+      showSuccess('No new meetings found in Outlook Calendar to sync.')
+      syncingOutlook.value = false
+      return
+    }
+
+    // Sync meetings to backend (only if we have meetings)
     const response = await meetingsService.syncOutlookCalendar(outlookMeetings)
     syncResults.value = response.data
     showSyncResults.value = true
@@ -1473,6 +1529,120 @@ const connectOutlookCalendar = async () => {
       showError(err.response?.data?.message || err.message || 'Failed to initiate Outlook connection. Please try again.')
     }
     connectingOutlook.value = false
+  }
+}
+
+// Disconnect Google Calendar
+const disconnectGoogleCalendar = async () => {
+  // Show confirmation dialog
+  const email = googleConnectionInfo.value.email || 'Google Calendar'
+  if (!confirm(`Are you sure you want to disconnect ${email}? You will need to reconnect to sync meetings.`)) {
+    return
+  }
+  
+  disconnectingGoogle.value = true
+  
+  try {
+    const response = await meetingsService.disconnectGoogleCalendar()
+    
+    // Handle response
+    if (response.success) {
+      const email = response.email || googleConnectionInfo.value.email || 'Google Calendar'
+      showSuccess(`✅ ${response.message || `Google Calendar (${email}) disconnected successfully`}`)
+      
+      // Update UI state
+      googleConnected.value = false
+      googleConnectionInfo.value = {
+        email: null,
+        expires_at: null,
+        expires_in_minutes: null,
+        is_expired: false
+      }
+      
+      // Refresh connection status to ensure consistency
+      await checkConnectionStatus()
+    } else {
+      showError(response.message || 'Failed to disconnect Google Calendar')
+    }
+  } catch (err) {
+    console.error('Disconnect error:', err)
+    
+    // Handle different error scenarios
+    if (err.response?.status === 404) {
+      // Already disconnected
+      showError('Google Calendar is not connected')
+      googleConnected.value = false
+      googleConnectionInfo.value = {
+        email: null,
+        expires_at: null,
+        expires_in_minutes: null,
+        is_expired: false
+      }
+      await checkConnectionStatus()
+    } else if (err.response?.status === 401) {
+      showError('Authentication required. Please ensure you are logged in.')
+    } else {
+      showError(err.response?.data?.message || err.message || 'Failed to disconnect Google Calendar. Please try again.')
+    }
+  } finally {
+    disconnectingGoogle.value = false
+  }
+}
+
+// Disconnect Outlook Calendar
+const disconnectOutlookCalendar = async () => {
+  // Show confirmation dialog
+  const email = outlookConnectionInfo.value.email || 'Outlook Calendar'
+  if (!confirm(`Are you sure you want to disconnect ${email}? You will need to reconnect to sync meetings.`)) {
+    return
+  }
+  
+  disconnectingOutlook.value = true
+  
+  try {
+    const response = await meetingsService.disconnectOutlookCalendar()
+    
+    // Handle response
+    if (response.success) {
+      const email = response.email || outlookConnectionInfo.value.email || 'Outlook Calendar'
+      showSuccess(`✅ ${response.message || `Outlook Calendar (${email}) disconnected successfully`}`)
+      
+      // Update UI state
+      outlookConnected.value = false
+      outlookConnectionInfo.value = {
+        email: null,
+        expires_at: null,
+        expires_in_minutes: null,
+        is_expired: false
+      }
+      
+      // Refresh connection status to ensure consistency
+      await checkConnectionStatus()
+    } else {
+      showError(response.message || 'Failed to disconnect Outlook Calendar')
+    }
+  } catch (err) {
+    console.error('Disconnect error:', err)
+    
+    // Handle different error scenarios
+    if (err.response?.status === 404) {
+      // Already disconnected
+      showError('Outlook Calendar is not connected')
+      outlookConnected.value = false
+      outlookConnectionInfo.value = {
+        email: null,
+        expires_at: null,
+        expires_in_minutes: null,
+        is_expired: false
+      }
+      await checkConnectionStatus()
+    } else if (err.response?.status === 401) {
+      showError('Authentication required. Please ensure you are logged in.')
+    } else {
+      showError(err.response?.data?.message || err.message || 'Failed to disconnect Outlook Calendar. Please try again.')
+    }
+  } finally {
+    disconnectingOutlook.value = false
   }
 }
 

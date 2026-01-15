@@ -185,6 +185,39 @@ export const meetingsService = {
     }
   },
 
+  // Disconnect Google Calendar
+  async disconnectGoogleCalendar() {
+    try {
+      const response = await api.delete('/meetings/oauth/google')
+      return response.data
+    } catch (error) {
+      console.error('Error disconnecting Google calendar:', error)
+      throw error
+    }
+  },
+
+  // Disconnect Outlook Calendar
+  async disconnectOutlookCalendar() {
+    try {
+      const response = await api.delete('/meetings/oauth/outlook')
+      return response.data
+    } catch (error) {
+      console.error('Error disconnecting Outlook calendar:', error)
+      throw error
+    }
+  },
+
+  // Disconnect Teams Calendar
+  async disconnectTeamsCalendar() {
+    try {
+      const response = await api.delete('/meetings/oauth/teams')
+      return response.data
+    } catch (error) {
+      console.error('Error disconnecting Teams calendar:', error)
+      throw error
+    }
+  },
+
   // Get meetings analytics
   async getMeetingsAnalytics(params = {}) {
     try {
