@@ -168,6 +168,53 @@
             </svg>
             <span>{{ disconnectingOutlook ? 'Disconnecting...' : 'Disconnect' }}</span>
           </button>
+
+          <!-- Zoom Calendar Connection Status -->
+          <div v-if="zoomConnected" class="flex items-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-md">
+            <svg class="h-4 w-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            <span class="text-sm font-medium text-blue-800">
+              Zoom Connected
+              <span v-if="zoomConnectionInfo.email" class="text-blue-600">({{ zoomConnectionInfo.email }})</span>
+            </span>
+            <span v-if="zoomConnectionInfo.expires_in_minutes && zoomConnectionInfo.expires_in_minutes > 0" class="text-xs text-blue-600">
+              • Expires in {{ zoomConnectionInfo.expires_in_minutes }}m
+            </span>
+          </div>
+          
+          <!-- Zoom Connect Button (when not connected) -->
+          <button
+            v-else
+            @click="connectZoomCalendar"
+            :disabled="connectingZoom || checkingConnection"
+            class="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2"
+            title="Click to connect Zoom"
+          >
+            <svg v-if="connectingZoom" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>{{ connectingZoom ? 'Connecting...' : 'Connect Zoom' }}</span>
+          </button>
+          
+          <!-- Zoom Disconnect Button (when connected) -->
+          <button
+            v-if="zoomConnected"
+            @click="disconnectZoomCalendar"
+            :disabled="disconnectingZoom || checkingConnection || connectingZoom"
+            class="bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2"
+            title="Disconnect Zoom"
+          >
+            <svg v-if="disconnectingZoom" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span>{{ disconnectingZoom ? 'Disconnecting...' : 'Disconnect' }}</span>
+          </button>
           <!-- Create Meeting Button -->
           <button
             @click="openCreateModal"
@@ -922,8 +969,17 @@ const outlookConnectionInfo = ref({
 })
 const connectingGoogle = ref(false)
 const connectingOutlook = ref(false)
+const connectingZoom = ref(false)
 const disconnectingGoogle = ref(false)
 const disconnectingOutlook = ref(false)
+const disconnectingZoom = ref(false)
+const zoomConnected = ref(false)
+const zoomConnectionInfo = ref({
+  email: null,
+  expires_at: null,
+  expires_in_minutes: null,
+  is_expired: false
+})
 
 // Meeting form
 const meetingForm = ref({
@@ -1450,6 +1506,39 @@ const checkConnectionStatus = async () => {
         is_expired: false
       }
     }
+
+    // Check Zoom connection
+    try {
+      const zoomStatus = await meetingsService.checkZoomConnection()
+      const statusData = zoomStatus.data || zoomStatus
+      zoomConnected.value = statusData?.connected || false
+      
+      // Store connection info
+      if (statusData?.connected) {
+        zoomConnectionInfo.value = {
+          email: statusData.email || null,
+          expires_at: statusData.expires_at || null,
+          expires_in_minutes: statusData.expires_in_minutes || null,
+          is_expired: statusData.is_expired || false
+        }
+      } else {
+        zoomConnectionInfo.value = {
+          email: null,
+          expires_at: null,
+          expires_in_minutes: null,
+          is_expired: false
+        }
+      }
+    } catch (err) {
+      console.warn('Could not check Zoom connection:', err)
+      zoomConnected.value = false
+      zoomConnectionInfo.value = {
+        email: null,
+        expires_at: null,
+        expires_in_minutes: null,
+        is_expired: false
+      }
+    }
   } catch (err) {
     console.error('Error checking connection status:', err)
   } finally {
@@ -1646,6 +1735,101 @@ const disconnectOutlookCalendar = async () => {
   }
 }
 
+// Connect Zoom Calendar (OAuth flow)
+const connectZoomCalendar = async () => {
+  connectingZoom.value = true
+  
+  try {
+    const oauthResponse = await meetingsService.getZoomOAuthUrl()
+    
+    // Handle nested response structure: { data: { data: { auth_url } } }
+    const authUrl = oauthResponse.data?.data?.auth_url || oauthResponse.data?.auth_url || oauthResponse.auth_url
+    
+    if (authUrl) {
+      // Validate the URL before redirecting
+      if (authUrl.includes('zoom.us') || authUrl.includes('zoom.com')) {
+        showSuccess('Redirecting to Zoom to connect your account...')
+        
+        // Small delay to show message before redirect
+        setTimeout(() => {
+          window.location.href = authUrl
+        }, 300)
+        return // Don't set connectingZoom to false since we're redirecting
+      } else {
+        throw new Error('Invalid Zoom OAuth URL received')
+      }
+    } else {
+      throw new Error('No redirect URL received from server')
+    }
+  } catch (err) {
+    console.error('OAuth initiation error:', err)
+    // Better error handling
+    if (err.response?.status === 401) {
+      showError('Authentication required. Please ensure you are logged in.')
+    } else {
+      showError(err.response?.data?.message || err.message || 'Failed to initiate Zoom connection. Please try again.')
+    }
+    connectingZoom.value = false
+  }
+}
+
+// Disconnect Zoom Calendar
+const disconnectZoomCalendar = async () => {
+  // Show confirmation dialog
+  const email = zoomConnectionInfo.value.email || 'Zoom'
+  if (!confirm(`Are you sure you want to disconnect ${email}? You will need to reconnect to create Zoom meetings.`)) {
+    return
+  }
+  
+  disconnectingZoom.value = true
+  
+  try {
+    const response = await meetingsService.disconnectZoomCalendar()
+    
+    // Handle response
+    if (response.success) {
+      const email = response.email || zoomConnectionInfo.value.email || 'Zoom'
+      showSuccess(`✅ ${response.message || `Zoom (${email}) disconnected successfully`}`)
+      
+      // Update UI state
+      zoomConnected.value = false
+      zoomConnectionInfo.value = {
+        email: null,
+        expires_at: null,
+        expires_in_minutes: null,
+        is_expired: false
+      }
+      
+      // Refresh connection status to ensure consistency
+      await checkConnectionStatus()
+    } else {
+      showError(response.message || 'Failed to disconnect Zoom')
+    }
+  } catch (err) {
+    console.error('Disconnect error:', err)
+    
+    // Handle different error scenarios
+    if (err.response?.status === 404) {
+      // Already disconnected
+      showError('Zoom is not connected')
+      zoomConnected.value = false
+      zoomConnectionInfo.value = {
+        email: null,
+        expires_at: null,
+        expires_in_minutes: null,
+        is_expired: false
+      }
+      await checkConnectionStatus()
+    } else if (err.response?.status === 401) {
+      showError('Authentication required. Please ensure you are logged in.')
+    } else {
+      showError(err.response?.data?.message || err.message || 'Failed to disconnect Zoom. Please try again.')
+    }
+  } finally {
+    disconnectingZoom.value = false
+  }
+}
+
 // Handle OAuth callback from URL parameters
 const handleOAuthCallback = async () => {
   // Check for Google OAuth result using Vue Router
@@ -1707,6 +1891,38 @@ const handleOAuthCallback = async () => {
     showError(`❌ Outlook Calendar connection failed: ${errorDescription}`)
     
     console.error('Outlook OAuth error:', {
+      error,
+      error_description: route.query.error_description,
+      message: route.query.message
+    })
+    
+    router.replace({ 
+      path: route.path,
+      query: {} 
+    })
+  }
+  
+  // Check for Zoom OAuth result
+  const zoomOAuth = route.query.zoom_oauth
+  
+  if (zoomOAuth === 'success') {
+    const message = route.query.message || 'Zoom connected successfully!'
+    showSuccess(`✅ ${message}`)
+    
+    // Refresh connection status from server to get email and expiration info
+    await checkConnectionStatus()
+    
+    router.replace({ 
+      path: route.path,
+      query: {} 
+    })
+    
+  } else if (zoomOAuth === 'error') {
+    const error = route.query.error || 'Unknown error'
+    const errorDescription = route.query.error_description || route.query.message || 'Connection failed'
+    showError(`❌ Zoom connection failed: ${errorDescription}`)
+    
+    console.error('Zoom OAuth error:', {
       error,
       error_description: route.query.error_description,
       message: route.query.message

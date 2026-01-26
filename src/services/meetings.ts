@@ -218,6 +218,47 @@ export const meetingsService = {
     }
   },
 
+  // Check Zoom OAuth connection status
+  async checkZoomConnection() {
+    try {
+      const response = await api.get('/meetings/oauth/zoom/status')
+      // Backend returns: { connected: true, email: "...", ... } directly
+      // or wrapped in data: { data: { connected: true, ... } }
+      // Handle both cases
+      const statusData = response.data?.data || response.data
+      return { data: statusData }
+    } catch (error) {
+      console.error('Error checking Zoom connection:', error)
+      // If endpoint doesn't exist, assume not connected
+      if (error.response?.status === 404) {
+        return { data: { connected: false, message: 'Zoom not connected' } }
+      }
+      throw error
+    }
+  },
+
+  // Get Zoom OAuth URL
+  async getZoomOAuthUrl() {
+    try {
+      const response = await api.get('/meetings/oauth/zoom')
+      return response.data
+    } catch (error) {
+      console.error('Error getting Zoom OAuth URL:', error)
+      throw error
+    }
+  },
+
+  // Disconnect Zoom Calendar
+  async disconnectZoomCalendar() {
+    try {
+      const response = await api.delete('/meetings/oauth/zoom')
+      return response.data
+    } catch (error) {
+      console.error('Error disconnecting Zoom calendar:', error)
+      throw error
+    }
+  },
+
   // Get meetings analytics
   async getMeetingsAnalytics(params = {}) {
     try {
