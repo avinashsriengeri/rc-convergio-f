@@ -366,7 +366,8 @@ export const useCommerceSubscriptionsStore = defineStore('commerceSubscriptions'
           customer_email: customerEmail,
           customer_name: customerName || customerEmail.split('@')[0], // Use provided name or extract from email
           return_url: returnUrl,
-          cancel_url: cancelUrl
+          cancel_url: cancelUrl,
+          trial_days: 0
         }
         
         // Add Stripe price ID if available
@@ -375,47 +376,39 @@ export const useCommerceSubscriptionsStore = defineStore('commerceSubscriptions'
         }
         
         console.log('Creating checkout session with payload:', payload)
-        console.log('Payload keys:', Object.keys(payload))
-        console.log('Payload values:', Object.values(payload))
-        console.log('Timestamp:', new Date().toISOString())
         
         const response = await commerceAPI.createCheckoutSession(payload)
-        console.log('=== CHECKOUT SESSION DEBUG ===')
-        console.log('Full response:', response)
-        console.log('Response data:', response.data)
-        console.log('Response success:', response.data?.success)
-        console.log('Response data.data:', response.data?.data)
+        console.log('Checkout session response:', response.data)
         
-        // Handle both demo mode and real Stripe responses
+        // Handle both demo mode and real payment gateway responses
         if (response.data?.success && response.data?.data) {
           const sessionData = response.data.data
           console.log('Session data:', sessionData)
-          console.log('Session URL:', sessionData.session_url)
-          console.log('Demo mode:', sessionData.demo_mode)
+          console.log('Payment data exists:', !!sessionData.payment_data)
           
-          // Return the data in a format the frontend expects
-          const result = {
+          // Return result - no redirect, email is sent by backend
+          // Customer will receive email and click link to checkout
+          return {
             success: true,
-            checkout_url: sessionData.session_url, // Map session_url to checkout_url for frontend compatibility
+            isPayFast: !!sessionData.payment_data,
+            checkout_url: sessionData.session_url,
             session_url: sessionData.session_url,
             plan: sessionData.plan,
             customer_id: sessionData.customer_id,
-            demo_mode: sessionData.demo_mode || false
+            demo_mode: sessionData.demo_mode || false,
+            message: 'Checkout link sent to customer email'
           }
-          
-          console.log('Returning result:', result)
-          return result
         }
         
         console.log('No valid session data found, returning raw response.data')
+        this.loading = false
         return response.data
       } catch (error) {
         this.error = error.response?.data?.message || 'Failed to create checkout session'
         console.error('Error creating checkout session:', error)
         console.error('Error response:', error.response?.data)
-        throw error
-      } finally {
         this.loading = false
+        throw error
       }
     },
 

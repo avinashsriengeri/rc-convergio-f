@@ -38,8 +38,9 @@ api.interceptors.request.use(
     const isPublicEventRequest = config.url?.includes('/public/events/')
     const isEventTypesRequest = config.url?.includes('/events/types')
     const isCommerceCheckoutRequest = config.url?.includes('/commerce/payment-links/') && config.method === 'get'
+    const isPublicPaymentLinkRequest = config.url?.includes('/public/commerce/payment-links/') && config.method === 'get'
     
-    if (!isPublicFormRequest && !isAuthRequest && !isPublicEventRequest && !isEventTypesRequest && !isCommerceCheckoutRequest) {
+    if (!isPublicFormRequest && !isAuthRequest && !isPublicEventRequest && !isEventTypesRequest && !isCommerceCheckoutRequest && !isPublicPaymentLinkRequest) {
       const token = localStorage.getItem('access_token')
       if (token) {
         config.headers['Authorization'] = `Bearer ${token}`
@@ -121,6 +122,13 @@ export const authAPI = {
   logout: () => api.post('/auth/logout'),
   resendVerification: (data) => api.post('/auth/resend-verification', data),
   getCurrentUser: () => api.get('/users/me'),
+}
+
+// License API endpoints
+export const licenseAPI = {
+  getPlans: () => api.get('/license/plans'),
+  renew: (data) => api.post('/license/renew', data),
+  getStatus: () => api.get('/license/status'),
 }
 
 // Dashboard API endpoints
@@ -596,6 +604,9 @@ export const commerceAPI = {
   // Public checkout endpoints
   createCheckoutSession: (data) => api.post('/public/commerce/checkout/create-subscription-session', data),
   getCheckoutSession: (sessionId) => api.get(`/public/commerce/checkout/session/${sessionId}`),
+  
+  // Public Payment Links API (no auth required)
+  getPublicPaymentLink: (id) => api.get(`/public/commerce/payment-links/${id}`),
   
   // Branding API endpoints
   getBranding: () => api.get('/commerce/branding'),

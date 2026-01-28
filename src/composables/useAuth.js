@@ -100,15 +100,32 @@ const login = async (credentials) => {
       }
     }
     
-    // Backend returns: { success: true, data: { access_token, user } }
-    const { access_token, user: userData } = response.data.data
+    // Backend returns: { success: true, data: { access_token, user, license, license_check_enabled } }
+    const { 
+      access_token, 
+      user: userData, 
+      license: licenseData,
+      license_check_enabled 
+    } = response.data.data
     
     console.log('User data from login:', userData)
     console.log('User roles from login:', userData.roles)
+    console.log('License data from login:', licenseData)
+    console.log('License check enabled:', license_check_enabled)
     
     // Store auth data
     localStorage.setItem('access_token', access_token)
     localStorage.setItem('user', JSON.stringify(userData))
+    
+    // Store license data if present
+    if (licenseData) {
+      localStorage.setItem('license', JSON.stringify(licenseData))
+    }
+    
+    // Store license_check_enabled flag (for router guard)
+    // Default to true if not provided (backward compatibility)
+    const isLicenseCheckEnabled = license_check_enabled !== undefined ? license_check_enabled : true
+    localStorage.setItem('license_check_enabled', isLicenseCheckEnabled.toString())
     
     // Update reactive state
     user.value = userData
@@ -138,7 +155,12 @@ const login = async (credentials) => {
       console.warn('Post-login metadata refresh failed:', e)
     }
     
-    return { success: true, user: userData }
+    return { 
+      success: true, 
+      user: userData, 
+      license: licenseData || null,
+      license_check_enabled: isLicenseCheckEnabled
+    }
   } catch (error) {
     console.error('Login error:', error)
     
@@ -206,6 +228,8 @@ const logout = async () => {
     localStorage.removeItem('access_token')
     localStorage.removeItem('user')
     localStorage.removeItem('tenant_id')
+    localStorage.removeItem('license')
+    localStorage.removeItem('license_check_enabled')
     
     // Reset reactive state
     user.value = null

@@ -58,6 +58,20 @@ const routes = [
     meta: { requiresAuth: false }
   },
   
+  // License Routes
+  {
+    path: '/license/pricing',
+    name: 'LicensePricing',
+    component: () => import('./views/license/Pricing.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/license/renewal/success',
+    name: 'LicensePaymentSuccess',
+    component: () => import('./views/license/PaymentSuccess.vue'),
+    meta: { requiresAuth: true }
+  },
+  
   // Public Contact Form Routes
   {
     path: '/contact',
@@ -619,6 +633,30 @@ const routes = [
     component: () => import('./views/commerce/CommerceCheckout.vue'),
     meta: { requiresAuth: false, public: true }
   },
+  
+  // Public Commerce Payment Link Route (PayFast/Stripe)
+  {
+    path: '/commerce/payment/:id',
+    name: 'PaymentLink',
+    component: () => import('./views/commerce/PaymentLinkPage.vue'),
+    meta: { requiresAuth: false, public: true }
+  },
+  
+  // Public Commerce Payment Success Page
+  {
+    path: '/commerce/success',
+    name: 'PaymentSuccess',
+    component: () => import('./views/commerce/PaymentSuccess.vue'),
+    meta: { requiresAuth: false, public: true }
+  },
+  
+  // Public Commerce Payment Cancel Page
+  {
+    path: '/commerce/cancel',
+    name: 'PaymentCancel',
+    component: () => import('./views/commerce/PaymentCancel.vue'),
+    meta: { requiresAuth: false, public: true }
+  },
 
   // Commerce Platform Module routes (Parent/Child structure)
   {
@@ -672,11 +710,19 @@ const routes = [
     ]
   },
 
-  // Public Subscription Checkout Route
+  // Public Subscription Checkout Route (for demo/backend redirects)
   {
     path: '/commerce/subscription-checkout/:sessionId',
     name: 'SubscriptionCheckout',
     component: () => import('./views/commerce/PublicCheckout.vue'),
+    meta: { requiresAuth: false, public: true }
+  },
+
+  // Public Subscription Checkout Page (for email links)
+  {
+    path: '/subscription/checkout',
+    name: 'SubscriptionCheckoutPage',
+    component: () => import('./views/subscription/SubscriptionCheckout.vue'),
     meta: { requiresAuth: false, public: true }
   },
 
@@ -974,11 +1020,37 @@ router.beforeEach((to, from, next) => {
   // Check if user needs email verification
   const requiresEmailVerification = isAuthenticated && userData && !userData.email_verified_at
   
+  // Check if license validation is enabled
+  // Default to true if not found (backward compatibility)
+  const licenseCheckEnabledStr = localStorage.getItem('license_check_enabled')
+  const isLicenseCheckEnabled = licenseCheckEnabledStr !== null 
+    ? licenseCheckEnabledStr === 'true' 
+    : true
+  
+  // Check license status (only if license check is enabled)
+  let licenseValid = true
+  if (isAuthenticated && isLicenseCheckEnabled) {
+    try {
+      const licenseData = localStorage.getItem('license')
+      if (licenseData) {
+        const license = JSON.parse(licenseData)
+        licenseValid = license.is_valid === true
+      }
+    } catch (error) {
+      console.error('Failed to parse license data:', error)
+      // Default to valid if we can't parse (backward compatibility)
+      licenseValid = true
+    }
+  }
+  
   // Navigation guard logic (console logs removed for production)
   
   const requiresAuth = to.meta?.public ? false : (to.meta?.requiresAuth ?? true)
   const requiresAdmin = to.meta?.requiresAdmin ?? false
   const requiresSuperAdmin = to.meta?.requiresSuperAdmin ?? false
+  
+  // License pages that should be accessible even with expired license
+  const licensePages = ['/license/pricing', '/license/renewal/success']
   
   // Check if user has super_admin role
   const isSuperAdmin = userData?.roles && Array.isArray(userData.roles) && userData.roles.some(role => {
@@ -1005,10 +1077,21 @@ router.beforeEach((to, from, next) => {
   if (requiresAuth && !isAuthenticated) {
     console.log('Router: Redirecting to login - not authenticated')
     next('/login')
+  } else if (requiresAuth && isAuthenticated && isLicenseCheckEnabled && !licenseValid && !licensePages.includes(to.path)) {
+    // Only redirect if license check is enabled AND license is invalid
+    // Redirect authenticated users with expired license to pricing page
+    console.log('Router: Redirecting to pricing - license expired')
+    next('/license/pricing')
   } else if (requiresAuth === false && isAuthenticated && (to.path === '/' || to.path === '/login')) {
-    // Redirect authenticated users away from login/home to dashboard
-    console.log('Router: Redirecting authenticated user to dashboard from', to.path)
-    next('/dashboard')
+    // Redirect authenticated users away from login/home
+    // Check license only if license check is enabled
+    if (isLicenseCheckEnabled && !licenseValid) {
+      console.log('Router: Redirecting authenticated user with expired license to pricing from', to.path)
+      next('/license/pricing')
+    } else {
+      console.log('Router: Redirecting authenticated user to dashboard from', to.path)
+      next('/dashboard')
+    }
   } else if (requiresAuth && requiresEmailVerification && to.path !== '/verify-notification' && to.path !== '/login') {
     // Redirect unverified users to verification page, but allow login page access
     console.log('Router: Redirecting to verification - email not verified')

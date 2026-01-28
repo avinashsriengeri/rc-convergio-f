@@ -3,9 +3,16 @@ import { commerceAPI } from '@/services/api'
 
 export interface CommerceSettings {
   id?: string | number
-  stripe_public_key: string
-  stripe_secret_key: string
+  payment_gateway?: 'stripe' | 'payfast'
+  // Stripe fields
+  stripe_public_key?: string
+  stripe_secret_key?: string
   stripe_webhook_secret?: string
+  // PayFast fields
+  payfast_merchant_id?: string
+  payfast_merchant_key?: string
+  payfast_passphrase?: string
+  payfast_webhook_secret?: string
   mode: 'test' | 'live'
   currency: string
   payment_methods: string[]
@@ -35,6 +42,13 @@ export const useCommerceSettingsStore = defineStore('commerceSettings', {
 
   getters: {
     isConfigured: (state) => {
+      const gateway = state.settings.payment_gateway || 'stripe'
+      if (gateway === 'payfast') {
+        // Only require merchant_id and merchant_key, passphrase is optional
+        return !!(state.settings.payfast_merchant_id && 
+                  state.settings.payfast_merchant_key)
+      }
+      // Default to Stripe check
       return !!(state.settings.stripe_public_key && state.settings.stripe_secret_key)
     },
     
@@ -47,6 +61,13 @@ export const useCommerceSettingsStore = defineStore('commerceSettings', {
     },
     
     hasValidKeys: (state) => {
+      const gateway = state.settings.payment_gateway || 'stripe'
+      if (gateway === 'payfast') {
+        // Only require merchant_id and merchant_key, passphrase is optional
+        return !!(state.settings.payfast_merchant_id && 
+                  state.settings.payfast_merchant_key)
+      }
+      // Default to Stripe validation
       return !!(state.settings.stripe_public_key?.startsWith('pk_') && 
                 state.settings.stripe_secret_key?.startsWith('sk_'))
     }
@@ -144,9 +165,14 @@ export const useCommerceSettingsStore = defineStore('commerceSettings', {
         const response = await commerceAPI.resetSettings()
         // Reset local state to default values
         this.settings = {
+          payment_gateway: 'stripe',
           stripe_public_key: '',
           stripe_secret_key: '',
           stripe_webhook_secret: '',
+          payfast_merchant_id: '',
+          payfast_merchant_key: '',
+          payfast_passphrase: '',
+          payfast_webhook_secret: '',
           mode: 'test',
           currency: 'usd',
           payment_methods: ['card'],

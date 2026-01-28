@@ -7,7 +7,7 @@
           <div class="flex items-center justify-between">
             <div>
               <h1 class="text-xl font-bold text-gray-900">Commerce Settings</h1>
-              <p class="text-sm text-gray-600">Configure your Stripe payment settings and preferences</p>
+              <p class="text-sm text-gray-600">Configure your payment gateway settings and preferences</p>
             </div>
             <div class="flex items-center space-x-3">
               <button
@@ -98,10 +98,10 @@
               ]"></div>
               <div>
                 <p class="text-sm font-medium text-gray-900">
-                  {{ isConfigured ? 'Stripe Configured' : 'Stripe Not Configured' }}
+                  {{ isConfigured ? `${gatewayName} Configured` : `${gatewayName} Not Configured` }}
                 </p>
                 <p class="text-sm text-gray-500">
-                  {{ isConfigured ? 'Your Stripe integration is ready to use' : 'Please configure your Stripe API keys below' }}
+                  {{ isConfigured ? `Your ${gatewayName} integration is ready to use` : `Please configure your ${gatewayName} credentials below` }}
                 </p>
               </div>
             </div>
@@ -119,13 +119,48 @@
       <div class="bg-white shadow rounded-lg">
         <form @submit.prevent="saveSettings">
           <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="text-lg font-medium text-gray-900">Stripe Configuration</h3>
+            <h3 class="text-lg font-medium text-gray-900">Payment Gateway Configuration</h3>
             <p class="mt-1 text-sm text-gray-500">
-              Configure your Stripe API keys and payment settings
+              Configure your payment gateway and payment settings
             </p>
           </div>
 
           <div class="px-6 py-6 space-y-6">
+            <!-- Payment Gateway Selection -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-3">
+                Payment Gateway
+              </label>
+              <div class="space-y-3">
+                <div class="flex items-center">
+                  <input
+                    id="gateway-stripe"
+                    v-model="formData.payment_gateway"
+                    type="radio"
+                    value="stripe"
+                    class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                  />
+                  <label for="gateway-stripe" class="ml-3 block text-sm font-medium text-gray-700">
+                    Stripe
+                    <span class="text-gray-500">- Credit card payments</span>
+                  </label>
+                </div>
+                <div class="flex items-center">
+                  <input
+                    id="gateway-payfast"
+                    v-model="formData.payment_gateway"
+                    type="radio"
+                    value="payfast"
+                    class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                  />
+                  <label for="gateway-payfast" class="ml-3 block text-sm font-medium text-gray-700">
+                    PayFast
+                    <span class="text-gray-500">- South African payment gateway</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
             <!-- Mode Selection -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-3">
@@ -161,8 +196,8 @@
               </div>
             </div>
 
-            <!-- API Keys -->
-            <div class="grid grid-cols-1 gap-6">
+            <!-- Stripe Configuration Fields -->
+            <div v-if="formData.payment_gateway === 'stripe'" class="grid grid-cols-1 gap-6">
               <!-- Public Key -->
               <div>
                 <label for="public-key" class="block text-sm font-medium text-gray-700">
@@ -262,6 +297,143 @@
                 </div>
                 <p class="mt-2 text-sm text-gray-500">
                   Webhook endpoint secret for verifying Stripe webhooks (starts with whsec_)
+                </p>
+              </div>
+            </div>
+
+            <!-- PayFast Configuration Fields -->
+            <div v-if="formData.payment_gateway === 'payfast'" class="grid grid-cols-1 gap-6">
+              <!-- Merchant ID -->
+              <div>
+                <label for="payfast-merchant-id" class="block text-sm font-medium text-gray-700">
+                  PayFast Merchant ID
+                </label>
+                <div class="mt-1 relative">
+                  <input
+                    id="payfast-merchant-id"
+                    v-model="formData.payfast_merchant_id"
+                    type="text"
+                    placeholder="10000100"
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    :class="{ 'border-red-300': !isValidPayFastMerchantId && formData.payfast_merchant_id }"
+                  />
+                  <div v-if="!isValidPayFastMerchantId && formData.payfast_merchant_id" class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+                <p v-if="!isValidPayFastMerchantId && formData.payfast_merchant_id" class="mt-2 text-sm text-red-600 flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  </svg>
+                  Merchant ID is required
+                </p>
+                <p v-else class="mt-2 text-sm text-gray-500">
+                  Your PayFast merchant ID (e.g., 10000100)
+                </p>
+              </div>
+
+              <!-- Merchant Key -->
+              <div>
+                <label for="payfast-merchant-key" class="block text-sm font-medium text-gray-700">
+                  PayFast Merchant Key
+                </label>
+                <div class="mt-1 relative">
+                  <input
+                    id="payfast-merchant-key"
+                    v-model="formData.payfast_merchant_key"
+                    :type="showPayFastKey ? 'text' : 'password'"
+                    placeholder="46f0cd694581a"
+                    class="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    :class="{ 'border-red-300': !isValidPayFastKey && formData.payfast_merchant_key }"
+                  />
+                  <button
+                    type="button"
+                    @click="showPayFastKey = !showPayFastKey"
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    <svg v-if="showPayFastKey" class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                    </svg>
+                    <svg v-else class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </button>
+                </div>
+                <p v-if="!isValidPayFastKey && formData.payfast_merchant_key" class="mt-2 text-sm text-red-600 flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  </svg>
+                  Merchant key is required
+                </p>
+                <p v-else class="mt-2 text-sm text-gray-500">
+                  Your PayFast merchant key
+                </p>
+              </div>
+
+              <!-- Passphrase (Optional) -->
+              <div>
+                <label for="payfast-passphrase" class="block text-sm font-medium text-gray-700">
+                  PayFast Passphrase <span class="text-gray-500 font-normal">(Optional)</span>
+                </label>
+                <div class="mt-1 relative">
+                  <input
+                    id="payfast-passphrase"
+                    v-model="formData.payfast_passphrase"
+                    :type="showPayFastPassphrase ? 'text' : 'password'"
+                    placeholder="your_passphrase"
+                    class="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  />
+                  <button
+                    type="button"
+                    @click="showPayFastPassphrase = !showPayFastPassphrase"
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    <svg v-if="showPayFastPassphrase" class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                    </svg>
+                    <svg v-else class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </button>
+                </div>
+                <p class="mt-2 text-sm text-gray-500">
+                  Your PayFast passphrase (set in your PayFast account settings) - Optional
+                </p>
+              </div>
+
+              <!-- Webhook Secret (Optional) -->
+              <div>
+                <label for="payfast-webhook-secret" class="block text-sm font-medium text-gray-700">
+                  PayFast Webhook Secret (Optional)
+                </label>
+                <div class="mt-1 relative">
+                  <input
+                    id="payfast-webhook-secret"
+                    v-model="formData.payfast_webhook_secret"
+                    :type="showPayFastWebhookSecret ? 'text' : 'password'"
+                    placeholder="optional_secret"
+                    class="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  />
+                  <button
+                    type="button"
+                    @click="showPayFastWebhookSecret = !showPayFastWebhookSecret"
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    <svg v-if="showPayFastWebhookSecret" class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                    </svg>
+                    <svg v-else class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </button>
+                </div>
+                <p class="mt-2 text-sm text-gray-500">
+                  Webhook secret for verifying PayFast webhooks (optional)
                 </p>
               </div>
             </div>
@@ -415,11 +587,21 @@ const settingsStore = useCommerceSettingsStore()
 const loading = ref(false)
 const showSecretKey = ref(false)
 const showWebhookSecret = ref(false)
+const showPayFastKey = ref(false)
+const showPayFastPassphrase = ref(false)
+const showPayFastWebhookSecret = ref(false)
 
 const formData = ref({
+  payment_gateway: 'stripe',
+  // Stripe fields
   stripe_public_key: '',
   stripe_secret_key: '',
   stripe_webhook_secret: '',
+  // PayFast fields
+  payfast_merchant_id: '',
+  payfast_merchant_key: '',
+  payfast_passphrase: '',
+  payfast_webhook_secret: '',
   mode: 'test',
   currency: 'usd',
   payment_methods: ['card'],
@@ -432,6 +614,10 @@ const settings = computed(() => settingsStore.settings)
 const connectionTest = computed(() => settingsStore.connectionTest)
 const isDirty = computed(() => settingsStore.isDirty)
 
+const gatewayName = computed(() => {
+  return formData.value.payment_gateway === 'payfast' ? 'PayFast' : 'Stripe'
+})
+
 const isValidPublicKey = computed(() => {
   const key = formData.value.stripe_public_key
   return !key || key.startsWith('pk_test_') || key.startsWith('pk_live_')
@@ -442,12 +628,38 @@ const isValidSecretKey = computed(() => {
   return !key || key.startsWith('sk_test_') || key.startsWith('sk_live_')
 })
 
+const isValidPayFastMerchantId = computed(() => {
+  const id = formData.value.payfast_merchant_id
+  return !id || id.trim().length > 0
+})
+
+const isValidPayFastKey = computed(() => {
+  const key = formData.value.payfast_merchant_key
+  return !key || key.trim().length > 0
+})
+
+const isValidPayFastPassphrase = computed(() => {
+  // Passphrase is optional, so always return true
+  return true
+})
+
 const isFormValid = computed(() => {
-  // Check if we have valid API keys
-  const hasValidKeys = isValidPublicKey.value && 
-                       isValidSecretKey.value && 
-                       formData.value.stripe_public_key && 
-                       formData.value.stripe_secret_key
+  const gateway = formData.value.payment_gateway || 'stripe'
+  
+  // Check if we have valid credentials based on selected gateway
+  let hasValidKeys = false
+  if (gateway === 'payfast') {
+    // Only require merchant_id and merchant_key, passphrase is optional
+    hasValidKeys = isValidPayFastMerchantId.value && 
+                   isValidPayFastKey.value &&
+                   formData.value.payfast_merchant_id && 
+                   formData.value.payfast_merchant_key
+  } else {
+    hasValidKeys = isValidPublicKey.value && 
+                   isValidSecretKey.value && 
+                   formData.value.stripe_public_key && 
+                   formData.value.stripe_secret_key
+  }
   
   // Check if we have at least one payment method selected
   const hasPaymentMethods = formData.value.payment_methods && 
@@ -458,6 +670,12 @@ const isFormValid = computed(() => {
 })
 
 const isConfigured = computed(() => {
+  const gateway = formData.value.payment_gateway || 'stripe'
+  if (gateway === 'payfast') {
+    // Only require merchant_id and merchant_key, passphrase is optional
+    return !!(formData.value.payfast_merchant_id && 
+              formData.value.payfast_merchant_key)
+  }
   return !!(formData.value.stripe_public_key && formData.value.stripe_secret_key)
 })
 
@@ -470,7 +688,7 @@ const saveSettings = async () => {
       window.Swal.fire({
         icon: 'success',
         title: 'Settings Saved!',
-        text: 'Your Stripe configuration has been saved successfully',
+        text: `Your ${gatewayName.value} configuration has been saved successfully`,
         timer: 2000,
         showConfirmButton: false,
         toast: true,
@@ -516,7 +734,7 @@ const testConnection = async () => {
       window.Swal.fire({
         icon: 'error',
         title: 'Connection Test Failed',
-        text: error?.response?.data?.message || 'Failed to test Stripe connection',
+        text: error?.response?.data?.message || `Failed to test ${gatewayName.value} connection`,
         timer: 3000,
         showConfirmButton: false,
         toast: true,
@@ -627,7 +845,7 @@ const resetForm = async () => {
   if (window.Swal) {
     const result = await window.Swal.fire({
       title: 'Reset Settings?',
-      text: 'This will reset all your Stripe configuration to default values. This action cannot be undone.',
+      text: 'This will reset all your payment gateway configuration to default values. This action cannot be undone.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -641,13 +859,29 @@ const resetForm = async () => {
         loading.value = true
         await settingsStore.resetSettings()
         await settingsStore.fetchSettings()
-        formData.value = { ...settings.value }
+        // Reinitialize form data with reset settings
+        formData.value = {
+          payment_gateway: settings.value.payment_gateway || 'stripe',
+          stripe_public_key: settings.value.stripe_public_key || '',
+          stripe_secret_key: settings.value.stripe_secret_key || '',
+          stripe_webhook_secret: settings.value.stripe_webhook_secret || '',
+          payfast_merchant_id: settings.value.payfast_merchant_id || '',
+          payfast_merchant_key: settings.value.payfast_merchant_key || '',
+          payfast_passphrase: settings.value.payfast_passphrase || '',
+          payfast_webhook_secret: settings.value.payfast_webhook_secret || '',
+          mode: settings.value.mode || 'test',
+          currency: settings.value.currency || 'usd',
+          payment_methods: settings.value.payment_methods || ['card'],
+          auto_fulfill_orders: settings.value.auto_fulfill_orders !== undefined ? settings.value.auto_fulfill_orders : true,
+          send_order_confirmations: settings.value.send_order_confirmations !== undefined ? settings.value.send_order_confirmations : true,
+          send_payment_receipts: settings.value.send_payment_receipts !== undefined ? settings.value.send_payment_receipts : true
+        }
         if (window.Swal) {
           window.Swal.fire({
-            icon: 'success',
-            title: 'Settings Reset!',
-            text: 'Your Stripe configuration has been reset to default values',
-            timer: 2000,
+          icon: 'success',
+          title: 'Settings Reset!',
+          text: 'Your payment gateway configuration has been reset to default values',
+          timer: 2000,
             showConfirmButton: false,
             toast: true,
             position: 'top-end'
@@ -677,7 +911,23 @@ const resetForm = async () => {
         loading.value = true
         await settingsStore.resetSettings()
         await settingsStore.fetchSettings()
-        formData.value = { ...settings.value }
+        // Reinitialize form data with reset settings
+        formData.value = {
+          payment_gateway: settings.value.payment_gateway || 'stripe',
+          stripe_public_key: settings.value.stripe_public_key || '',
+          stripe_secret_key: settings.value.stripe_secret_key || '',
+          stripe_webhook_secret: settings.value.stripe_webhook_secret || '',
+          payfast_merchant_id: settings.value.payfast_merchant_id || '',
+          payfast_merchant_key: settings.value.payfast_merchant_key || '',
+          payfast_passphrase: settings.value.payfast_passphrase || '',
+          payfast_webhook_secret: settings.value.payfast_webhook_secret || '',
+          mode: settings.value.mode || 'test',
+          currency: settings.value.currency || 'usd',
+          payment_methods: settings.value.payment_methods || ['card'],
+          auto_fulfill_orders: settings.value.auto_fulfill_orders !== undefined ? settings.value.auto_fulfill_orders : true,
+          send_order_confirmations: settings.value.send_order_confirmations !== undefined ? settings.value.send_order_confirmations : true,
+          send_payment_receipts: settings.value.send_payment_receipts !== undefined ? settings.value.send_payment_receipts : true
+        }
       } catch (error) {
         console.error('Error resetting settings:', error)
         alert('Failed to reset settings: ' + (error?.response?.data?.message || error?.message || 'Unknown error'))
@@ -692,7 +942,23 @@ const loadSettings = async () => {
   loading.value = true
   try {
     await settingsStore.fetchSettings()
-    formData.value = { ...settings.value }
+    // Initialize form data with settings, defaulting to stripe if no gateway is set
+    formData.value = {
+      payment_gateway: settings.value.payment_gateway || 'stripe',
+      stripe_public_key: settings.value.stripe_public_key || '',
+      stripe_secret_key: settings.value.stripe_secret_key || '',
+      stripe_webhook_secret: settings.value.stripe_webhook_secret || '',
+      payfast_merchant_id: settings.value.payfast_merchant_id || '',
+      payfast_merchant_key: settings.value.payfast_merchant_key || '',
+      payfast_passphrase: settings.value.payfast_passphrase || '',
+      payfast_webhook_secret: settings.value.payfast_webhook_secret || '',
+      mode: settings.value.mode || 'test',
+      currency: settings.value.currency || 'usd',
+      payment_methods: settings.value.payment_methods || ['card'],
+      auto_fulfill_orders: settings.value.auto_fulfill_orders !== undefined ? settings.value.auto_fulfill_orders : true,
+      send_order_confirmations: settings.value.send_order_confirmations !== undefined ? settings.value.send_order_confirmations : true,
+      send_payment_receipts: settings.value.send_payment_receipts !== undefined ? settings.value.send_payment_receipts : true
+    }
   } catch (error) {
     console.error('Error loading settings:', error)
   } finally {

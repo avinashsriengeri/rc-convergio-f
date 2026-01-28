@@ -228,29 +228,26 @@ const createCheckoutLink = async () => {
         )
 
         // Store returns result directly, not wrapped in response.data
-        if (response && response.checkout_url) {
+        if (response && response.success) {
           // Emit event with checkout data
           emit('checkout-created', {
             plan: props.plan,
             checkoutUrl: response.checkout_url,
-            customer: formValues
+            customer: formValues,
+            isPayFast: response.isPayFast || false
           })
 
-          // Show success message and redirect
+          // Show success message - checkout link sent to customer email
+          // No redirect - customer will receive email and checkout from there
           Swal.fire({
             icon: 'success',
-            title: 'Checkout Created!',
-            text: 'Redirecting to Stripe checkout...',
-            timer: 2000,
+            title: 'Checkout Link Sent!',
+            text: `Checkout link has been sent to ${formValues.customerEmail}`,
+            timer: 3000,
             showConfirmButton: false,
             toast: true,
             position: 'top-end'
           })
-
-          // Redirect to checkout
-          setTimeout(() => {
-            window.open(response.checkout_url, '_blank')
-          }, 1000)
         } else {
           throw new Error('Invalid checkout response')
         }

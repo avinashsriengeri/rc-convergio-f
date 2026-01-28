@@ -308,8 +308,18 @@ const handleLogin = async () => {
         success('Welcome back!')
       }
       
-      // Redirect to dashboard immediately (don't wait for toast)
-      await router.replace('/dashboard')
+      // Check if license validation is enabled
+      // Default to true if not provided (backward compatibility)
+      const licenseCheckEnabled = result.license_check_enabled ?? true
+      
+      // Only validate license if license check is enabled
+      if (licenseCheckEnabled && result.license && !result.license.is_valid) {
+        // License check enabled AND license expired → redirect to pricing page
+        await router.replace('/license/pricing')
+      } else {
+        // License check disabled OR license valid → redirect to dashboard
+        await router.replace('/dashboard')
+      }
     } else if (result.requiresVerification) {
       // Handle email verification requirement
       error('Please verify your email before logging in.')
