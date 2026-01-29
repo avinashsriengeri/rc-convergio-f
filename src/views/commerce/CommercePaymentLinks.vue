@@ -43,42 +43,24 @@
     <div class="bg-gray-50 border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <!-- Total Views -->
+          <!-- Total Links -->
           <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center">
               <div class="flex-shrink-0">
                 <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                   <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                   </svg>
                 </div>
               </div>
               <div class="ml-3">
-                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Views</p>
-                <p class="text-xl font-bold text-gray-900">{{ analyticsData.totalViews || 0 }}</p>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Links</p>
+                <p class="text-xl font-bold text-gray-900">{{ analyticsData.totalLinks || 0 }}</p>
               </div>
             </div>
           </div>
 
-          <!-- Total Clicks -->
-          <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
-            <div class="flex items-center">
-              <div class="flex-shrink-0">
-                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-                  </svg>
-                </div>
-              </div>
-              <div class="ml-3">
-                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Clicks</p>
-                <p class="text-xl font-bold text-gray-900">{{ analyticsData.totalClicks || 0 }}</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Conversions -->
+          <!-- Active Links -->
           <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center">
               <div class="flex-shrink-0">
@@ -89,25 +71,42 @@
                 </div>
               </div>
               <div class="ml-3">
-                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Conversions</p>
-                <p class="text-xl font-bold text-gray-900">{{ analyticsData.totalConversions || 0 }}</p>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Active Links</p>
+                <p class="text-xl font-bold text-gray-900">{{ analyticsData.activeLinks || 0 }}</p>
               </div>
             </div>
           </div>
 
-          <!-- Conversion Rate -->
+          <!-- Expired Links -->
           <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center">
               <div class="flex-shrink-0">
-                <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                  <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
               </div>
               <div class="ml-3">
-                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Conversion Rate</p>
-                <p class="text-xl font-bold text-gray-900">{{ analyticsData.conversionRate || 0 }}%</p>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Expired Links</p>
+                <p class="text-xl font-bold text-gray-900">{{ analyticsData.expiredLinks || 0 }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Completed Links -->
+          <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+              <div class="ml-3">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Completed Links</p>
+                <p class="text-xl font-bold text-gray-900">{{ analyticsData.completedLinks || 0 }}</p>
               </div>
             </div>
           </div>
@@ -363,10 +362,10 @@ const bulkEmailSubject = ref('Payment link for your quote')
 const bulkEmailMessage = ref('Please find your payment link below. Click the link to complete your payment.')
 const selectedLinks = ref([])
 const analyticsData = ref({
-  totalViews: 0,
-  totalClicks: 0,
-  totalConversions: 0,
-  conversionRate: 0
+  totalLinks: 0,
+  activeLinks: 0,
+  expiredLinks: 0,
+  completedLinks: 0
 })
 
 const paymentLinks = computed(() => linksStore.paymentLinks)
@@ -424,17 +423,45 @@ const refreshLinks = async () => {
   }
 }
 
-const fetchAnalyticsData = async () => {
+const fetchAnalyticsData = () => {
   try {
-    // Mock analytics data for now - replace with actual API call
+    const links = paymentLinks.value
+    const now = new Date()
+    
+    // Calculate total links from pagination or array length
+    const totalLinks = linksStore.pagination?.total || links.length
+    
+    // Count active links (status === 'active')
+    const activeLinks = links.filter(link => link.status === 'active').length
+    
+    // Count expired links (status === 'expired' OR expires_at < now)
+    const expiredLinks = links.filter(link => {
+      if (link.status === 'expired') return true
+      if (link.expires_at) {
+        const expiryDate = new Date(link.expires_at)
+        return expiryDate < now
+      }
+      return false
+    }).length
+    
+    // Count completed links (order_id is not null)
+    const completedLinks = links.filter(link => link.order_id !== null).length
+    
     analyticsData.value = {
-      totalViews: 1247,
-      totalClicks: 389,
-      totalConversions: 47,
-      conversionRate: 12.1
+      totalLinks,
+      activeLinks,
+      expiredLinks,
+      completedLinks
     }
   } catch (error) {
-    console.error('Error fetching analytics data:', error)
+    console.error('Error calculating analytics data:', error)
+    // Reset to defaults on error
+    analyticsData.value = {
+      totalLinks: 0,
+      activeLinks: 0,
+      expiredLinks: 0,
+      completedLinks: 0
+    }
   }
 }
 
@@ -676,6 +703,11 @@ const goToPage = (page) => {
 watch([searchQuery, statusFilter], () => {
   currentPage.value = 1
 })
+
+// Recalculate analytics when payment links change
+watch(paymentLinks, () => {
+  fetchAnalyticsData()
+}, { deep: true })
 
 onMounted(() => {
   refreshLinks()

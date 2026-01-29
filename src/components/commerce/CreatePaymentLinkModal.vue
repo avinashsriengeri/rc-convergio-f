@@ -43,7 +43,7 @@
                     {{ quotesLoading ? 'Loading quotes...' : 'Select a quote...' }}
                   </option>
                   <option v-for="quote in quotes" :key="quote.id" :value="quote.id">
-                    {{ quote.quote_number || quote.title }} - ${{ formatCurrency(quote.total) }}
+                    {{ quote.quote_number || quote.title }} - {{ formatCurrencyWithSymbol(quote.total, quote.currency || 'USD') }}
                   </option>
                 </select>
                 <p class="mt-2 text-sm text-gray-500">
@@ -73,7 +73,7 @@
                 </label>
                 <div class="mt-1 relative rounded-md shadow-sm">
                   <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span class="text-gray-500 sm:text-sm">$</span>
+                    <span class="text-gray-500 sm:text-sm">{{ getCurrencySymbol(formData.currency || 'usd') }}</span>
                   </div>
                   <input
                     id="amount"
@@ -82,10 +82,14 @@
                     step="0.01"
                     min="0"
                     required
+                    :disabled="!!formData.quote_id"
                     placeholder="0.00"
-                    class="block w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-purple focus:border-primary-purple sm:text-sm"
+                    class="block w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-purple focus:border-primary-purple sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
                   />
                 </div>
+                <p v-if="formData.quote_id" class="mt-2 text-sm text-gray-500">
+                  Amount is locked to the selected quote
+                </p>
               </div>
 
               <!-- Currency -->
@@ -96,14 +100,19 @@
                 <select
                   id="currency"
                   v-model="formData.currency"
-                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-purple focus:border-primary-purple sm:text-sm"
+                  :disabled="!!formData.quote_id"
+                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-purple focus:border-primary-purple sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
                   <option value="usd">USD - US Dollar</option>
                   <option value="eur">EUR - Euro</option>
                   <option value="gbp">GBP - British Pound</option>
                   <option value="cad">CAD - Canadian Dollar</option>
                   <option value="aud">AUD - Australian Dollar</option>
+                  <option value="zar">ZAR - South African Rand</option>
                 </select>
+                <p v-if="formData.quote_id" class="mt-2 text-sm text-gray-500">
+                  Currency is locked to the selected quote
+                </p>
               </div>
 
               <!-- Description -->
@@ -237,6 +246,13 @@ const handleQuoteSelection = () => {
     formData.value.title = quoteTitle
     formData.value.amount = selectedQuote.value.total.toString()
     formData.value.description = `Payment for ${quoteTitle}`
+    // Auto-populate currency from quote (convert to lowercase for form)
+    if (selectedQuote.value.currency) {
+      formData.value.currency = selectedQuote.value.currency.toLowerCase()
+    }
+  } else {
+    // Reset currency to default when quote is deselected
+    formData.value.currency = 'usd'
   }
 }
 
@@ -263,6 +279,23 @@ const formatCurrency = (amount: number) => {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   }).format(amount)
+}
+
+const getCurrencySymbol = (currency: string) => {
+  const currencyMap: Record<string, string> = {
+    usd: '$',
+    eur: '€',
+    gbp: '£',
+    cad: 'C$',
+    aud: 'A$',
+    zar: 'R'
+  }
+  return currencyMap[currency.toLowerCase()] || currency.toUpperCase()
+}
+
+const formatCurrencyWithSymbol = (amount: number, currency: string = 'USD') => {
+  const symbol = getCurrencySymbol(currency.toLowerCase())
+  return `${symbol}${formatCurrency(amount)}`
 }
 
 const fetchQuotes = async () => {

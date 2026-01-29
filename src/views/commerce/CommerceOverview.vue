@@ -64,13 +64,13 @@
                 </svg>
               </div>
             </div>
-            <div class="ml-3">
-              <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Revenue</p>
-              <p class="text-xl font-bold text-gray-900">${{ formatCurrency(analyticsOverview?.total_revenue || stats.total_revenue || 0) }}</p>
-              <p v-if="analyticsOverview?.revenue_growth" :class="analyticsOverview?.revenue_growth >= 0 ? 'text-green-600' : 'text-red-600'" class="text-xs">
-                {{ analyticsOverview?.revenue_growth >= 0 ? '+' : '' }}{{ analyticsOverview?.revenue_growth }}%
-              </p>
-            </div>
+              <div class="ml-3">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Revenue</p>
+                <p class="text-xl font-bold text-gray-900">{{ getCurrencySymbol('ZAR') }}{{ formatCurrency(analyticsOverview?.total_revenue || stats.total_revenue || 0) }}</p>
+                <p v-if="analyticsOverview?.revenue_growth" :class="analyticsOverview?.revenue_growth >= 0 ? 'text-green-600' : 'text-red-600'" class="text-xs">
+                  {{ analyticsOverview?.revenue_growth >= 0 ? '+' : '' }}{{ analyticsOverview?.revenue_growth }}%
+                </p>
+              </div>
           </div>
         </div>
 
@@ -104,13 +104,13 @@
                 </svg>
               </div>
             </div>
-            <div class="ml-3">
-              <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Order Value</p>
-              <p class="text-xl font-bold text-gray-900">${{ formatCurrency(analyticsOverview?.average_order_value || stats.average_order_value || 0) }}</p>
-              <p v-if="analyticsOverview?.aov_growth" :class="analyticsOverview?.aov_growth >= 0 ? 'text-green-600' : 'text-red-600'" class="text-xs">
-                {{ analyticsOverview?.aov_growth >= 0 ? '+' : '' }}{{ analyticsOverview?.aov_growth }}%
-              </p>
-            </div>
+              <div class="ml-3">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Order Value</p>
+                <p class="text-xl font-bold text-gray-900">{{ getCurrencySymbol('ZAR') }}{{ formatCurrency(analyticsOverview?.average_order_value || stats.average_order_value || 0) }}</p>
+                <p v-if="analyticsOverview?.aov_growth" :class="analyticsOverview?.aov_growth >= 0 ? 'text-green-600' : 'text-red-600'" class="text-xs">
+                  {{ analyticsOverview?.aov_growth >= 0 ? '+' : '' }}{{ analyticsOverview?.aov_growth }}%
+                </p>
+              </div>
           </div>
         </div>
       </div>
@@ -147,13 +147,13 @@
                 </svg>
               </div>
             </div>
-            <div class="ml-3">
-              <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Monthly Recurring Revenue</p>
-              <p class="text-xl font-bold text-gray-900">${{ formatCurrency(subscriptionsStore.analytics.monthlyRecurringRevenue) }}</p>
-              <p v-if="subscriptionsStore.analytics.mrr_growth" :class="subscriptionsStore.analytics.mrr_growth >= 0 ? 'text-green-600' : 'text-red-600'" class="text-xs">
-                {{ subscriptionsStore.analytics.mrr_growth >= 0 ? '+' : '' }}{{ subscriptionsStore.analytics.mrr_growth }}%
-              </p>
-            </div>
+              <div class="ml-3">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Monthly Recurring Revenue</p>
+                <p class="text-xl font-bold text-gray-900">{{ getCurrencySymbol('ZAR') }}{{ formatCurrency(subscriptionsStore.analytics.monthlyRecurringRevenue) }}</p>
+                <p v-if="subscriptionsStore.analytics.mrr_growth" :class="subscriptionsStore.analytics.mrr_growth >= 0 ? 'text-green-600' : 'text-red-600'" class="text-xs">
+                  {{ subscriptionsStore.analytics.mrr_growth >= 0 ? '+' : '' }}{{ subscriptionsStore.analytics.mrr_growth }}%
+                </p>
+              </div>
           </div>
         </div>
 
@@ -187,13 +187,13 @@
                 </svg>
               </div>
             </div>
-            <div class="ml-3">
-              <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Revenue This Month</p>
-              <p class="text-xl font-bold text-gray-900">${{ formatCurrency(subscriptionsStore.analytics.revenueThisMonth) }}</p>
-              <p v-if="subscriptionsStore.analytics.monthly_revenue_growth" :class="subscriptionsStore.analytics.monthly_revenue_growth >= 0 ? 'text-green-600' : 'text-red-600'" class="text-xs">
-                {{ subscriptionsStore.analytics.monthly_revenue_growth >= 0 ? '+' : '' }}{{ subscriptionsStore.analytics.monthly_revenue_growth }}%
-              </p>
-            </div>
+              <div class="ml-3">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Revenue This Month</p>
+                <p class="text-xl font-bold text-gray-900">{{ getCurrencySymbol('ZAR') }}{{ formatCurrency(subscriptionsStore.analytics.revenueThisMonth) }}</p>
+                <p v-if="subscriptionsStore.analytics.monthly_revenue_growth" :class="subscriptionsStore.analytics.monthly_revenue_growth >= 0 ? 'text-green-600' : 'text-red-600'" class="text-xs">
+                  {{ subscriptionsStore.analytics.monthly_revenue_growth >= 0 ? '+' : '' }}{{ subscriptionsStore.analytics.monthly_revenue_growth }}%
+                </p>
+              </div>
           </div>
         </div>
       </div>
@@ -265,7 +265,7 @@
                   </div>
                 </div>
                 <div class="text-right">
-                  <p class="text-sm font-medium text-gray-900">${{ formatCurrency(transaction.amount) }}</p>
+                  <p class="text-sm font-medium text-gray-900">{{ getCurrencySymbol('ZAR') }}{{ formatCurrency(transaction.amount) }}</p>
                   <div class="flex items-center">
                     <span
                       :class="getStatusColor(transaction.status)"
@@ -509,17 +509,20 @@ const refreshData = async () => {
   loading.value = true
   analyticsLoading.value = true
   try {
+    // Fetch orders first to ensure we have data for calculations
+    await ordersStore.fetchOrders({ limit: 100 }) // Fetch more orders for accurate stats
+    await ordersStore.fetchStats()
+    
     await Promise.all([
-      ordersStore.fetchStats(),
-      ordersStore.fetchOrders({ limit: 5 }),
       linksStore.fetchPaymentLinks(),
-      analyticsStore.fetchOverview(),
+      subscriptionsStore.fetchSubscriptions(), // Fetch subscriptions for analytics calculation
+      subscriptionsStore.fetchAnalytics(),
+      analyticsStore.fetchOverview(), // This will use calculated data if API fails
       analyticsStore.fetchRevenueData(selectedPeriod.value),
       analyticsStore.fetchConversionData(selectedPeriod.value),
       analyticsStore.fetchTransactionData(selectedPeriod.value),
       analyticsStore.fetchPaymentLinkAnalytics(),
-      analyticsStore.fetchRecentTransactions(),
-      subscriptionsStore.fetchAnalytics()
+      analyticsStore.fetchRecentTransactions()
     ])
   } catch (error) {
     console.error('Error refreshing data:', error)
@@ -575,6 +578,19 @@ const exportAnalytics = async () => {
   }
 }
 
+
+const getCurrencySymbol = (currency) => {
+  const currencySymbols = {
+    'USD': '$',
+    'EUR': '€',
+    'GBP': '£',
+    'CAD': 'C$',
+    'AUD': 'A$',
+    'ZAR': 'R'
+  }
+  const currencyUpper = (currency || 'ZAR').toUpperCase()
+  return currencySymbols[currencyUpper] || currencyUpper
+}
 
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-US', {

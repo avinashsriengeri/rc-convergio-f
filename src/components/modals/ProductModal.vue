@@ -66,7 +66,7 @@
             </label>
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span class="text-gray-500 sm:text-sm">$</span>
+                <span class="text-gray-500 sm:text-sm">R</span>
               </div>
               <input
                 v-model.number="form.unit_price"

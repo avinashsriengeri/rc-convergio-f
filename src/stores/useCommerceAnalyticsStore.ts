@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
 import { commerceAPI } from '@/services/api'
+import { useCommerceOrdersStore } from './useCommerceOrdersStore'
+import { useCommerceLinksStore } from './useCommerceLinksStore'
 
 export interface AnalyticsOverview {
   total_revenue: number
@@ -98,25 +100,56 @@ export const useCommerceAnalyticsStore = defineStore('commerceAnalytics', {
   },
 
   actions: {
+    // Calculate overview from actual data (orders, payment links, etc.)
+    calculateOverviewFromData(ordersStore, linksStore) {
+      const orders = ordersStore?.orders || []
+      const stats = ordersStore?.stats || { total_orders: 0, total_revenue: 0, average_order_value: 0 }
+      
+      // Use stats from orders store if available
+      const totalOrders = stats.total_orders || orders.length || 0
+      const totalRevenue = stats.total_revenue || 0
+      const averageOrderValue = stats.average_order_value || 0
+      
+      // Calculate conversion rate from payment links
+      // This is a simplified calculation - you may need to adjust based on your business logic
+      const paymentLinks = linksStore?.paymentLinks || []
+      const totalViews = paymentLinks.reduce((sum, link) => sum + (link.views || 0), 0)
+      const totalConversions = paymentLinks.reduce((sum, link) => sum + (link.conversions || 0), 0)
+      const conversionRate = totalViews > 0 ? (totalConversions / totalViews) * 100 : 0
+      
+      this.overview = {
+        total_revenue: parseFloat(totalRevenue.toFixed(2)),
+        total_orders: totalOrders,
+        conversion_rate: parseFloat(conversionRate.toFixed(2)),
+        average_order_value: parseFloat(averageOrderValue.toFixed(2)),
+        revenue_growth: 0, // Growth calculations require historical data
+        orders_growth: 0,
+        conversion_growth: 0,
+        aov_growth: 0
+      }
+      
+      console.log('Overview calculated from actual data:', this.overview)
+    },
+
     async fetchOverview() {
       this.loading = true
       this.error = null
       try {
         const response = await commerceAPI.getCommerceAnalytics({ type: 'overview' })
-        this.overview = response.data.data
-      } catch (error) {
-        console.warn('Analytics API not available, using mock data:', error)
-        // Mock data for development
-        this.overview = {
-          total_revenue: 45678.90,
-          total_orders: 156,
-          conversion_rate: 12.5,
-          average_order_value: 292.81,
-          revenue_growth: 15.2,
-          orders_growth: 8.7,
-          conversion_growth: -2.1,
-          aov_growth: 5.3
+        if (response?.data?.data) {
+          this.overview = response.data.data
+        } else {
+          // If API returns empty data, calculate from actual data
+          const ordersStore = useCommerceOrdersStore()
+          const linksStore = useCommerceLinksStore()
+          this.calculateOverviewFromData(ordersStore, linksStore)
         }
+      } catch (error) {
+        console.warn('Analytics API not available, calculating from actual data:', error)
+        // Calculate from actual data instead of using mock data
+        const ordersStore = useCommerceOrdersStore()
+        const linksStore = useCommerceLinksStore()
+        this.calculateOverviewFromData(ordersStore, linksStore)
       } finally {
         this.loading = false
       }
@@ -145,9 +178,9 @@ export const useCommerceAnalyticsStore = defineStore('commerceAnalytics', {
         
         console.log('Transformed revenue data:', this.revenueData)
       } catch (error) {
-        console.warn('Revenue API not available, using mock data:', error)
-        // Generate mock data for the last 30 days
-        this.revenueData = this.generateMockRevenueData(period)
+        console.warn('Revenue API not available, using empty data:', error)
+        // Return empty array instead of mock data
+        this.revenueData = []
       } finally {
         this.loading = false
       }
@@ -160,9 +193,9 @@ export const useCommerceAnalyticsStore = defineStore('commerceAnalytics', {
         const response = await commerceAPI.getCommerceAnalytics({ type: 'conversion', period })
         this.conversionData = response.data.data
       } catch (error) {
-        console.warn('Conversion API not available, using mock data:', error)
-        // Generate mock conversion data
-        this.conversionData = this.generateMockConversionData(period)
+        console.warn('Conversion API not available, using empty data:', error)
+        // Return empty array instead of mock data
+        this.conversionData = []
       } finally {
         this.loading = false
       }
@@ -175,9 +208,9 @@ export const useCommerceAnalyticsStore = defineStore('commerceAnalytics', {
         const response = await commerceAPI.getCommerceAnalytics({ type: 'transactions', period })
         this.transactionData = response.data.data
       } catch (error) {
-        console.warn('Transaction API not available, using mock data:', error)
-        // Generate mock transaction data
-        this.transactionData = this.generateMockTransactionData(period)
+        console.warn('Transaction API not available, using empty data:', error)
+        // Return empty array instead of mock data
+        this.transactionData = []
       } finally {
         this.loading = false
       }
@@ -190,37 +223,9 @@ export const useCommerceAnalyticsStore = defineStore('commerceAnalytics', {
         const response = await commerceAPI.getCommerceAnalytics({ type: 'payment-links' })
         this.paymentLinkAnalytics = response.data.data
       } catch (error) {
-        console.warn('Payment link analytics API not available, using mock data:', error)
-        // Mock data for development
-        this.paymentLinkAnalytics = [
-          {
-            id: 1,
-            name: 'Website Development Quote',
-            views: 245,
-            clicks: 89,
-            conversions: 12,
-            conversion_rate: 13.5,
-            revenue: 3599.99
-          },
-          {
-            id: 2,
-            name: 'Mobile App Development',
-            views: 189,
-            clicks: 67,
-            conversions: 8,
-            conversion_rate: 11.9,
-            revenue: 4999.99
-          },
-          {
-            id: 3,
-            name: 'E-commerce Platform',
-            views: 156,
-            clicks: 45,
-            conversions: 6,
-            conversion_rate: 13.3,
-            revenue: 7999.99
-          }
-        ]
+        console.warn('Payment link analytics API not available, using empty data:', error)
+        // Return empty array instead of mock data
+        this.paymentLinkAnalytics = []
       } finally {
         this.loading = false
       }
@@ -234,38 +239,23 @@ export const useCommerceAnalyticsStore = defineStore('commerceAnalytics', {
         console.log('Recent transactions API response:', response.data)
         this.recentTransactions = response.data.data || []
       } catch (error) {
-        console.warn('Recent transactions API not available, using mock data:', error)
-        // Mock data for development
-        this.recentTransactions = [
-          {
-            id: 1,
-            order_number: 'ORD-2025-001',
-            customer_name: 'John Doe',
-            amount: 1299.99,
-            status: 'completed',
-            payment_provider: 'stripe',
-            created_at: '2025-10-15T10:30:00Z'
-          },
-          {
-            id: 2,
-            order_number: 'ORD-2025-002',
-            customer_name: 'Jane Smith',
-            amount: 2499.99,
-            status: 'pending',
-            payment_provider: 'stripe',
-            created_at: '2025-10-15T09:15:00Z'
-          },
-          {
-            id: 3,
-            order_number: 'ORD-2025-003',
-            customer_name: 'Bob Johnson',
-            amount: 899.99,
-            status: 'failed',
-            payment_provider: 'stripe',
-            created_at: '2025-10-15T08:45:00Z'
-          }
-        ]
-        console.log('Using mock recent transactions:', this.recentTransactions)
+        console.warn('Recent transactions API not available, calculating from orders:', error)
+        // Calculate from actual orders data
+        const ordersStore = useCommerceOrdersStore()
+        const orders = ordersStore.orders || []
+        
+        // Transform orders to recent transactions format
+        this.recentTransactions = orders.slice(0, limit).map(order => ({
+          id: order.id,
+          order_number: order.order_number || order.id?.toString() || `ORD-${order.id}`,
+          customer_name: order.customer_name || order.customer?.name || 'Unknown',
+          amount: parseFloat(order.total || order.amount || order.total_amount || 0),
+          status: order.status || 'pending',
+          payment_provider: order.payment_provider || order.payment_method || 'unknown',
+          created_at: order.created_at || new Date().toISOString()
+        }))
+        
+        console.log('Recent transactions calculated from orders:', this.recentTransactions)
       } finally {
         this.loading = false
       }

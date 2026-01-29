@@ -143,7 +143,7 @@
                 {{ product.sku || '-' }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                ${{ formatCurrency(product.unit_price) }}
+                R{{ formatCurrency(product.unit_price) }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 {{ product.tax_rate }}%

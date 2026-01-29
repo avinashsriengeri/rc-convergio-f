@@ -62,7 +62,7 @@
               </div>
               <div class="ml-3">
                 <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Monthly Recurring Revenue</p>
-                <p class="text-xl font-bold text-gray-900">${{ formatCurrency(subscriptionsStore.analytics?.monthlyRecurringRevenue) }}</p>
+                <p class="text-xl font-bold text-gray-900">{{ getCurrencySymbol('ZAR') }}{{ formatCurrency(subscriptionsStore.analytics?.monthlyRecurringRevenue) }}</p>
               </div>
             </div>
           </div>
@@ -100,7 +100,7 @@
               </div>
               <div class="ml-3">
                 <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Revenue This Month</p>
-                <p class="text-xl font-bold text-gray-900">${{ formatCurrency(subscriptionsStore.analytics?.revenueThisMonth) }}</p>
+                <p class="text-xl font-bold text-gray-900">{{ getCurrencySymbol('ZAR') }}{{ formatCurrency(subscriptionsStore.analytics?.revenueThisMonth) }}</p>
               </div>
             </div>
           </div>
@@ -150,7 +150,7 @@
               <div>
                 <div class="flex items-baseline justify-between mb-2">
                   <span class="text-sm font-medium text-gray-600">Total MRR</span>
-                  <span class="text-2xl font-semibold text-gray-900">${{ formatCurrency(subscriptionsStore.analytics?.monthlyRecurringRevenue) }}</span>
+                  <span class="text-2xl font-semibold text-gray-900">{{ getCurrencySymbol('ZAR') }}{{ formatCurrency(subscriptionsStore.analytics?.monthlyRecurringRevenue) }}</span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2">
                   <div class="bg-green-500 h-2 rounded-full" style="width: 75%"></div>
@@ -161,7 +161,7 @@
               <div>
                 <div class="flex items-baseline justify-between mb-2">
                   <span class="text-sm font-medium text-gray-600">This Month</span>
-                  <span class="text-2xl font-semibold text-gray-900">${{ formatCurrency(subscriptionsStore.analytics?.revenueThisMonth) }}</span>
+                  <span class="text-2xl font-semibold text-gray-900">{{ getCurrencySymbol('ZAR') }}{{ formatCurrency(subscriptionsStore.analytics?.revenueThisMonth) }}</span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2">
                   <div class="bg-blue-500 h-2 rounded-full" style="width: 60%"></div>
@@ -228,6 +228,19 @@ const revenueChart = ref(null)
 const hasError = ref(false)
 const analyticsLoading = ref(false)
 let chartInstance = null
+
+const getCurrencySymbol = (currency) => {
+  const currencySymbols = {
+    'USD': '$',
+    'EUR': '€',
+    'GBP': '£',
+    'CAD': 'C$',
+    'AUD': 'A$',
+    'ZAR': 'R'
+  }
+  const currencyUpper = (currency || 'ZAR').toUpperCase()
+  return currencySymbols[currencyUpper] || currencyUpper
+}
 
 const formatCurrency = (amount) => {
   if (!amount) return '0.00'
@@ -411,7 +424,7 @@ const createRevenueChart = () => {
           tooltip: {
             callbacks: {
               label: function(context) {
-                return 'Revenue: $' + context.parsed.y.toLocaleString()
+                return 'Revenue: R' + context.parsed.y.toLocaleString()
               }
             }
           }
@@ -421,7 +434,7 @@ const createRevenueChart = () => {
             beginAtZero: true,
             ticks: {
               callback: function(value) {
-                return '$' + value.toLocaleString()
+                return 'R' + value.toLocaleString()
               }
             },
             grid: {

@@ -81,22 +81,22 @@
 
                 <div>
                   <label class="block text-sm font-medium text-gray-700">Subtotal</label>
-                  <p class="mt-1 text-sm text-gray-900">${{ formatCurrency(detailedOrder?.subtotal || 0) }}</p>
+                  <p class="mt-1 text-sm text-gray-900">{{ getCurrencySymbol(getOrderCurrency()) }}{{ formatCurrency(detailedOrder?.subtotal || 0) }}</p>
                 </div>
 
                 <div v-if="detailedOrder?.tax && parseFloat(detailedOrder.tax) > 0">
                   <label class="block text-sm font-medium text-gray-700">Tax</label>
-                  <p class="mt-1 text-sm text-gray-900">${{ formatCurrency(detailedOrder.tax) }}</p>
+                  <p class="mt-1 text-sm text-gray-900">{{ getCurrencySymbol(getOrderCurrency()) }}{{ formatCurrency(detailedOrder.tax) }}</p>
                 </div>
 
                 <div v-if="detailedOrder?.discount && parseFloat(detailedOrder.discount) > 0">
                   <label class="block text-sm font-medium text-gray-700">Discount</label>
-                  <p class="mt-1 text-sm text-gray-900">-${{ formatCurrency(detailedOrder.discount) }}</p>
+                  <p class="mt-1 text-sm text-gray-900">-{{ getCurrencySymbol(getOrderCurrency()) }}{{ formatCurrency(detailedOrder.discount) }}</p>
                 </div>
 
                 <div>
                   <label class="block text-sm font-medium text-gray-700">Total Amount</label>
-                  <p class="mt-1 text-lg font-semibold text-gray-900">${{ formatCurrency(detailedOrder?.total_amount || detailedOrder?.total || order.total || 0) }}</p>
+                  <p class="mt-1 text-lg font-semibold text-gray-900">{{ getCurrencySymbol(getOrderCurrency()) }}{{ formatCurrency(detailedOrder?.total_amount || detailedOrder?.total || order.total || 0) }}</p>
                 </div>
 
                 <div>
@@ -224,6 +224,16 @@
             Close
           </button>
           <button
+            v-if="orderInvoice && !invoiceLoading"
+            @click="openInvoiceModal"
+            class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-purple hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-purple"
+          >
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            View Invoice
+          </button>
+          <button
             v-if="order.payment_status === 'pending'"
             class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
@@ -238,12 +248,21 @@
         </div>
       </div>
     </div>
+    
+    <!-- Invoice Detail Modal -->
+    <OrderInvoiceDetailModal
+      v-if="showInvoiceModal && orderInvoice"
+      :invoice="orderInvoice"
+      @close="showInvoiceModal = false"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue'
 import { useCommerceOrdersStore } from '@/stores/useCommerceOrdersStore'
+import { commerceAPI } from '@/services/api'
+import OrderInvoiceDetailModal from './OrderInvoiceDetailModal.vue'
 
 const props = defineProps({
   order: {
@@ -258,6 +277,9 @@ const ordersStore = useCommerceOrdersStore()
 const detailedOrder = ref(null)
 const loading = ref(false)
 const error = ref(null)
+const orderInvoice = ref(null)
+const invoiceLoading = ref(false)
+const showInvoiceModal = ref(false)
 
 // Fetch detailed order data when modal opens
 const fetchOrderDetails = async () => {
@@ -269,6 +291,8 @@ const fetchOrderDetails = async () => {
   try {
     const orderData = await ordersStore.fetchOrder(props.order.id)
     detailedOrder.value = orderData
+    // Check for invoice after order is loaded
+    await checkForInvoice()
   } catch (err) {
     console.error('Error fetching order details:', err)
     error.value = 'Failed to load order details'
@@ -279,12 +303,59 @@ const fetchOrderDetails = async () => {
   }
 }
 
+// Check if invoice exists for this order
+const checkForInvoice = async () => {
+  if (!props.order?.id) return
+  
+  invoiceLoading.value = true
+  try {
+    const response = await commerceAPI.getOrderInvoicesByOrder(props.order.id)
+    if (response.data?.success && response.data?.data?.length > 0) {
+      // Get the first invoice (most recent)
+      const invoiceId = response.data.data[0].id
+      const invoiceResponse = await commerceAPI.getOrderInvoice(invoiceId)
+      if (invoiceResponse.data?.success && invoiceResponse.data?.data?.invoice) {
+        orderInvoice.value = invoiceResponse.data.data.invoice
+      }
+    }
+  } catch (err) {
+    // Invoice not found or error - silently fail, just don't show button
+    console.log('No invoice found for this order:', err)
+    orderInvoice.value = null
+  } finally {
+    invoiceLoading.value = false
+  }
+}
+
+// Open invoice detail modal
+const openInvoiceModal = () => {
+  showInvoiceModal.value = true
+}
+
 // Watch for order changes and fetch details
 watch(() => props.order, () => {
   if (props.order) {
     fetchOrderDetails()
   }
 }, { immediate: true })
+
+const getCurrencySymbol = (currency) => {
+  const currencySymbols = {
+    'USD': '$',
+    'EUR': '€',
+    'GBP': '£',
+    'CAD': 'C$',
+    'AUD': 'A$',
+    'ZAR': 'R'
+  }
+  const currencyUpper = (currency || 'ZAR').toUpperCase()
+  return currencySymbols[currencyUpper] || currencyUpper
+}
+
+const getOrderCurrency = () => {
+  // Get currency from detailedOrder or order, default to ZAR
+  return (detailedOrder.value?.currency || props.order?.currency || 'ZAR').toUpperCase()
+}
 
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-US', {

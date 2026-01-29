@@ -64,6 +64,9 @@ export const useCommerceOrdersStore = defineStore('commerceOrders', {
           }
         }
         
+        // Recalculate stats after fetching orders
+        this.calculateStatsFromOrders()
+        
         return response.data
       } catch (error) {
         this.error = error.response?.data?.message || 'Failed to fetch orders'
@@ -72,6 +75,42 @@ export const useCommerceOrdersStore = defineStore('commerceOrders', {
       } finally {
         this.loading = false
       }
+    },
+
+    // Calculate stats from actual orders data
+    calculateStatsFromOrders() {
+      const orders = this.orders || []
+      
+      if (orders.length === 0) {
+        this.stats = {
+          total_orders: 0,
+          total_revenue: 0,
+          average_order_value: 0
+        }
+        return this.stats
+      }
+      
+      // Calculate total orders
+      const totalOrders = orders.length
+      
+      // Calculate total revenue (sum of all order amounts)
+      const totalRevenue = orders.reduce((sum, order) => {
+        // Handle different possible field names for amount
+        const amount = order.total || order.amount || order.total_amount || 0
+        return sum + parseFloat(amount || 0)
+      }, 0)
+      
+      // Calculate average order value
+      const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0
+      
+      this.stats = {
+        total_orders: totalOrders,
+        total_revenue: parseFloat(totalRevenue.toFixed(2)),
+        average_order_value: parseFloat(averageOrderValue.toFixed(2))
+      }
+      
+      console.log('Stats calculated from orders:', this.stats)
+      return this.stats
     },
 
     // Fetch order stats used by the overview cards
@@ -90,7 +129,9 @@ export const useCommerceOrdersStore = defineStore('commerceOrders', {
       } catch (error) {
         this.error = error.response?.data?.message || 'Failed to fetch order stats'
         console.error('Error fetching order stats:', error)
-        throw error
+        // Calculate from actual orders data as fallback
+        this.calculateStatsFromOrders()
+        return this.stats
       } finally {
         this.loading = false
       }

@@ -678,6 +678,12 @@ const routes = [
         meta: { requiresAuth: true }
       },
       {
+        path: 'invoices',
+        name: 'CommerceOrderInvoices',
+        component: () => import('./views/commerce/CommerceOrderInvoices.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
         path: 'payment-links',
         name: 'CommercePaymentLinks',
         component: () => import('./views/commerce/CommercePaymentLinks.vue'),

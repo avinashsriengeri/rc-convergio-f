@@ -338,7 +338,7 @@
                   >
                     <option value="">Add from Product Library</option>
                     <option v-for="product in (products || [])" :key="product.id" :value="product.id">
-                      {{ product.name }} - ${{ formatCurrency(product.unit_price) }}
+                      {{ product.name }} - R{{ formatCurrency(product.unit_price) }}
                     </option>
                   </select>
                   <div v-if="productsLoading" class="absolute inset-y-0 right-0 flex items-center pr-2">

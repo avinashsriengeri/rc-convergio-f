@@ -186,7 +186,7 @@
                 {{ quote.creator?.name || 'Unknown' }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                ${{ formatCurrency(quote.total) }}
+                {{ formatCurrency(quote.total, quote.currency || 'USD') }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 {{ quote.currency || 'USD' }}
@@ -535,12 +535,21 @@ const exportQuotes = async () => {
   }
 }
 
-const formatCurrency = (amount) => {
-  if (!amount) return '0.00'
-  return new Intl.NumberFormat('en-US', {
+const formatCurrency = (amount, currency = 'USD') => {
+  if (!amount && amount !== 0) return '0.00'
+  const currencySymbols = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    CAD: 'C$',
+    AUD: 'A$',
+    ZAR: 'R'
+  }
+  const symbol = currencySymbols[currency] || currency
+  return `${symbol}${new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
-  }).format(amount)
+  }).format(amount)}`
 }
 
 const formatDate = (date) => {

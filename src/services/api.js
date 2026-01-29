@@ -624,10 +624,19 @@ export const commerceAPI = {
   },
   resetBranding: () => api.post('/commerce/branding/reset'),
   
-  // Invoice API endpoints
+  // Invoice API endpoints (Subscription invoices)
   viewInvoicePDF: (invoiceId) => api.get(`/commerce/invoices/${invoiceId}/preview`),
   downloadInvoicePDF: (invoiceId) => api.get(`/commerce/invoices/${invoiceId}/download`, { responseType: 'blob' }),
   sendInvoiceEmail: (invoiceId) => api.post(`/commerce/invoices/${invoiceId}/send-email`),
+  
+  // Order Invoice API endpoints
+  getOrderInvoices: (params = {}) => api.get('/commerce/order-invoices', { params }),
+  getOrderInvoice: (id) => api.get(`/commerce/order-invoices/${id}`),
+  getOrderInvoicesByOrder: (orderId) => api.get(`/commerce/order-invoices/order/${orderId}`),
+  getOrderInvoicesByQuote: (quoteId) => api.get(`/commerce/order-invoices/quote/${quoteId}`),
+  downloadOrderInvoicePDF: (id) => api.get(`/commerce/order-invoices/${id}/download`, { responseType: 'blob' }),
+  previewOrderInvoice: (id) => api.get(`/commerce/order-invoices/${id}/preview`),
+  sendOrderInvoiceEmail: (id) => api.post(`/commerce/order-invoices/${id}/send-email`),
 }
 
 // CMS / Content Platform API endpoints

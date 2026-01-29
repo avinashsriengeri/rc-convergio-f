@@ -219,6 +219,9 @@ export const useCommerceSubscriptionsStore = defineStore('commerceSubscriptions'
           this.subscriptions = []
           console.error('No valid subscription data found in response')
         }
+        
+        // Recalculate analytics after fetching subscriptions
+        this.calculateAnalyticsFromSubscriptions()
       } catch (error) {
         this.subscriptionsError = error.response?.data?.message || 'Failed to fetch subscriptions'
         console.error('Error fetching subscriptions:', error)
@@ -263,6 +266,8 @@ export const useCommerceSubscriptionsStore = defineStore('commerceSubscriptions'
             }
           }
         ]
+        // Calculate analytics from fallback data
+        this.calculateAnalyticsFromSubscriptions()
       } finally {
         this.subscriptionsLoading = false
       }
@@ -427,11 +432,86 @@ export const useCommerceSubscriptionsStore = defineStore('commerceSubscriptions'
       }
     },
 
+    // Calculate analytics from actual subscription data
+    calculateAnalyticsFromSubscriptions() {
+      const subscriptions = this.subscriptions || []
+      
+      if (subscriptions.length === 0) {
+        this.analytics = {
+          activeSubscriptions: 0,
+          monthlyRecurringRevenue: 0,
+          churnRate: 0,
+          revenueThisMonth: 0,
+          mrrTrend: []
+        }
+        return
+      }
+      
+      // Calculate Active Subscriptions
+      const activeSubscriptions = subscriptions.filter(sub => sub.status === 'active')
+      const activeSubscriptionsCount = activeSubscriptions.length
+      
+      // Calculate Monthly Recurring Revenue (MRR)
+      // Sum of plan.amount_cents / 100 for all active subscriptions
+      const monthlyRecurringRevenue = activeSubscriptions.reduce((total, sub) => {
+        const plan = sub.plan
+        if (plan && plan.amount_cents) {
+          return total + (plan.amount_cents / 100)
+        }
+        return total
+      }, 0)
+      
+      // Calculate Churn Rate
+      // (canceled subscriptions / total subscriptions) * 100
+      const canceledSubscriptions = subscriptions.filter(sub => 
+        sub.status === 'canceled' || sub.status === 'cancelled'
+      ).length
+      const totalSubscriptions = subscriptions.length
+      const churnRate = totalSubscriptions > 0 
+        ? ((canceledSubscriptions / totalSubscriptions) * 100).toFixed(1)
+        : 0
+      
+      // Calculate Revenue This Month
+      // Sum of paid invoices for current month
+      const now = new Date()
+      const currentMonth = now.getMonth()
+      const currentYear = now.getFullYear()
+      
+      const revenueThisMonth = subscriptions.reduce((total, sub) => {
+        if (!sub.invoices || !Array.isArray(sub.invoices)) {
+          return total
+        }
+        
+        return sub.invoices.reduce((invoiceTotal, invoice) => {
+          // Check if invoice is paid and paid in current month
+          if (invoice.status === 'paid' && invoice.paid_at) {
+            const paidDate = new Date(invoice.paid_at)
+            if (paidDate.getMonth() === currentMonth && paidDate.getFullYear() === currentYear) {
+              return invoiceTotal + (invoice.amount_cents / 100)
+            }
+          }
+          return invoiceTotal
+        }, total)
+      }, 0)
+      
+      // Update analytics
+      this.analytics = {
+        activeSubscriptions: activeSubscriptionsCount,
+        monthlyRecurringRevenue: parseFloat(monthlyRecurringRevenue.toFixed(2)),
+        churnRate: parseFloat(churnRate),
+        revenueThisMonth: parseFloat(revenueThisMonth.toFixed(2)),
+        mrrTrend: this.analytics?.mrrTrend || [] // Keep existing trend data if available
+      }
+      
+      console.log('Analytics calculated from subscriptions:', this.analytics)
+    },
+
     // Analytics Actions
     async fetchAnalytics() {
       this.analyticsLoading = true
       this.analyticsError = null
       try {
+        // First, try to get analytics from API
         const response = await commerceAPI.getCommerceAnalytics({ type: 'subscriptions' })
         console.log('Analytics response:', response)
         if (response && response.data && response.data.data) {
@@ -446,38 +526,14 @@ export const useCommerceSubscriptionsStore = defineStore('commerceSubscriptions'
           }
           console.log('Analytics set from API:', this.analytics)
         } else {
-          // Use existing analytics or fallback to mock data
-          this.analytics = this.analytics || {
-            activeSubscriptions: 15,
-            monthlyRecurringRevenue: 1250.00,
-            churnRate: 5.2,
-            revenueThisMonth: 1250.00,
-            mrrTrend: [
-              { month: 'Jan', mrr: 1000 },
-              { month: 'Feb', mrr: 1100 },
-              { month: 'Mar', mrr: 1200 },
-              { month: 'Apr', mrr: 1250 }
-            ]
-          }
-          console.log('Analytics set from fallback:', this.analytics)
+          // Calculate from actual subscription data
+          this.calculateAnalyticsFromSubscriptions()
         }
       } catch (error) {
         this.analyticsError = error.response?.data?.message || 'Failed to fetch subscription analytics'
         console.error('Error fetching subscription analytics:', error)
-        // Fallback to mock data
-        this.analytics = {
-          activeSubscriptions: 15,
-          monthlyRecurringRevenue: 1250.00,
-          churnRate: 5.2,
-          revenueThisMonth: 1250.00,
-          mrrTrend: [
-            { month: 'Jan', mrr: 1000 },
-            { month: 'Feb', mrr: 1100 },
-            { month: 'Mar', mrr: 1200 },
-            { month: 'Apr', mrr: 1250 }
-          ]
-        }
-        console.log('Analytics set from error fallback:', this.analytics)
+        // Calculate from actual subscription data as fallback
+        this.calculateAnalyticsFromSubscriptions()
       } finally {
         this.analyticsLoading = false
       }

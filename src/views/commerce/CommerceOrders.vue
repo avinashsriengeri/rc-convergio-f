@@ -46,7 +46,7 @@
               </div>
               <div class="ml-3">
                 <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Paid</p>
-                <p class="text-xl font-bold text-gray-900">${{ formatCurrency(transactionStats.totalPaid) }}</p>
+                <p class="text-xl font-bold text-gray-900">{{ getCurrencySymbol(transactionStats.currency) }}{{ formatCurrency(transactionStats.totalPaid) }}</p>
               </div>
             </div>
           </div>
@@ -80,7 +80,7 @@
               </div>
               <div class="ml-3">
                 <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Refunded</p>
-                <p class="text-xl font-bold text-gray-900">${{ formatCurrency(transactionStats.totalRefunded) }}</p>
+                <p class="text-xl font-bold text-gray-900">{{ getCurrencySymbol(transactionStats.currency) }}{{ formatCurrency(transactionStats.totalRefunded) }}</p>
               </div>
             </div>
           </div>
@@ -231,7 +231,7 @@
                   <div class="text-sm text-gray-500">{{ getCustomerEmail(order) }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">${{ formatCurrency(order.total_amount || 0) }}</div>
+                  <div class="text-sm font-medium text-gray-900">{{ getCurrencySymbol(order.currency) }}{{ formatCurrency(order.total_amount || 0) }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
@@ -382,11 +382,13 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useCommerceOrdersStore } from '@/stores/useCommerceOrdersStore'
+import { useCommerceSettingsStore } from '@/stores/useCommerceSettingsStore'
 import OrderDetailModal from '@/components/commerce/OrderDetailModal.vue'
 import OrderEditModal from '@/components/commerce/OrderEditModal.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 
 const ordersStore = useCommerceOrdersStore()
+const settingsStore = useCommerceSettingsStore()
 
 const loading = ref(false)
 const searchQuery = ref('')
@@ -401,7 +403,8 @@ const transactionStats = ref({
   totalPaid: 0,
   failedCount: 0,
   totalRefunded: 0,
-  successRate: 0
+  successRate: 0,
+  currency: 'ZAR' // Default to ZAR, will be determined from orders
 })
 
 const orders = computed(() => ordersStore.orders)
@@ -491,16 +494,38 @@ const fetchTransactionStats = async () => {
   try {
     // Calculate transaction stats from actual order data
     const orders = ordersStore.orders
-    const totalPaid = orders.filter(o => o.status === 'paid').reduce((sum, o) => sum + parseFloat(o.total_amount || 0), 0)
+    
+    // Determine primary currency from orders
+    // Count currency occurrences in paid orders (most relevant for stats)
+    const paidOrders = orders.filter(o => o.status === 'paid')
+    const currencyCounts = {}
+    
+    paidOrders.forEach(order => {
+      const currency = (order.currency || 'ZAR').toUpperCase()
+      currencyCounts[currency] = (currencyCounts[currency] || 0) + 1
+    })
+    
+    // Get most common currency, or fallback to commerce settings, or default to ZAR
+    let primaryCurrency = 'ZAR'
+    if (Object.keys(currencyCounts).length > 0) {
+      primaryCurrency = Object.keys(currencyCounts).reduce((a, b) => 
+        currencyCounts[a] > currencyCounts[b] ? a : b
+      )
+    } else if (settingsStore.settings?.currency) {
+      primaryCurrency = settingsStore.settings.currency.toUpperCase()
+    }
+    
+    const totalPaid = paidOrders.reduce((sum, o) => sum + parseFloat(o.total_amount || 0), 0)
     const failedCount = orders.filter(o => o.status === 'failed').length
     const totalRefunded = orders.filter(o => o.status === 'refunded').reduce((sum, o) => sum + parseFloat(o.total_amount || 0), 0)
-    const successRate = orders.length > 0 ? ((orders.filter(o => o.status === 'paid').length / orders.length) * 100).toFixed(1) : 0
+    const successRate = orders.length > 0 ? ((paidOrders.length / orders.length) * 100).toFixed(1) : 0
 
     transactionStats.value = {
       totalPaid,
       failedCount,
       totalRefunded,
-      successRate
+      successRate,
+      currency: primaryCurrency
     }
   } catch (error) {
     console.error('Error fetching transaction stats:', error)
@@ -609,6 +634,19 @@ const deleteOrder = async (order) => {
       }
     }
   }
+}
+
+const getCurrencySymbol = (currency) => {
+  const currencySymbols = {
+    'USD': '$',
+    'EUR': '€',
+    'GBP': '£',
+    'CAD': 'C$',
+    'AUD': 'A$',
+    'ZAR': 'R'
+  }
+  const currencyUpper = (currency || 'ZAR').toUpperCase()
+  return currencySymbols[currencyUpper] || currencyUpper
 }
 
 const formatCurrency = (amount) => {

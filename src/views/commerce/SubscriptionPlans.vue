@@ -77,7 +77,7 @@
             </div>
             <div class="ml-3 flex-1">
               <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Avg. Price</p>
-              <p class="text-xl font-bold text-gray-900">${{ averagePrice }}</p>
+              <p class="text-xl font-bold text-gray-900">{{ averagePrice.symbol }}{{ averagePrice.value }}</p>
             </div>
           </div>
         </div>
@@ -181,13 +181,36 @@ const showModal = ref(false)
 const editingPlan = ref(null)
 const hasError = ref(false)
 
+const getCurrencySymbol = (currency) => {
+  const currencySymbols = {
+    'USD': '$',
+    'EUR': '€',
+    'GBP': '£',
+    'CAD': 'C$',
+    'AUD': 'A$',
+    'ZAR': 'R'
+  }
+  const currencyUpper = (currency || 'ZAR').toUpperCase()
+  return currencySymbols[currencyUpper] || currencyUpper
+}
+
 const averagePrice = computed(() => {
-  if (subscriptionsStore.plans.length === 0) return '0.00'
+  if (subscriptionsStore.plans.length === 0) {
+    return { value: '0.00', symbol: 'R' }
+  }
+  
   const total = subscriptionsStore.plans.reduce((sum, plan) => {
     const price = plan.amount_cents ? plan.amount_cents / 100 : parseFloat(plan.price || 0)
     return sum + price
   }, 0)
-  return (total / subscriptionsStore.plans.length).toFixed(2)
+  
+  const avg = (total / subscriptionsStore.plans.length).toFixed(2)
+  
+  // Default to ZAR for display (plans are primarily ZAR-based)
+  // This ensures consistency with plan cards which display ZAR
+  const symbol = getCurrencySymbol('ZAR')
+  
+  return { value: avg, symbol }
 })
 
 const stripeSyncedCount = computed(() => {

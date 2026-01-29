@@ -141,16 +141,16 @@
                       {{ item.quantity }}
                     </td>
                     <td class="px-4 py-4 whitespace-nowrap text-right text-sm text-gray-900">
-                      ${{ formatCurrency(item.unit_price) }}
+                      {{ formatCurrency(item.unit_price, quote.currency || 'USD') }}
                     </td>
                     <td class="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-900">
-                      ${{ formatCurrency(item.discount) }}
+                      {{ formatCurrency(item.discount, quote.currency || 'USD') }}
                     </td>
                     <td class="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-900">
                       {{ item.tax_rate }}%
                     </td>
                     <td class="px-4 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900">
-                      ${{ formatCurrency(item.total) }}
+                      {{ formatCurrency(item.total, quote.currency || 'USD') }}
                     </td>
                   </tr>
                 </tbody>
@@ -162,7 +162,7 @@
               <div v-for="(item, index) in quote.items" :key="index" class="border border-gray-200 rounded-lg p-4">
                 <div class="flex justify-between items-start mb-2">
                   <h4 class="font-medium text-gray-900">{{ item.name }}</h4>
-                  <span class="text-sm font-medium text-gray-900">${{ formatCurrency(item.total) }}</span>
+                  <span class="text-sm font-medium text-gray-900">{{ formatCurrency(item.total, quote.currency || 'USD') }}</span>
                 </div>
                 <p v-if="item.description" class="text-sm text-gray-600 mb-2">{{ item.description }}</p>
                 <div class="grid grid-cols-2 gap-2 text-sm">
@@ -172,11 +172,11 @@
                   </div>
                   <div>
                     <span class="text-gray-500">Unit Price:</span>
-                    <span class="ml-1">${{ formatCurrency(item.unit_price) }}</span>
+                    <span class="ml-1">{{ formatCurrency(item.unit_price, quote.currency || 'USD') }}</span>
                   </div>
                   <div>
                     <span class="text-gray-500">Discount:</span>
-                    <span class="ml-1">${{ formatCurrency(item.discount) }}</span>
+                    <span class="ml-1">{{ formatCurrency(item.discount, quote.currency || 'USD') }}</span>
                   </div>
                   <div>
                     <span class="text-gray-500">Tax:</span>
@@ -193,19 +193,19 @@
             <div class="space-y-3">
               <div class="flex justify-between text-sm">
                 <span class="text-gray-600">Subtotal:</span>
-                <span class="font-medium text-gray-900">${{ formatCurrency(quote.subtotal) }}</span>
+                <span class="font-medium text-gray-900">{{ formatCurrency(quote.subtotal, quote.currency || 'USD') }}</span>
               </div>
               <div v-if="quote.discount > 0" class="flex justify-between text-sm">
                 <span class="text-gray-600">Discount:</span>
-                <span class="font-medium text-red-600">-${{ formatCurrency(quote.discount) }}</span>
+                <span class="font-medium text-red-600">-{{ formatCurrency(quote.discount, quote.currency || 'USD') }}</span>
               </div>
               <div v-if="quote.tax > 0" class="flex justify-between text-sm">
                 <span class="text-gray-600">Tax:</span>
-                <span class="font-medium text-gray-900">${{ formatCurrency(quote.tax) }}</span>
+                <span class="font-medium text-gray-900">{{ formatCurrency(quote.tax, quote.currency || 'USD') }}</span>
               </div>
               <div class="flex justify-between text-lg font-bold border-t border-gray-300 pt-3 mt-3">
                 <span class="text-gray-900">Total:</span>
-                <span class="text-blue-600">${{ formatCurrency(quote.total) }}</span>
+                <span class="text-blue-600">{{ formatCurrency(quote.total, quote.currency || 'USD') }}</span>
               </div>
             </div>
           </div>
@@ -366,12 +366,21 @@ const confirmReject = async () => {
   }
 }
 
-const formatCurrency = (amount) => {
-  if (!amount) return '0.00'
-  return new Intl.NumberFormat('en-US', {
+const formatCurrency = (amount, currency = 'USD') => {
+  if (!amount && amount !== 0) return '0.00'
+  const currencySymbols = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    CAD: 'C$',
+    AUD: 'A$',
+    ZAR: 'R'
+  }
+  const symbol = currencySymbols[currency] || currency
+  return `${symbol}${new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
-  }).format(amount)
+  }).format(amount)}`
 }
 
 const formatDate = (date) => {

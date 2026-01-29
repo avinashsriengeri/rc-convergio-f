@@ -64,7 +64,7 @@
           <div class="px-6 py-5 bg-gradient-to-br from-gray-50 to-gray-100 border-b border-gray-200">
             <div class="text-center">
               <div class="flex items-baseline justify-center">
-                <span class="text-gray-900 text-2xl font-semibold mr-1">$</span>
+                <span class="text-gray-900 text-2xl font-semibold mr-1">{{ getCurrencySymbol(plan.currency || 'ZAR') }}</span>
                 <span class="text-gray-900 text-4xl font-bold">{{ formatPrice(plan.price) }}</span>
               </div>
               <p class="text-sm text-gray-600 mt-2">{{ plan.duration_days }} days</p>
@@ -139,6 +139,17 @@ const formatPrice = (price) => {
   if (!price) return '0.00'
   const numPrice = parseFloat(price)
   return numPrice.toFixed(2)
+}
+
+const getCurrencySymbol = (currency) => {
+  const currencyMap = {
+    'ZAR': 'R',
+    'USD': '$',
+    'EUR': '€',
+    'GBP': '£'
+  }
+  // Default to 'R' (ZAR) if currency is missing or unknown
+  return currencyMap[currency] || 'R'
 }
 
 const fetchPlans = async () => {

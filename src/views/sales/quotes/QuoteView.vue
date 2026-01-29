@@ -176,7 +176,7 @@
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Deal Value</label>
-                <p class="text-sm text-gray-900">${{ formatCurrency(quote.deal.value) }}</p>
+                <p class="text-sm text-gray-900">{{ formatCurrency(quote.deal.value, quote.deal.currency || quote.currency || 'USD') }}</p>
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Stage</label>
@@ -232,16 +232,16 @@
                       {{ item.quantity }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ${{ formatCurrency(item.unit_price) }}
+                      {{ formatCurrency(item.unit_price, quote.currency || 'USD') }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ${{ formatCurrency(item.discount) }}
+                      {{ formatCurrency(item.discount, quote.currency || 'USD') }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {{ item.tax_rate }}%
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      ${{ formatCurrency(item.total) }}
+                      {{ formatCurrency(item.total, quote.currency || 'USD') }}
                     </td>
                   </tr>
                 </tbody>
@@ -258,19 +258,19 @@
                 <div class="w-64 space-y-2">
                   <div class="flex justify-between text-sm">
                     <span class="text-gray-600">Subtotal:</span>
-                    <span class="font-medium">${{ formatCurrency(quote.subtotal) }}</span>
+                    <span class="font-medium">{{ formatCurrency(quote.subtotal, quote.currency || 'USD') }}</span>
                   </div>
                   <div class="flex justify-between text-sm">
                     <span class="text-gray-600">Discount:</span>
-                    <span class="font-medium text-red-600">-${{ formatCurrency(quote.discount) }}</span>
+                    <span class="font-medium text-red-600">-{{ formatCurrency(quote.discount, quote.currency || 'USD') }}</span>
                   </div>
                   <div class="flex justify-between text-sm">
                     <span class="text-gray-600">Tax:</span>
-                    <span class="font-medium">${{ formatCurrency(quote.tax) }}</span>
+                    <span class="font-medium">{{ formatCurrency(quote.tax, quote.currency || 'USD') }}</span>
                   </div>
                   <div class="flex justify-between text-lg font-semibold border-t border-gray-200 pt-2">
                     <span>Total:</span>
-                    <span>${{ formatCurrency(quote.total) }}</span>
+                    <span>{{ formatCurrency(quote.total, quote.currency || 'USD') }}</span>
                   </div>
                 </div>
               </div>
@@ -344,11 +344,11 @@
               </div>
               <div>
                 <dt class="text-sm font-medium text-gray-500">Total Amount</dt>
-                <dd class="text-lg font-semibold text-gray-900">${{ formatCurrency(quote.total) }}</dd>
+                <dd class="text-lg font-semibold text-gray-900">{{ formatCurrency(quote.total, quote.currency || 'USD') }}</dd>
               </div>
               <div v-if="quote.deal?.total_accepted_revenue">
                 <dt class="text-sm font-medium text-gray-500">Total Deal Revenue</dt>
-                <dd class="text-lg font-semibold text-green-600">${{ formatCurrency(quote.deal.total_accepted_revenue) }}</dd>
+                <dd class="text-lg font-semibold text-green-600">{{ formatCurrency(quote.deal.total_accepted_revenue, quote.deal.currency || quote.currency || 'USD') }}</dd>
               </div>
               <div>
                 <dt class="text-sm font-medium text-gray-500">Created</dt>
@@ -532,12 +532,21 @@ const printQuote = () => {
   window.open(pdfUrl, '_blank')
 }
 
-const formatCurrency = (amount) => {
-  if (!amount) return '0.00'
-  return new Intl.NumberFormat('en-US', {
+const formatCurrency = (amount, currency = 'USD') => {
+  if (!amount && amount !== 0) return '0.00'
+  const currencySymbols = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    CAD: 'C$',
+    AUD: 'A$',
+    ZAR: 'R'
+  }
+  const symbol = currencySymbols[currency] || currency
+  return `${symbol}${new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
-  }).format(amount)
+  }).format(amount)}`
 }
 
 const formatDate = (date) => {
