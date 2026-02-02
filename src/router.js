@@ -740,6 +740,90 @@ const routes = [
     meta: { requiresAuth: true }
   },
 
+  // HR Module routes (Parent/Child structure)
+  {
+    path: '/hr',
+    name: 'HrPlatform',
+    component: () => import('./modules/hr/pages/HrPlatform.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'HrDashboard',
+        component: () => import('./modules/hr/pages/DashboardView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'employees',
+        name: 'HrEmployees',
+        component: () => import('./modules/hr/pages/EmployeesView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'employees/:id',
+        name: 'HrEmployeeDetail',
+        component: () => import('./modules/hr/pages/EmployeeDetailView.vue'),
+        props: true,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'leave',
+        name: 'HrLeave',
+        component: () => import('./modules/hr/pages/LeaveView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'payslips',
+        name: 'HrPayslips',
+        component: () => import('./modules/hr/pages/PayslipsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'documents',
+        name: 'HrDocuments',
+        component: () => import('./modules/hr/pages/DocumentsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'departments',
+        name: 'HrDepartments',
+        component: () => import('./modules/hr/pages/DepartmentsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'designations',
+        name: 'HrDesignations',
+        component: () => import('./modules/hr/pages/DesignationsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'onboarding',
+        name: 'HrOnboarding',
+        component: () => import('./modules/hr/pages/OnboardingDashboardView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'onboarding/my-tasks',
+        name: 'HrOnboardingMyTasks',
+        component: () => import('./modules/hr/pages/MyOnboardingTasksView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'employees/:id/onboarding',
+        name: 'HrEmployeeOnboarding',
+        component: () => import('./modules/hr/pages/EmployeeOnboardingDetailView.vue'),
+        props: true,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'onboarding/templates',
+        name: 'HrOnboardingTemplates',
+        component: () => import('./modules/hr/pages/OnboardingTemplatesView.vue'),
+        meta: { requiresAuth: true }
+      }
+    ]
+  },
+
   // Service Platform Module routes (Parent/Child structure)
   {
     path: '/service',

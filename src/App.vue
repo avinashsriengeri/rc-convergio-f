@@ -417,6 +417,18 @@
             {{ $t('common.service') }}
           </router-link>
 
+          <!-- HR Module Link -->
+          <router-link
+            to="/hr"
+            class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+            :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr'), 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr') }"
+          >
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            HR
+          </router-link>
+
            <!-- CMS / Content Platform Link -->
           <router-link
             to="/cms"
@@ -1121,6 +1133,135 @@
         </div>
       </div>
 
+      <!-- HR Module Sub-menu (shows when on HR routes) -->
+      <div v-if="$route.path.startsWith('/hr')" class="fixed left-0 top-0 h-full w-56 bg-sidebar-bg z-40 transform transition-transform duration-300 ease-in-out">
+        <div class="flex flex-col h-full">
+          <!-- HR Module Header -->
+          <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-gray-800">HR Management</h2>
+              <button
+                @click="$router.push('/dashboard')"
+                class="text-gray-700 hover:text-primary-purple transition-colors"
+                title="Back to main menu"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- HR Module Navigation -->
+          <nav class="flex-1 py-4 overflow-y-auto sidebar-scrollbar">
+            <router-link
+              :to="{ name: 'HrDashboard' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path === '/hr' || $route.name === 'HrDashboard', 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': $route.path !== '/hr' && $route.name !== 'HrDashboard' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58M22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2A10,10 0 0,1 22,12M20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12Z"/>
+              </svg>
+              Dashboard
+            </router-link>
+
+            <a
+              @click.prevent="$router.push('/hr/employees')"
+              href="/hr/employees"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1 cursor-pointer"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/employees') || $route.name === 'HrEmployees' || $route.name === 'HrEmployeeDetail', 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/employees') && $route.name !== 'HrEmployees' && $route.name !== 'HrEmployeeDetail' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              Employees
+            </a>
+
+            <router-link
+              :to="{ name: 'HrOnboarding' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/onboarding') || $route.name === 'HrOnboarding' || $route.name === 'HrOnboardingMyTasks' || $route.name === 'HrEmployeeOnboarding', 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/onboarding') && $route.name !== 'HrOnboarding' && $route.name !== 'HrOnboardingMyTasks' && $route.name !== 'HrEmployeeOnboarding' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Onboarding
+            </router-link>
+
+            <router-link
+              :to="{ name: 'HrLeave' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/leave') || $route.name === 'HrLeave', 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/leave') && $route.name !== 'HrLeave' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Leave Management
+            </router-link>
+
+            <router-link
+              :to="{ name: 'HrPayslips' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/payslips') || $route.name === 'HrPayslips', 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/payslips') && $route.name !== 'HrPayslips' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Payslips
+            </router-link>
+
+            <router-link
+              :to="{ name: 'HrDocuments' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/documents') || $route.name === 'HrDocuments', 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/documents') && $route.name !== 'HrDocuments' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Documents
+            </router-link>
+
+            <router-link
+              v-if="isHrAdmin"
+              :to="{ name: 'HrOnboardingTemplates' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/onboarding/templates') || $route.name === 'HrOnboardingTemplates', 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/onboarding/templates') && $route.name !== 'HrOnboardingTemplates' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Templates
+            </router-link>
+
+            <div class="px-6 py-2 mt-2">
+              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Setup</h3>
+            </div>
+
+            <router-link
+              :to="{ name: 'HrDepartments' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/departments') || $route.name === 'HrDepartments', 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/departments') && $route.name !== 'HrDepartments' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+              Departments
+            </router-link>
+
+            <router-link
+              :to="{ name: 'HrDesignations' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/designations') || $route.name === 'HrDesignations', 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/designations') && $route.name !== 'HrDesignations' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              Designations
+            </router-link>
+          </nav>
+        </div>
+      </div>
+
       <div v-if="$route.path.startsWith('/cms')" class="fixed left-0 top-0 h-full w-56 bg-sidebar-bg z-40 transform transition-transform duration-300 ease-in-out">
         <div class="flex flex-col h-full">
           <!-- CMS Header -->
@@ -1479,6 +1620,15 @@ const currentLanguage = computed(() => {
 
 // User role for conditional menu rendering (kept for backward compatibility)
 const currentUserRole = computed(() => userRole.value)
+
+const isHrAdmin = computed(() => {
+  if (!user.value?.roles) return false
+  const roles = Array.isArray(user.value.roles) ? user.value.roles : [user.value.roles]
+  return roles.some(r => {
+    const roleName = typeof r === 'object' ? r.name : r
+    return roleName === 'hr_admin' || roleName === 'system_admin'
+  })
+})
 
 // Initialize auth state on app mount
 onMounted(() => {
