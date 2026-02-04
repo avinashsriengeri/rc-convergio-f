@@ -146,27 +146,54 @@ export const useHrDocumentsStore = defineStore('hrDocuments', () => {
     try {
       const response = await hrAPI.downloadDocument(employeeId, documentId)
       
-      // Create blob and download
-      const blob = new Blob([response.data])
+      // Get content type from response
+      const contentType = response.headers['content-type'] || 'application/octet-stream'
+      
+      // Create blob with proper content type
+      const blob = new Blob([response.data], { type: contentType })
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
+      link.style.display = 'none'
       
       // Get filename from response headers or use default
       const contentDisposition = response.headers['content-disposition']
       let filename = 'document'
       if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/i)
-        if (filenameMatch) {
-          filename = filenameMatch[1]
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/i)
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '')
+          // Decode URI if needed
+          try {
+            filename = decodeURIComponent(filename)
+          } catch (e) {
+            // If decoding fails, use as is
+          }
+        }
+      }
+      
+      // If no filename from headers, try to get from document data
+      if (filename === 'document') {
+        const document = state.value.documents.find(d => d.id === documentId || d.document_id === documentId)
+        if (document?.title) {
+          filename = document.title
+          // Add extension if not present
+          if (!filename.includes('.')) {
+            const fileType = document.file_type || 'pdf'
+            filename += `.${fileType.toLowerCase()}`
+          }
         }
       }
       
       link.setAttribute('download', filename)
       document.body.appendChild(link)
       link.click()
-      link.remove()
-      window.URL.revokeObjectURL(url)
+      
+      // Clean up
+      setTimeout(() => {
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(url)
+      }, 100)
       
       return true
     } catch (err) {

@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-16">
     <!-- Loading State -->
     <div v-if="loading" class="flex items-center justify-center py-12">
       <div class="text-center">
@@ -30,18 +30,18 @@
     <!-- Content -->
     <div v-else-if="onboardingData">
       <!-- Header Card -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div class="flex items-start space-x-6">
+      <div class="bg-white rounded-xl shadow-md border border-gray-200 p-5 hover:shadow-lg transition-all duration-300 mb-12">
+        <div class="flex items-start space-x-5">
           <!-- Avatar -->
           <div class="flex-shrink-0">
-            <div v-if="employee.profile_picture" class="h-20 w-20 rounded-full overflow-hidden">
+            <div v-if="employee.profile_picture" class="h-20 w-20 rounded-full overflow-hidden ring-2 ring-gray-100">
               <img
                 :src="employee.profile_picture.url"
                 :alt="employeeFullName"
                 class="h-full w-full object-cover"
               />
             </div>
-            <div v-else class="h-20 w-20 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+            <div v-else class="h-20 w-20 rounded-full bg-gradient-to-br from-primary-purple to-primary-pink flex items-center justify-center ring-2 ring-gray-100 shadow-md">
               <span class="text-white font-semibold text-2xl">
                 {{ employee.first_name?.[0] }}{{ employee.last_name?.[0] }}
               </span>
@@ -50,29 +50,29 @@
           
           <!-- Employee Info -->
           <div class="flex-1">
-            <div class="flex items-center space-x-3 mb-2">
+            <div class="flex items-center space-x-3 mb-1">
               <h1 class="text-2xl font-bold text-gray-900">{{ employeeFullName }}</h1>
               <StatusBadge :status="employee.employment_status || 'onboarding'" />
             </div>
-            <p class="text-sm text-gray-500 mb-4">{{ employee.employee_id }}</p>
+            <p class="text-sm text-gray-500 mb-3 font-medium">{{ employee.employee_id }}</p>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
               <div>
                 <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Department</p>
-                <p class="mt-1 text-sm text-gray-900">{{ departmentName }}</p>
+                <p class="mt-0.5 text-sm font-semibold text-gray-900">{{ departmentName }}</p>
               </div>
               <div>
                 <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Designation</p>
-                <p class="mt-1 text-sm text-gray-900">{{ designationName }}</p>
+                <p class="mt-0.5 text-sm font-semibold text-gray-900">{{ designationName }}</p>
               </div>
               <div>
                 <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Manager</p>
-                <p class="mt-1 text-sm text-gray-900">{{ employee.manager?.full_name || 'N/A' }}</p>
+                <p class="mt-0.5 text-sm font-semibold text-gray-900">{{ employee.manager?.full_name || 'N/A' }}</p>
               </div>
             </div>
             
             <!-- Progress Bar -->
-            <div class="mt-4">
+            <div class="mt-3">
               <ProgressBar
                 :percentage="progressPercentage"
                 :subtitle="progressSubtitle"
@@ -86,11 +86,11 @@
       </div>
 
       <!-- Checklist Section -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div class="flex items-center justify-between mb-6">
+      <div class="bg-white rounded-xl shadow-md border border-gray-200 p-5 hover:shadow-lg transition-all duration-300 mb-12">
+        <div class="flex items-center justify-between mb-4">
           <div>
             <h2 class="text-xl font-bold text-gray-900">Onboarding Checklist</h2>
-            <p class="mt-1 text-sm text-gray-600">Complete all checklist items to finish onboarding</p>
+            <p class="mt-0.5 text-sm text-gray-600">Complete all checklist items to finish onboarding</p>
           </div>
         </div>
         
@@ -131,16 +131,130 @@
         </div>
       </div>
 
+      <!-- Induction & Training Section -->
+      <div class="bg-white rounded-xl shadow-md border border-gray-200 p-5 hover:shadow-lg transition-all duration-300 mb-12">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-xl font-bold text-gray-900">Induction & Training Progress</h2>
+            <p class="mt-0.5 text-sm text-gray-600">Complete mandatory induction and training content</p>
+          </div>
+          <router-link
+            :to="`/hr/induction/employees/${employee.id}/progress`"
+            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-purple transition-colors"
+          >
+            View All
+            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </router-link>
+        </div>
+        
+        <div v-if="inductionLoading" class="space-y-4">
+          <div v-for="i in 2" :key="i" class="bg-gray-50 rounded-lg p-4 animate-pulse">
+            <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+            <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+          </div>
+        </div>
+        
+        <div v-else-if="inductionProgress">
+          <!-- Progress Overview -->
+          <div class="mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-medium text-gray-700">Overall Progress</span>
+              <span class="text-sm font-bold text-primary-purple">{{ inductionProgress.progress?.percentage || 0 }}%</span>
+            </div>
+            <ProgressBar
+              :percentage="inductionProgress.progress?.percentage || 0"
+              :subtitle="`${inductionProgress.progress?.completed || 0} of ${inductionProgress.progress?.total || 0} items completed`"
+              :color="getInductionProgressColor(inductionProgress.progress?.percentage || 0)"
+            />
+            <div v-if="inductionProgress.progress?.mandatory" class="mt-3 pt-3 border-t border-gray-200">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <svg class="w-5 h-5 mr-2" :class="inductionProgress.progress.mandatory.all_completed ? 'text-green-600' : 'text-red-600'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <span class="text-sm font-medium" :class="inductionProgress.progress.mandatory.all_completed ? 'text-green-700' : 'text-red-700'">
+                    Mandatory: {{ inductionProgress.progress.mandatory.completed }} of {{ inductionProgress.progress.mandatory.total }} completed
+                  </span>
+                </div>
+                <span v-if="!inductionProgress.progress.mandatory.all_completed" class="text-xs text-red-600 font-medium">
+                  Must complete all mandatory items
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Induction Items List -->
+          <div v-if="inductionProgress.items && inductionProgress.items.length > 0" class="space-y-3">
+            <div
+              v-for="item in inductionProgress.items.slice(0, 5)"
+              :key="item.assignment_id || item.id"
+              class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              <div class="flex items-center space-x-3 flex-1">
+                <div :class="getStatusIconClass(item.status)" class="flex-shrink-0">
+                  <component :is="getStatusIcon(item.status)" class="w-5 h-5" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center space-x-2">
+                    <h4 class="text-sm font-medium text-gray-900 truncate">{{ item.content_title || item.title }}</h4>
+                    <span v-if="item.is_mandatory" class="px-2 py-0.5 text-xs font-medium bg-red-100 text-red-800 rounded-full">
+                      Mandatory
+                    </span>
+                  </div>
+                  <p class="text-xs text-gray-500 mt-1">
+                    <span :class="getCategoryBadgeClass(item.category)" class="px-2 py-0.5 rounded-full">
+                      {{ getCategoryLabel(item.category) }}
+                    </span>
+                    <span v-if="item.due_date" class="ml-2" :class="isOverdue(item.due_date, item.status) ? 'text-red-600 font-medium' : 'text-gray-500'">
+                      Due: {{ formatDate(item.due_date) }}
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2 ml-4">
+                <StatusBadge :status="item.status" />
+                <router-link
+                  :to="`/hr/induction/employees/${employee.id}/progress`"
+                  class="text-primary-purple hover:text-primary-pink text-sm font-medium transition-colors"
+                >
+                  View
+                </router-link>
+              </div>
+            </div>
+            <div v-if="inductionProgress.items.length > 5" class="text-center pt-2">
+              <router-link
+                :to="`/hr/induction/employees/${employee.id}/progress`"
+                class="text-sm text-primary-purple hover:text-primary-pink font-medium"
+              >
+                View all {{ inductionProgress.items.length }} items →
+              </router-link>
+            </div>
+          </div>
+            <div v-else class="text-center py-8">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <h3 class="mt-4 text-sm font-medium text-gray-900">No induction items</h3>
+              <p class="mt-2 text-sm text-gray-500">No induction or training content has been assigned yet.</p>
+            </div>
+        </div>
+        <div v-else class="text-center py-8">
+          <p class="text-sm text-gray-500">Unable to load induction progress.</p>
+        </div>
+      </div>
+
       <!-- Tasks Section -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div class="flex items-center justify-between mb-6">
+      <div class="bg-white rounded-xl shadow-md border border-gray-200 p-5 hover:shadow-lg transition-all duration-300 mb-12">
+        <div class="flex items-center justify-between mb-4">
           <div>
             <h2 class="text-xl font-bold text-gray-900">Onboarding Tasks</h2>
-            <p class="mt-1 text-sm text-gray-600">Track and complete onboarding tasks</p>
+            <p class="mt-0.5 text-sm text-gray-600">Track and complete onboarding tasks</p>
           </div>
           <button
             @click="showAddTaskModal = true"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-purple hover:bg-primary-pink focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-purple transition-colors"
           >
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -176,11 +290,11 @@
       </div>
 
       <!-- Bottom Actions -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="bg-white rounded-xl shadow-md border border-gray-200 p-5 hover:shadow-lg transition-all duration-300">
         <div class="flex items-center justify-between">
           <button
             @click="$router.push('/hr/onboarding')"
-            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-purple transition-colors"
           >
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -204,6 +318,9 @@
               disabled
               class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-400 bg-gray-100 cursor-not-allowed"
             >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
               Complete Onboarding
             </button>
           </div>
@@ -553,10 +670,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, h } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useHrOnboardingStore } from '../store/hrOnboarding'
 import { useHrDocumentsStore } from '../store/hrDocuments'
+import { useHrInductionStore } from '../store/hrInduction'
 import { useAuth } from '@/composables/useAuth'
 import { hrAPI } from '../api/hrAPI'
 import StatusBadge from '../components/StatusBadge.vue'
@@ -571,6 +689,7 @@ const route = useRoute()
 const router = useRouter()
 const onboardingStore = useHrOnboardingStore()
 const documentsStore = useHrDocumentsStore()
+const inductionStore = useHrInductionStore()
 const { user } = useAuth()
 
 // Local state
@@ -578,6 +697,8 @@ const loading = ref(true)
 const error = ref(null)
 const checklistLoading = ref(false)
 const tasksLoading = ref(false)
+const inductionLoading = ref(false)
+const inductionProgress = ref(null)
 const showCompleteModal = ref(false)
 const showUploadModal = ref(false)
 const showVerifyModal = ref(false)
@@ -741,7 +862,83 @@ const getRequiredDocuments = (item) => {
     : []
 }
 
+// Helper functions for induction section
+const getCategoryLabel = (category) => {
+  const labels = {
+    induction: 'Induction',
+    policy: 'Policy',
+    training: 'Training'
+  }
+  return labels[category] || category
+}
+
+const getCategoryBadgeClass = (category) => {
+  const classes = {
+    induction: 'bg-blue-100 text-blue-800',
+    policy: 'bg-purple-100 text-purple-800',
+    training: 'bg-green-100 text-green-800'
+  }
+  return classes[category] || 'bg-gray-100 text-gray-800'
+}
+
+const getInductionProgressColor = (percentage) => {
+  if (percentage >= 80) return 'green'
+  if (percentage >= 50) return 'blue'
+  if (percentage >= 25) return 'yellow'
+  return 'red'
+}
+
+const getStatusIconClass = (status) => {
+  const classes = {
+    completed: 'text-green-600',
+    pending: 'text-yellow-600',
+    in_progress: 'text-blue-600',
+    overdue: 'text-red-600'
+  }
+  return classes[status] || 'text-gray-400'
+}
+
+const getStatusIcon = (status) => {
+  if (status === 'completed') {
+    return () => h('svg', { class: 'w-5 h-5', fill: 'currentColor', viewBox: '0 0 20 20' }, [
+      h('path', { 'fill-rule': 'evenodd', d: 'M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z', 'clip-rule': 'evenodd' })
+    ])
+  }
+  return () => h('svg', { class: 'w-5 h-5', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [
+    h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' })
+  ])
+}
+
+const formatDate = (dateString) => {
+  if (!dateString) return '-'
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+}
+
+const isOverdue = (dueDate, status) => {
+  if (status === 'completed') return false
+  if (!dueDate) return false
+  const due = new Date(dueDate)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  due.setHours(0, 0, 0, 0)
+  return due < today
+}
+
 // Methods
+const loadInductionProgress = async () => {
+  if (!employeeId.value) return
+  inductionLoading.value = true
+  try {
+    inductionProgress.value = await inductionStore.fetchEmployeeProgress(employeeId.value)
+  } catch (err) {
+    console.error('Error loading induction progress:', err)
+    // Don't show error, just log it - induction is optional
+  } finally {
+    inductionLoading.value = false
+  }
+}
+
 const loadOnboardingData = async () => {
   loading.value = true
   error.value = null
@@ -1260,6 +1457,8 @@ onMounted(async () => {
   await loadOnboardingData()
   // Load checklist after onboarding data to ensure we have the latest documents
   await loadChecklist()
+  // Load induction progress
+  await loadInductionProgress()
 })
 </script>
 

@@ -89,6 +89,12 @@ const currentPageName = computed(() => {
   if (path === '/hr/documents' || path === '/hr/documents/') {
     return 'Documents'
   }
+  if (path === '/hr/document-types' || path === '/hr/document-types/') {
+    return 'Document Types'
+  }
+  if (path === '/hr/my-documents' || path === '/hr/my-documents/') {
+    return 'My Documents'
+  }
   if (path === '/hr/departments' || path === '/hr/departments/') {
     return 'Departments'
   }
@@ -106,6 +112,18 @@ const currentPageName = computed(() => {
   }
   if (path === '/hr/onboarding/templates' || path === '/hr/onboarding/templates/') {
     return 'Onboarding Templates'
+  }
+  if (path === '/hr/induction/contents' || path === '/hr/induction/contents/') {
+    return 'Induction & Training'
+  }
+  if (path === '/hr/induction/tracking' || path === '/hr/induction/tracking/') {
+    return 'Induction Tracking'
+  }
+  if (path.match(/\/hr\/induction\/employees\/\d+\/progress/)) {
+    return 'Employee Induction Progress'
+  }
+  if (path === '/hr/induction/my-training' || path === '/hr/induction/my-training/') {
+    return 'My Induction & Training'
   }
   if (path === '/hr' || path === '/hr/') {
     return 'Dashboard'

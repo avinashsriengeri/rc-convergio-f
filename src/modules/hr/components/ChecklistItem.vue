@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg border border-gray-200 p-4 hover:border-blue-300 transition-colors">
+  <div class="bg-white rounded-lg border border-gray-200 p-4 hover:border-primary-purple transition-colors">
     <div class="flex items-start space-x-4">
       <!-- Checkbox/Status Icon -->
       <div class="flex-shrink-0 pt-1">
@@ -152,7 +152,7 @@
         </div>
         
         <!-- Action Buttons -->
-        <div v-if="item.status !== 'completed' && showActions" class="mt-4 flex items-center space-x-2">
+        <div v-if="item.status !== 'completed' && showActions" class="mt-6 flex items-center space-x-3">
           <!-- Upload Documents Button (for employees when pending) -->
           <button
             v-if="item.status === 'pending' && canUploadDocuments"

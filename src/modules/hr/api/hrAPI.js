@@ -84,8 +84,18 @@ export const hrAPI = {
     return api.post('/hr/employees', data)
   },
   
-  // Update employee
-  updateEmployee: (id, data) => api.put(`/hr/employees/${id}`, data),
+  // Update employee - supports multipart/form-data
+  updateEmployee: (id, data) => {
+    // Check if data is FormData (for file uploads or multipart)
+    if (data instanceof FormData) {
+      return api.put(`/hr/employees/${id}`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+    }
+    return api.put(`/hr/employees/${id}`, data)
+  },
   
   // Activate employee (onboarding -> active)
   activateEmployee: (id) => api.post(`/hr/employees/${id}/activate`),
@@ -158,13 +168,13 @@ export const hrAPI = {
   // Get employee documents
   getEmployeeDocuments: (employeeId, params = {}) => api.get(`/hr/employees/${employeeId}/documents`, { params }),
   
-  // Upload employee document (HR Admin only)
+  // Upload employee document (HR Admin only) - Enhanced with document_type_id
   uploadEmployeeDocument: (employeeId, data) => {
     const formData = new FormData()
     Object.keys(data).forEach(key => {
       if (key === 'file') {
         formData.append('file', data[key])
-      } else {
+      } else if (data[key] !== null && data[key] !== undefined) {
         formData.append(key, data[key])
       }
     })
@@ -265,7 +275,58 @@ export const hrAPI = {
   updateOnboardingTemplate: (id, data) => api.put(`/hr/onboarding/templates/${id}`, data),
   
   // Delete onboarding template
-  deleteOnboardingTemplate: (id) => api.delete(`/hr/onboarding/templates/${id}`)
+  deleteOnboardingTemplate: (id) => api.delete(`/hr/onboarding/templates/${id}`),
+
+  // ==================== Induction & Training Management ====================
+
+  // HR Admin - Content Management
+  getInductionContents: (params = {}) => api.get('/hr/induction/contents', { params }),
+  getInductionContent: (id) => api.get(`/hr/induction/contents/${id}`),
+  createInductionContent: (data) => api.post('/hr/induction/contents', data),
+  updateInductionContent: (id, data) => api.put(`/hr/induction/contents/${id}`, data),
+  publishInductionContent: (id) => api.post(`/hr/induction/contents/${id}/publish`),
+  deleteInductionContent: (id) => api.delete(`/hr/induction/contents/${id}`),
+
+  // HR Admin - Tracking
+  getInductionTracking: (params = {}) => api.get('/hr/induction/tracking', { params }),
+  getEmployeeInductionProgress: (employeeId) => api.get(`/hr/induction/employees/${employeeId}/progress`),
+  sendInductionReminders: (data) => api.post('/hr/induction/reminders', data),
+
+  // Employee - My Induction
+  getMyInduction: (params = {}) => api.get('/employee/induction', { params }),
+  viewInductionContent: (assignmentId) => api.get(`/employee/induction/${assignmentId}/view`),
+  startInductionContent: (assignmentId) => api.post(`/employee/induction/${assignmentId}/start`),
+  acknowledgeInductionContent: (assignmentId, data = {}) => api.post(`/employee/induction/${assignmentId}/acknowledge`, data),
+
+  // ==================== Document Types Management ====================
+  
+  // HR Admin - Document Types
+  getDocumentTypes: (params = {}) => api.get('/hr/document-types', { params }),
+  getDocumentType: (id) => api.get(`/hr/document-types/${id}`),
+  createDocumentType: (data) => api.post('/hr/document-types', data),
+  updateDocumentType: (id, data) => api.put(`/hr/document-types/${id}`, data),
+  deleteDocumentType: (id) => api.delete(`/hr/document-types/${id}`),
+
+  // Employee - My Documents
+  getMyDocuments: (params = {}) => api.get('/employee/documents', { params }),
+  getMyDocumentTypes: () => api.get('/employee/documents/document-types'),
+  getMissingMandatoryDocuments: () => api.get('/employee/documents/missing-mandatory'),
+  downloadMyDocument: (documentId) => api.get(`/employee/documents/${documentId}/download`, { responseType: 'blob' }),
+  uploadMyDocument: (data) => {
+    const formData = new FormData()
+    Object.keys(data).forEach(key => {
+      if (key === 'file') {
+        formData.append('file', data[key])
+      } else {
+        formData.append(key, data[key])
+      }
+    })
+    return api.post('/employee/documents', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  }
 }
 
 export default hrAPI

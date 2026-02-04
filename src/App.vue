@@ -1188,6 +1188,30 @@
               Onboarding
             </router-link>
 
+            <!-- HR Admin sees Content Manager, Employee sees My Induction -->
+            <router-link
+              v-if="isHrAdmin"
+              :to="{ name: 'HrInductionContents' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/induction') || $route.name === 'HrInductionContents' || $route.name === 'HrInductionTracking' || $route.name === 'HrEmployeeInductionProgress', 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/induction') && $route.name !== 'HrInductionContents' && $route.name !== 'HrInductionTracking' && $route.name !== 'HrEmployeeInductionProgress' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Induction & Training
+            </router-link>
+            <router-link
+              v-else
+              :to="{ name: 'MyInduction' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/induction') || $route.name === 'MyInduction', 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/induction') && $route.name !== 'MyInduction' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              My Induction & Training
+            </router-link>
+
             <router-link
               :to="{ name: 'HrLeave' }"
               class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
@@ -1210,7 +1234,9 @@
               Payslips
             </router-link>
 
+            <!-- Documents (HR Admin only - includes Document Types button) -->
             <router-link
+              v-if="isHrAdmin"
               :to="{ name: 'HrDocuments' }"
               class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
               :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/documents') || $route.name === 'HrDocuments', 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/documents') && $route.name !== 'HrDocuments' }"
@@ -1219,6 +1245,18 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               Documents
+            </router-link>
+
+            <!-- My Documents (All users) -->
+            <router-link
+              :to="{ name: 'MyDocuments' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/my-documents') || $route.name === 'MyDocuments', 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/my-documents') && $route.name !== 'MyDocuments' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              My Documents
             </router-link>
 
             <router-link

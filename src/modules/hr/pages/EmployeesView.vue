@@ -1064,8 +1064,11 @@ const handleCreateEmployee = async () => {
     if (newEmployee.value.contract_end_date) {
       formData.append('contract_end_date', newEmployee.value.contract_end_date)
     }
-    if (newEmployee.value.manager_id) {
-      formData.append('manager_id', newEmployee.value.manager_id)
+    // Always send manager_id - send as number string if exists, empty string if null
+    if (newEmployee.value.manager_id !== null && newEmployee.value.manager_id !== undefined) {
+      formData.append('manager_id', String(newEmployee.value.manager_id))
+    } else {
+      formData.append('manager_id', '')
     }
     if (newEmployee.value.team_id) {
       formData.append('team_id', newEmployee.value.team_id)

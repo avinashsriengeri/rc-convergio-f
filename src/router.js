@@ -778,12 +778,24 @@ const routes = [
         component: () => import('./modules/hr/pages/PayslipsView.vue'),
         meta: { requiresAuth: true }
       },
-      {
-        path: 'documents',
-        name: 'HrDocuments',
-        component: () => import('./modules/hr/pages/DocumentsView.vue'),
-        meta: { requiresAuth: true }
-      },
+        {
+          path: 'documents',
+          name: 'HrDocuments',
+          component: () => import('./modules/hr/pages/DocumentsView.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'document-types',
+          name: 'HrDocumentTypes',
+          component: () => import('./modules/hr/pages/DocumentTypesView.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'my-documents',
+          name: 'MyDocuments',
+          component: () => import('./modules/hr/pages/MyDocumentsView.vue'),
+          meta: { requiresAuth: true }
+        },
       {
         path: 'departments',
         name: 'HrDepartments',
@@ -819,6 +831,31 @@ const routes = [
         path: 'onboarding/templates',
         name: 'HrOnboardingTemplates',
         component: () => import('./modules/hr/pages/OnboardingTemplatesView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'induction/contents',
+        name: 'HrInductionContents',
+        component: () => import('./modules/hr/pages/InductionContentsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'induction/tracking',
+        name: 'HrInductionTracking',
+        component: () => import('./modules/hr/pages/InductionTrackingView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'induction/employees/:id/progress',
+        name: 'HrEmployeeInductionProgress',
+        component: () => import('./modules/hr/pages/EmployeeInductionProgressView.vue'),
+        props: true,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'induction/my-training',
+        name: 'MyInduction',
+        component: () => import('./modules/hr/pages/MyInductionView.vue'),
         meta: { requiresAuth: true }
       }
     ]
