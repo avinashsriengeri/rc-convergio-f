@@ -221,36 +221,16 @@
                 <InfoField label="Contract End" :value="formatDate(employee.contract_end_date)" />
               </InfoCard>
 
-              <!-- Reporting To Card -->
-              <InfoCard
-                title="Reporting To"
-                icon="users"
-                icon-color="text-blue-600"
-              >
-                <div v-if="employee.manager" class="flex items-center space-x-3">
-                  <div class="h-10 w-10 rounded-full bg-gradient-to-br from-primary-purple to-primary-pink flex items-center justify-center">
-                    <span class="text-white text-sm font-medium">
-                      {{ employee.manager.full_name?.split(' ').map(n => n[0]).join('') || 'M' }}
-                    </span>
-                  </div>
-                  <div>
-                    <p class="font-medium text-gray-900">{{ employee.manager.full_name }}</p>
-                    <p class="text-sm text-gray-500">Manager</p>
-                  </div>
-                </div>
-                <p v-else class="text-gray-500">No Manager Assigned</p>
-                <div v-if="employee.team" class="mt-3 pt-3 border-t border-gray-200">
-                  <p class="text-sm font-medium text-gray-700 mb-1">Team</p>
-                  <p class="text-gray-900">{{ employee.team.name }}</p>
-                </div>
-                <div v-if="employee.user" class="mt-3 pt-3 border-t border-gray-200">
-                  <p class="text-sm font-medium text-gray-700 mb-1">User Account</p>
-                  <p class="text-sm text-gray-900">
-                    <span class="font-medium">{{ employee.user.name }}</span>
-                    <span class="text-gray-500"> ({{ employee.user.email }})</span>
-                  </p>
-                </div>
-              </InfoCard>
+              <!-- Reporting To Card (Full Width) -->
+              <div class="col-span-1 md:col-span-2 lg:col-span-3">
+                <InfoCard
+                  title="Reporting Structure"
+                  icon="users"
+                  icon-color="text-blue-600"
+                >
+                  <ReportingStructureChart :employee="employee" />
+                </InfoCard>
+              </div>
 
               <!-- Home Address Card -->
               <InfoCard
@@ -361,31 +341,7 @@
                 icon="users"
                 icon-color="text-blue-600"
               >
-                <div v-if="employee.manager" class="mb-4">
-                  <p class="text-sm font-medium text-gray-700 mb-2">Manager</p>
-                  <div class="flex items-center space-x-3">
-                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-primary-purple to-primary-pink flex items-center justify-center">
-                      <span class="text-white text-sm font-medium">
-                        {{ employee.manager.full_name?.split(' ').map(n => n[0]).join('') || 'M' }}
-                      </span>
-                    </div>
-                    <div>
-                      <p class="font-medium text-gray-900">{{ employee.manager.full_name }}</p>
-                    </div>
-                  </div>
-                </div>
-                <p v-else class="text-gray-500 mb-4">No Manager Assigned</p>
-                <div v-if="employee.team" class="pt-4 border-t border-gray-200">
-                  <p class="text-sm font-medium text-gray-700 mb-2">Team</p>
-                  <p class="text-gray-900">{{ employee.team.name }}</p>
-                </div>
-                <div v-if="employee.user" class="pt-4 border-t border-gray-200">
-                  <p class="text-sm font-medium text-gray-700 mb-2">User Account</p>
-                  <p class="text-sm text-gray-900">
-                    <span class="font-medium">{{ employee.user.name }}</span>
-                    <span class="text-gray-500"> ({{ employee.user.email }})</span>
-                  </p>
-                </div>
+                <ReportingStructureChart :employee="employee" />
               </InfoCard>
             </div>
           </div>
@@ -902,6 +858,7 @@ import { success as showSuccess, error as showError } from '@/utils/notification
 import InfoCard from '../components/InfoCard.vue'
 import InfoField from '../components/InfoField.vue'
 import StatusBadge from '../components/StatusBadge.vue'
+import ReportingStructureChart from '../components/ReportingStructureChart.vue'
 
 const route = useRoute()
 const router = useRouter()

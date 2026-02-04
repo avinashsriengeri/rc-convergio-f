@@ -125,6 +125,15 @@ const currentPageName = computed(() => {
   if (path === '/hr/induction/my-training' || path === '/hr/induction/my-training/') {
     return 'My Induction & Training'
   }
+  if (path === '/hr/announcements' || path === '/hr/announcements/') {
+    return 'Announcements'
+  }
+  if (path === '/hr/announcements/analytics' || path === '/hr/announcements/analytics/') {
+    return 'Announcement Analytics'
+  }
+  if (path === '/hr/announcements/my-feed' || path === '/hr/announcements/my-feed/') {
+    return 'My Announcements'
+  }
   if (path === '/hr' || path === '/hr/') {
     return 'Dashboard'
   }

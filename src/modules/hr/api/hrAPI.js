@@ -326,7 +326,55 @@ export const hrAPI = {
         'Content-Type': 'multipart/form-data'
       }
     })
-  }
+  },
+
+  // ==================== KPI Management ====================
+  
+  // HR Admin - KPI Templates
+  getKpiTemplates: (params = {}) => api.get('/hr/kpi/templates', { params }),
+  getKpiTemplate: (id) => api.get(`/hr/kpi/templates/${id}`),
+  createKpiTemplate: (data) => api.post('/hr/kpi/templates', data),
+  updateKpiTemplate: (id, data) => api.put(`/hr/kpi/templates/${id}`, data),
+  deleteKpiTemplate: (id) => api.delete(`/hr/kpi/templates/${id}`),
+  
+  // HR Admin - KPI Assignment
+  assignKpiTemplate: (data) => api.post('/hr/kpi/templates/assign', data),
+  
+  // HR Admin - KPI Analytics
+  getKpiAnalytics: (params = {}) => api.get('/hr/kpi/analytics', { params }),
+  
+  // Manager - KPI Reviews
+  getMyTeamKpiReviews: (params = {}) => api.get('/hr/kpi/reviews/my-team', { params }),
+  getKpiReview: (id) => api.get(`/hr/kpi/reviews/${id}`),
+  submitManagerReview: (id, data) => api.post(`/hr/kpi/reviews/${id}/manager-review`, data),
+  
+  // Employee - KPI
+  getMyKpiAssignments: (params = {}) => api.get('/employee/kpi', { params }),
+  getMyKpiAssignment: (id) => api.get(`/employee/kpi/${id}`),
+  submitSelfReview: (id, data) => api.post(`/employee/kpi/${id}/self-review`, data),
+  getMyKpiHistory: (params = {}) => api.get('/employee/kpi/history', { params }),
+
+  // ==================== Announcement Management ====================
+  
+  // HR Admin - Announcements
+  getAnnouncements: (params = {}) => api.get('/hr/announcements', { params }),
+  getAnnouncement: (id) => api.get(`/hr/announcements/${id}`),
+  createAnnouncement: (data) => api.post('/hr/announcements', data),
+  updateAnnouncement: (id, data) => api.put(`/hr/announcements/${id}`, data),
+  deleteAnnouncement: (id) => api.delete(`/hr/announcements/${id}`),
+  publishAnnouncement: (id) => api.post(`/hr/announcements/${id}/publish`),
+  archiveAnnouncement: (id) => api.post(`/hr/announcements/${id}/archive`),
+  getAnnouncementAnalytics: (params = {}) => api.get('/hr/announcements/analytics', { params }),
+  sendAnnouncementReminders: (id) => api.post(`/hr/announcements/${id}/remind`),
+
+  // Employee - Announcements
+  getEmployeeAnnouncements: (params = {}) => api.get('/employee/announcements', { params }),
+  getEmployeeAnnouncement: (id) => api.get(`/employee/announcements/${id}`),
+  markAnnouncementAsViewed: (id) => api.post(`/employee/announcements/${id}/view`),
+  acknowledgeAnnouncement: (id) => api.post(`/employee/announcements/${id}/acknowledge`),
+  toggleAnnouncementLike: (id) => api.post(`/employee/announcements/${id}/like`),
+  addAnnouncementComment: (id, data) => api.post(`/employee/announcements/${id}/comment`, data),
+  deleteAnnouncementComment: (announcementId, commentId) => api.delete(`/employee/announcements/${announcementId}/comment/${commentId}`)
 }
 
 export default hrAPI

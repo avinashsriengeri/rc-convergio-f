@@ -1272,6 +1272,91 @@
             </router-link>
 
             <div class="px-6 py-2 mt-2">
+              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Communications</h3>
+            </div>
+
+            <!-- HR Admin - Announcements -->
+            <router-link
+              v-if="isHrAdmin"
+              :to="{ name: 'HrAnnouncements' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/announcements') && !$route.path.includes('/my-feed'), 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/announcements') || $route.path.includes('/my-feed') }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+              </svg>
+              Announcements
+            </router-link>
+
+            <!-- Employee - Announcements -->
+            <router-link
+              v-if="!isHrAdmin"
+              :to="{ name: 'EmployeeAnnouncements' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/announcements/my-feed'), 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/announcements/my-feed') }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+              </svg>
+              Announcements
+            </router-link>
+
+            <div class="px-6 py-2 mt-2">
+              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Performance</h3>
+            </div>
+
+            <!-- HR Admin - KPI Management -->
+            <router-link
+              v-if="isHrAdmin"
+              :to="{ name: 'HrKpiTemplates' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/kpi/templates') || $route.name === 'HrKpiTemplates', 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/kpi/templates') && $route.name !== 'HrKpiTemplates' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+              </svg>
+              KPI Templates
+            </router-link>
+
+            <router-link
+              v-if="isHrAdmin"
+              :to="{ name: 'HrKpiAnalytics' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/kpi/analytics') || $route.name === 'HrKpiAnalytics', 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/kpi/analytics') && $route.name !== 'HrKpiAnalytics' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              KPI Analytics
+            </router-link>
+
+            <!-- Manager - Team Reviews (Managers can also be HR Admins, so show if manager role exists) -->
+            <router-link
+              v-if="(userRole === 'line_manager' || userRole === 'manager') && !isHrAdmin"
+              :to="{ name: 'ManagerTeamReviews' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/kpi/reviews') || $route.name === 'ManagerTeamReviews', 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/kpi/reviews') && $route.name !== 'ManagerTeamReviews' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              My Team Reviews
+            </router-link>
+
+            <!-- Employee - My Performance (Show for all non-HR Admin users) -->
+            <router-link
+              v-if="!isHrAdmin"
+              :to="{ name: 'EmployeePerformance' }"
+              class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-4 my-1"
+              :class="{ 'bg-sidebar-active text-primary-purple shadow-sm transform scale-105': $route.path.startsWith('/hr/kpi/my-performance') || $route.name === 'EmployeePerformance', 'text-gray-800 hover:text-primary-purple hover:bg-sidebar-active hover:shadow-sm hover:transform hover:scale-105': !$route.path.startsWith('/hr/kpi/my-performance') && $route.name !== 'EmployeePerformance' }"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              My Performance
+            </router-link>
+
+            <div class="px-6 py-2 mt-2">
               <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Setup</h3>
             </div>
 
@@ -1635,7 +1720,8 @@ const showDialerDropdown = ref(false)
 
 // Notifications dropdown state
 const showNotificationsDropdown = ref(false)
-const unreadNotifications = ref(3) // Mock unread count
+const unreadNotifications = ref(0)
+let notificationPollInterval = null
 
 // Super Admin dropdown state
 const showSuperAdminDropdown = ref(false)
@@ -1668,9 +1754,30 @@ const isHrAdmin = computed(() => {
   })
 })
 
+// Notification polling function
+const pollNotifications = async () => {
+  if (!isAuthenticated.value) return
+  
+  try {
+    const api = await import('@/services/api')
+    const response = await api.default.get('/notifications', { params: { unread_only: true } })
+    if (response.data) {
+      unreadNotifications.value = response.data.unread_count || (Array.isArray(response.data) ? response.data.length : 0) || 0
+    }
+  } catch (err) {
+    console.error('Error polling notifications:', err)
+    // Silently fail - don't show error to user
+  }
+}
+
 // Initialize auth state on app mount
 onMounted(() => {
   initAuth()
+  // Start notification polling (10 minutes = 600000 milliseconds)
+  if (isAuthenticated.value) {
+    pollNotifications() // Poll immediately
+    notificationPollInterval = setInterval(pollNotifications, 600000) // Then every 10 minutes
+  }
 })
 
 // Initialize real-time updates
@@ -1773,6 +1880,28 @@ onMounted(() => {
 // Cleanup event listener on unmount
 onUnmounted(() => {
   document.removeEventListener('click', closeDropdown)
+  // Clear notification polling interval
+  if (notificationPollInterval) {
+    clearInterval(notificationPollInterval)
+    notificationPollInterval = null
+  }
+})
+
+// Watch authentication state to start/stop polling
+watch(isAuthenticated, (newVal) => {
+  if (newVal) {
+    pollNotifications() // Poll immediately when authenticated
+    if (!notificationPollInterval) {
+      notificationPollInterval = setInterval(pollNotifications, 600000) // Then every 10 minutes
+    }
+  } else {
+    // Clear interval when logged out
+    if (notificationPollInterval) {
+      clearInterval(notificationPollInterval)
+      notificationPollInterval = null
+    }
+    unreadNotifications.value = 0
+  }
 })
 </script>
 

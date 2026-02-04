@@ -857,6 +857,56 @@ const routes = [
         name: 'MyInduction',
         component: () => import('./modules/hr/pages/MyInductionView.vue'),
         meta: { requiresAuth: true }
+      },
+      // KPI Management Routes
+      {
+        path: 'kpi/templates',
+        name: 'HrKpiTemplates',
+        component: () => import('./modules/hr/pages/KpiTemplatesView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'kpi/assign',
+        name: 'HrKpiAssign',
+        component: () => import('./modules/hr/pages/KpiAssignmentView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'kpi/analytics',
+        name: 'HrKpiAnalytics',
+        component: () => import('./modules/hr/pages/KpiAnalyticsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'kpi/reviews/my-team',
+        name: 'ManagerTeamReviews',
+        component: () => import('./modules/hr/pages/ManagerTeamReviewsView.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'kpi/my-performance',
+        name: 'EmployeePerformance',
+        component: () => import('./modules/hr/pages/EmployeePerformanceView.vue'),
+        meta: { requiresAuth: true }
+      },
+      // Announcement Management Routes
+      {
+        path: 'announcements',
+        name: 'HrAnnouncements',
+        component: () => import('./modules/hr/pages/AnnouncementsView.vue'),
+        meta: { requiresAuth: true, roles: ['hr_admin', 'system_admin'] }
+      },
+      {
+        path: 'announcements/analytics',
+        name: 'HrAnnouncementAnalytics',
+        component: () => import('./modules/hr/pages/AnnouncementAnalyticsView.vue'),
+        meta: { requiresAuth: true, roles: ['hr_admin', 'system_admin'] }
+      },
+      {
+        path: 'announcements/my-feed',
+        name: 'EmployeeAnnouncements',
+        component: () => import('./modules/hr/pages/EmployeeAnnouncementsView.vue'),
+        meta: { requiresAuth: true }
       }
     ]
   },
@@ -1175,6 +1225,7 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.meta?.public ? false : (to.meta?.requiresAuth ?? true)
   const requiresAdmin = to.meta?.requiresAdmin ?? false
   const requiresSuperAdmin = to.meta?.requiresSuperAdmin ?? false
+  const requiredRoles = to.meta?.roles || []
   
   // License pages that should be accessible even with expired license
   const licensePages = ['/license/pricing', '/license/renewal/success']
@@ -1190,12 +1241,20 @@ router.beforeEach((to, from, next) => {
     return false
   })
   
+  // Check if user has required roles
+  const hasRequiredRole = requiredRoles.length === 0 || (userData?.roles && Array.isArray(userData.roles) && userData.roles.some(role => {
+    const roleName = typeof role === 'object' ? role?.name : role
+    return requiredRoles.includes(roleName)
+  }))
+  
   console.log('Router guard decision:', {
     path: to.path,
     isPublic: to.meta?.public,
     requiresAuth,
     requiresAdmin,
     requiresSuperAdmin,
+    requiredRoles,
+    hasRequiredRole,
     isAuthenticated: !!isAuthenticated,
     requiresEmailVerification,
     isSuperAdmin
@@ -1230,6 +1289,10 @@ router.beforeEach((to, from, next) => {
   } else if (requiresAdmin && userRole !== 'admin') {
     // Redirect non-admin users trying to access admin routes
     console.log('Router: Redirecting to dashboard - admin required')
+    next('/dashboard')
+  } else if (requiredRoles.length > 0 && !hasRequiredRole) {
+    // Redirect users without required roles
+    console.log('Router: Redirecting to dashboard - role required:', requiredRoles)
     next('/dashboard')
   } else {
     console.log('Router: Allowing navigation to', to.path)
